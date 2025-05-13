@@ -1,4 +1,4 @@
-namespace Icms.Helpers;
+namespace MC.Basic.API.Helpers;
 
 using MC.Basic.Application.Contracts.Infrasructure;
 using Microsoft.IdentityModel.Tokens;

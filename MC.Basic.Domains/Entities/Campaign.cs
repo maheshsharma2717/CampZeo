@@ -25,6 +25,6 @@ namespace MC.Basic.Domains.Entities
         public Organisation Organisation { get; set; }
 
         public long? CampaignPostsId { get; set; }
-        public CampaignPost CampaignPost { get; set; }
+        public ICollection<CampaignPost> CampaignPost { get; set; }
     }
 }
