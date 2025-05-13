@@ -1,0 +1,22 @@
+<div class="chat-container">
+    <div class="chat-header d-flex align-items-start justify-content-between w-100">
+        <p>Chat</p> <i class="fa fa-close" (click)="service.isChatPopupOpen=false"></i>
+    </div>
+    <div class="chat-messages">
+        @if(myMessage){<div class="message sent">{{myMessage}}</div>}
+        @for (item of apiResponse; track $index) {<div class="message received" [innerHTML]="item.text"></div>}
+      @if(downloadableText!='') { <div class="message received">
+            <a class="pointer" (click)="downloadFile( 'myData', 'csv')"><i class="fa fa-download"></i> Download CSV</a>
+            <br>
+            <a class="pointer" (click)="downloadFile( 'myData', 'xlsx')"><i class="fa fa-download"></i> Download Excel</a>
+        </div>}
+
+    </div>
+
+    <div class="chat-input">
+        <div class="card position-absolute d-flex flex-row " style="bottom: 8%;"  ><input type="checkbox" [(ngModel)]="isShowDownload" [ngModelOptions]="{standalone:true}"> &nbsp;&nbsp;  Get Downloadable Link</div>
+        <input type="text" [(ngModel)]="questionText" [ngModelOptions]="{standalone:true}"
+            placeholder="Type a message..." />
+        <button type="button" class="btn pointer" style="z-index: 9999999;" (click)="GetResponseFromAi()">Send</button>
+    </div>
+</div>

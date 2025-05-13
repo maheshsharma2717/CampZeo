@@ -1,0 +1,51 @@
+::ng-deep .pagination .current {
+  background-color: #1abc9c !important;
+  padding: .1875rem .625rem;
+  color: #fefefe;
+  cursor: default;
+}
+
+.ql-editor img {
+  max-width: 100%;
+  max-height: 500px;
+  width: auto;
+  height: auto;
+  display: block;
+  margin: 10px auto;
+  border-radius: 4px;
+  object-fit: contain;
+  }
+  .ql-tooltip.ql-editing {
+  transform: translateX(50%);
+  background: #fff;
+  border: 1px solid #ccc;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  z-index: 100;
+  display: block;
+  font-family: "Segoe UI", sans-serif;
+  font-size: 14px;
+  top: 0 !important;
+  left: 5 !important;
+  display: none;
+  }
+  
+  /* .ql-tooltip.ql-editing a.ql-action {
+  padding-inline: 10px;
+  margin-inline: 2px;
+  color: white;
+  background-color: blue;
+  font-weight: 500;
+  border-radius: 5px;
+  text-align: left;
+  } */
+  ::ng-deep .ql-tooltip {
+  top: 0px !important;
+  left: 0px !important;
+  }
+  ::ng-deep .ql-tooltip .ql-editing {
+  top: 0px !important;
+  left: 0px !important;
+  }
+  .ql-editor .ql-blank {
+  height: 500px !important;
+  }

@@ -1,0 +1,62 @@
+.selected-email{
+    box-shadow: 0px 0px 8px 0px #00d5ffbb;
+}
+.selected-email i{
+    color: #00d5ffbb;
+}
+.selected-sms{
+    box-shadow: 0px 0px 8px 0px #c49700;
+}
+.selected-sms i{
+    color: #c49700;
+}
+.selected-whatsapp{
+    box-shadow: 0px 0px 8px 0px #1ee000;
+}
+.selected-whatsapp i{
+    color: #1ee000;
+}
+.selected-rcs{
+    box-shadow: 0px 0px 8px 0px #00c4b7;
+}
+.selected-rcs i{
+    color: #00c4b7;
+}
+.chat-popup{
+    position: fixed;
+    right: 0;
+    bottom: 0;
+    width: 25vw;
+}
+.collapse-popup{
+    width: fit-content;
+    justify-self: end;
+    box-shadow: 0px 0 30px rgba(1, 41, 112, 0.1);
+   
+}
+
+.selected-email-hover:hover{
+    box-shadow: 0px 0px 8px 0px #00d5ff8a;
+}
+.selected-sms-hover:hover{
+    box-shadow: 0px 0px 8px 0px #c49700;
+}
+.selected-whatsapp-hover:hover{
+    box-shadow: 0px 0px 8px 0px #1ee000bf;
+}
+.selected-rcs-hover:hover{
+    box-shadow: 0px 0px 8px 0px #00c4b7b0;
+}
+.selected-facebook-hover:hover{
+    box-shadow: 0px 0px 8px 0px #316ff6ca;
+}
+.selected-instagram-hover:hover{
+    box-shadow: 0px 0px 8px 0px #fc5745c6;
+}
+
+::ng-deep .pagination .current {
+    background-color: #1abc9c !important;
+    padding: .1875rem .625rem;
+    color: #fefefe;
+    cursor: default;
+  }

@@ -1,0 +1,19 @@
+.card {
+    border-radius: 10px;
+  }
+  
+  .card-body i {
+    color: #28a745; /* Green icon */
+  }
+  
+  h3 {
+    font-weight: bold;
+  }
+  
+  p {
+    color: #6c757d; /* Bootstrap gray for secondary text */
+  }
+  
+  a.link-primary {
+    font-size: 14px;
+  }

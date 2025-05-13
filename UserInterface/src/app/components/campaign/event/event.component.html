@@ -1,0 +1,247 @@
+<div class="pcoded-content pt-2">
+    <div class="page-header mb-3">
+        <div class="page-block">
+            <div class="row align-items-center">
+                <div class="col-md-12">
+                    <div class="page-header-title">
+                        <h5 class="m-b-10">Campaign Events</h5>
+                    </div>
+                    <ul class="breadcrumb">
+                        <li class="breadcrumb-item"><a [routerLink]="'/dashboard'"><i class="feather icon-home"></i></a>
+                        </li>
+                        <li class="breadcrumb-item"><a [routerLink]="'/list-campaigns'">Campaign List</a></li>
+                        <li class="breadcrumb-item"><a [routerLink]="'/campaign-events'">Campaign Events </a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header d-flex aligin-item-center justify-content-between py-2">
+                    <div class="title-table d-flex align-items-center">
+                        <h5>Campaign Events</h5>
+                    </div>
+
+                </div>
+                <div class="card-header d-flex aligin-item-center justify-content-between py-2">
+                    <input type="text" class="form-control w-25" placeholder="Search..." [(ngModel)]="searchTerm"
+                        (input)="onSearchChange()" />
+
+                    <div class="d-flex align-items-center justify-content-center ">
+                        <div class="mx-2">
+                            <span class="text-primary">entries per page</span>
+                        </div>
+                        <div class="">
+                            <select id="itemsPerPageSelect" class="form-control" [(ngModel)]="itemsPerPage"
+                                (change)="onItemsPerPageChange(itemsPerPage)">
+                                <option *ngFor="let option of itemsPerPageOptions" [value]="option">{{ option }}
+                                </option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body table-border-style pb-1">
+                    <!-- <div class="table-responsive"> -->
+                    <div class="table-responsive"
+                        *ngIf="!campagin?.isFacebookCampaign && !campagin?.isInstagramCampaign">
+
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th scope="col" class="align-middle">
+                                        <input type="checkbox" class="form-check-input pointer" [checked]="allSelected"
+                                            (change)="selectAll($event)" />
+                                    </th>
+                                    <th scope="col">Contact Name</th>
+                                    <th scope="col">Email</th>
+                                    <th scope="col">Mobile</th>
+                                    <th scope="col">WhatsApp</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr
+                                    *ngFor="let contact of filteredContacts | paginate: { itemsPerPage: itemsPerPage, currentPage: page, totalItems: total }">
+                                    <td class="align-middle">
+                                        <input class="form-check-input pointer" type="checkbox"
+                                            [(ngModel)]="contact.selected" (change)="onIndividualCheckChange()"
+                                            id="contact{{contact.id}}">
+                                    </td>
+                                    <td class="align-middle">
+                                        <label class="form-check-label" for="contact{{contact.id}}">
+                                            {{ contact.contactName }}
+                                        </label>
+                                    </td>
+                                    <td class="align-middle">
+                                        <label class="form-check-label" for="contact{{contact.id}}">
+                                            {{ contact.contactEmail }}
+                                        </label>
+                                    </td>
+                                    <td class="align-middle">
+                                        <label class="form-check-label" for="contact{{contact.id}}">
+                                            {{ contact.contactMobile }}
+                                        </label>
+                                    </td>
+                                    <td class="align-middle">
+                                        <label class="form-check-label" for="contact{{contact.id}}">
+                                            {{ contact.contactWhatsApp }}
+                                        </label>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <div class="d-flex justify-content-end pt-2 mb-0">
+                            <pagination-controls class="pagination"
+                                (pageChange)="pageChangeEvent($event)"></pagination-controls>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="card">
+                <div class="card-header py-2">
+                    <h5>Message Preview</h5>
+                </div>
+                <div class="card-body pt-2">
+                    <ul class="nav nav-tabs" id="myTab" role="tablist">
+
+                        <li *ngIf="campagin.isSmsCampaign" class="nav-item" role="presentation">
+                            <a class="nav-link active text-uppercase" id="SMS-tab" data-bs-toggle="tab"
+                                data-bs-target="#SMS" type="button" role="tab" aria-controls="SMS"
+                                aria-selected="true">SMS</a>
+                        </li>
+
+                        <li *ngIf="campagin.isWhatsAppCampaign" class="nav-item" role="presentation">
+                            <a class="nav-link text-uppercase " id="whatsApp-tab" data-bs-toggle="tab"
+                                data-bs-target="#whatsApp" type="button" role="tab" aria-controls="whatsApp"
+                                aria-selected="false">WhatsApp</a>
+                        </li>
+                        <li *ngIf="campagin.isEmailCampaign" class="nav-item" role="presentation">
+                            <a class="nav-link text-uppercase" id="email-tab" data-bs-toggle="tab"
+                                data-bs-target="#email" type="button" role="tab" aria-controls="email"
+                                aria-selected="false">Email</a>
+                        </li>
+                        <li *ngIf="campagin.isRCSCampaign" class="nav-item" role="presentation">
+                            <a class="nav-link text-uppercase" id="rcs-tab" data-bs-toggle="tab" data-bs-target="#rcs"
+                                type="button" role="tab" aria-controls="rcs" aria-selected="false">RCS</a>
+                        </li>
+                        <!-- <li *ngIf="campagin.isFacebookCampaign" class="nav-item" role="presentation">
+                            <a class="nav-link text-uppercase" id="facebook-tab" data-bs-toggle="tab"
+                                data-bs-target="#facebook" type="button" role="tab" aria-controls="facebook"
+                                aria-selected="false">Facebook</a>
+                        </li>
+                        <li *ngIf="campagin.isInstagramCampaign" class="nav-item" role="presentation">
+                            <a class="nav-link text-uppercase" id="instagram-tab" data-bs-toggle="tab"
+                                data-bs-target="#instagram" type="button" role="tab" aria-controls="instagram"
+                                aria-selected="false">Instagram</a>
+                        </li> -->
+                        <li *ngIf="campagin.isFacebookCampaign" class="nav-item" role="presentation">
+                            <a class="nav-link text-uppercase" id="facebook-tab" data-bs-toggle="tab"
+                                data-bs-target="#facebook" type="button" role="tab" aria-controls="facebook"
+                                aria-selected="false" (click)="onTabClick('facebook')">Facebook</a>
+                        </li>
+                        <li *ngIf="campagin.isInstagramCampaign" class="nav-item" role="presentation">
+                            <a class="nav-link text-uppercase" id="instagram-tab" data-bs-toggle="tab"
+                                data-bs-target="#instagram" type="button" role="tab" aria-controls="instagram"
+                                aria-selected="false" (click)="onTabClick('instagram')">Instagram</a>
+                        </li>
+                      
+                    </ul>
+                    <div class="tab-content pt-2" id="myTabContent">
+                        <div class="tab-pane fade" [class.show]="activeTab === 'SMS'"
+                            [class.active]="activeTab === 'SMS'" id="SMS" role="tabpanel" aria-labelledby="SMS-tab">
+                            <div class="form-group">
+                                <div class="form-control" id="messageText" rows="5"
+                                    [innerHTML]="GetHtml(messageTemplates?.smsTemplate?.message)"
+                                    style="min-height: 3vh; border: none"></div>
+                            </div>
+                        </div>
+                        <div class="tab-pane fade" [class.show]="activeTab === 'whatsApp'"
+                            [class.active]="activeTab === 'whatsApp'" id="whatsApp" role="tabpanel"
+                            aria-labelledby="whatsApp-tab">
+                            <div class="form-group">
+                                <div class="form-control" id="messageText" rows="5"
+                                    [innerHTML]="GetHtml(messageTemplates?.whatsappTemplate?.message)"
+                                    style="min-height: 3vh; border: none"></div>
+                            </div>
+                        </div>
+                        <div class="tab-pane fade" [class.show]="activeTab === 'email'"
+                            [class.active]="activeTab === 'email'" id="email" role="tabpanel"
+                            aria-labelledby="email-tab">
+                            <div class="form-group">
+                                <div class="form-control" id="messageText" rows="5"
+                                    [innerHTML]="GetHtml(messageTemplates?.emailTemplate?.message)"
+                                    style="min-height: 3vh; border: none">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="tab-pane fade" [class.show]="activeTab === 'rcs'"
+                            [class.active]="activeTab === 'rcs'" id="rcs" role="tabpanel" aria-labelledby="rcs-tab">
+                            <div class="form-group">
+                                <div class="form-control" id="messageText" rows="5"
+                                    [innerHTML]="GetHtml(messageTemplates?.rcsTemplate?.message)"
+                                    style="min-height: 3vh; border: none"></div>
+                            </div>
+                        </div>
+
+                        <div class="tab-pane fade" [class.show]="activeTab === 'facebook'"
+                            [class.active]="activeTab === 'facebook'" id="facebook" role="tabpanel"
+                            aria-labelledby="facebook-tab">
+                            <div class="form-group">
+                                <div class="card border-0">
+                                    <div class="card-header">
+                                        <div class="mb-3">
+                                            <label for="pageSelect" class="form-label">Select Page</label>
+                                            <select id="pageSelect" class="form-control" [(ngModel)]="selectedPage">
+                                                <option value="" disabled selected>Select a page</option>
+                                                <option *ngFor="let page of pages" [ngValue]="page">{{ page.name }}
+                                                </option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="card-body custom-inner-html"
+                                        [innerHTML]="GetHtml(messageTemplates?.facebookTemplate?.message)">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="tab-pane fade" [class.show]="activeTab === 'instagram'"
+                            [class.active]="activeTab === 'instagram'" id="instagram" role="tabpanel"
+                            aria-labelledby="instagram-tab">
+                            <div class="form-group">
+                                <div class="card border-0">
+                                    <div class="card-header">
+                                        <div class="mb-3">
+                                            <label for="pageSelect" class="form-label">Select Page</label>
+                                            <select id="pageSelect" class="form-control" [(ngModel)]="selectedPage"
+                                                (change)="onPageSelect()">
+                                                <option value="" disabled selected>Select a page</option>
+                                                <option *ngFor="let page of pages" [ngValue]="page">{{ page.name }}
+                                                </option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="card-body custom-inner-html"
+                                        [innerHTML]="GetHtml(messageTemplates?.instagramTemplate?.message)">
+                                    </div>
+                                    <video [src]="videoUrl" controls width="400">
+                                        Your browser does not support the video tag.
+                                    </video>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mt-2">
+                        <button class="btn btn-primary mt-3" (click)="sendMessage()">Send Campaigns</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,21 @@
+/* 
+.nav-link.active,.nav-link.active i{
+    display: flex;
+    align-items: center;
+    font-size: 15px;
+    color: #4154f1;
+    background: #f6f9ff;
+    border-radius: 4px;
+} */
+
+ .user-menu-wrapper {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.7s ease, opacity 0.7s ease;
+    opacity: 0;
+  }
+  .user-menu-wrapper.open {
+    max-height: 500px;
+    opacity: 1;
+  }
+  

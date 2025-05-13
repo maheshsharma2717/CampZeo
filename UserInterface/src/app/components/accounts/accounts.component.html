@@ -1,0 +1,49 @@
+<div class="pcoded-content">
+    <div class="page-header">
+        <div class="page-block">
+            <div class="row align-items-center">
+                <div class="col-md-12">
+                    <div class="page-header-title">
+                        <h5 class="m-b-10">Accounts</h5>
+                    </div>
+                    <ul class="breadcrumb">
+                        <li class="breadcrumb-item"><a [routerLink]="'/accounts'"><i class="feather icon-home"></i>Accounts</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="card">
+                <div class="my-4">
+                    <div class="d-flex g-3">
+                        <div class="d-flex flex-column">
+                          <div class="card text-center selected-facebook-hover mx-3 mb-2" style="width: 8rem; border-radius: 10px;">
+                            <div class="card-body rounded pt-4 bg-white pointer border"
+                                 (click)="loginWithFacebook()"
+                                 [ngClass]="{'selected-facebook': selectedPlatform === 'facebook'}">
+                              <i class="fab fa-facebook fa-2x"></i>
+                              <p class="card-text mt-2">Facebook</p>
+                            </div>
+                          </div>
+                          <p *ngIf="isFacebookConnected" class="text-success text-center">Connected</p>
+                        </div>
+                          <div class="d-flex flex-column">
+                          <div class="card text-center selected-instagram-hover mb-2" style="width: 8rem; border-radius: 10px;">
+                            <div class="card-body rounded pt-4 bg-white pointer border"
+                                 (click)="loginWithInstagram()"
+                                 [ngClass]="{'selected-instagram': selectedPlatform === 'instagram'}">
+                              <i class="fab fa-instagram fa-2x"></i>
+                              <p class="card-text mt-2">Instagram</p>
+                            </div>
+                          </div>
+                          <p *ngIf="isInstagramConnected" class="text-success text-center">Connected</p>
+                          </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,102 @@
+<!-- <div class="post-insights">
+    <h2>Post Insights</h2>
+  
+    <div>
+      <label for="postId">Post ID:</label>
+      <input type="text" id="postId" [(ngModel)]="postId" placeholder="Enter Post ID" />
+    </div>
+  
+    <div>
+      <label for="accessToken">Access Token:</label>
+      <input type="text" id="accessToken" [(ngModel)]="accessToken" placeholder="Enter Access Token" />
+    </div>
+  
+    <div>
+      <label for="platform">Platform:</label>
+      <select id="platform" [(ngModel)]="platform">
+        <option value="facebook">Facebook</option>
+        <option value="instagram">Instagram</option>
+      </select>
+    </div>
+  
+    <button (click)="fetchPostInsights()">Get Insights</button>
+  
+    <div *ngIf="errorMessage" class="error">
+      {{ errorMessage }}
+    </div>
+    <div *ngIf="insights">
+      <div *ngIf="platform === 'facebook'">
+        <h3>Facebook Insights</h3>
+        <p><strong>Impressions:</strong> {{ insights.data[0].values[0].value }}</p>
+        <p><strong>Engaged Users:</strong> {{ insights.data[1].values[0].value }}</p>
+        <p><strong>Reactions:</strong> {{ insights.data[2].values[0].value }}</p>
+      </div>
+  
+      <div *ngIf="platform === 'instagram'">
+        <h3>Instagram Insights</h3>
+        <p><strong>Impressions:</strong> {{ insights.data[0].values[0].value }}</p>
+        <p><strong>Reach:</strong> {{ insights.data[1].values[0].value }}</p>
+        <p><strong>Engagement:</strong> {{ insights.data[2].values[0].value }}</p>
+        <p><strong>Saved:</strong> {{ insights.data[3].values[0].value }}</p>
+        <p><strong>Video Views:</strong> {{ insights.data[4].values[0].value }}</p>
+      </div>
+    </div>
+  </div>
+   -->
+
+
+   <div class="post-insights">
+    <h2>Post Insights</h2>
+  
+    <!-- Dropdown for selecting a post -->
+    <div>
+      <label for="postId">Select Post:</label>
+      <select id="postId" [(ngModel)]="selectedPostId">
+        <option *ngFor="let post of posts" [value]="post.postId">
+          {{ post.message || 'No message' }} - {{ post.postType }}
+        </option>
+      </select>
+    </div>
+  
+    <!-- Input for Access Token -->
+    <div>
+      <label for="accessToken">Access Token:</label>
+      <input type="text" id="accessToken" [(ngModel)]="accessToken" placeholder="Enter Access Token" />
+    </div>
+  
+    <!-- Select platform -->
+    <div>
+      <label for="platform">Platform:</label>
+      <select id="platform" [(ngModel)]="platform">
+        <option value="facebook">Facebook</option>
+        <option value="instagram">Instagram</option>
+      </select>
+    </div>
+  
+    <button (click)="fetchPostInsights()">Get Insights</button>
+  
+    <!-- Error message -->
+    <div *ngIf="errorMessage" class="error">
+      {{ errorMessage }}
+    </div>
+  
+    <!-- Display insights -->
+    <div *ngIf="insights">
+      <div *ngIf="platform === 'facebook'">
+        <h3>Facebook Insights</h3>
+        <p><strong>Impressions:</strong> {{ insights.data[0].values[0].value }}</p>
+        <p><strong>Engaged Users:</strong> {{ insights.data[1].values[0].value }}</p>
+        <p><strong>Reactions:</strong> {{ insights.data[2].values[0].value }}</p>
+      </div>
+  
+      <div *ngIf="platform === 'instagram'">
+        <h3>Instagram Insights</h3>
+        <p><strong>Impressions:</strong> {{ insights.data[0].values[0].value }}</p>
+        <p><strong>Reach:</strong> {{ insights.data[1].values[0].value }}</p>
+        <p><strong>Engagement:</strong> {{ insights.data[2].values[0].value }}</p>
+        <p><strong>Saved:</strong> {{ insights.data[3].values[0].value }}</p>
+        <p><strong>Video Views:</strong> {{ insights.data[4].values[0].value }}</p>
+      </div>
+    </div>
+  </div>
+  

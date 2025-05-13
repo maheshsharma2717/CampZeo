@@ -1,0 +1,163 @@
+::ng-deep .pagination .current {
+  background-color: #1abc9c !important;
+  padding: .1875rem .625rem;
+  color: #fefefe;
+  cursor: default;
+}
+
+.hover-card {
+    transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+  }
+  
+  .hover-card:hover {
+    transform: scale(1.05);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+  }
+  
+  .custom-close-button {
+    background-color: #ff0000 !important; 
+    color: #fff !important; 
+    border: none;
+    border-radius: 5px;
+    padding: 5px;
+    height: 40px;
+    width: 40px;
+  }
+  
+  .custom-close-button:hover {
+    background-color: darkred; 
+  }
+  .yourDivId {
+    overflow: scroll;
+    scrollbar-width: none; 
+  }
+  
+  .yourDivId::-webkit-scrollbar {
+    display: none;
+  }
+ 
+  
+  .selected {
+    box-shadow: 0px 0px 8px 0px #090b0b !important; 
+    border:1px solid #5a6263;
+    z-index: 10; 
+  }
+
+  
+  .card-box {
+    
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    background-color: #f5f5f5;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    font-family: Arial, sans-serif;
+    position: relative;
+  }
+  
+  .card-header-1 {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    background-color: #e8eaf6;
+  }
+  
+  .team-label {
+    font-size: 14px;
+    color: #5c6bc0;
+    font-weight: bold;
+  }
+  
+  .team-tag {
+    font-size: 12px;
+    color: white;
+    background-color: #7e57c2;
+    padding: 3px 8px;
+    border-radius: 4px;
+  }
+  
+  .card-body {
+    padding: 15px;
+    text-align: center;
+  }
+  
+  .card-body h3 {
+    font-size: 18px;
+    margin: 0;
+    color: #424242;
+  }
+  
+  .card-body p {
+    font-size: 14px;
+    color: #757575;
+  }
+  
+  .card-footer {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background-color: #eeeeee;
+    padding: 10px;
+    font-size: 12px;
+    color: #424242;
+    text-align: center;
+    opacity: 0; /* Hide initially */
+    transform: translateY(20px); /* Move out of view */
+    transition: opacity 0.3s, transform 0.3s; /* Smooth transition */
+  }
+  
+  .card-box:hover .card-footer {
+    opacity: 1; /* Show on hover */
+    transform: translateY(0); /* Move into view */
+  }
+  .modal-fullscreen {
+    width: 98vw !important;
+    max-width: none !important;
+    height: 93% !important;
+    margin: 14px !important;
+  }
+  .col-md-3 {
+    padding: 12px;
+  }
+
+    .selected-box-shadow {
+      box-shadow: 2px 6px 10px rgba(0, 0, 0, 0.2);
+      border: 2px solid #1abc9c; 
+      transition: box-shadow 0.3s ease, border 0.3s ease; 
+    
+    }
+
+  .selected-box-header{
+    background-color: #1abc9c;
+  }
+  .fa-sms {
+    color: #c49700;
+  }
+  .fa-envelope-open{
+    color: #e04d3b;
+  }
+  .fa-whatsapp{
+    color:#1ee000;
+  }
+  .fa-globe{
+    color:#00c4b7;
+  }
+  .pointer{
+    cursor: pointer !important;
+  }
+ .fa-facebook{
+  color: #316FF6;
+ }
+  .fa-instagram {
+    color: transparent;
+    background: radial-gradient(circle at 30% 107%, #fdf497 0%, #fdf497 5%, #fd5949 45%, #d6249f 60%, #285AEB 90%);
+    background: -webkit-radial-gradient(circle at 30% 107%, #fdf497 0%, #fdf497 5%, #fd5949 45%, #d6249f 60%, #285AEB 90%);
+    background-clip: text;
+    -webkit-background-clip: text;
+  }
+
+  .text-end{
+    text-align: end !important;
+  }

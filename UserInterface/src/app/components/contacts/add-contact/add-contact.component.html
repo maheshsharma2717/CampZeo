@@ -1,0 +1,90 @@
+<div class="pcoded-content">
+    <div class="page-header">
+        <div class="page-block">
+            <div class="row align-items-center">
+                <div class="col-md-12">
+                    <div class="page-header-title">
+                        <h5 class="m-b-10">Create Contact</h5>
+                    </div>
+                    <ul class="breadcrumb">
+                        <li class="breadcrumb-item"><a [routerLink]="'/dashboard'"><i
+                                    class="feather icon-home"></i></a></li>
+                        <li class="breadcrumb-item"><a [routerLink]="'/list-contacts'">Contact List</a></li>
+                        <li class="breadcrumb-item"><a [routerLink]="'/add-contact'">Create Contact </a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5>@if(editMode){Update}@else{Add} Contact </h5>
+                </div>
+                <div class="card-body">
+                    <form [formGroup]="contactForm" (ngSubmit)="onSubmit()">
+                        <div class="row">
+
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="floating-label" for="contactName">Contact Name<span class="text-danger ">*</span></label>
+                                    <input type="text" class="form-control" id="contactName"
+                                        placeholder="Enter Contact Name" formControlName="contactName">
+                                    @if(contactForm.get('contactName').invalid &&
+                                    contactForm.get('contactName').touched){ <span class="text-danger">
+                                        Name is required.
+                                    </span>}
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="floating-label" for="contactMobile">Contact Mobile<span class="text-danger ">*</span></label>
+                                    <input type="tel" class="form-control" id="contactMobile"
+                                        placeholder="Enter Phone Number" formControlName="contactMobile">
+                                    @if (contactForm.get('contactMobile').invalid &&
+                                    contactForm.get('contactMobile').touched){ <span class="text-danger">
+                                        Mobile number is required.
+                                    </span>}
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="floating-label" for="contactWhatsApp">Contact WhatsApp Number </label>
+                                    <input type="tel" class="form-control" id="contactWhatsApp"
+                                        placeholder="Enter Phone Number" formControlName="contactWhatsApp">
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="contactEmail">Contact Email<span class="text-danger ">*</span></label>
+                                    <input type="email" class="form-control" id="contactEmail"
+                                        aria-describedby="emailHelp" placeholder="Enter email"
+                                        formControlName="contactEmail">
+                                    @if(contactForm.get('contactEmail').invalid &&
+                                    contactForm.get('contactEmail').touched){ <span class="text-danger">
+                                        A valid email address is required.
+                                    </span>}
+                                    <small id="email" class="form-text text-muted">We'll never share your email with
+                                        anyone
+                                        else.</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="d-flex gap-3 mt-1">
+                            <button type="submit" class="btn btn-primary" [disabled]="contactForm.invalid">
+                                @if(editMode){Update}@else{Create} Contact
+                            </button>
+                            <button type="button" class="btn btn-secondary" [routerLink]="'/list-contacts'">
+                                Back to list
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

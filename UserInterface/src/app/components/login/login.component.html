@@ -1,0 +1,54 @@
+<div class="auth-wrapper">
+  <div class="container p-0">
+    <!-- Left Side -->
+    <div class="left-panel">
+      <img src="assets/img/CampZeoLogo.png" alt="" class="img-fluid mb-4 h-35">
+      <p>
+        Manage your campaigns efficiently and effortlessly. Our Campaign Management system helps you
+        plan, execute, and analyze your marketing efforts—all in one place.
+      </p>
+    </div>
+
+    <!-- Right Side -->
+    <div class="right-panel">
+      <div class="login-box">
+        <h2 class="login-heading">LOGIN</h2>
+        <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+
+          <!-- Email -->
+          <div class="form-group mb-3">
+            <input type="email" class="form-control" formControlName="email" placeholder="Email address">
+            <div *ngIf="loginForm.get('email')?.touched && loginForm.get('email')?.invalid">
+              <small class="text-danger" *ngIf="loginForm.get('email')?.errors?.['required']">Email is required.</small>
+              <small class="text-danger" *ngIf="loginForm.get('email')?.errors?.['email']">Enter a valid email.</small>
+            </div>
+          </div>
+
+          <div class="form-group mb-4 position-relative">
+            <input [type]="showPassword ? 'text' : 'password'" class="form-control" formControlName="password"
+              placeholder="Password" />
+            <span class="position-absolute" style="top: 50%; right: 15px; transform: translateY(-50%); cursor: pointer;"
+              (click)="togglePassword()">
+              <i [class]="showPassword ? 'fa fa-eye-slash' : 'fa fa-eye'"></i>
+            </span>
+            <div *ngIf="loginForm.get('password')?.touched && loginForm.get('password')?.invalid">
+              <small class="text-danger">Password is required.</small>
+            </div>
+          </div>
+
+          <!-- Remember Me -->
+          <div class="custom-control custom-checkbox text-left mb-4 mt-2">
+            <input type="checkbox" class="custom-control-input" id="customCheck1" formControlName="rememberMe">
+            <label class="custom-control-label" for="customCheck1">Save credentials.</label>
+          </div>
+          <div class="custom-control custom-checkbox text-left mb-4 mt-2 p-0">
+            <p class="custom-control-p" for="customCheck1">Forgot password ? <a [routerLink]=""> click here . </a></p>
+          </div>
+
+          <!-- Submit Button -->
+          <button class="btn btn-block btn-primary" type="submit" [disabled]="loginForm.invalid">Signin</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
