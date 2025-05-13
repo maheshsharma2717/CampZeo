@@ -21,7 +21,7 @@ namespace MC.Basic.Infrastructure {
             services.AddTransient<IEmailService, EmailService>(); 
             
             //services.Configure<TwilioSettings>(configuration.GetSection("TwilioSettings"));
-            //services.AddTransient<ITwilioService, TwilioService>();
+            services.AddTransient<IAuthenticationService, IAuthenticationService>();
             return services;
         }
     }
