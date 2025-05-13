@@ -1,6 +1,6 @@
 ﻿namespace MC.Basic.Domain;
 
-public enum TemplateType : long
+public enum PlatformType : long
 {
     Email = 1,
     SMS = 2,

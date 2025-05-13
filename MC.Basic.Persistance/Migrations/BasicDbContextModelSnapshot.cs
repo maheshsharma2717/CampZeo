@@ -144,8 +144,8 @@ namespace MC.Basic.Persistance.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("Type")
-                        .HasColumnType("int");
+                    b.Property<long>("Type")
+                        .HasColumnType("bigint");
 
                     b.Property<string>("VideoUrl")
                         .IsRequired()
@@ -393,9 +393,6 @@ namespace MC.Basic.Persistance.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
                     b.Property<string>("CreatedBy")
                         .HasColumnType("nvarchar(max)");
 
@@ -484,9 +481,6 @@ namespace MC.Basic.Persistance.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime>("UpdatedAt")
-                        .HasColumnType("datetime2");
-
                     b.Property<string>("UserName")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -513,13 +507,11 @@ namespace MC.Basic.Persistance.Migrations
                         .WithOne("CampaignPost")
                         .HasForeignKey("MC.Basic.Domains.Entities.CampaignPost", "CampaignId");
 
-                    b.HasOne("MC.Basic.Domains.Entities.Organisation", "Organisation")
+                    b.HasOne("MC.Basic.Domains.Entities.Organisation", null)
                         .WithMany("CampaignPosts")
                         .HasForeignKey("OrganisationId");
 
                     b.Navigation("Campaign");
-
-                    b.Navigation("Organisation");
                 });
 
             modelBuilder.Entity("MC.Basic.Domains.Entities.Contact", b =>

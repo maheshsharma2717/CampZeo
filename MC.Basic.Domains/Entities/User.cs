@@ -36,7 +36,5 @@ namespace MC.Basic.Domains.Entities
         public DateTime? InstagramTokenCreatedAt { get; set; }
         public int? InstagramTokenExpiresIn { get; set; }
 
-        public DateTime CreatedAt { get; set; }
-        public DateTime UpdatedAt { get; set; }
     }
 }
