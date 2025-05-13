@@ -33,9 +33,6 @@ namespace MC.Basic.Persistance.Migrations
                     b.Property<long?>("CampaignPostsId")
                         .HasColumnType("bigint");
 
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
                     b.Property<string>("CreatedBy")
                         .HasColumnType("nvarchar(max)");
 
@@ -83,9 +80,6 @@ namespace MC.Basic.Persistance.Migrations
                     b.Property<DateTime>("StartDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<DateTime>("UpdatedAt")
-                        .HasColumnType("datetime2");
-
                     b.HasKey("Id");
 
                     b.HasIndex("OrganisationId");
@@ -126,13 +120,6 @@ namespace MC.Basic.Persistance.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<long?>("OrganisationId")
-                        .HasColumnType("bigint");
-
-                    b.Property<string>("OrganisationName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<DateTime?>("ScheduledPostTime")
                         .HasColumnType("datetime2");
 
@@ -156,8 +143,6 @@ namespace MC.Basic.Persistance.Migrations
                     b.HasIndex("CampaignId")
                         .IsUnique()
                         .HasFilter("[CampaignId] IS NOT NULL");
-
-                    b.HasIndex("OrganisationId");
 
                     b.ToTable("CampaignPosts");
                 });
@@ -507,10 +492,6 @@ namespace MC.Basic.Persistance.Migrations
                         .WithOne("CampaignPost")
                         .HasForeignKey("MC.Basic.Domains.Entities.CampaignPost", "CampaignId");
 
-                    b.HasOne("MC.Basic.Domains.Entities.Organisation", null)
-                        .WithMany("CampaignPosts")
-                        .HasForeignKey("OrganisationId");
-
                     b.Navigation("Campaign");
                 });
 
@@ -540,8 +521,6 @@ namespace MC.Basic.Persistance.Migrations
 
             modelBuilder.Entity("MC.Basic.Domains.Entities.Organisation", b =>
                 {
-                    b.Navigation("CampaignPosts");
-
                     b.Navigation("Campaigns");
 
                     b.Navigation("Contacts");

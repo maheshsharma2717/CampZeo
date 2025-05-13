@@ -106,8 +106,6 @@ namespace MC.Basic.Persistance.Migrations
                     IsInstagramCampaign = table.Column<bool>(type: "bit", nullable: false),
                     OrganisationId = table.Column<long>(type: "bigint", nullable: true),
                     CampaignPostsId = table.Column<long>(type: "bigint", nullable: true),
-                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     LastModifiedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
@@ -201,14 +199,12 @@ namespace MC.Basic.Persistance.Migrations
                     Subject = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Message = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     SenderEmail = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    OrganisationName = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Type = table.Column<long>(type: "bigint", nullable: false),
                     IsAttachedToCampaign = table.Column<bool>(type: "bit", nullable: false),
                     CampaignId = table.Column<long>(type: "bigint", nullable: true),
                     VideoUrl = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     ScheduledPostTime = table.Column<DateTime>(type: "datetime2", nullable: true),
                     IsPostSent = table.Column<bool>(type: "bit", nullable: false),
-                    OrganisationId = table.Column<long>(type: "bigint", nullable: true),
                     CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     LastModifiedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
@@ -222,11 +218,6 @@ namespace MC.Basic.Persistance.Migrations
                         column: x => x.CampaignId,
                         principalTable: "Campaigns",
                         principalColumn: "Id");
-                    table.ForeignKey(
-                        name: "FK_CampaignPosts_Organizations_OrganisationId",
-                        column: x => x.OrganisationId,
-                        principalTable: "Organizations",
-                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateIndex(
@@ -235,11 +226,6 @@ namespace MC.Basic.Persistance.Migrations
                 column: "CampaignId",
                 unique: true,
                 filter: "[CampaignId] IS NOT NULL");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_CampaignPosts_OrganisationId",
-                table: "CampaignPosts",
-                column: "OrganisationId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Campaigns_OrganisationId",

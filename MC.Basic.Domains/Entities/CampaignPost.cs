@@ -13,7 +13,6 @@ namespace MC.Basic.Domains.Entities
         public string Subject { get; set; }
         public string Message { get; set; }
         public string SenderEmail { get; set; }
-        public string OrganisationName { get; set; }
         public PlatformType Type { get; set; }  
         public bool IsAttachedToCampaign { get; set; } = false;
 

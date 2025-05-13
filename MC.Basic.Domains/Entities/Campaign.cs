@@ -26,8 +26,5 @@ namespace MC.Basic.Domains.Entities
 
         public long? CampaignPostsId { get; set; }
         public CampaignPost CampaignPost { get; set; }
-
-        public DateTime CreatedAt { get; set; }
-        public DateTime UpdatedAt { get; set; }
     }
 }

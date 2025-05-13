@@ -17,7 +17,6 @@ namespace MC.Basic.Domains.Entities {
         public bool IsDeleted { get; set; } = false;
         public ICollection<User> Users { get; set; }
         public ICollection<Campaign> Campaigns { get; set; }
-        public ICollection<CampaignPost> CampaignPosts { get; set; }
         public ICollection<Contact> Contacts { get; set; }
     }
 
