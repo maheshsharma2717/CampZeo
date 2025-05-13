@@ -1,5 +1,4 @@
-﻿using MC.Basic.Application.Models.A;
-using MC.Basic.Application.Models.Authentication;
+﻿using MC.Basic.Application.Models.Authentication;
 using MC.Basic.Application.Models.DataModel;
 using MC.Basic.Domains.Entities;
 using MediatR;

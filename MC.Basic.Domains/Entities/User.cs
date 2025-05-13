@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MC.Basic.Domain;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -17,7 +18,7 @@ namespace MC.Basic.Domains.Entities
         public string LastName { get; set; }
         public bool IsApproved { get; set; } = false;
         public bool IsFirstLogin { get; set; } = true;
-        public int Role { get; set; }
+        public UserRole Role { get; set; }
 
         public long? OrganisationId { get; set; }
         public Organisation Organisation { get; set; }
