@@ -14,9 +14,9 @@ namespace MC.Basic.Application.Profiles
     public class MappingProfile : Profile
     {
         public MappingProfile() {
-            CreateMap<Organization, CreateOrganisationCommand>();
-            CreateMap<Organization, OrganizationListVm>().ReverseMap();
-            CreateMap<Organization, OrganizationDetailVm>().ReverseMap();
+            CreateMap<Organisation, CreateOrganisationCommand>();
+            CreateMap<Organisation, OrganizationListVm>().ReverseMap();
+            CreateMap<Organisation, OrganizationDetailVm>().ReverseMap();
         }
     }
 }

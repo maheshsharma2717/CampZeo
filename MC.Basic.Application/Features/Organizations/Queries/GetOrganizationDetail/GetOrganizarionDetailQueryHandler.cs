@@ -12,10 +12,10 @@ namespace MC.Basic.Application.Features.Organizations.Queries.GetOrganizationDet
 {
     public class GetOrganizarionDetailQueryHandler : IRequestHandler<GetOrganizationDetailQuery, OrganizationDetailVm>
     {
-        private readonly IAsyncRepository<Organization> _organizationRepository;
+        private readonly IAsyncRepository<Organisation> _organizationRepository;
         private readonly IMapper _mapper;
 
-        public GetOrganizarionDetailQueryHandler(IMapper mapper, IAsyncRepository<Organization> organizationRepository)
+        public GetOrganizarionDetailQueryHandler(IMapper mapper, IAsyncRepository<Organisation> organizationRepository)
         {
             _mapper = mapper;
             _organizationRepository = organizationRepository;
@@ -24,7 +24,7 @@ namespace MC.Basic.Application.Features.Organizations.Queries.GetOrganizationDet
         public async Task<OrganizationDetailVm> Handle(GetOrganizationDetailQuery query, CancellationToken cancellationToken)
         {
             var org = await _organizationRepository.GetAsyncById(query.Id);
-            return _mapper.Map<Organization, OrganizationDetailVm>(org);
+            return _mapper.Map<Organisation, OrganizationDetailVm>(org);
         }
 
     }

@@ -12,19 +12,18 @@ namespace MC.Basic.Persistance {
     {
         public BasicDbContext(DbContextOptions<BasicDbContext> options) : base(options) { }
 
-        public DbSet<Organization> Organizations { get; set; }
+        public DbSet<Organisation> Organizations { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder) {
             modelBuilder.ApplyConfigurationsFromAssembly(typeof(BasicDbContext).Assembly);
 
             var Id = 1;
 
-            modelBuilder.Entity<Organization>().HasData(
-                new Organization {
+            modelBuilder.Entity<Organisation>().HasData(
+                new Organisation {
                     Id = Id,
                     Name="Mandav Consuktancy",
                     Address= "Purani mandi",
-                    Description ="Test"
                 });
 
             base.OnModelCreating(modelBuilder);

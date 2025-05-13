@@ -12,10 +12,10 @@ namespace MC.Basic.Application.Features.Organizations.Queries.GetOrganizationLis
 {
     public class GetOrganizationsListQueryHandler : IRequestHandler<GetOrganizationsListQuery, List<OrganizationListVm>>
     {
-        private readonly IAsyncRepository<Organization> _organizationRepository;
+        private readonly IAsyncRepository<Organisation> _organizationRepository;
         private readonly IMapper _mapper;
 
-        public GetOrganizationsListQueryHandler(IMapper mapper, IAsyncRepository<Organization> organizationRepository)
+        public GetOrganizationsListQueryHandler(IMapper mapper, IAsyncRepository<Organisation> organizationRepository)
         {
             _mapper = mapper;
             _organizationRepository = organizationRepository;

@@ -7,7 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace MC.Basic.Persistance.Repositories {
-    public class OrganizationRepository : BaseRepository<Organization>,IOrganizationRepository
+    public class OrganizationRepository : BaseRepository<Organisation>,IOrganizationRepository
     {
         public OrganizationRepository(BasicDbContext dbContext):base(dbContext) 
         {

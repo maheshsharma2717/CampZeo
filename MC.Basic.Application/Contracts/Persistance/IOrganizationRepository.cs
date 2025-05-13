@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace MC.Basic.Application.Contracts.Persistance 
 {
-    public interface IOrganizationRepository: IAsyncRepository<Organization> 
+    public interface IOrganizationRepository: IAsyncRepository<Organisation> 
     {
         Task<bool> IsOrganizationNameUnique(string? name);
     }

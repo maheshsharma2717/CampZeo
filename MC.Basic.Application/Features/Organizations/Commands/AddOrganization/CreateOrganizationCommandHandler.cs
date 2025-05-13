@@ -30,11 +30,10 @@ namespace MC.Basic.Application.Features.Organizations.Commands.AddOrganization
         {
             Log.Information("Handling CreateOrganizationCommand for organization: {Name}", createOrganisationCommand.Name);
 
-            var org = new Organization
+            var org = new Organisation
             {
                 Name = createOrganisationCommand.Name,
                 Address = createOrganisationCommand.Address,
-                Description = createOrganisationCommand.Description
             };
 
             var response = new CreateOrganizationCommandResponse();

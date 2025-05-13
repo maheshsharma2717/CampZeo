@@ -30,7 +30,7 @@ namespace MC.Basic.Application.Features.Organizations.Commands.UpdateOrganizatio
             }
 
             // Map the updated values from command to the organization entity
-            _mapper.Map(updateOrganisationCommand, organizationToUpdate, typeof(UpdateOrganisationCommand), typeof(Organization));
+            _mapper.Map(updateOrganisationCommand, organizationToUpdate, typeof(UpdateOrganisationCommand), typeof(Organisation));
 
             // Save the updated entity to the repository
             await _organizationRepository.UpdateAsync(organizationToUpdate);

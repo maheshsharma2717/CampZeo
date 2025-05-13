@@ -9,13 +9,12 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace MC.Basic.Persistance.Configurations {
-    public class OrganizationConfiguration : IEntityTypeConfiguration<Organization>
+    public class OrganizationConfiguration : IEntityTypeConfiguration<Organisation>
     {
-        public void Configure(EntityTypeBuilder<Organization> entityTypeBuilder) {
+        public void Configure(EntityTypeBuilder<Organisation> entityTypeBuilder) {
 
             entityTypeBuilder.Property(e => e.Id).IsRequired().UseIdentityColumn();
             entityTypeBuilder.Property(e => e.Name).IsRequired().HasMaxLength(100);
-            entityTypeBuilder.Property(e => e.Description).IsRequired().HasMaxLength(500);
             entityTypeBuilder.Property(e => e.Address).IsRequired().HasMaxLength(500);
 
         }
