@@ -1,4 +1,5 @@
 ﻿using MC.Basic.Domain;
+using MC.Basic.Domains.Common;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace MC.Basic.Domains.Entities
 {
-    public class User
+    public class User:AuditableEntity
     {
         public string Token { get; set; }
         public string UserName { get; set; }

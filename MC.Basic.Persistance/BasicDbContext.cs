@@ -13,18 +13,15 @@ namespace MC.Basic.Persistance {
         public BasicDbContext(DbContextOptions<BasicDbContext> options) : base(options) { }
 
         public DbSet<Organisation> Organizations { get; set; }
+        public DbSet<User> Users { get; set; }
+        public DbSet<Campaign> Campaigns { get; set; }
+        public DbSet<CampaignPost> CampaignPosts{ get; set; }
+        public DbSet<PostTransaction> PostTransactions{ get; set; }
+        public DbSet<PostInsight> PostInsights { get; set; }
+        public DbSet<Contact> Contact { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder) {
-            modelBuilder.ApplyConfigurationsFromAssembly(typeof(BasicDbContext).Assembly);
-
-            var Id = 1;
-
-            modelBuilder.Entity<Organisation>().HasData(
-                new Organisation {
-                    Id = Id,
-                    Name="Mandav Consuktancy",
-                    Address= "Purani mandi",
-                });
+            modelBuilder.ApplyConfigurationsFromAssembly(typeof(BasicDbContext).Assembly); 
 
             base.OnModelCreating(modelBuilder);
         }

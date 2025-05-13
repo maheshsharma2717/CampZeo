@@ -6,124 +6,252 @@ using Twilio.Exceptions;
 using Twilio.Types;
 using Serilog;
 using MC.Basic.Application.Contracts.Infrasructure;
-using MC.Basic.Application.Models.Message;
+using MC.Basic.Application.Models.DataModel;
+using MC.Basic.Application.Models.Twilio;
+using Microsoft.Extensions.Configuration;
+using Newtonsoft.Json;
+using RestSharp;
+using System.Text.RegularExpressions;
+using System.Text;
 
 namespace MC.Basic.Infrastructure.Message // Rename this namespace to something like SMS or Messaging
 {
-    public class TwilioService : ITwilioService
+    public class TwilioSmsService : ITwilioService
     {
-        private readonly TwilioSettings _twilioSettings;
+        private readonly IConfiguration _configuration;
+        private readonly string _accountSid;
+        private readonly string _authToken;
+        private readonly string _twilioNumber;
+        private readonly string _twilioWhatsappNumber;
+        private readonly string _apiUrl;
+        private readonly string _rcsApiUrl;
+        private readonly string _serviceSid;
 
-        public TwilioService(IOptions<TwilioSettings> twilioSettings)
+        public TwilioSmsService(IConfiguration configuration)
         {
-            _twilioSettings = twilioSettings.Value;
-            TwilioClient.Init(_twilioSettings.AccountSid, _twilioSettings.AuthToken);
+            _configuration = configuration;
+            _accountSid = _configuration.GetRequiredSection("TwilioSettings:accountSid").Value;
+            _authToken = _configuration.GetRequiredSection("TwilioSettings:authToken").Value;
+            _twilioNumber = _configuration.GetRequiredSection("TwilioSettings:twilioNumber").Value;
+            _twilioWhatsappNumber = _configuration.GetRequiredSection("TwilioSettings:twilioWhatsappNumber").Value;
+            _apiUrl = _configuration.GetRequiredSection("TwilioSettings:apiUrl").Value;
+            _rcsApiUrl = _configuration.GetRequiredSection("TwilioSettings:rcsApiUrl").Value;
+            _serviceSid = _configuration.GetRequiredSection("TwilioSettings:serviceSid").Value;
+        }
+        public async Task<RestResponse> SendMessage(List<string> phoneNumbers, string template)
+        {
+            var client = new RestClient(_apiUrl);
+            var request = new RestRequest($@"2010-04-01/Accounts/{_accountSid}/Messages.json", Method.Post);
+            var authToken = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{_accountSid}:{_authToken}"));
+            request.AddHeader("Authorization", $"Basic {authToken}");
+
+            foreach(var phoneNumber in phoneNumbers)
+            {
+                request.AddParameter("To", phoneNumber);
+                request.AddParameter("From", _twilioNumber);
+                request.AddParameter("Body", template);
+                var response = await client.ExecuteAsync(request);
+            }
+            return new RestResponse();
         }
 
-        // Function to send a single SMS message
-        public async Task<bool> SendMessage(TwilioMessage message)
+        public async Task<ApiResponse<object>> GetSmsReports(string phoneNumber, List<string> events)
+        {
+            var client = new RestClient(_apiUrl);
+            var request = new RestRequest($"2010-04-01/Accounts/{_accountSid}/Messages.json?To={phoneNumber}", Method.Get);
+            var authToken = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{_accountSid}:{_authToken}"));
+            request.AddHeader("Authorization", $"Basic {authToken}");
+
+            var response = await client.ExecuteAsync(request);
+            return new ApiResponse<object> { Data = response.Content };
+        }
+        //public async Task<RestResponse> SendBatchSms(TwilioSmsParams smsParams)
+        //{
+        //    var client = new RestClient(_apiUrl);
+        //    var request = new RestRequest($@"2010-04-01/Accounts/{_accountSid}/Messages.json", Method.Post);
+        //    var authToken = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{_accountSid}:{_authToken}"));
+        //    request.AddHeader("Authorization", $"Basic {authToken}");
+
+        //    request.AddParameter("To", smsParams.PhoneNumber);
+        //    request.AddParameter("From", _twilioNumber);
+        //    request.AddParameter("Body", smsParams.Message);
+
+        //    var response = await client.ExecuteAsync(request);
+        //    return response;
+        //}
+
+        public async Task<string> SendBatchSms(TwilioSmsParams smsParams)
         {
             try
             {
-                // Send an SMS using Twilio
-                var messageSent = MessageResource.Create(
-                    body: message.Body, // Message body
-                    from: new PhoneNumber(_twilioSettings.FromNumber), // Your Twilio phone number
-                    to: new PhoneNumber(message.To) // Recipient phone number
-                );
+                var accountSid = _accountSid;
+                var authToken = _authToken;
+                TwilioClient.Init(accountSid, authToken);
 
-                // Log the status of the message
-                if(messageSent.Status == MessageResource.StatusEnum.Queued || messageSent.Status == MessageResource.StatusEnum.Sent || messageSent.Status == MessageResource.StatusEnum.Delivered)
+                StringBuilder logs = new StringBuilder();
+                var tasks = new List<Task>();
+
+                foreach(var receiver in smsParams.PhoneNumber)
                 {
-                    Log.Information($"SMS sent successfully to {message.To}, SID: {messageSent.Sid}");
-                    return true;
-                }
-                else
-                {
-                    Log.Error($"Failed to send SMS to {message.To}. Status: {messageSent.Status}");
-                    return false;
-                }
-            }
-            catch(ApiException ex)
-            {
-                Log.Error($"Error while sending SMS: {ex.Message}");
-                return false;
-            }
-        }
-
-        // Function to send bulk SMS messages
-        public async Task<bool> SendBulkMessages(List<TwilioMessage> messages)
-        {
-            bool allMessagesSent = true;
-
-            foreach(var message in messages)
-            {
-                bool result = await SendMessage(message);
-                if(!result)
-                {
-                    allMessagesSent = false;
-                }
-            }
-
-            return allMessagesSent;
-        }
-
-        // Function to check the log for a single SMS message by SID
-        public Task<MessageLog> CheckLogForSingleMessage(string messageSid)
-        {
-            try
-            {
-                // Fetch message details from Twilio by SID
-                var message = MessageResource.Fetch(pathSid: messageSid);
-                var smsLog = new MessageLog
-                {
-                    MessageSid = message.Sid,
-                    Status = message.Status.ToString(),
-                    To = message.To,
-                    From = message.From.ToString(),
-                    Body = message.Body,
-                    DateSent = message.DateSent
-                };
-
-                return Task.FromResult(smsLog);
-            }
-            catch(ApiException ex)
-            {
-                Log.Error($"Error while fetching log for SMS {messageSid}: {ex.Message}");
-                return Task.FromResult<MessageLog>(null);
-            }
-        }
-
-        // Function to check logs for all SMS messages (for simplicity, fetching latest 10 messages)
-        public Task<List<MessageLog>> CheckLogsForAllMessages()
-        {
-            try
-            {
-                var messageLogs = new List<MessageLog>();
-                var messages = MessageResource.Read(limit: 10); // Fetch the latest 10 messages
-
-                foreach(var message in messages)
-                {
-                    messageLogs.Add(new MessageLog
+                    tasks.Add(Task.Run(async () =>
                     {
-                        MessageSid = message.Sid,
-                        Status = message.Status.ToString(),
-                        To = message.To,
-                        From = message.From.ToString(),
-                        Body = message.Body,
-                        DateSent = message.DateSent
-                    });
+                        var message = await MessageResource.CreateAsync(
+                            body: smsParams.Message,
+                            from: new PhoneNumber(_twilioNumber),
+                            to: new PhoneNumber($@"{receiver}")
+                        );
+                        logs.AppendLine($@"To:{receiver}, Status:{message.Status}");
+                    }));
                 }
 
-                return Task.FromResult(messageLogs);
+                await Task.WhenAll(tasks);
+
+                return logs.ToString();
             }
-            catch(ApiException ex)
+            catch(Exception ex)
             {
-                Log.Error($"Error while fetching all SMS logs: {ex.Message}");
-                return Task.FromResult<List<MessageLog>>(new List<MessageLog>());
             }
+            return "No data found";
+        }
+
+        public async Task<string> SendBatchRcsSms(TwilioMessageParams smsParams)
+        {
+            try
+            {
+                var accountSid = _accountSid;
+                var authToken = _authToken;
+                TwilioClient.Init(accountSid, authToken);
+
+                var messageData = smsParams.Message;
+                string base64 = string.Empty;
+                string textContent = string.Empty;
+
+
+                Regex base64Regex = new Regex(@"<img\s+src=""(data:image/[^""]+base64,[^""]+)""");
+                MatchCollection base64Matches = base64Regex.Matches(messageData);
+
+                foreach(Match match in base64Matches)
+                {
+                    if(match.Groups[1].Success)
+                    {
+                        base64 = match.Groups[1].Value;
+                    }
+                }
+
+                string cleanText = Regex.Replace(messageData, "<[^>]+?>", "").Trim();
+
+                textContent = cleanText;
+
+                string fileUrl = string.Empty;
+
+                if(!string.IsNullOrEmpty(base64))
+                {
+                    string[] base64Parts = base64.Split(';');
+                    string mimeType = base64Parts[0].Split(':')[1];
+                    string extension = mimeType.Split('/')[1];
+
+                    string imageData = base64.Split(',')[1];
+                    byte[] imageBytes = Convert.FromBase64String(imageData);
+                    string fileName = Guid.NewGuid().ToString() + "." + extension;
+                    string imagePath = Path.Combine(Directory.GetCurrentDirectory(), "images", fileName);
+                    string directory = Path.GetDirectoryName(imagePath);
+
+                    if(!Directory.Exists(directory))
+                    {
+                        Directory.CreateDirectory(directory);
+                    }
+
+                    File.WriteAllBytes(imagePath, imageBytes);
+                    fileUrl = "https://localhost:7163/images/" + fileName;
+                }
+                StringBuilder logs = new StringBuilder();
+                var tasks = new List<Task>();
+
+                foreach(var receiver in smsParams.Recipients)
+                {
+                    tasks.Add(Task.Run(async () =>
+                    {
+                        var createMessageOptions = new CreateMessageOptions(new PhoneNumber($@"{receiver}"))
+                        {
+                            MediaUrl = new List<Uri> { new Uri("https://5.imimg.com/data5/SELLER/Default/2023/2/KF/XR/TX/75400157/new-product-500x500.jpeg") },
+
+                            //MediaUrl = new List<Uri> { new Uri(fileUrl) },
+                            Body = textContent,
+                            From = new PhoneNumber(_twilioNumber),
+                            SendAsMms = true,
+
+
+                        };
+                        var message = await MessageResource.CreateAsync(
+                              createMessageOptions);
+                        logs.AppendLine($@"To:{receiver}, Status:{message.Status}");
+                    }));
+                }
+
+                await Task.WhenAll(tasks);
+
+                return logs.ToString();
+            }
+            catch(Exception ex)
+            {
+            }
+            return "No data found";
+        }
+
+        public async Task<string> SendBatchWhatsappSms(TwilioMessageParams smsParams)
+        {
+            var accountSid = _accountSid;
+            var authToken = _authToken;
+            TwilioClient.Init(accountSid, authToken);
+
+            StringBuilder logs = new StringBuilder();
+            var tasks = new List<Task>();
+
+            foreach(var receiver in smsParams.Recipients)
+            {
+                tasks.Add(Task.Run(async () =>
+                {
+                    var message = await MessageResource.CreateAsync(
+                        body: smsParams.Message,
+                        from: new PhoneNumber($@"whatsapp:{_twilioWhatsappNumber}"),
+                        to: new PhoneNumber($@"whatsapp:{receiver}")
+                    );
+                    logs.AppendLine($@"To:{receiver}, Status:{message.Status}");
+                }));
+            }
+
+            await Task.WhenAll(tasks);
+            return logs.ToString();
+        }
+
+
+        // Get logs from Twilio
+        public async Task<List<LogResponse>> GetLogs()
+        {
+            var client = new RestClient(_apiUrl);
+            var request = new RestRequest($"2010-04-01/Accounts/{_accountSid}/Messages.json", Method.Get);
+            var authToken = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{_accountSid}:{_authToken}"));
+            request.AddHeader("Authorization", $"Basic {authToken}");
+
+            var response = await client.ExecuteAsync(request);
+
+            if(!response.IsSuccessful || string.IsNullOrEmpty(response.Content))
+            {
+                // Handle or log error here
+                return new List<LogResponse>();
+            }
+
+            var twilioLogs = JsonConvert.DeserializeObject<TwilioLogResponse>(response.Content);
+
+            var logs = twilioLogs?.Messages?.Select(x => new LogResponse
+            {
+                Event = x.Status,
+                Id = x.Sid,
+                Recipient = x.To,
+                Timestamp = x.Date_Created.ToString()
+            }).ToList() ?? new List<LogResponse>();
+
+            return logs;
         }
     }
-
-
 }

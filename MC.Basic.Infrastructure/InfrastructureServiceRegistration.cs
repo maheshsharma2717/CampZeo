@@ -2,7 +2,6 @@
 using MC.Basic.Application.Contracts.Infrasructure;
 using MC.Basic.Application.Models.Authorization;
 using MC.Basic.Application.Models.Mail;
-using MC.Basic.Application.Models.Message;
 using MC.Basic.Infrastructure.Authorization;
 using MC.Basic.Infrastructure.Mail;
 using MC.Basic.Infrastructure.Message;
@@ -21,8 +20,8 @@ namespace MC.Basic.Infrastructure {
             services.Configure<EmailSettings>(configuration.GetSection("EmailSettings"));
             services.AddTransient<IEmailService, EmailService>(); 
             
-            services.Configure<TwilioSettings>(configuration.GetSection("TwilioSettings"));
-            services.AddTransient<ITwilioService, TwilioService>();
+            //services.Configure<TwilioSettings>(configuration.GetSection("TwilioSettings"));
+            //services.AddTransient<ITwilioService, TwilioService>();
             return services;
         }
     }
