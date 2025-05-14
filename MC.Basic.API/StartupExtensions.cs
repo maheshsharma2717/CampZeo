@@ -71,12 +71,24 @@ namespace MC.Basic.API
 
             builder.Services.AddControllers();
 
-            builder.Services.AddCors(options => options.AddPolicy("open", policy => policy.WithOrigins([builder.Configuration["ApiUrl"] ?? "https://localhost:7020",
-                builder.Configuration["ClientUrl"] ?? "https://Localhost:4200"])
-            .AllowAnyMethod()
-            .SetIsOriginAllowed(pol => true)
-            .AllowAnyHeader()
-            .AllowCredentials()));
+
+            //builder.Services.AddCors(options => options.AddPolicy("open", policy => policy
+            //.WithOrigins([builder.Configuration["ApiUrl"] ?? "https://localhost:7020",
+            //    builder.Configuration["ClientUrl"] ?? "https://Localhost:4200"])
+            //.AllowAnyMethod()
+            //.SetIsOriginAllowed(pol => true)
+            //.AllowAnyHeader()
+            //.AllowCredentials()));
+            builder.Services.AddCors(options =>
+            {
+                options.AddPolicy("CorsPolicy", builder =>
+                {
+                    builder.WithOrigins("https://campzeo.com", "http://localhost:4200", "http://campzeo.com")
+                           .AllowAnyMethod()
+                           .AllowAnyHeader()
+                           .AllowCredentials();
+                });
+            });
 
 
             Log.Logger = new LoggerConfiguration()
@@ -94,12 +106,13 @@ namespace MC.Basic.API
             return builder.Build();
         }
 
+
         public static WebApplication ConfigurePipeline(this WebApplication app)
         {
             app.UseHttpsRedirection();
-            app.UseCors("open");
-
-            if(app.Environment.IsDevelopment())
+         //   app.UseCors("open");
+            app.UseCors("CorsPolicy");
+            if (app.Environment.IsDevelopment())
             {
                 app.UseSwagger();
                 app.UseSwaggerUI();
@@ -120,13 +133,13 @@ namespace MC.Basic.API
             try
             {
                 var context = scope.ServiceProvider.GetService<BasicDbContext>();
-                if(context != null)
+                if (context != null)
                 {
                     await context.Database.EnsureCreatedAsync();
                     await context.Database.MigrateAsync();
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 //logs here
             }

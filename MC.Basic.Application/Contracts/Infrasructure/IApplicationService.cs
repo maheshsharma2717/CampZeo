@@ -1,5 +1,6 @@
 ﻿
 using MC.Basic.Application.Models.DataModel;
+using MC.Basic.Application.Models.Organisation;
 using MC.Basic.Domains.Entities;
 using Microsoft.AspNetCore.Http;
 
@@ -11,7 +12,7 @@ namespace MC.Basic.Application.Contracts.Infrasructure
         Task<ApiResponse<Organisation>> ApproveOrganisation(ApiRequest<long> request);
 //Todo
       //  Task<ApiResponse<string>> SelectOrganisation(ApiRequest<long> request);
-        Task<ApiResponse<Organisation>> CreateOrganisation(ApiRequest<Organisation> request);
+        Task<ApiResponse<Organisation>> CreateOrganisation(ApiRequest<OrganisationCreateDto> request);
         Task<ApiResponse<ListResponse<List<Organisation>>>> GetOrganisation(ApiRequest<FilteredList> request);
         Task<ApiResponse<User>> UpdateUser(ApiRequest<User> request);
         Task<ApiResponse<List<Contact>>> ImportContact(ApiRequest<IFormFile> file);

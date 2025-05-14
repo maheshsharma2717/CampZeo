@@ -1,10 +1,10 @@
 ﻿using MC.Basic.API.Helpers;
 using MC.Basic.Application.Contracts.Infrasructure;
 using MC.Basic.Application.Models.DataModel;
+using MC.Basic.Application.Models.Organisation;
 using MC.Basic.Domains.Entities;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace MC.Basic.API.Controllers;
 [Route("api/[controller]")]
@@ -20,7 +20,7 @@ public class OrganisationController : ControllerBase
     //TODO
     [HttpPost("CreateOrganisation")]
     [EnableCors("CorsPolicy")]
-    public async Task<IActionResult> CreateOrganisation(ApiRequest<Organisation> request)
+    public async Task<IActionResult> CreateOrganisation(ApiRequest<OrganisationCreateDto> request)
     {
         try
         {

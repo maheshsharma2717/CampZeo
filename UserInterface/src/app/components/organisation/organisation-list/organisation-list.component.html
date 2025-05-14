@@ -35,7 +35,11 @@
                             <option value="false">Active</option>
                         </select>
                     </div>
-
+    <div class="" *ngIf="this.service.User.role == 1">
+        <a [routerLink]="'/create-organisation'"><button type="button"
+                class="btn  btn-outline-primary">Add New</button>
+        </a>
+    </div>
                     <!-- Table -->
                     <div class="table-responsive">
                         <table class="table">

@@ -24,10 +24,10 @@ namespace MC.Basic.Persistance.Repositories
             else
             {
                 dbUser.Id = user.Id;
-                //dbUser.CreatedById = user.CreatedById;
-                //dbUser.LastModifiedById = user.LastModifiedById;
-                //dbUser.DateCreated = user.DateCreated;
-                //dbUser.DateModified = user.DateModified;
+                dbUser.CreatedBy = user.CreatedBy;
+                dbUser.LastModifiedBy = user.LastModifiedBy;
+                dbUser.CreatedDate = user.CreatedDate;
+                dbUser.LastModifiedDate = user.LastModifiedDate;
                 dbUser.Mobile = user.Mobile;
                 dbUser.FirstName = user.FirstName;
                 dbUser.LastName = user.LastName;

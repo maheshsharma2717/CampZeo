@@ -21,9 +21,13 @@ namespace MC.Basic.Persistance.Repositories
         {
             return await _dbContext.Set<T>().FindAsync(Id);
         }
+        //public virtual async Task<T> GetAsync(Expression<Func<T, bool>> filter)
+        //{
+        //    return await _dbContext.Set<T>().FindAsync(filter);
+        //}
         public virtual async Task<T> GetAsync(Expression<Func<T, bool>> filter)
         {
-            return await _dbContext.Set<T>().FindAsync(filter);
+            return await _dbContext.Set<T>().FirstOrDefaultAsync(filter);
         }
 
         public async Task<IReadOnlyList<T>> ListAllAsync()

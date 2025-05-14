@@ -1,4 +1,5 @@
 ﻿using MC.Basic.Domain;
+using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -107,6 +108,10 @@ namespace MC.Basic.Application.Models.Post
     {
         public int TemplateId { get; set; }
         public int Type { get; set; }
+    }
+    public class VideoUploadDto
+    {
+        public IFormFile File { get; set; }
     }
 
 }

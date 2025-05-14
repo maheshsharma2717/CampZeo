@@ -13,6 +13,7 @@ using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
+using Twilio.Jwt.AccessToken;
 
 namespace MC.Basic.Application.Services
 {
@@ -45,10 +46,10 @@ namespace MC.Basic.Application.Services
                 response.Data = new User
                 {
                     Id = user.Id,
-                    //DateCreated = user.DateCreated,
-                    //DateModified = user.DateModified,
-                    //CreatedById = user.CreatedById,
-                    //LastModifiedById = user.LastModifiedById,
+                    CreatedDate = user.CreatedDate,
+                    LastModifiedDate = user.LastModifiedDate,
+                    CreatedBy = user.CreatedBy,
+                    LastModifiedBy = user.LastModifiedBy,
                     FirstName = user.FirstName,
                     LastName = user.LastName,
                     Mobile = user.Mobile,
@@ -102,10 +103,10 @@ namespace MC.Basic.Application.Services
                 response.Data = new User
                 {
                     Id = dbUser.Id,
-                    //DateCreated = dbUser.DateCreated,
-                    //DateModified = dbUser.DateModified,
-                    //CreatedById = dbUser.CreatedById,
-                    //LastModifiedById = dbUser.LastModifiedById,
+                    CreatedDate = dbUser.CreatedDate,
+                    LastModifiedDate = dbUser.LastModifiedDate,
+                    CreatedBy = dbUser.CreatedBy,
+                    LastModifiedBy = dbUser.LastModifiedBy,
                     FirstName = dbUser.FirstName,
                     LastName = dbUser.LastName,
                     Mobile = dbUser.Mobile,
@@ -153,7 +154,17 @@ namespace MC.Basic.Application.Services
                     FirstName = firstName,
                     LastName = lastName,
                     Role = UserRole.AdminUser,
-                    IsApproved = true
+                    IsApproved = true,
+                    FacebookAccessToken = string.Empty,
+                    FacebookTokenType = string.Empty,
+                    FacebookUserId = string.Empty,
+                    FacebookPageId = string.Empty,
+                    FacebookPageAccessToken = string.Empty,
+                    InstagramAccessToken = string.Empty,
+                    InstagramUserId = string.Empty,
+                    Mobile = string.Empty,
+                    Token=string.Empty,
+                    UserName=$"{firstName}+{lastName}"
                 });
             }
         }

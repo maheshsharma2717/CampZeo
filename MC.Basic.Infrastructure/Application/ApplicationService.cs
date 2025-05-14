@@ -1,6 +1,7 @@
 ﻿using MC.Basic.Application.Contracts.Infrasructure;
 using MC.Basic.Application.Contracts.Persistance;
 using MC.Basic.Application.Models.DataModel;
+using MC.Basic.Application.Models.Organisation;
 using MC.Basic.Application.Models.Post;
 using MC.Basic.Application.Models.Twilio;
 using MC.Basic.Domain;
@@ -59,14 +60,33 @@ public class ApplicationService : IApplicationService
     }
     #endregion
     #region Organisation 
-    public async Task<ApiResponse<Organisation>> CreateOrganisation(ApiRequest<Organisation> request)
+    public async Task<ApiResponse<Organisation>> CreateOrganisation(ApiRequest<OrganisationCreateDto> request)
     {
-        ApiResponse<Organisation> response = new ApiResponse<Organisation>();
-        var organisation = request.Data;
-        var dbOrganisation = await _organisationRepository.CreateOrUpdate(organisation);
-        response.IsSuccess = true;
+        // Map DTO to entity
+        var organisation = new Organisation
+        {
+            Name = request.Data.Name,
+            Phone = request.Data.Phone,
+            Email = request.Data.Email,
+            Address = request.Data.Address,
+            OwnerName = request.Data.OwnerName,
+            Users = new List<User>(),
+            Campaigns = new List<Campaign>(),
+            Contacts = new List<Contact>()
+        };
+
+        var savedOrganisation = await _organisationRepository.CreateOrUpdate(organisation);
+
+        // Build response
+        var response = new ApiResponse<Organisation>
+        {
+            IsSuccess = true,
+            Data = savedOrganisation
+        };
+
         return response;
     }
+
     public async Task<ApiResponse<Organisation>> ApproveOrganisation(ApiRequest<long> request)
     {
         ApiResponse<Organisation> response = new ApiResponse<Organisation>();
