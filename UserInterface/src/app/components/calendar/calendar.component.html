@@ -107,7 +107,10 @@
                                 </div>
                             </div>
                         </div>
-
+                        <div *ngIf="campaignForm.errors?.atLeastOneRequired && campaignForm.touched"
+                            class="text-danger mt-0 mb-2">
+                            Please select at least one campaign type.
+                        </div>
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="form-group">
@@ -155,6 +158,10 @@
                                     <input type="datetime-local" id="endDate" formControlName="endDate"
                                         class="form-control p-2"
                                         [value]="campaignForm.controls.endDate.value | date:'yyyy-MM-ddTHH:mm'">
+                                    <div *ngIf="campaignForm.controls.endDate.invalid && campaignForm.controls.endDate.touched"
+                                        class="text-danger">
+                                        End Date is required
+                                    </div>
                                 </div>
                             </div>
 
@@ -245,7 +252,7 @@
 
                     <div *ngIf="currentStep === 3">
 
-                         <div class="d-flex flex-wrap">
+                        <div class="d-flex flex-wrap">
                             <div *ngFor="let campaign of selectedCampaignTypes" class="card text-center m-2"
                                 style="width: 8rem; border-radius: 10px;">
                                 <div class="card-body pointer border" (click)="ChangeType(campaign.id)"
@@ -344,7 +351,7 @@
                                 </div>
                             </div>
                         </div>
-                       
+
                         <!-- </div> -->
                         <div class="card-body ">
                             <div class="text-start">
@@ -439,7 +446,7 @@
                             (click)="goToPreviousStep()">Back</button>
                         <button *ngIf="currentStep < 3" class="btn btn-primary"
                             (click)="proceedToNextStep()">Next</button>
-                            <button (click)="nextStep()">Next</button>
+                        <button (click)="nextStep()">Next</button>
                         <button *ngIf="currentStep === 3" class="btn btn-primary" (click)="saveCampaign()">Save</button>
                     </div>
 

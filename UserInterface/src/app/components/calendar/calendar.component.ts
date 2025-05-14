@@ -45,31 +45,30 @@ export class CalendarComponent implements OnInit {
   selectedTemplateTypeId: number = 0;
   //for showing the campaign type step 1 on the step 3 close
   selectedTimeRange: any;
-  campaignForm: any = new FormGroup({
-    name: new FormControl('', [
-      Validators.required,
-      Validators.minLength(3),
-      Validators.pattern('^[a-zA-Z ]+$')
-    ]),
-    description: new FormControl(''),
-    startDate: new FormControl('', Validators.required),
-    endDate: new FormControl(''),
-    isEmailCampaign: new FormControl(false),
-    isWhatsAppCampaign: new FormControl(false),
-    isRCSCampaign: new FormControl(false),
-    isSmsCampaign: new FormControl(false),
-    isFacebookCampaign: new FormControl(false),
-    isInstagramCampaign: new FormControl(false),
-    // validaton for the step3
-    subject: new FormControl('', Validators.required),
-    message: new FormControl(''),
-    senderEmail: new FormControl('', [Validators.required, Validators.email]),
-    organisationName: new FormControl('', [Validators.required]),
-    type: new FormControl(1),
-    html: new FormControl(''),
-    scheduledPostTime: new FormControl('', Validators.required),
+ campaignForm: any = new FormGroup({
+  name: new FormControl('', [
+    Validators.required,
+    Validators.minLength(3),
+    Validators.pattern('^[a-zA-Z ]+$')
+  ]),
+  description: new FormControl(''),
+  startDate: new FormControl('', Validators.required),
+  endDate: new FormControl('', Validators.required), 
+  isEmailCampaign: new FormControl(false),
+  isWhatsAppCampaign: new FormControl(false),
+  isRCSCampaign: new FormControl(false),
+  isSmsCampaign: new FormControl(false),
+  isFacebookCampaign: new FormControl(false),
+  isInstagramCampaign: new FormControl(false),
 
-  }, { validators: this.atLeastOneSelectedValidator });
+  subject: new FormControl('', Validators.required),
+  message: new FormControl(''),
+  senderEmail: new FormControl('', [Validators.required, Validators.email]),
+  organisationName: new FormControl('', [Validators.required]),
+  type: new FormControl(),
+  html: new FormControl(''),
+  scheduledPostTime: new FormControl('', Validators.required),
+}, { validators: this.atLeastOneSelectedValidator });
   atLeastOneSelectedValidator(control: AbstractControl): { [key: string]: boolean } | null {
     const emailSelected = control.get('isEmailCampaign')?.value;
     const smsSelected = control.get('isSmsCampaign')?.value;
@@ -790,14 +789,62 @@ export class CalendarComponent implements OnInit {
 
   // validation
 
+// nextStep() {
+//   debugger
+//   if (this.currentStep === 1) {
+//     this.campaignForm.get('name')?.markAsTouched();
+//     this.campaignForm.get('startDate')?.markAsTouched();
+//     this.campaignForm.get('endDate')?.markAsTouched();
+//     this.campaignForm.updateValueAndValidity(); 
+
+//     if (this.campaignForm.invalid) return;
+//   }
+
+//   if (this.currentStep === 3) {
+//     this.campaignForm.get('subject')?.markAsTouched();
+//     this.campaignForm.get('senderEmail')?.markAsTouched();
+//     this.campaignForm.get('organisationName')?.markAsTouched();
+//     this.campaignForm.get('scheduledPostTime')?.markAsTouched();
+
+//     if (this.campaignForm.get('subject')?.invalid ||
+//         this.campaignForm.get('senderEmail')?.invalid ||
+//         this.campaignForm.get('organisationName')?.invalid ||
+//         this.campaignForm.get('scheduledPostTime')?.invalid) {
+//       return;
+//     }
+//   }
+
+//   // Proceed to the next step
+//   this.currentStep++;
+// }
+
 nextStep() {
   if (this.currentStep === 1) {
-    // Mark relevant controls and group as touched to show validation errors
     this.campaignForm.get('name')?.markAsTouched();
     this.campaignForm.get('startDate')?.markAsTouched();
-    this.campaignForm.updateValueAndValidity(); // ensure atLeastOneSelectedValidator runs
+    this.campaignForm.get('endDate')?.markAsTouched();
+    this.campaignForm.updateValueAndValidity();
 
-    if (this.campaignForm.invalid) return; // block navigation if form is invalid
+    const invalidFields: string[] = [];
+
+    if (this.campaignForm.get('name')?.invalid) {
+      invalidFields.push('Name');
+    }
+    if (this.campaignForm.get('startDate')?.invalid) {
+      invalidFields.push('Start Date');
+    }
+    if (this.campaignForm.get('endDate')?.invalid) {
+      invalidFields.push('End Date');
+    }
+    if (this.campaignForm.errors?.atLeastOneRequired) {
+      invalidFields.push('Campaign Type');
+    }
+
+    if (invalidFields.length > 0) {
+      this.toaster.error(`Please fix the following fields: ${invalidFields.join(', ')}`, 'Validation Error');
+      console.log('Invalid Fields:', invalidFields);
+      return;
+    }
   }
 
   if (this.currentStep === 3) {
@@ -806,16 +853,31 @@ nextStep() {
     this.campaignForm.get('organisationName')?.markAsTouched();
     this.campaignForm.get('scheduledPostTime')?.markAsTouched();
 
-    if (this.campaignForm.get('subject')?.invalid ||
-        this.campaignForm.get('senderEmail')?.invalid ||
-        this.campaignForm.get('organisationName')?.invalid ||
-        this.campaignForm.get('scheduledPostTime')?.invalid) {
+    const invalidFields: string[] = [];
+
+    if (this.campaignForm.get('subject')?.invalid) {
+      invalidFields.push('Subject');
+    }
+    if (this.campaignForm.get('senderEmail')?.invalid) {
+      invalidFields.push('Sender Email');
+    }
+    if (this.campaignForm.get('organisationName')?.invalid) {
+      invalidFields.push('Organisation Name');
+    }
+    if (this.campaignForm.get('scheduledPostTime')?.invalid) {
+      invalidFields.push('Scheduled Post Time');
+    }
+
+    if (invalidFields.length > 0) {
+      this.toaster.error(`Please fix the following fields: ${invalidFields.join(', ')}`, 'Validation Error');
+      console.log('Invalid Fields:', invalidFields);
       return;
     }
   }
 
-  // Proceed to the next step
   this.currentStep++;
 }
+
+
 }
 
