@@ -33,7 +33,7 @@ namespace MC.Basic.API
                     IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(builder.Configuration["JwtSettings:Secret"]))
                 };
             });
-            
+
             builder.Services.AddAuthorization();
             builder.Services.AddSwaggerGen(c =>
             {
@@ -96,20 +96,20 @@ namespace MC.Basic.API
 
         public static WebApplication ConfigurePipeline(this WebApplication app)
         {
-            app.UseHttpsRedirection();         
-            app.UseCors("open");               
+            app.UseHttpsRedirection();
+            app.UseCors("open");
 
             if(app.Environment.IsDevelopment())
             {
-                app.UseSwagger();              
+                app.UseSwagger();
                 app.UseSwaggerUI();
             }
 
-            app.UseAuthentication();           
+            app.UseAuthentication();
             app.UseMiddleware<JwtMiddleware>();
-            app.UseAuthorization();            
+            app.UseAuthorization();
 
-            app.MapControllers();              
+            app.MapControllers();
             return app;
         }
 

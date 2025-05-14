@@ -14,9 +14,9 @@ using RestSharp;
 using System.Text.RegularExpressions;
 using System.Text;
 
-namespace MC.Basic.Infrastructure.Message // Rename this namespace to something like SMS or Messaging
+namespace MC.Basic.Infrastructure.Message 
 {
-    public class TwilioSmsService : ITwilioService
+    public class TwilioService : ITwilioService
     {
         private readonly IConfiguration _configuration;
         private readonly string _accountSid;
@@ -27,7 +27,7 @@ namespace MC.Basic.Infrastructure.Message // Rename this namespace to something 
         private readonly string _rcsApiUrl;
         private readonly string _serviceSid;
 
-        public TwilioSmsService(IConfiguration configuration)
+        public TwilioService(IConfiguration configuration)
         {
             _configuration = configuration;
             _accountSid = _configuration.GetRequiredSection("TwilioSettings:accountSid").Value;
@@ -114,7 +114,7 @@ namespace MC.Basic.Infrastructure.Message // Rename this namespace to something 
             return "No data found";
         }
 
-        public async Task<string> SendBatchRcsSms(TwilioMessageParams smsParams)
+        public async Task<string> SendBatchRcsSms(Application.Models.DataModel.TwilioMessageParams smsParams)
         {
             try
             {
@@ -198,7 +198,7 @@ namespace MC.Basic.Infrastructure.Message // Rename this namespace to something 
             return "No data found";
         }
 
-        public async Task<string> SendBatchWhatsappSms(TwilioMessageParams smsParams)
+        public async Task<string> SendBatchWhatsappSms(Application.Models.DataModel.TwilioMessageParams smsParams)
         {
             var accountSid = _accountSid;
             var authToken = _authToken;
