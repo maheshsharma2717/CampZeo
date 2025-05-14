@@ -16,7 +16,8 @@ namespace MC.Basic.Persistance {
         {
             services.AddDbContext<BasicDbContext>(options => options.UseSqlServer(configuration.GetConnectionString("BasicConnectionString")));
             services.AddScoped(typeof(IAsyncRepository<>), typeof(BaseRepository<>));
-            services.AddScoped<IOrganizationRepository, OrganizationRepository>();
+            services.AddScoped<IOrganisationRepository, OrganizationRepository>();
+            services.AddScoped<IUserRepository, UserRepository>();
 
             return services;
         }

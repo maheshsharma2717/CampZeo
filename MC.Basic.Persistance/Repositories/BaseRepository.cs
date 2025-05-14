@@ -1,19 +1,14 @@
 ﻿using MC.Basic.Application.Contracts.Persistance;
 using MC.Basic.Application.Models.DataModel;
+using MC.Basic.Domains.Common;
 using Microsoft.EntityFrameworkCore;
-using RestSharp;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 
 
 namespace MC.Basic.Persistance.Repositories
 {
-    public class BaseRepository<T> : IAsyncRepository<T> where T : class
+    public class BaseRepository<T> : IAsyncRepository<T> where T : AuditableEntity
     {
         protected readonly BasicDbContext _dbContext;
 
@@ -150,6 +145,20 @@ namespace MC.Basic.Persistance.Repositories
             {
                 throw;
             }
+        }
+        public IQueryable<T> GetQuariable()
+        {
+            return _dbContext.Set<T>();
+        }
+        public async Task<T> GetById(long id)
+        {
+            return await _dbContext.Set<T>().SingleOrDefaultAsync(x => x.Id == id);
+        }
+        public async Task<T> CreateAsync(T entity)
+        {
+            await _dbContext.AddAsync(entity);
+            await _dbContext.SaveChangesAsync();
+            return entity;
         }
     }
 

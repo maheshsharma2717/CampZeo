@@ -19,7 +19,6 @@ namespace MC.Basic.Application.Services
     public class AuthenticationService : IAuthenticationService
     {
         private readonly IUserRepository _repository;
-        private readonly IUserRepository _organisationRepository;
         private readonly string passwordKey;
         public AuthenticationService(IUserRepository repository)
         {

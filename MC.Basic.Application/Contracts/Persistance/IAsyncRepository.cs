@@ -13,6 +13,8 @@ namespace MC.Basic.Application.Contracts.Persistance {
         Task<T> GetAsyncById(long id);
         Task<T> GetAsync(Expression<Func<T, bool>> filter);
         Task<T> AddAsync(T entity);
+        Task<T> GetById(long Id);
+        IQueryable<T> GetQuariable();
         Task<T> UpdateAsync(T entity);
         Task DeleteAsync(long id);
         Task<List<T>> GetListWithIncludes(Expression<Func<T, object>> Includes);
