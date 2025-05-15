@@ -439,11 +439,9 @@ namespace MC.Basic.Persistance.Migrations
 
             modelBuilder.Entity("MC.Basic.Domains.Entities.CampaignPost", b =>
                 {
-                    b.HasOne("MC.Basic.Domains.Entities.Campaign", "Campaign")
+                    b.HasOne("MC.Basic.Domains.Entities.Campaign", null)
                         .WithMany("CampaignPost")
                         .HasForeignKey("CampaignId");
-
-                    b.Navigation("Campaign");
                 });
 
             modelBuilder.Entity("MC.Basic.Domains.Entities.Contact", b =>
