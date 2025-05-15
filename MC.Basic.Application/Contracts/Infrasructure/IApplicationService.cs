@@ -24,10 +24,10 @@ namespace MC.Basic.Application.Contracts.Infrasructure
         Task<ApiResponse<List<Campaign>>> GetCampaigns(ApiRequest<Campaign> request);
         //Task<ApiResponse<CampaignTemplateResponseDto>> GetCampaignsMessageTemplate(ApiRequest<CampaignTemplateRequestDto> request);
         Task<ApiResponse<Campaign>> GetCampaignById(ApiRequest<long> request);  
-        Task<ApiResponse<CampaignPost>> CreateMessageTemplate(ApiRequest<CampaignPost> request);
-        Task<ApiResponse<CampaignPost>> CreateMessageTemplateFromCampain(long campainId, ApiRequest<CampaignPost> request);
-        Task<ApiResponse<List<CampaignPost>>> GetMessageTemplates(ApiRequest<CampaignPost> request);
-        Task<ApiResponse<CampaignPost>> GetMessageTemplateById(ApiRequest<long> request);
+        Task<ApiResponse<CampaignPost>> CreateCampaignPost(ApiRequest<CampaignPost> request);
+        Task<ApiResponse<CampaignPost>> CreateCampaignPostFromCampain(long campainId, ApiRequest<CampaignPost> request);
+        Task<ApiResponse<List<CampaignPost>>> GetCampaignPosts(ApiRequest<CampaignPost> request);
+        Task<ApiResponse<CampaignPost>> GetCampaignPostById(ApiRequest<long> request);
      //   Task<ApiResponse<EventContactMessageDto>> GetEventForCampaign(ApiRequest<long> request);
      //   Task<ApiResponse<string>> SendBulkMessagetoContacts(ApiRequest<BulkMessageRequest> request);
         Task<ApiResponse<object>> GetMailgunReports(string email, List<string> events);

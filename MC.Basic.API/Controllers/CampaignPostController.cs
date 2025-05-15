@@ -5,7 +5,7 @@ using MC.Basic.Domains.Entities;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 
-namespace MessageTemplateManagement.Controllers;
+namespace MC.Basic.API.Controllers;
 
 [Route("api/[controller]")]
 [Authorize]
@@ -17,13 +17,13 @@ public class CampaignPostController  : ControllerBase
     {
         _applicationService = applicationService;
     }
-    [HttpPost("CreateMessageTemplate")]
+    [HttpPost("CreateCampaignPost")]
     [EnableCors("CorsPolicy")]
-    public async Task<IActionResult> CreateMessageTemplate(ApiRequest<MC.Basic.Domains.Entities.CampaignPost> request)
+    public async Task<IActionResult> CreateCampaignPost(ApiRequest<CampaignPost> request)
     {
         try
         {
-            var response = await _applicationService.CreateMessageTemplate(request);
+            var response = await _applicationService.CreateCampaignPost(request);
             return Ok(response);
         }
         catch(Exception ex)
@@ -32,13 +32,13 @@ public class CampaignPostController  : ControllerBase
         }
     }
 
-    [HttpPost("CreateMessageTemplateFromCampain")]
+    [HttpPost("CreateCampaignPostFromCampain")]
     [EnableCors("CorsPolicy")]
-    public async Task<IActionResult> CreateMessageTemplateFromCampain(long campainId, ApiRequest<MC.Basic.Domains.Entities.CampaignPost> request)
+    public async Task<IActionResult> CreateCampaignPostFromCampain(long campainId, ApiRequest<MC.Basic.Domains.Entities.CampaignPost> request)
     {
         try
         {
-            var response = await _applicationService.CreateMessageTemplateFromCampain( campainId, request);
+            var response = await _applicationService.CreateCampaignPostFromCampain( campainId, request);
             return Ok(response);
         }
         catch (Exception ex)
@@ -48,13 +48,13 @@ public class CampaignPostController  : ControllerBase
     }
 
 
-    [HttpPost("GetMessageTemplates")]
+    [HttpPost("GetCampaignPosts")]
     [EnableCors("CorsPolicy")]
-    public async Task<IActionResult> GetMessageTemplate(ApiRequest<MC.Basic.Domains.Entities.CampaignPost> request)
+    public async Task<IActionResult> GetCampaignPost(ApiRequest<MC.Basic.Domains.Entities.CampaignPost> request)
     {
         try
         {
-            var response = await _applicationService.GetMessageTemplates(request);
+            var response = await _applicationService.GetCampaignPosts(request);
             return Ok(response);
         }
         catch(Exception ex)
@@ -65,13 +65,13 @@ public class CampaignPostController  : ControllerBase
 
 
 
-    [HttpPost("GetMessageTemplateDetails")]
+    [HttpPost("GetCampaignPostDetails")]
     [EnableCors("CorsPolicy")]
-    public async Task<IActionResult> GetMessageTemplateDetails(ApiRequest<long> request)
+    public async Task<IActionResult> GetCampaignPostDetails(ApiRequest<long> request)
     {
         try
         {
-            var response = await _applicationService.GetMessageTemplateById(request);
+            var response = await _applicationService.GetCampaignPostById(request);
             return Ok(response);
         }
         catch(Exception ex)
