@@ -63,7 +63,15 @@ namespace MC.Basic.Persistance.Repositories
         }
         public async Task<T> GetRecordWithIncludes(Expression<Func<T, object>> Includes, Expression<Func<T, bool>> filter)
         {
-            return await _dbContext.Set<T>().Include(Includes).SingleOrDefaultAsync(filter);
+            try
+            {
+                return await _dbContext.Set<T>().Include(Includes).SingleOrDefaultAsync(filter);
+            }
+            catch(Exception)
+            {
+
+                throw;
+            }
         }
         public async Task<List<T>> ToListWhereAsync(Expression<Func<T, bool>> filter)
         {

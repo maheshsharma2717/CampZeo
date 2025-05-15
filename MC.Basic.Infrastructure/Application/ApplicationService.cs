@@ -93,12 +93,13 @@ public class ApplicationService : IApplicationService
         var organisationId = request.Data;
         var dbOrganisation = await _organisationRepository.ApproveOrganisation(request.Data);
         var password = GenerateRandomPassword(12);
-        var user = await _userRepository.CreateOrganisationUser(dbOrganisation, EncryptString(passwordKey, password));
+        var user = await _organisationRepository.CreateOrganisationUser(dbOrganisation, EncryptString(passwordKey, password));
         await _emailService.SendPasswordToUserEmail(user.Email, password);
         //send email
         response.IsSuccess = true;
         return response;
     }
+
     public async Task<ApiResponse<Organisation>> SuspendOrRecoverOrganisation(ApiRequest<long> request)
     {
         ApiResponse<Organisation> response = new ApiResponse<Organisation>();

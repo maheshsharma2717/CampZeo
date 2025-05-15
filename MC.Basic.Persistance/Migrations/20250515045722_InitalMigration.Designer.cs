@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace MC.Basic.Persistance.Migrations
 {
     [DbContext(typeof(BasicDbContext))]
-    [Migration("20250513100401_InitalMigration")]
+    [Migration("20250515045722_InitalMigration")]
     partial class InitalMigration
     {
         /// <inheritdoc />
@@ -20,7 +20,7 @@ namespace MC.Basic.Persistance.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "9.0.0")
+                .HasAnnotation("ProductVersion", "9.0.5")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
@@ -143,9 +143,7 @@ namespace MC.Basic.Persistance.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CampaignId")
-                        .IsUnique()
-                        .HasFilter("[CampaignId] IS NOT NULL");
+                    b.HasIndex("CampaignId");
 
                     b.ToTable("CampaignPosts");
                 });
@@ -388,19 +386,15 @@ namespace MC.Basic.Persistance.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Email")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("FacebookAccessToken")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("FacebookPageAccessToken")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("FacebookPageId")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime?>("FacebookTokenCreatedAt")
@@ -410,19 +404,15 @@ namespace MC.Basic.Persistance.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("FacebookTokenType")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("FacebookUserId")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("FirstName")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("InstagramAccessToken")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime?>("InstagramTokenCreatedAt")
@@ -432,7 +422,6 @@ namespace MC.Basic.Persistance.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("InstagramUserId")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("IsApproved")
@@ -448,29 +437,24 @@ namespace MC.Basic.Persistance.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("LastName")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Mobile")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<long?>("OrganisationId")
                         .HasColumnType("bigint");
 
                     b.Property<string>("Password")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<long>("Role")
                         .HasColumnType("bigint");
 
                     b.Property<string>("Token")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("UserName")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
@@ -492,8 +476,8 @@ namespace MC.Basic.Persistance.Migrations
             modelBuilder.Entity("MC.Basic.Domains.Entities.CampaignPost", b =>
                 {
                     b.HasOne("MC.Basic.Domains.Entities.Campaign", "Campaign")
-                        .WithOne("CampaignPost")
-                        .HasForeignKey("MC.Basic.Domains.Entities.CampaignPost", "CampaignId");
+                        .WithMany("CampaignPost")
+                        .HasForeignKey("CampaignId");
 
                     b.Navigation("Campaign");
                 });
@@ -518,8 +502,7 @@ namespace MC.Basic.Persistance.Migrations
 
             modelBuilder.Entity("MC.Basic.Domains.Entities.Campaign", b =>
                 {
-                    b.Navigation("CampaignPost")
-                        .IsRequired();
+                    b.Navigation("CampaignPost");
                 });
 
             modelBuilder.Entity("MC.Basic.Domains.Entities.Organisation", b =>
