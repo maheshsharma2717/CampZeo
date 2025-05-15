@@ -4,6 +4,7 @@ using MC.Basic.Application.Models.Authentication;
 using MC.Basic.Application.Models.DataModel;
 using MC.Basic.Domain;
 using MC.Basic.Domains.Entities;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;
@@ -68,8 +69,10 @@ namespace MC.Basic.Application.Services
 
             ApiResponse<User> response = new ApiResponse<User>();
             //var password = EncryptString(passwordKey, Password);
-            var dbUser = await _repository.GetRecordWithIncludes(x => x.Organisation,x => x.Organisation.Id == Id);
-            if(dbUser != null)
+            //var dbUser = await _repository.GetRecordWithIncludes(x => x.Organisation,x => x.Organisation.Id == Id);
+            //if(dbUser != null)
+            var dbUser = await _repository.GetQuariable().Include(x => x.Organisation).SingleOrDefaultAsync(x => x.Organisation.Id == Id);
+            if (dbUser != null)
             {
                 var token = generateJwtToken(dbUser);
                 response.IsSuccess = true;
@@ -78,10 +81,10 @@ namespace MC.Basic.Application.Services
                 response.Data = new User
                 {
                     Id = user.Id,
-                    //DateCreated = user.DateCreated,
-                    //DateModified = user.DateModified,
-                    //CreatedById = user.CreatedById,
-                    //LastModifiedById = user.LastModifiedById,
+                    CreatedDate = user.CreatedDate,
+                    LastModifiedDate = user.LastModifiedDate,
+                    CreatedBy = user.CreatedBy,
+                    LastModifiedBy = user.LastModifiedBy,
                     FirstName = user.FirstName,
                     LastName = user.LastName,
                     Mobile = user.Mobile,
