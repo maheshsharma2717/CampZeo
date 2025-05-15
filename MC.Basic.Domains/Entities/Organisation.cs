@@ -8,6 +8,12 @@ using System.Threading.Tasks;
 namespace MC.Basic.Domains.Entities {
     public class Organisation : AuditableEntity
     {
+        public Organisation()
+        {
+            Users = new List<User>();
+            Campaigns = new List<Campaign>();
+             Contacts= new List<Contact>();
+        }
         public string Name { get; set; }
         public string Phone { get; set; }
         public string Email { get; set; }

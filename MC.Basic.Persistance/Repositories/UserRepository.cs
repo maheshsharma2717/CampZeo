@@ -43,7 +43,6 @@ namespace MC.Basic.Persistance.Repositories
                 Email = dbOrganisation.Email,
                 Password = password,
                 IsApproved = dbOrganisation.IsApproved,
-                //Organisation = dbOrganisation
                 OrganisationId = dbOrganisation.Id
             });
             return dbUser;

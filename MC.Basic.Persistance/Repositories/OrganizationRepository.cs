@@ -12,7 +12,7 @@ namespace MC.Basic.Persistance.Repositories
     public class OrganizationRepository : BaseRepository<Organisation>, IOrganisationRepository
     {
         public OrganizationRepository(BasicDbContext dbContext) : base(dbContext) { }
-              public async Task<Organisation> CreateOrUpdate(Organisation organisation)
+        public async Task<Organisation> CreateOrUpdate(Organisation organisation)
         {
             var dbOrganisation = await GetQuariable().SingleOrDefaultAsync(org => org.Id == organisation.Id);
             if(dbOrganisation == null)
@@ -71,6 +71,28 @@ namespace MC.Basic.Persistance.Repositories
         {
             var matches = _dbContext.Organizations.Any(e => e.Name == name);
             return Task.FromResult(matches);
+        }
+        public async Task<User> CreateOrganisationUser(Organisation dbOrganisation, string password)
+        {
+            try
+            {
+                var orgUser = new User
+                {
+                    
+                    Email = dbOrganisation.Email,
+                    Password = password,
+                    IsApproved = dbOrganisation.IsApproved,
+                    OrganisationId = dbOrganisation.Id
+                };
+                dbOrganisation.Users.Add(orgUser);
+                await UpdateAsync(dbOrganisation);
+                return orgUser;
+            }
+            catch(Exception)
+            {
+
+                throw;
+            }
         }
     }
 }

@@ -130,7 +130,7 @@ export class OrganisationListComponent implements OnInit, OnDestroy {
       this.service.SuspendOrRecoverOrganisation(this.organisationToDeleteId).subscribe({
         next: () => {
            this.Organisations.find(org => org.id == this.organisationToDeleteId).isDeleted = !this.isRecovering;
-          this.toaster.show('Organisation deleted successfully');
+          this.toaster.show(!this.isRecovering?'Organisation suspended successfully':'Organisation recovered successfully');
           this.closeModal();
         },
         error: () => {
