@@ -35,12 +35,6 @@ public class CampaignRepository : BaseRepository<Campaign>, ICampaignRepository
                 dbCampaign.Description = campaign.Description;
                 dbCampaign.StartDate = campaign.StartDate;
                 dbCampaign.EndDate = campaign.EndDate;
-                dbCampaign.IsEmailCampaign = campaign.IsEmailCampaign;
-                dbCampaign.IsWhatsAppCampaign = campaign.IsWhatsAppCampaign;
-                dbCampaign.IsSmsCampaign = campaign.IsSmsCampaign;
-                dbCampaign.IsRCSCampaign = campaign.IsRCSCampaign;
-                dbCampaign.IsFacebookCampaign = campaign.IsFacebookCampaign;
-                dbCampaign.IsInstagramCampaign = campaign.IsInstagramCampaign;
                 dbCampaign = await UpdateAsync(dbCampaign);
             }
             await dbcontext.SaveChangesAsync();
