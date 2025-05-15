@@ -23,24 +23,17 @@ export class AddCampaignComponent implements OnInit {
     description: new FormControl(''),
     startDate: new FormControl('', Validators.required),
     endDate: new FormControl(''),
-    isEmailCampaign: new FormControl(false),
-    isWhatsAppCampaign: new FormControl(false),
-    isRCSCampaign: new FormControl(false),
-    isSmsCampaign: new FormControl(false),
-    isFacebookCampaign:new FormControl(false),
-    isInstagramCampaign:new FormControl(false)
+  },);
+  // atLeastOneSelectedValidator(control: AbstractControl): { [key: string]: boolean } | null {
+  //   const emailSelected = control.get('isEmailCampaign')?.value;
+  //   const smsSelected = control.get('isSmsCampaign')?.value;
+  //   const whatsappSelected = control.get('isWhatsAppCampaign')?.value;
+  //   const rcsSelected = control.get('isRCSCampaign')?.value;
+  //   const facebookSelected = control.get('isFacebookCampaign')?.value;
+  //   const instagramSelected = control.get('isInstagramCampaign')?.value;
 
-  }, { validators: this.atLeastOneSelectedValidator });
-  atLeastOneSelectedValidator(control: AbstractControl): { [key: string]: boolean } | null {
-    const emailSelected = control.get('isEmailCampaign')?.value;
-    const smsSelected = control.get('isSmsCampaign')?.value;
-    const whatsappSelected = control.get('isWhatsAppCampaign')?.value;
-    const rcsSelected = control.get('isRCSCampaign')?.value;
-    const facebookSelected = control.get('isFacebookCampaign')?.value;
-    const instagramSelected = control.get('isInstagramCampaign')?.value;
-
-    return (emailSelected || smsSelected || whatsappSelected || rcsSelected || facebookSelected || instagramSelected) ? null : { 'atLeastOneRequired': true };
-  }
+  //   return (emailSelected || smsSelected || whatsappSelected || rcsSelected || facebookSelected || instagramSelected) ? null : { 'atLeastOneRequired': true };
+  // }
 
   CampaignId: any;
   editMode: boolean = false;

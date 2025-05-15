@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace MC.Basic.Domains.Entities
@@ -22,6 +23,7 @@ namespace MC.Basic.Domains.Entities
         public UserRole Role { get; set; } = UserRole.OrganisationUser;
 
         public long? OrganisationId { get; set; }
+        [JsonIgnore]
         public Organisation? Organisation { get; set; }
 
         public string? FacebookAccessToken { get; set; }
