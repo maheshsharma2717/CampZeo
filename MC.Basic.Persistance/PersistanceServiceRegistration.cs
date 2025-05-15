@@ -12,15 +12,21 @@ using System.Threading.Tasks;
 namespace MC.Basic.Persistance {
     public static class PersistanceServiceRegistration 
     {
-        public static IServiceCollection AddPersistanceServices(this IServiceCollection services, IConfiguration configuration) 
+        public static IServiceCollection AddPersistanceServices(this IServiceCollection services, IConfiguration configuration)
         {
-            services.AddDbContext<BasicDbContext>(options => options.UseSqlServer(configuration.GetConnectionString("BasicConnectionString")));
+            services.AddDbContext<BasicDbContext>(options =>
+                options.UseMySql(
+                    configuration.GetConnectionString("BasicConnectionString"),
+                    ServerVersion.AutoDetect(configuration.GetConnectionString("BasicConnectionString"))
+                ));
+
             services.AddScoped(typeof(IAsyncRepository<>), typeof(BaseRepository<>));
             services.AddScoped<IOrganisationRepository, OrganizationRepository>();
             services.AddScoped<IUserRepository, UserRepository>();
 
             return services;
         }
+
 
     }
 }
