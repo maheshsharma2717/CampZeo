@@ -9,7 +9,7 @@ import { CommonModule } from '@angular/common';
 @Component({
   selector: 'app-profile',
   standalone: true,
-  imports: [ReactiveFormsModule, RouterModule,CommonModule,],
+  imports: [ReactiveFormsModule, RouterModule, CommonModule,],
   templateUrl: './profile.component.html',
   styleUrl: './profile.component.css'
 })
@@ -20,7 +20,10 @@ export class ProfileComponent implements OnInit {
   showCurrent: boolean = false;
   showNew: boolean = false;
   showConfirm: boolean = false;
-  constructor(public service: AppService, private fb: FormBuilder, private toastr: ToastrService, private route: ActivatedRoute, private dialog: MatDialog) { }
+  constructor(public service: AppService,
+    private fb: FormBuilder,
+    private toastr: ToastrService,
+    private route: ActivatedRoute, private dialog: MatDialog) { }
   ngOnInit(): void {
     if (!this.service.User.firstName) {
       this.IsEditing = true;
@@ -42,25 +45,28 @@ export class ProfileComponent implements OnInit {
         this.service.User.mobile,
         [
           Validators.required,
-          Validators.pattern('^[0-9+()\\-\\s]*$'), 
+          Validators.pattern('^[0-9+()\\-\\s]*$'),
         ],
       ],
       address: [this.service.User.address],
     });
-    
+
     this.pwForm = this.fb.group({
       currentPassword: ['', Validators.required],
       newPassword: ['', [Validators.required, Validators.minLength(6), Validators.pattern(/^(?=.*[A-Z])(?=.*\W).+$/)]],
       renewPassword: ['', Validators.required]
     });
-    const isFirstLogin = localStorage.getItem('IsFirstLogin') =='true' ;
-    const isDialogShown = sessionStorage.getItem('FirstLoginDialogShown') == 'true';
-    if (isFirstLogin && isDialogShown) {
+   
+    const isFirstLogin = localStorage.getItem('IsFirstLogin') === 'true';
+    const isDialogShown = sessionStorage.getItem('FirstLoginDialogShown') === 'true';
+    const userRole = Number(localStorage.getItem('UserRole'));
+
+    if (isFirstLogin  && userRole !== 1) {
       this.dialog.open(ChangePasswordDialogComponent, {
         disableClose: true,
         width: '400px',
       });
-  
+
       sessionStorage.setItem('FirstLoginDialogShown', 'true');
     }
   }

@@ -47,6 +47,8 @@ export class AppService {
     sessionStorage.removeItem('token');
     this.IsUserAuthenticated = false;
     sessionStorage.removeItem('FirstLoginDialogShown');
+    localStorage.removeItem('UserRole');
+    localStorage.removeItem('IsFirstLogin');
     this.router.navigate(['/'])
   }
   LoginUser(request: any) {
