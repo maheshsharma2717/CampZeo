@@ -88,10 +88,10 @@ export class AppService {
 
     return this.http.post(ApiUrl + "Contact/ImportContact", formData);
   }
-  GetCampaigns() {
-    var request = {
-      token: this.Token
-    }
+  GetCampaigns(request:any) {
+   
+    request.token= this.Token
+    
     return this.http.post(ApiUrl + "Campaign/GetCampaigns", request);
   }
   GetScheduledPosts() {
@@ -108,18 +108,18 @@ export class AppService {
     request.token = this.Token;
     return this.http.post(ApiUrl + "Campaign/CreateCampaign", request);
   }
-  GetMessageTemplates() {
+  GetCampaignPosts() {
     var request = {
       token: this.Token
     }
-    return this.http.post(ApiUrl + "MessageTemplate/GetMessageTemplates", request);
+    return this.http.post(ApiUrl + "CampaignPost/GetCampaignPosts", request);
   }
-  AddMessagetemplate(request: any) {
+  AddCampaignPost(request: any) {
     request.token = this.Token;
-    return this.http.post(ApiUrl + "MessageTemplate/CreateMessageTemplate", request);
+    return this.http.post(ApiUrl + "CampaignPost/CreateCampaignPost", request);
   }
-  GetMessagetemplateById(request: any) {
-    return this.http.post(ApiUrl + "MessageTemplate/GetMessageTemplateDetails", request);
+  GetCampaignPostById(request: any) {
+    return this.http.post(ApiUrl + "CampaignPost/GetCampaignPostDetails", request);
   }
   GetEventForCampaign(request: any) {
     request.token = this.Token;
@@ -136,7 +136,7 @@ export class AppService {
   TestPrompt(request: any) {
     return this.http.post(ApiUrl + "Campaign/TestDevloper", request);
   }
-  GetMessageTemplateDetails(type: any, campaignId: any) {
+  GetCampaignPostDetails(type: any, campaignId: any) {
     var request = {
       data: {
         templateType: type,
@@ -144,15 +144,15 @@ export class AppService {
       },
       token: this.Token
     }
-    return this.http.post(ApiUrl + "Campaign/GetCampaignsMessageTemplates", request);
+    return this.http.post(ApiUrl + "Campaign/GetCampaignsCampaignPosts", request);
   }
-  createCampaignMessageTemplate(request: any) {
+  createCampaignCampaignPost(request: any) {
     request.token = this.Token
-    return this.http.post(ApiUrl + "Campaign/CreateCampaignMessageTemplate", request);
+    return this.http.post(ApiUrl + "Campaign/CreateCampaignCampaignPost", request);
   }
-  AddMessagetemplateFromCampain(id: number, request: any) {
+  AddCampaignPostFromCampaign(id: number, request: any) {
     request.token = this.Token;
-    return this.http.post(ApiUrl + "MessageTemplate/CreateMessageTemplateFromCampain?campainId=" + id, request);
+    return this.http.post(ApiUrl + "CampaignPost/CreateCampaignPostFromCampain?campainId=" + id, request);
   }
 
   SuspendOrRecoverOrganisation(id: number) {
@@ -166,7 +166,7 @@ export class AppService {
     return this.http.get(ApiUrl + "Account/LogInAsOrgenisation?id=" + id);
   }
 
-  getMessageTemplateDetails() {
+  getCampaignPostDetails() {
     var request = {
       data: 0,
       token: this.Token

@@ -10,11 +10,13 @@ public class CampaignPostRepository:BaseRepository<CampaignPost>, ICampaignPostR
 {
 
     private readonly IHttpContextAccessor _httpContextAccessor;
+    private readonly ICampaignRepository _campaignRepository;
     BasicDbContext dbcontext;
-    public CampaignPostRepository(BasicDbContext context, IHttpContextAccessor httpContextAccessor) : base(context)
+    public CampaignPostRepository(BasicDbContext context, IHttpContextAccessor httpContextAccessor, ICampaignRepository campaignRepository) : base(context)
     {
         dbcontext = context;
         _httpContextAccessor = httpContextAccessor;
+        _campaignRepository = campaignRepository;
     }
     //public async Task<CampaignPost> CreateUpdateMessageTemplate(CampaignPost messageTemplate,long OrganisationId)
     //{
@@ -50,48 +52,42 @@ public class CampaignPostRepository:BaseRepository<CampaignPost>, ICampaignPostR
     //        throw new Exception("You are not member of any Organisation");
     //    }
     //}
-    public async Task<CampaignPost> CreateUpdateMessageTemplate(CampaignPost messageTemplate, long OrganisationId)
+    public async Task<CampaignPost> CreateUpdateMessageTemplate(CampaignPost campaignPost)
     {
-        var dbOrganisation = await dbcontext.Organizations.Include(o => o.Campaigns)
-                .ThenInclude(c => c.CampaignPost)
-            .SingleOrDefaultAsync(o => o.Id == OrganisationId);
 
-        if(dbOrganisation == null)
-            throw new Exception("You are not member of any Organisation");
-
-        var campaign = dbOrganisation.Campaigns.FirstOrDefault(c => c.Id == messageTemplate.CampaignId);
+        var campaign = await _campaignRepository.GetRecordWithIncludes(x=>x.CampaignPost,x=>x.Id==campaignPost.CampaignId);
 
         if(campaign == null)
             throw new Exception("Campaign not found in your organisation");
 
-        var dbMessageTemplate = campaign.CampaignPost.FirstOrDefault(p => p.Id == messageTemplate.Id);
+        var dbCampaignPost = campaign.CampaignPost.SingleOrDefault(p => p.Id == campaignPost.Id);
 
-        if(dbMessageTemplate == null)
+        if(dbCampaignPost == null)
         {
             // New post
-            campaign.CampaignPost.Add(messageTemplate);
-            dbMessageTemplate = messageTemplate;
+            campaign.CampaignPost.Add(campaignPost);
+            dbCampaignPost = campaignPost;
         }
         else
         {
             // Update existing post
-            dbMessageTemplate.LastModifiedBy = messageTemplate.LastModifiedBy;
-            dbMessageTemplate.LastModifiedDate = messageTemplate.LastModifiedDate;
-            dbMessageTemplate.Subject = messageTemplate.Subject;
-            dbMessageTemplate.Message = messageTemplate.Message;
-            dbMessageTemplate.SenderEmail = messageTemplate.SenderEmail;
+            dbCampaignPost.LastModifiedBy = campaignPost.LastModifiedBy;
+            dbCampaignPost.LastModifiedDate = campaignPost.LastModifiedDate;
+            dbCampaignPost.Subject = campaignPost.Subject;
+            dbCampaignPost.Message = campaignPost.Message;
+            dbCampaignPost.SenderEmail = campaignPost.SenderEmail;
            // dbMessageTemplate.OrganisationName = messageTemplate.OrganisationName;
-            dbMessageTemplate.Type = messageTemplate.Type;
-            dbMessageTemplate.IsAttachedToCampaign = messageTemplate.IsAttachedToCampaign;
-            dbMessageTemplate.CampaignId = messageTemplate.CampaignId;
-            dbMessageTemplate.VideoUrl = messageTemplate.VideoUrl;
-            dbMessageTemplate.ScheduledPostTime = messageTemplate.ScheduledPostTime;
+            dbCampaignPost.Type = campaignPost.Type;
+            dbCampaignPost.IsAttachedToCampaign = campaignPost.IsAttachedToCampaign;
+            dbCampaignPost.CampaignId = campaignPost.CampaignId;
+            dbCampaignPost.VideoUrl = campaignPost.VideoUrl;
+            dbCampaignPost.ScheduledPostTime = campaignPost.ScheduledPostTime;
 
-            dbcontext.CampaignPosts.Update(dbMessageTemplate); // Optional if using tracking
+            dbcontext.CampaignPosts.Update(dbCampaignPost); // Optional if using tracking
         }
 
         await dbcontext.SaveChangesAsync();
-        return dbMessageTemplate;
+        return dbCampaignPost;
     }
 
     public async Task<List<CampaignPost>> GetMessageTemplatesForOrganisation(long OrganisationId)

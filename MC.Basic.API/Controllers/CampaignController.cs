@@ -51,7 +51,7 @@ public class CampaignController : ControllerBase
 
     [HttpPost("GetCampaigns")]
     [EnableCors("CorsPolicy")]
-    public async Task<IActionResult> GetCampaign(ApiRequest<Campaign> request)
+    public async Task<IActionResult> GetCampaign(ApiRequest<FilteredList> request)
     {
         try
         {

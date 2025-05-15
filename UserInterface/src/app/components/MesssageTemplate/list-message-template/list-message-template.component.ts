@@ -34,7 +34,7 @@ export class ListMessageTemplateComponent {
 
   ngOnInit(): void {
     debugger;
-    this.service.GetMessageTemplates().subscribe({
+    this.service.GetCampaignPosts().subscribe({
       next: (response: any) => {
         this.MessageTemplates = response.data;
         this.filteredModalContentAll = [...this.MessageTemplates];

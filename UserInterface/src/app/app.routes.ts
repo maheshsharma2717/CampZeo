@@ -20,6 +20,8 @@ import { AuthCallbackComponent } from './components/auth-callback/auth-callback.
 import { AccountsComponent } from './components/accounts/accounts.component';
 import { PostInsightsComponent } from './components/post-insights/post-insights.component';
 import { CalendarComponent } from './components/calendar/calendar.component';
+import { ListPostsComponent } from './components/CampaignPosts/list-posts/list-posts.component';
+import { AddPostComponent } from './components/CampaignPosts/add-post/add-post.component';
 export const routes: Routes = [
     { path: 'dashboard', component: DashboardComponent , canActivate: [PasswordChangeGuard]},
     { path: 'login', component: LoginComponent },
@@ -34,9 +36,9 @@ export const routes: Routes = [
     { path: 'add-campaign', component: AddCampaignComponent },
     { path: 'edit-campaign', component: AddCampaignComponent },
     { path: 'list-campaigns', component: ListCampaignComponent , canActivate: [PasswordChangeGuard]},
-    { path: 'list-message-templates', component: ListMessageTemplateComponent , canActivate: [PasswordChangeGuard]},
-    { path: 'add-message-template', component: AddMessageTemplateComponent },
-    { path: 'edit-message-template', component: AddMessageTemplateComponent },
+    { path: 'list-message-templates', component: ListPostsComponent , canActivate: [PasswordChangeGuard]},
+    { path: 'add-campaign-post', component: AddPostComponent },
+    { path: 'edit-message-template', component: AddPostComponent },
     { path: 'campaign-events', component: EventComponent },
     { path: 'event-logs', component: EventLogsComponent, canActivate: [PasswordChangeGuard]},
     { path: 'chat', component: ChatComponentComponent },

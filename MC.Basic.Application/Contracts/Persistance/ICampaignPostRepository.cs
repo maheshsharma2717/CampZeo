@@ -5,7 +5,7 @@ namespace MC.Basic.Application.Contracts.Persistance;
 
     public interface ICampaignPostRepository : IAsyncRepository<CampaignPost>
     {
-        Task<CampaignPost> CreateUpdateMessageTemplate(CampaignPost data, long OrganisationId);
+        Task<CampaignPost> CreateUpdateMessageTemplate(CampaignPost data);
         Task<List<CampaignPost>> GetMessageTemplatesForOrganisation(long OrganisationId);
 
     }
