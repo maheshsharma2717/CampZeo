@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace MC.Basic.Persistance.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialCreate : Migration
+    public partial class init : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -126,14 +126,7 @@ namespace MC.Basic.Persistance.Migrations
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     StartDate = table.Column<DateTime>(type: "datetime(6)", nullable: false),
                     EndDate = table.Column<DateTime>(type: "datetime(6)", nullable: false),
-                    IsEmailCampaign = table.Column<bool>(type: "tinyint(1)", nullable: false),
-                    IsWhatsAppCampaign = table.Column<bool>(type: "tinyint(1)", nullable: false),
-                    IsSmsCampaign = table.Column<bool>(type: "tinyint(1)", nullable: false),
-                    IsRCSCampaign = table.Column<bool>(type: "tinyint(1)", nullable: false),
-                    IsFacebookCampaign = table.Column<bool>(type: "tinyint(1)", nullable: false),
-                    IsInstagramCampaign = table.Column<bool>(type: "tinyint(1)", nullable: false),
                     OrganisationId = table.Column<long>(type: "bigint", nullable: true),
-                    CampaignPostsId = table.Column<long>(type: "bigint", nullable: true),
                     CreatedBy = table.Column<string>(type: "longtext", nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     CreatedDate = table.Column<DateTime>(type: "datetime(6)", nullable: false),

@@ -18,8 +18,4 @@
     <ProjectReference Include="..\MC.Basic.Application\MC.Basic.Application.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Migrations\" />
-  </ItemGroup>
-
 </Project>

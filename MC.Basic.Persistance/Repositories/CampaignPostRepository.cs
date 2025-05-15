@@ -52,8 +52,7 @@ public class CampaignPostRepository:BaseRepository<CampaignPost>, ICampaignPostR
     //}
     public async Task<CampaignPost> CreateUpdateMessageTemplate(CampaignPost messageTemplate, long OrganisationId)
     {
-        var dbOrganisation = await dbcontext.Organizations
-            .Include(o => o.Campaigns)
+        var dbOrganisation = await dbcontext.Organizations.Include(o => o.Campaigns)
                 .ThenInclude(c => c.CampaignPost)
             .SingleOrDefaultAsync(o => o.Id == OrganisationId);
 

@@ -457,7 +457,7 @@ public class ApplicationService : IApplicationService
     }
     #endregion
     #region MessageTemplate
-    public async Task<ApiResponse<CampaignPost>> CreateMessageTemplate(ApiRequest<CampaignPost> request)
+    public async Task<ApiResponse<CampaignPost>> CreateCampaignPost(ApiRequest<CampaignPost> request)
     {
         var OrganizationId = GetOrganisationIdFromToken(request.Token);
         ApiResponse<CampaignPost> response = new ApiResponse<CampaignPost>
@@ -467,7 +467,7 @@ public class ApplicationService : IApplicationService
         return response;
     }
 
-    public async Task<ApiResponse<CampaignPost>> CreateMessageTemplateFromCampain(long campainId, ApiRequest<CampaignPost> request)
+    public async Task<ApiResponse<CampaignPost>> CreateCampaignPostFromCampain(long campainId, ApiRequest<CampaignPost> request)
     {
         var OrganizationId = GetOrganisationIdFromToken(request.Token);
 
@@ -579,7 +579,7 @@ public class ApplicationService : IApplicationService
     }
 
 
-    public async Task<ApiResponse<List<CampaignPost>>> GetMessageTemplates(ApiRequest<CampaignPost> request)
+    public async Task<ApiResponse<List<CampaignPost>>> GetCampaignPosts(ApiRequest<CampaignPost> request)
     {
 
         var OrganizationId = GetOrganisationIdFromToken(request.Token);
@@ -601,7 +601,7 @@ public class ApplicationService : IApplicationService
 
 
 
-    public async Task<ApiResponse<CampaignPost>> GetMessageTemplateById(ApiRequest<long> request)
+    public async Task<ApiResponse<CampaignPost>> GetCampaignPostById(ApiRequest<long> request)
     {
         return new ApiResponse<CampaignPost> { Data = await _messageTemplateRepository.GetById(request.Data) };
     }

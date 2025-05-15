@@ -4,7 +4,6 @@ using MC.Basic.Persistance;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
-using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -12,11 +11,9 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace MC.Basic.Persistance.Migrations
 {
     [DbContext(typeof(BasicDbContext))]
-    [Migration("20250515064830_InitialCreate")]
-    partial class InitialCreate
+    partial class BasicDbContextModelSnapshot : ModelSnapshot
     {
-        /// <inheritdoc />
-        protected override void BuildTargetModel(ModelBuilder modelBuilder)
+        protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -33,9 +30,6 @@ namespace MC.Basic.Persistance.Migrations
 
                     MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<long>("Id"));
 
-                    b.Property<long?>("CampaignPostsId")
-                        .HasColumnType("bigint");
-
                     b.Property<string>("CreatedBy")
                         .HasColumnType("longtext");
 
@@ -47,24 +41,6 @@ namespace MC.Basic.Persistance.Migrations
 
                     b.Property<DateTime>("EndDate")
                         .HasColumnType("datetime(6)");
-
-                    b.Property<bool>("IsEmailCampaign")
-                        .HasColumnType("tinyint(1)");
-
-                    b.Property<bool>("IsFacebookCampaign")
-                        .HasColumnType("tinyint(1)");
-
-                    b.Property<bool>("IsInstagramCampaign")
-                        .HasColumnType("tinyint(1)");
-
-                    b.Property<bool>("IsRCSCampaign")
-                        .HasColumnType("tinyint(1)");
-
-                    b.Property<bool>("IsSmsCampaign")
-                        .HasColumnType("tinyint(1)");
-
-                    b.Property<bool>("IsWhatsAppCampaign")
-                        .HasColumnType("tinyint(1)");
 
                     b.Property<string>("LastModifiedBy")
                         .HasColumnType("longtext");
@@ -456,20 +432,16 @@ namespace MC.Basic.Persistance.Migrations
 
             modelBuilder.Entity("MC.Basic.Domains.Entities.Campaign", b =>
                 {
-                    b.HasOne("MC.Basic.Domains.Entities.Organisation", "Organisation")
+                    b.HasOne("MC.Basic.Domains.Entities.Organisation", null)
                         .WithMany("Campaigns")
                         .HasForeignKey("OrganisationId");
-
-                    b.Navigation("Organisation");
                 });
 
             modelBuilder.Entity("MC.Basic.Domains.Entities.CampaignPost", b =>
                 {
-                    b.HasOne("MC.Basic.Domains.Entities.Campaign", "Campaign")
+                    b.HasOne("MC.Basic.Domains.Entities.Campaign", null)
                         .WithMany("CampaignPost")
                         .HasForeignKey("CampaignId");
-
-                    b.Navigation("Campaign");
                 });
 
             modelBuilder.Entity("MC.Basic.Domains.Entities.Contact", b =>
