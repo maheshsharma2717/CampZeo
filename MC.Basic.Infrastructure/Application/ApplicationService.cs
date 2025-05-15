@@ -955,12 +955,6 @@ public class ApplicationService : IApplicationService
             Description = request.Data.Description,
             StartDate = request.Data.StartDate,
             EndDate = request.Data.EndDate,
-            IsEmailCampaign = request.Data.IsEmailCampaign,
-            IsSmsCampaign = request.Data.IsSmsCampaign,
-            IsWhatsAppCampaign = request.Data.IsWhatsAppCampaign,
-            IsRCSCampaign = request.Data.IsRCSCampaign,
-            IsFacebookCampaign = request.Data.IsFacebookCampaign,
-            IsInstagramCampaign = request.Data.IsInstagramCampaign,
         };
 
         var savedCampaign = await _campaignRepository.CreateUpdateCampaign(campaign, organisationId);
