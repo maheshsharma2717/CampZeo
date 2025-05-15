@@ -17,7 +17,6 @@ public class OrganisationController : ControllerBase
     {
         _applicationService = applicationService;
     }
-    //TODO
     [HttpPost("CreateOrganisation")]
     [EnableCors("CorsPolicy")]
     public async Task<IActionResult> CreateOrganisation(ApiRequest<OrganisationCreateDto> request)
