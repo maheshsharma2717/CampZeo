@@ -18,8 +18,8 @@ import { CalendarComponent } from '../calendar/calendar.component';
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [SidebarComponent, TopbarComponent,RouterOutlet,FormsModule,CommonModule,
-    ScheduleModule,EmailEditorModule,ReactiveFormsModule,QuillModule,CalendarComponent],
+  imports: [SidebarComponent, TopbarComponent, RouterOutlet, FormsModule, CommonModule,
+    ScheduleModule, EmailEditorModule, ReactiveFormsModule, QuillModule, CalendarComponent],
   providers: [
     DayService,
     WeekService,
@@ -31,22 +31,21 @@ import { CalendarComponent } from '../calendar/calendar.component';
   styleUrl: './dashboard.component.css'
 })
 export class DashboardComponent implements OnInit {
-  
-  constructor( private dialog: MatDialog,  private activatedRoute: ActivatedRoute,
-      private router: Router,
-      private http: HttpClient,private service: AppService,private toaster: ToastrService, private route: Router) { }
- 
+
+  constructor(private dialog: MatDialog, private activatedRoute: ActivatedRoute,
+    private router: Router,
+    private http: HttpClient, private service: AppService, private toaster: ToastrService, private route: Router) { }
+
   ngOnInit(): void {
-    debugger
     const isFirstLogin = localStorage.getItem('IsFirstLogin') === 'true';
     const isDialogShown = sessionStorage.getItem('FirstLoginDialogShown') === 'true';
-  
-    if (isFirstLogin && !isDialogShown) {
+    const userRole = Number(localStorage.getItem('UserRole'));
+    if (isFirstLogin && userRole !== 1) {
       this.dialog.open(ChangePasswordDialogComponent, {
         disableClose: true,
         width: '400px',
       });
-  
+
       sessionStorage.setItem('FirstLoginDialogShown', 'true');
     }
   }

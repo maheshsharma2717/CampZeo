@@ -66,7 +66,7 @@ export class ChangePasswordDialogComponent implements OnInit {
             this.dialogRef?.close();
             this.router.navigate(['/dashboard']);
             localStorage.setItem('IsFirstLogin', 'false');
-            sessionStorage.removeItem('FirstLoginDialogShown');
+            sessionStorage.setItem('FirstLoginDialogShown', 'false');
           }
         },
         error: () => {

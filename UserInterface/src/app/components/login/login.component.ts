@@ -30,6 +30,7 @@ export class LoginComponent {
   }
 
   onSubmit() {
+    debugger
     if (this.loginForm.valid) {
       const loginData = this.loginForm.value;
       this.service.LoginUser(loginData).subscribe({
@@ -38,6 +39,7 @@ export class LoginComponent {
             this.service.SetToken(response.data.token,this.loginForm.value.rememberMe);
             this.service.User = response.data;
            localStorage.setItem('IsFirstLogin', response.data.isFirstLogin);
+            localStorage.setItem('UserRole', response.data.role);
             this.toastr.success('Login success');
             if (response.data.isFirstLogin === true && this.service.User.role !== 1) {
          

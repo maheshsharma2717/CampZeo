@@ -178,4 +178,7 @@ export class OrganisationListComponent implements OnInit, OnDestroy {
       this.routerSubscription.unsubscribe();
     }
   }
+    pageChangeEvent(event: number) {
+    this.currentPage = event;
+  }
 }
