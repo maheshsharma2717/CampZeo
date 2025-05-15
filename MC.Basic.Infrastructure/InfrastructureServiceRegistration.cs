@@ -4,6 +4,7 @@ using MC.Basic.Application.Contracts.Infrasructure;
 using MC.Basic.Application.Contracts.Persistance;
 using MC.Basic.Application.Models.Authorization;
 using MC.Basic.Application.Models.Mail;
+using MC.Basic.Application.Models.Post;
 using MC.Basic.Application.Services;
 using MC.Basic.Infrastructure.Authorization;
 using MC.Basic.Infrastructure.Mail;
@@ -42,6 +43,9 @@ namespace MC.Basic.Infrastructure {
             services.AddScoped<ITwilioService, TwilioService>();
             services.AddScoped<IInfobipSmsService, InfobipSmsService>();
             services.AddScoped<IGeminiService, GeminiService>();
+
+            services.Configure<FacebookSettings>(configuration.GetSection("Facebook"));
+            services.Configure<InstaSettings>(configuration.GetSection("Instagram"));
             return services;
         }
     }
