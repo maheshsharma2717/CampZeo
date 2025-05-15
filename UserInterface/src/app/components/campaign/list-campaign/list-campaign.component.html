@@ -135,7 +135,7 @@
                 style="height: 227px;">
                 <h3>Add Your Own template </h3>
                 <p>Create a workflow from scratch or start with one of our templates.</p>
-                <a routerLink="/add-message-template" [queryParams]="{ type: smsPlatForm }" class="text-decoration-none"
+                <a routerLink="/add-campaign-post" [queryParams]="{ type: smsPlatForm }" class="text-decoration-none"
                   (click)="closeModal()">
                   <button class="btn btn-primary">
                     Add New</button>
@@ -154,7 +154,7 @@
                 </div>
               </div>
               <div class="card-footer">
-                <a [routerLink]="'/edit-message-template'" [queryParams]="{id: item.id, type: smsPlatForm}"
+                <a [routerLink]="'/edit-campaign-post'" [queryParams]="{id: item.id, type: smsPlatForm}"
                   (click)="closeModal()">
                   <i class="fa fa-eye"> &nbsp; Preview </i> and
                   <i class="fa fa-edit"> &nbsp; Edit </i>

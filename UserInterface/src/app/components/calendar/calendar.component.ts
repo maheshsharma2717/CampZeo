@@ -124,7 +124,7 @@ export class CalendarComponent implements OnInit {
 
   }
   getMessageTemplateDetails() {
-    this.service.getMessageTemplateDetails().subscribe((response: any) => {
+    this.service.getCampaignPostDetails().subscribe((response: any) => {
       debugger;
       if (this.campaignForm) {
         this.campaignForm.patchValue({

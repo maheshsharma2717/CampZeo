@@ -21,7 +21,7 @@ namespace MC.Basic.Application.Contracts.Infrasructure
         Task<ApiResponse<Contact>> GetContactById(ApiRequest<long> request);
         Task<ApiResponse<Campaign>> CreateCampaign(ApiRequest<Campaign> request);
       //  Task<ApiResponse<bool>> CreateCampaignMessageTemplate(ApiRequest<CampaignMessageTemplateDto> request);
-        Task<ApiResponse<List<Campaign>>> GetCampaigns(ApiRequest<Campaign> request);
+        Task<ApiResponse<ListResponse<List<Campaign>>>> GetCampaigns(ApiRequest<FilteredList> request);
         //Task<ApiResponse<CampaignTemplateResponseDto>> GetCampaignsMessageTemplate(ApiRequest<CampaignTemplateRequestDto> request);
         Task<ApiResponse<Campaign>> GetCampaignById(ApiRequest<long> request);  
         Task<ApiResponse<CampaignPost>> CreateCampaignPost(ApiRequest<CampaignPost> request);

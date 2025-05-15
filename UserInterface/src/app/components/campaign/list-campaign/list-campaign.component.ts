@@ -41,20 +41,7 @@ export class ListCampaignComponent implements OnInit, OnDestroy {
 
   }
   ngOnInit(): void {
-    this.service.GetCampaigns().subscribe({
-      next: (response: any) => {
-        this.Campaigns = response.data;
-        this.originalContacts=this.Campaigns;
-        this.total = this.Campaigns.length;
-        if (response.isSuccess) {
-        //this.toastr.success(response.message)
-        this.toastr.success('Campaigns loaded successfully')
-        }
-        else{
-          this.toastr.warning(response.message)
-        }
-      }
-    });
+this.GetRecords();
     this.routerSubscription = this.router.events.subscribe((event) => {
       if (event instanceof NavigationStart) {
         this.closeModal();
@@ -63,6 +50,28 @@ export class ListCampaignComponent implements OnInit, OnDestroy {
     });
   }
 
+  GetRecords(){
+    var request:any = { "data": {
+    "pageSize": this.itemsPerPage,
+    "pageNumber": this.page,
+    "searchText": this.searchTerm,
+    "sortBy": "id",
+    "sortDesc": true
+  }};
+        this.service.GetCampaigns(request).subscribe({
+      next: (response: any) => {
+        this.Campaigns = response.data.list;
+        this.total=response.data.totalCount;
+        this.originalContacts=this.Campaigns;
+        if (response.isSuccess) {
+        this.toastr.success('Campaigns loaded successfully')
+        }
+        else{
+          this.toastr.warning(response.message)
+        }
+      }
+    });
+  }
   openModal(platform: string, item: any): void {
     this.smsPlatForm = platform;
     this.campaignId = item.id;
@@ -87,7 +96,7 @@ export class ListCampaignComponent implements OnInit, OnDestroy {
       modalInstance.show();
       localStorage.setItem("campainId", item.id);
 
-      this.service.GetMessageTemplateDetails(this.type, item.id).subscribe({
+      this.service.GetCampaignPostDetails(this.type, item.id).subscribe({
         next: (response: any) => {
           this.modalContentAll = response.data.messageTemplates || [];
           this.selectedTemplateId = response.data.selectedTemplateId;
@@ -123,7 +132,7 @@ export class ListCampaignComponent implements OnInit, OnDestroy {
 
     };
     debugger;
-    this.service.createCampaignMessageTemplate(data).subscribe((response: any) => {
+    this.service.createCampaignCampaignPost(data).subscribe((response: any) => {
       this.closeModal();
     })
   }

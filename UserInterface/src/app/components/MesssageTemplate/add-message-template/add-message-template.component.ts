@@ -49,7 +49,7 @@ export class AddMessageTemplateComponent {
   }
 
   getMessageTemplateDetails() {
-    this.service.getMessageTemplateDetails().subscribe((response: any) => {
+    this.service.getCampaignPostDetails().subscribe((response: any) => {
       debugger;
       this.MessageTemplateForm.patchValue({
         senderEmail: response.data.email,
@@ -62,7 +62,7 @@ export class AddMessageTemplateComponent {
   ngOnInit(): void {
     if (this.id) {
       const request = { data: this.id };
-      this.service.GetMessagetemplateById(request).subscribe({
+      this.service.GetCampaignPostById(request).subscribe({
         next: (response: any) => {
           if (response?.data) {
             this.CampainIdFromTemplate = response.data.campainId
@@ -118,7 +118,7 @@ export class AddMessageTemplateComponent {
           templateData.VideoUrl = this.uploadedVideoUrl;
           var request = { data: templateData };
           if (!this.smsPlatform) {
-            this.service.AddMessagetemplate(request).subscribe({
+            this.service.AddCampaignPost(request).subscribe({
               next: (response: any) => {
                 this.toaster.success("Updated successfully");
                 this.route.navigate(['/list-message-templates'])
@@ -141,7 +141,7 @@ export class AddMessageTemplateComponent {
     let campaignId = localStorage.getItem("campainId")
 
     if (campaignId) {
-      this.service.AddMessagetemplateFromCampain(parseInt(campaignId), request).subscribe({
+      this.service.AddCampaignPostFromCampaign(parseInt(campaignId), request).subscribe({
         next: (response: any) => {
           this.toaster.success("Updated successfully");
           this.route.navigate(['/list-campaigns']);
