@@ -50,7 +50,7 @@ export class AddMessageTemplateComponent {
 
   getMessageTemplateDetails() {
     this.service.getCampaignPostDetails().subscribe((response: any) => {
-      debugger;
+      
       this.MessageTemplateForm.patchValue({
         senderEmail: response.data.email,
         organisationName: response.data.name
@@ -108,7 +108,7 @@ export class AddMessageTemplateComponent {
   }
 
   onSubmit(): void {
-    debugger
+    
     if (this.MessageTemplateForm.valid) {
       this.GetMessagePromise()
         .then(() => {

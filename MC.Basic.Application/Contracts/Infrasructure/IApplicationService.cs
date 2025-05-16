@@ -22,14 +22,15 @@ namespace MC.Basic.Application.Contracts.Infrasructure
         Task<ApiResponse<Campaign>> CreateCampaign(ApiRequest<Campaign> request);
       //  Task<ApiResponse<bool>> CreateCampaignMessageTemplate(ApiRequest<CampaignMessageTemplateDto> request);
         Task<ApiResponse<ListResponse<List<Campaign>>>> GetCampaigns(ApiRequest<FilteredList> request);
-        //Task<ApiResponse<CampaignTemplateResponseDto>> GetCampaignsMessageTemplate(ApiRequest<CampaignTemplateRequestDto> request);
+        //Task<ApiResponse<CampaiegnTemplateResponseDto>> GetCampaignsMessageTemplate(ApiRequest<CampaignTemplateRequestDto> request);
         Task<ApiResponse<Campaign>> GetCampaignById(ApiRequest<long> request);  
         Task<ApiResponse<CampaignPost>> CreateCampaignPost(ApiRequest<CampaignPost> request);
         Task<ApiResponse<CampaignPost>> CreateCampaignPostFromCampain(long campainId, ApiRequest<CampaignPost> request);
         Task<ApiResponse<List<CampaignPost>>> GetCampaignPosts(ApiRequest<CampaignPost> request);
+        Task<ApiResponse<ListResponse<List<CampaignPost>>>> GetCampaignPostsByCampaignId(ApiRequest<FilteredList> request);
         Task<ApiResponse<CampaignPost>> GetCampaignPostById(ApiRequest<long> request);
-     //   Task<ApiResponse<EventContactMessageDto>> GetEventForCampaign(ApiRequest<long> request);
-     //   Task<ApiResponse<string>> SendBulkMessagetoContacts(ApiRequest<BulkMessageRequest> request);
+        Task<ApiResponse<EventContactMessageDto>> GetEventForCampaignPost(ApiRequest<long> request);
+        //   Task<ApiResponse<string>> SendBulkMessagetoContacts(ApiRequest<BulkMessageRequest> request);
         Task<ApiResponse<object>> GetMailgunReports(string email, List<string> events);
         Task<ApiResponse<object>> GetMessageinLogs();
         Task<ApiResponse<string>> GetAnswerForQuestion(ApiRequest<string> request);

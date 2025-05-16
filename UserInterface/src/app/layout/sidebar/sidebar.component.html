@@ -52,13 +52,12 @@
                     <a [routerLink]="'/list-campaigns'" class="nav-link "><span class="pcoded-micon"><i
                                 class="feather icon-map"></i></span><span class="pcoded-mtext">Campaigns</span></a>
                 </li>
-                <li class="nav-item"
-                    [ngClass]="{'active':router.url.includes('list-message-templates')|| router.url.includes('add-campaign-post')|| router.url.includes('edit-campaign-post')}"
+                <!-- <li class="nav-item"
+                    [ngClass]="{'active':router.url.includes('list-campaign-posts')|| router.url.includes('add-post')|| router.url.includes('edit-post')}"
                     *ngIf="service.User.role > 1">
-                    <a [routerLink]="'/list-message-templates'" class="nav-link "><span class="pcoded-micon"><i
-                                class="feather icon-layout"></i></span><span class="pcoded-mtext">Message
-                            Templates</span></a>
-                </li>
+                    <a [routerLink]="'/list-campaign-posts'" class="nav-link "><span class="pcoded-micon"><i
+                                class="feather icon-layout"></i></span><span class="pcoded-mtext">Campaign Posts</span></a>
+                </li> -->
                 <li class="nav-item" [ngClass]="{'active':router.url.includes('event-logs')}"
                     *ngIf="service.User.role > 1">
                     <a [routerLink]="'/event-logs'" class="nav-link "><span class="pcoded-micon"><i

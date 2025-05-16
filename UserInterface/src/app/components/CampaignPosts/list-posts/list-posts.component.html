@@ -15,6 +15,40 @@
             </div>
         </div>
     </div>
+    <div class="row ">
+        <div class="col-md-12">
+            <div class=" card shadow border-0 rounded-4">
+                <div class="card-header bg-primary text-white rounded-top-4">
+                    <h5 class="mb-0">📋 Campaign Details</h5>
+                </div>
+                <div class="card-body px-4 py-3">
+                    <div class="row g-3">
+                        <div class="col-sm-6">
+                            <label class="form-label fw-semibold text-muted">Name</label>
+                            <div class="text-dark fs-6">{{ Campaign.name }}</div>
+                        </div>
+                        <div class="col-sm-6">
+                            <label class="form-label fw-semibold text-muted">Description</label>
+                            <div class="text-dark fs-6">{{ Campaign.description }}</div>
+                        </div>
+                        <div class="col-sm-6">
+                            <label class="form-label fw-semibold text-muted">Start Date</label>
+                            <div class="text-dark fs-6">{{ Campaign.startDate | date:'medium' }}</div>
+                        </div>
+                        <div class="col-sm-6">
+                            <label class="form-label fw-semibold text-muted">End Date</label>
+                            <div class="text-dark fs-6">{{ Campaign.endDate | date:'medium' }}</div>
+                        </div>
+                        <div class="col-sm-6">
+                            <label class="form-label fw-semibold text-muted">Created Date</label>
+                            <div class="text-dark fs-6">{{ Campaign.createdDate | date:'medium' }}</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div class="row">
         <div class="col-md-12">
             <div class="card">
@@ -23,7 +57,8 @@
                         <h5>Campaign Posts</h5>
                     </div>
                     <div class="">
-                        <a [routerLink]="'/add-campaign-post'"><button type="button" class="btn  btn-outline-primary">Add
+                        <a [routerLink]="'/add-post'" [queryParams]="{campaignId:campaignId}"><button type="button"
+                                class="btn  btn-outline-primary">Add
                                 New</button>
                         </a>
                     </div>
@@ -57,49 +92,56 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr *ngFor="let item of CampaignPosts | paginate: { itemsPerPage: itemsPerPage, currentPage: page, totalItems: total }; let i = index">
+                                <tr
+                                    *ngFor="let item of CampaignPosts | paginate: { itemsPerPage: itemsPerPage, currentPage: page, totalItems: total }; let i = index">
                                     <td class="title align-middle">{{ (page - 1) * itemsPerPage + (i + 1) }}</td>
-                                <td>
-                                    <div class="title align-middle">
-                                        <span>{{item.subject}}</span><br>
-                                        <span>{{item.senderEmail}}<br>{{item.organisationName}}</span>
-                                    </div>
-                                </td>
+                                    <td>
+                                        <div class="title align-middle">
+                                            <span>{{item.subject}}</span><br>
+                                            <span>{{item.senderEmail}}<br>{{item.organisationName}}</span>
+                                        </div>
+                                    </td>
 
-                                <td class="align-middle ">
-                                    @if(item.type == 1 || item.type == 4 || item.type == 5 || item.type == 6) {
-                                    <div [innerHTML]="GetHtml(item.message)" class="custom-inner-html"></div>
-                                    <video *ngIf="item.videoUrl" [src]="item.videoUrl" controls width="250">
-                                        Your browser does not support the video tag.
-                                      </video>
-                                    }
-                                    
-                                    @else {
-                                    <p>{{item.message}}</p>
-                                    }
-                                </td>
-                                <td class="align-middle ">
-                                    <div class="type mx-3">
-                                        <p class="pb-0">
-                                          {{ typeMapping[item.type] || 'Unknown' }}
-                                        </p>
-                                      </div>
-                                </td>
+                                    <td class="align-middle ">
+                                        @if(item.type == 1 || item.type == 4 || item.type == 5 || item.type == 6) {
+                                        <div [innerHTML]="GetHtml(item.message)" class="custom-inner-html"></div>
+                                        <video *ngIf="item.videoUrl" [src]="item.videoUrl" controls width="250">
+                                            Your browser does not support the video tag.
+                                        </video>
+                                        }
 
-                                <td class="align-middle"><a class="pointer" [routerLink]="'/edit-campaign-post'"
-                                        [queryParams]="{id:item.id}">
-                                        <i class="feather icon-edit"></i>
-                                    </a>
-                                </td>
-                            </tr> 
+                                        @else {
+                                        <p>{{item.message}}</p>
+                                        }
+                                    </td>
+                                    <td class="align-middle ">
+                                        <div class="type mx-3">
+                                            <p class="pb-0">
+                                                {{ typeMapping[item.type] || 'Unknown' }}
+                                            </p>
+                                        </div>
+                                    </td>
+
+                                    <td class="align-middle"><a class="pointer" [routerLink]="'/edit-post'"
+                                            [queryParams]="{id:item.id}">
+                                            <i class="feather icon-edit"></i>
+                                            </a> &nbsp;<a class="pointer" [routerLink]="'/campaign-events'"
+                                            [queryParams]="{id:item.id}">
+                                            <i class="fas fa-send"></i>
+                                        </a>
+                                       
+                                    </td>
+                                   
+                                </tr>
                             </tbody>
                         </table>
                         <div class="d-flex justify-content-end mb-0">
-                            <pagination-controls class="pagination" (pageChange)="pageChangeEvent($event)"></pagination-controls>
+                            <pagination-controls class="pagination"
+                                (pageChange)="pageChangeEvent($event)"></pagination-controls>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-  </div>
+</div>

@@ -37,7 +37,7 @@ export class DashboardComponent implements OnInit {
       private http: HttpClient,private service: AppService,private toaster: ToastrService, private route: Router) { }
  
   ngOnInit(): void {
-    debugger
+    
     const isFirstLogin = localStorage.getItem('IsFirstLogin') === 'true';
     const isDialogShown = sessionStorage.getItem('FirstLoginDialogShown') === 'true';
   

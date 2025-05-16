@@ -9,4 +9,5 @@ public class FilteredList
 
     public string SortBy { get; set; } = "";
     public bool SortDesc { get; set; } = false;
+    public long ParentId { get; set; } = 0;
 }

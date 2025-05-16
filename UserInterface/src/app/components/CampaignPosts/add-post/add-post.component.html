@@ -87,7 +87,7 @@
                             </div>
                         </div>
                     </div>
-              <div class="mb-3 position-relative" style="z-index:10;" id="campaignSearchDiv">
+              <!-- <div class="mb-3 position-relative" style="z-index:10;" id="campaignSearchDiv">
     <label for="campaignInput">Select Campaign</label>
     <input
         id="campaignInput"
@@ -130,7 +130,7 @@
             </li>
         </ul>
     </div>
-</div>
+</div> -->
                 <div>
                     <label for="subject">Subject</label>
                     <input class="form-control" id="subject" formControlName="subject" type="text" />
@@ -177,15 +177,7 @@
                         }
                     </div>
                 </div>
-                <div>
-                    <label for="organisationName">Organisation Name</label>
-                    <input class="form-control" id="organisationName" formControlName="organisationName" type="text" />
-                    @if(CampaignPostForm.get('organisationName').invalid &&
-                    CampaignPostForm.get('organisationName').touched){
-                    <div class="text-danger">
-                        Please enter a valid mobile number (digits only).
-                    </div>}
-                </div>
+           
                 <div>
                     <label for="senderEmail">Sender Email</label>
                     <input class="form-control" id="senderEmail" formControlName="senderEmail" type="email" />

@@ -96,20 +96,20 @@ public class CampaignController : ControllerBase
     }
 
 
-    //[HttpPost("GetEventForCampaign")]
-    //[EnableCors("CorsPolicy")]
-    //public async Task<IActionResult> GetEventForCampaign(ApiRequest<long> request)
-    //{
-    //    try
-    //    {
-    //        var response = await _applicationService.GetEventForCampaign(request);
-    //        return Ok(response);
-    //    }
-    //    catch (Exception ex)
-    //    {
-    //        return BadRequest(ex);
-    //    }
-    //}
+    [HttpPost("GetEventForCampaignPost")]
+    [EnableCors("CorsPolicy")]
+    public async Task<IActionResult> GetEventForCampaign(ApiRequest<long> request)
+    {
+        try
+        {
+            var response = await _applicationService.GetEventForCampaignPost(request);
+            return Ok(response);
+        }
+        catch(Exception ex)
+        {
+            return BadRequest(ex);
+        }
+    }
 
     //[HttpPost("SendBulkMessagetoContacts")]
     //[EnableCors("CorsPolicy")]

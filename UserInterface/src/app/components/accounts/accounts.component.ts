@@ -25,7 +25,7 @@ export class AccountsComponent {
   constructor(private route: ActivatedRoute, private router: Router, private http: HttpClient,
     public service: AppService ,private toaster:ToastrService) {}
   ngOnInit(): void {
-    debugger
+    
     const userId = this.service.User.id;
   
     this.service.getFacebookTokenByUser(userId).subscribe({
@@ -72,7 +72,7 @@ export class AccountsComponent {
   //   window.location.href = fbLoginUrl;
   // }
   loginWithFacebook(): void {
-    debugger
+    
     const scope = 'public_profile,pages_show_list,pages_manage_posts,pages_read_engagement,pages_manage_metadata,instagram_basic,instagram_content_publish,business_management';
 
     const redirectUri = encodeURIComponent(this.redirectUri);
@@ -88,7 +88,7 @@ export class AccountsComponent {
   //   });
   // }
   loginWithInstagram(): void {
-    debugger;
+    
     const scope = 'instagram_basic,instagram_content_publish,pages_show_list,pages_read_engagement';
    
     const redirectUri = encodeURIComponent(this.redirectUri); 

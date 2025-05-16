@@ -102,11 +102,15 @@
     </div>
   </div>
 </div> -->
+    <div class="popup" [ngClass]="{'d-none':!showPostsPopup}">
+      <app-campaign-posts-popup (togglePopup)="Togglepopup()" #postsPopup></app-campaign-posts-popup>
 
+    </div>
 <!-- Modal -->
 <div class="modal fade " id="platformModal" tabindex="-1" aria-labelledby="platformModalLabel" aria-hidden="true"
   data-bs-backdrop="static" data-bs-keyboard="false">
   <div class="modal-dialog modal-dialog-centered modal-xl">
+
     <div class="modal-content rounded">
       <div class="modal-header">
         <div class="row w-100 align-items-center">
@@ -266,7 +270,9 @@
                                   <i class="fab fa-instagram fa-1-3x pointer"></i>
                                 </span> -->
                                   <span>
-                                <i class="fa-solid fa-calendar"></i>
+                              <a class="pointer mx-3" title="Edit Campaign" [routerLink]="'/list-campaign-posts'"
+                                  [queryParams]="{campaignId: item.id}" >
+                                     <i class="far fa-calendar"></i></a>
                                 </span>
                               </td>
                               <td class="align-middle text-center">

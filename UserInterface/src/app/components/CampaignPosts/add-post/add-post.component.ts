@@ -20,14 +20,11 @@ export class AddPostComponent {
     subject: new FormControl('', Validators.required),
     message: new FormControl(''),
     senderEmail: new FormControl('', [Validators.required, Validators.email]),
-    organisationName: new FormControl('', [Validators.required]),
     scheduledPostTime: new FormControl('', Validators.required),
     type: new FormControl(1),
     html: new FormControl('')
   });
-  campaigns: any[] = [ { id: 1, name: 'Spring Sale', startDate: '2024-05-01', endDate: '2024-05-31' },
-  { id: 2, name: 'Holiday Promo', startDate: '2024-12-01', endDate: '2024-12-31' },
-];
+  campaigns: any[] = [];
   @ViewChild(EmailEditorComponent) private emailEditor!: EmailEditorComponent;
   simpleText: string = '';
   id: any;
@@ -40,14 +37,17 @@ export class AddPostComponent {
   CampainIdFromTemplate: number = 0
   videoUrl: string | ArrayBuffer | null = null;
   uploadedVideoUrl: string = '';
-  filteredCampaigns :any[]=[];
-campaignSearch = { name: '', startDate: '', endDate: '' };
-campaignInputValue = '';
-showCampaignDropdown = false;
+  filteredCampaigns: any[] = [];
+  campaignSearch = { name: '', startDate: '', endDate: '' };
+  campaignInputValue = '';
+  showCampaignDropdown = false;
 
   constructor(private service: AppService, private toaster: ToastrService, private activatedRoute: ActivatedRoute, private route: Router) {
     this.activatedRoute.queryParams.subscribe(param => {
       this.id = param['id']
+      this.CampaignPostForm.patchValue({
+        campaignId: param['campaignId']
+      })
       if (this.id) {
         this.editMode = true
       } else {
@@ -59,7 +59,7 @@ showCampaignDropdown = false;
 
   getCampaignPostDetails() {
     this.service.getCampaignPostDetails().subscribe((response: any) => {
-      debugger;
+
       this.CampaignPostForm.patchValue({
         senderEmail: response.data.email,
         organisationName: response.data.name
@@ -67,30 +67,37 @@ showCampaignDropdown = false;
 
     })
   }
- filterCampaigns(){
-    var request:any = { "data": {
-    "pageSize": 100,
-    "pageNumber": 1,
-    "searchText": this.campaignSearch.name,
-    "sortBy": "id",
-    "sortDesc": true
-  }};
-        this.service.GetCampaigns(request).subscribe({
+  filterCampaigns(selectedId: any = 0) {
+    var request: any = {
+      "data": {
+        "pageSize": 100,
+        "pageNumber": 1,
+        "searchText": this.campaignSearch.name,
+        "sortBy": "id",
+        "sortDesc": true
+      }
+    };
+    this.service.GetCampaigns(request).subscribe({
       next: (response: any) => {
         this.filteredCampaigns = response.data.list;
         this.campaigns = response.data.list;
+        if (selectedId > 0) {
+          this.selectCampaign(this.campaigns.find((item) => item.id === selectedId))
+        }
       }
     });
   }
   ngOnInit(): void {
-    this.filterCampaigns();
     if (this.id) {
       const request = { data: this.id };
       this.service.GetCampaignPostById(request).subscribe({
         next: (response: any) => {
           if (response?.data) {
-            this.CampainIdFromTemplate = response.data.campainId
+            this.CampainIdFromTemplate = response.data.campaignId
             this.CampaignPostForm.patchValue(response.data);
+            if (response.data.campaignId > 0) {
+              this.filterCampaigns(response.data.campaignId)
+            }
             if (this.CampaignPostForm.get('type').value === 1) {
               const HtmlJson = response.data.message.split('[{(break)}]');
               if (HtmlJson.length > 1) {
@@ -127,23 +134,26 @@ showCampaignDropdown = false;
           console.error('Error fetching message template:', error);
         }
       });
+    } else {
+
+      this.filterCampaigns();
     }
     this.setFormTypeBasedOnPlatform();
-      document.addEventListener('click', this.closeDropdownOnOutsideClick.bind(this));
+    document.addEventListener('click', this.closeDropdownOnOutsideClick.bind(this));
 
   }
-ngOnDestroy() {
-  document.removeEventListener('click', this.closeDropdownOnOutsideClick.bind(this));
-}
-
-closeDropdownOnOutsideClick(event: MouseEvent) {
-  const section = document.getElementById('campaignSearchDiv');
-  if (section && !section.contains(event.target as Node)) {
-    this.showCampaignDropdown = false;
+  ngOnDestroy() {
+    document.removeEventListener('click', this.closeDropdownOnOutsideClick.bind(this));
   }
-}
+
+  closeDropdownOnOutsideClick(event: MouseEvent) {
+    const section = document.getElementById('campaignSearchDiv');
+    if (section && !section.contains(event.target as Node)) {
+      this.showCampaignDropdown = false;
+    }
+  }
   onSubmit(): void {
-    debugger
+
     if (this.CampaignPostForm.valid) {
       this.GetMessagePromise()
         .then(() => {
@@ -155,8 +165,8 @@ closeDropdownOnOutsideClick(event: MouseEvent) {
           if (!this.smsPlatform) {
             this.service.AddCampaignPost(request).subscribe({
               next: (response: any) => {
-                this.toaster.success("Updated successfully");
-                this.route.navigate(['/list-message-templates'])
+                this.toaster.success(this.editMode ? "Updated successfully" : "Created successfully");
+                this.route.navigate(['/list-campaign-posts', { campaignId: this.CampainIdFromTemplate }])
               }
             })
           } else {
@@ -172,11 +182,13 @@ closeDropdownOnOutsideClick(event: MouseEvent) {
     }
   }
 
-selectCampaign(campaign: any) {
-  this.campaignSearch.name = campaign.name;
-  this.CampaignPostForm.get('campaignId')?.setValue(campaign.id);
-  this.showCampaignDropdown = false;
-}
+  selectCampaign(campaign: any) {
+    if (campaign) {
+      this.campaignSearch.name = campaign.name;
+      this.CampaignPostForm.get('campaignId')?.setValue(campaign.id);
+      this.showCampaignDropdown = false;
+    }
+  }
 
   submitFromCampain(request: any): void {
     let campaignId = localStorage.getItem("campainId")

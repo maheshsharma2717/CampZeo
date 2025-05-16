@@ -65,6 +65,21 @@ public class CampaignPostController  : ControllerBase
 
 
 
+    [HttpPost("GetCampaignPostsByCampaignId")]
+    [EnableCors("CorsPolicy")]
+    public async Task<IActionResult> GetCampaignPostDetails(ApiRequest<FilteredList> request)
+    {
+        try
+        {
+            var response = await _applicationService.GetCampaignPostsByCampaignId(request);
+            return Ok(response);
+        }
+        catch(Exception ex)
+        {
+            return BadRequest(ex);
+        }
+    } 
+    
     [HttpPost("GetCampaignPostDetails")]
     [EnableCors("CorsPolicy")]
     public async Task<IActionResult> GetCampaignPostDetails(ApiRequest<long> request)

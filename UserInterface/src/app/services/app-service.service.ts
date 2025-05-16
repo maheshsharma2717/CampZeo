@@ -18,9 +18,9 @@ export class AppService {
   isChatPopupOpen: boolean = false;
   constructor(private http: HttpClient, private router: Router) { }
 
-  SetToken(token: any,rememberMe:boolean) {
-   if(rememberMe){ localStorage.setItem('token', token);}
-   sessionStorage.setItem('token', token);
+  SetToken(token: any, rememberMe: boolean) {
+    if (rememberMe) { localStorage.setItem('token', token); }
+    sessionStorage.setItem('token', token);
     this.Token = token;
     this.IsUserAuthenticated = true;
   }
@@ -30,7 +30,7 @@ export class AppService {
     this.http.post(ApiUrl + "Account/ValidateToken", form).subscribe({
       next: (response: any) => {
         if (response.isSuccess) {
-          this.SetToken(response.data.token,false);
+          this.SetToken(response.data.token, false);
           this.User = response.data;
           this.IsUserAuthenticated = true;
           if (!response.data.firstName) {
@@ -59,7 +59,7 @@ export class AppService {
     return this.http.post(ApiUrl + "Organisation/ApproveOrganisation", request);
   }
   GetOrganisations(request: any) {
-    request.token= this.Token;
+    request.token = this.Token;
     return this.http.post(ApiUrl + "Organisation/GetOrganisation", request);
   }
   UpdateUser(request: any) {
@@ -88,10 +88,10 @@ export class AppService {
 
     return this.http.post(ApiUrl + "Contact/ImportContact", formData);
   }
-  GetCampaigns(request:any) {
-   
-    request.token= this.Token
-    
+  GetCampaigns(request: any) {
+
+    request.token = this.Token
+
     return this.http.post(ApiUrl + "Campaign/GetCampaigns", request);
   }
   GetScheduledPosts() {
@@ -114,6 +114,10 @@ export class AppService {
     }
     return this.http.post(ApiUrl + "CampaignPost/GetCampaignPosts", request);
   }
+  GetCampaignPostsByCampaignId(request: any) {
+    request.token = this.Token;
+    return this.http.post(ApiUrl + "CampaignPost/GetCampaignPostsByCampaignId", request);
+  }
   AddCampaignPost(request: any) {
     request.token = this.Token;
     return this.http.post(ApiUrl + "CampaignPost/CreateCampaignPost", request);
@@ -121,9 +125,9 @@ export class AppService {
   GetCampaignPostById(request: any) {
     return this.http.post(ApiUrl + "CampaignPost/GetCampaignPostDetails", request);
   }
-  GetEventForCampaign(request: any) {
+  GetEventForCampaignPost(request: any) {
     request.token = this.Token;
-    return this.http.post(ApiUrl + "Campaign/GetEventForCampaign", request);
+    return this.http.post(ApiUrl + "Campaign/GetEventForCampaignPost", request);
   }
   SendBulkMessagetoContacts(request: any) {
     request.token = this.Token;
@@ -254,23 +258,23 @@ export class AppService {
 
   // preview clander
   // Ensure token is fetched correctly
-GetTemplateById(payload: any): Observable<any> {
-  debugger
-  const token = this.Token // Get token from local storage
+  GetTemplateById(payload: any): Observable<any> {
 
-  if (!token) {
-    console.error('Token is missing!');
-    throw new Error('Token is missing');  // Ensure that if token is missing, it throws an error
+    const token = this.Token // Get token from local storage
+
+    if (!token) {
+      console.error('Token is missing!');
+      throw new Error('Token is missing');  // Ensure that if token is missing, it throws an error
+    }
+
+    const requestBody = {
+      token: token,  // Include token from local storage
+      data: payload.data  // Use the data passed from the onEventClick function
+    };
+
+    console.log('Request Body:', requestBody);  // Debugging to check request structure
+    return this.http.post(ApiUrl + `Campaign/GetTemplateById`, requestBody);
   }
-
-  const requestBody = {
-    token: token,  // Include token from local storage
-    data: payload.data  // Use the data passed from the onEventClick function
-  };
-
-  console.log('Request Body:', requestBody);  // Debugging to check request structure
-  return this.http.post(ApiUrl + `Campaign/GetTemplateById`, requestBody);
-}
 
 
 

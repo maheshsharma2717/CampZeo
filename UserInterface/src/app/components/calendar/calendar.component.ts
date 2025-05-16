@@ -102,7 +102,7 @@ export class CalendarComponent implements OnInit {
   selectedTemplateType: number | null = null;
   selectedTemplateId: number = 0;
   selectTemplate(item: any) {
-    debugger
+    
     this.selectedTemplateId = item.id;
     this.selectedTemplateType = item.type;
   }
@@ -125,7 +125,7 @@ export class CalendarComponent implements OnInit {
   }
   getMessageTemplateDetails() {
     this.service.getCampaignPostDetails().subscribe((response: any) => {
-      debugger;
+      
       if (this.campaignForm) {
         this.campaignForm.patchValue({
           senderEmail: response.data?.email || '',
@@ -141,7 +141,7 @@ export class CalendarComponent implements OnInit {
     this.loadScheduledPosts();
   }
   loadScheduledPosts(): void {
-    debugger
+    
     this.service.GetScheduledPosts().subscribe({
       next: (response: any) => {
         if (response.isSuccess) {
@@ -343,7 +343,7 @@ export class CalendarComponent implements OnInit {
 
   // Preview changes
   async onEventClick(args: any) {
-    debugger;
+    
     const data = args.e.data;
 
     const [templateId, type] = data.id.split('-');
@@ -483,7 +483,7 @@ export class CalendarComponent implements OnInit {
   }
 
   proceedToAddTemplate() {
-    debugger
+    
     this.currentStep = 3;
     this.campaignForm.controls['type'].setValue(this.selectedTemplateType || 1);
 
@@ -555,7 +555,7 @@ export class CalendarComponent implements OnInit {
   }
 
   ChangeType(typeId: number) {
-    debugger
+    
     if (this.selectedTemplateTypeId) {
       this.templateDataMap[this.selectedTemplateTypeId] = {
         form: this.campaignForm.value,
@@ -753,8 +753,8 @@ export class CalendarComponent implements OnInit {
     }
   }
   GetAllContacts() {
-    debugger
-    this.service.GetEventForCampaign({ data: this.id }).subscribe({
+    
+    this.service.GetEventForCampaignPost({ data: this.id }).subscribe({
       next: (response: any) => {
         this.contacts = response.data.contact
         this.campagin=response.data.campaign
@@ -790,7 +790,7 @@ export class CalendarComponent implements OnInit {
   // validation
 
 // nextStep() {
-//   debugger
+//   
 //   if (this.currentStep === 1) {
 //     this.campaignForm.get('name')?.markAsTouched();
 //     this.campaignForm.get('startDate')?.markAsTouched();
