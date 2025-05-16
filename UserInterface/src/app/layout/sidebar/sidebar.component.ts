@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, Input, NgModule } from '@angular/core';
+import { Component, EventEmitter, Input, NgModule, Output } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
 import { AppService } from '../../services/app-service.service';
 import { TopbarComponent } from '../topbar/topbar.component';
@@ -12,16 +12,24 @@ import { TopbarComponent } from '../topbar/topbar.component';
   styleUrl: './sidebar.component.css'
 })
 export class SidebarComponent {
-  showUserMenu: boolean = false;
+  isSidebarMinimized = false;
   constructor(public service: AppService , public router:Router) {
 
   }
   @Input() collapsed = false;
   @Input() isMobileNavOpen = false;
-  toggleUserMenu() {
-    this.showUserMenu = !this.showUserMenu;
+  
+
+  toggleSidebar() {
+    this.isSidebarMinimized = !this.isSidebarMinimized;
   }
   LogoutUser() {
     this.service.ClearToken()
+    }
+    
+    @Output() togglebar = new EventEmitter<void>();
+    
+    onToggleSidebar() {
+      this.togglebar.emit();
     }
 }

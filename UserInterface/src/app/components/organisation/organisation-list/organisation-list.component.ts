@@ -8,11 +8,12 @@ import { ToastrService } from 'ngx-toastr';
 import { NgxPaginationModule } from 'ngx-pagination';
 import { dataBinding } from '@syncfusion/ej2-angular-schedule';
 import { FormsModule } from '@angular/forms';
-
+import { GridModule, PageService, SortService, FilterService, ToolbarService } from '@syncfusion/ej2-angular-grids';
 @Component({
   selector: 'app-organisation-list',
   standalone: true,
-  imports: [CommonModule, RouterModule, NgxPaginationModule,FormsModule],
+  imports: [CommonModule, RouterModule, NgxPaginationModule,FormsModule,GridModule],
+   providers: [PageService, SortService, FilterService, ToolbarService],
   templateUrl: './organisation-list.component.html',
   styleUrl: './organisation-list.component.css'
 })
@@ -33,7 +34,10 @@ export class OrganisationListComponent implements OnInit, OnDestroy {
   sortDesc: boolean = false; 
   pageSizeOptions: number[] = [5, 10, 20, 50]; // Page size options
   isRecovering: boolean = false;
-
+//syncfusion grid
+  // PageSize = 10;
+  // pageSizeOptions = [5, 10, 20, 50];
+  toolbarOptions = ['Search'];
   constructor(public service: AppService, private toaster: ToastrService,
     private router: Router
   ) {
@@ -181,4 +185,25 @@ export class OrganisationListComponent implements OnInit, OnDestroy {
     pageChangeEvent(event: number) {
     this.currentPage = event;
   }
+
+  //syncfusion 
+  approveItemById(id: number) {
+  const index = this.Organisations.findIndex(org => org.id === id);
+  if (index !== -1) {
+    this.approveItem(index);
+  }
+}
+
+onGridActionBegin(args: any) {
+  if (args.requestType === 'paging') {
+    this.currentPage = args.currentPage;
+    this.PageSize = args.pageSize;
+    this.loadOrganisations();
+  } else if (args.requestType === 'sorting') {
+    this.sortBy = args.columnName;
+    this.sortDesc = args.direction === 'Descending';
+    this.loadOrganisations();
+  }
+}
+
 }

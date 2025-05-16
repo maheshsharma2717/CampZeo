@@ -1,80 +1,84 @@
-<nav [ngClass]="{'pcoded-navbar': true, 'navbar-collapsed': collapsed, 'mob-open': isMobileNavOpen}"
-    class="pcoded-navbar">
-    <div class="navbar-wrapper  ">
-        <div class="navbar-content scroll-div ">
-            <div class="">
-                <div class="main-menu-header">
-                    <img class="img-radius" src="assets/images/user/avatar-2.jpg" alt="User-Profile-Image">
-                    <div class="user-details">
-                        <span>{{ service.User.firstName ?? "" }} {{ service.User.lastName ?? "" }}</span>
-                        <div (click)="toggleUserMenu()" id="more-details">{{ service.User.jobTitle ?? "Web Designer"
-                            }}<i class="fa fa-chevron-down m-l-5"></i></div>
-                    </div>
-                </div>
-                <!-- <div class="collapse user-menu-wrapper"  [ngClass]="{'collapse': true, 'show': showUserMenu}"id="nav-user-link"> -->
-                <div class="user-menu-wrapper" [class.open]="showUserMenu">
-                    <ul class="list-unstyled">
-                        <li class="list-group-item"><a [routerLink]="'/profile'"><i
-                                    class="feather icon-user m-r-5"></i>View Profile</a></li>
-                        <li class="list-group-item"><a href="#!"><i class="feather icon-settings m-r-5"></i>Settings</a>
-                        </li>
-                        <li class="list-group-item"><a (click)="LogoutUser()"><i class="feather icon-log-out m-r-5"></i>Logout</a>
-                        </li>
-                    </ul>
-                </div>
-            </div>
+<div [ngClass]="{ 'wrapper': true, 'sidebar_minimize': isSidebarMinimized }">
+    <div class="sidebar " data-background-color="dark">
+        <div class="sidebar-logo">
+            <!-- Logo Header -->
+            <div class="logo-header" data-background-color="dark">
 
-            <ul class="nav pcoded-inner-navbar ">
-                <li class="nav-item pcoded-menu-caption">
-                    <label>Navigation</label>
-                </li>
-                <li class="nav-item" [ngClass]="{'active':router.url.includes('list-organisation')}"
-                    *ngIf="!service.User.organisationId && service.User.role == 1"
-                    [ngClass]="{'active':router.url.includes('list-organisation')}">
-                    <a [routerLink]="'list-organisation'" class="nav-link "><span class="pcoded-micon"><i
-                                class="feather icon-align-justify"></i></span><span
-                            class="pcoded-mtext">Organisation</span></a>
-                </li>
-                <li class="nav-item" [ngClass]="{'active':router.url.includes('dashboard')}"
-                    *ngIf="service.User.role > 1">
-                    <a [routerLink]="'dashboard'" class="nav-link "><span class="pcoded-micon"><i
-                                class="feather icon-home"></i></span><span class="pcoded-mtext">Dashboard</span></a>
-                </li>
-                <li class="nav-item" [ngClass]="{'active':router.url.includes('list-contacts')|| 
-                 router.url.includes('add-contact')|| router.url.includes('import-contacts')}"
-                    *ngIf="service.User.role > 1">
-                    <a [routerLink]="'list-contacts'" class="nav-link "><span class="pcoded-micon"><i
-                                class="feather icon-mail"></i></span><span class="pcoded-mtext">Contacts</span></a>
-                </li>
-                <li class="nav-item"
-                    [ngClass]="{'active': router.url.includes('list-campaigns') || router.url.includes('add-campaign')|| router.url.includes('campaign-events')}"
-                    *ngIf="service.User.role > 1">
-                    <a [routerLink]="'/list-campaigns'" class="nav-link "><span class="pcoded-micon"><i
-                                class="feather icon-map"></i></span><span class="pcoded-mtext">Campaigns</span></a>
-                </li>
-                <li class="nav-item"
-                    [ngClass]="{'active':router.url.includes('list-message-templates')|| router.url.includes('add-message-template')|| router.url.includes('edit-message-template')}"
-                    *ngIf="service.User.role > 1">
-                    <a [routerLink]="'/list-message-templates'" class="nav-link "><span class="pcoded-micon"><i
-                                class="feather icon-layout"></i></span><span class="pcoded-mtext">Message
-                            Templates</span></a>
-                </li>
-                <li class="nav-item" [ngClass]="{'active':router.url.includes('event-logs')}"
-                    *ngIf="service.User.role > 1">
-                    <a [routerLink]="'/event-logs'" class="nav-link "><span class="pcoded-micon"><i
-                                class="feather icon-sidebar"></i></span><span class="pcoded-mtext">Logs</span></a>
-                </li>
-                <!-- <li class="nav-item" [ngClass]="{'active':router.url.includes('event-logs')}"
-                    *ngIf="service.User.role > 1">
-                    <a [routerLink]="'/auth-callback'" class="nav-link "><span class="pcoded-micon"><i
-                                class="feather icon-sidebar"></i></span><span class="pcoded-mtext">facebook post</span></a>
-                </li> -->
-                <li class="nav-item" [ngClass]="{'active':router.url.includes('accounts')}"
-                *ngIf="service.User.role > 1">
-                <a [routerLink]="'/accounts'" class="nav-link "><span class="pcoded-micon"><i
-                            class="feather icon-sidebar"></i></span><span class="pcoded-mtext">Accounts</span></a>
-            </li> 
-            </ul>
+                <a href="index.html" class="logo">
+                    <img src="assets/img/CampZeoLogo.png" alt="navbar brand" class="navbar-brand" height="50">
+                </a>
+                <div class="nav-toggle" (click)="toggleSidebar()">
+                    <button class="btn btn-toggle toggle-sidebar">
+                        <i class="gg-menu-right"></i>
+                    </button>
+                    <button class="btn btn-toggle sidenav-toggler">
+                        <i class="gg-menu-left"></i>
+                    </button>
+                </div>
+                <button class="topbar-toggler more">
+                    <i class="gg-more-vertical-alt"></i>
+                </button>
+
+            </div>
+            <!-- End Logo Header -->
+        </div>
+        <div class="sidebar-wrapper scrollbar scrollbar-inner">
+            <div class="sidebar-content">
+                <ul class="nav nav-secondary">
+                    <li class="nav-item" [ngClass]="{'active':router.url.includes('list-organisation')}"
+                        *ngIf="!service.User.organisationId && service.User.role == 1"
+                        [ngClass]="{'active':router.url.includes('list-organisation')}">
+                        <a [routerLink]="'list-organisation'" class="">
+                            <i class="fas fa-layer-group"></i>
+                            <p class="pcoded-mtext">Organisation</p>
+                        </a>
+                    </li>
+                    <li class="nav-item" [ngClass]="{'active':router.url.includes('dashboard')}"
+                        *ngIf="service.User.role > 1">
+                        <a [routerLink]="'dashboard'" class=""><i class="fas fa-home"></i>
+                            <p class="">Dashboard</p>
+                        </a>
+                    </li>
+                    <li class="nav-item" [ngClass]="{'active':router.url.includes('list-contacts')|| 
+                     router.url.includes('add-contact')|| router.url.includes('import-contacts')}"
+                        *ngIf="service.User.role > 1">
+                        <a [routerLink]="'list-contacts'" class="nav-link "><i class="fas fa-envelope"></i>
+                            <p class="">Contacts</p>
+                        </a>
+                    </li>
+                    <li class="nav-item" [ngClass]="{'active': router.url.includes('list-campaigns') ||
+                         router.url.includes('add-campaign')|| 
+                         router.url.includes('campaign-events')}" *ngIf="service.User.role > 1">
+                        <a [routerLink]="'/list-campaigns'" class="">
+                            <i class="feather icon-map"></i>
+                            <p class="">Campaigns</p>
+                        </a>
+                    </li>
+                    <li class="nav-item" [ngClass]="{'active':router.url.includes('list-message-templates')|| 
+                        router.url.includes('add-message-template')||
+                         router.url.includes('edit-message-template')}" *ngIf="service.User.role > 1">
+                        <a [routerLink]="'/list-message-templates'" class="">
+                            <i class="far fa-clone"></i>
+                            <p class="pcoded-mtext">Message Templates</p>
+                        </a>
+                    </li>
+                    <li class="nav-item" [ngClass]="{'active':router.url.includes('event-logs')}"
+                        *ngIf="service.User.role > 1">
+                        <a [routerLink]="'/event-logs'" class="">
+                            <i class="fas fa-book"></i>
+                            <p class="pcoded-mtext">Logs</p>
+                        </a>
+                    </li>
+
+                    <li class="nav-item" [ngClass]="{'active':router.url.includes('accounts')}"
+                        *ngIf="service.User.role > 1">
+                        <a [routerLink]="'/accounts'" class=" ">
+                            <i class="fas fa-atlas"></i>
+                            <p class="pcoded-mtext">Accounts</p>
+                        </a>
+                    </li>
+                </ul>
+            </div>
         </div>
     </div>
-</nav>
+</div>

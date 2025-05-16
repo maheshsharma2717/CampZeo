@@ -1,133 +1,163 @@
-<div class="pcoded-content">
-    <!-- [ breadcrumb ] start -->
-    <div class="page-header">
-        <div class="page-block">
-            <div class="row align-items-center">
-                <div class="col-md-12">
-                    <div class="page-header-title">
-                        <h5 class="m-b-10">Organisations</h5>
-                    </div>
-                    <ul class="breadcrumb">
-                        <li class="breadcrumb-item"><a [routerLink]="'/list-organisation'"><i
-                                    class="feather icon-home"></i></a></li>
-                        <li class="breadcrumb-item"><a [routerLink]="'/list-organisation'">Organisations List</a></li>
-                    </ul>
-                </div>
+<div class="main-panel">
+    <div class="container">
+        <div class="page-inner">
+             <div class="page-header pb-0">
+                <h3 class="fw-bold mb-3">Organisations</h3>
+                <ul class="breadcrumbs mb-3">
+                    <li class="nav-item">
+                        <a [routerLink]="'/list-organisation'"><i class=" icon-home"></i></a>
+                    </li>
+                    <li class="separator">
+                        <i class="icon-arrow-right"></i>
+                    </li>
+                    <li class="nav-item">
+                       <a [routerLink]="'/list-organisation'">Organisations List</a>
+                    </li>
+                    <li class="separator">
+                        <i class="icon-arrow-right"></i>
+                    </li>
+                    <li class="nav-item">
+                        <a [routerLink]="'/create-organisation'">Create Organisations </a>
+                    </li>
+                </ul>
             </div>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-md-12">
-            <div class="card">
-                <div class="card-header d-flex aligin-item-center justify-content-between py-2">
-                    <div class="title-table d-flex align-items-center">
-                        <h5>Organisation</h5>
-                    </div>
-                   
-                    <div class="d-flex" >
-                          <div class="d-flex mr-2" >
-                        <label class="m-3">Filter Suspended :</label>
-                        <select [(ngModel)]="isSuspendedFilter" [ngModelOptions]="{standalone:true}"
-                            class="form-control w-auto" (change)="loadOrganisations();currentPage = 1">
-                            <option value="">All</option>
-                            <option value="true">Suspended</option>
-                            <option value="false">Active</option>
-                        </select>
-                    </div>
-                        <div *ngIf="this.service.User.role == 1">
-                        <a [routerLink]="'/create-organisation'"><button type="button"
-                                class="btn  btn-outline-primary">Add New</button>
-                        </a>
-                        </div>
-                    </div>
+           
+            <!-- <div class="card-header d-flex aligin-item-center justify-content-between py-2">
+                <div class="title-table d-flex align-items-center">
+                    <h5>Organisations List</h5>
                 </div>
-                    <div class="card-header d-flex aligin-item-center justify-content-between py-2">
-                  <input type="text" class="form-control w-25" placeholder="Search..." [(ngModel)]="SearchText"
-                      (input)="loadOrganisations()" />
-                  <div class="d-flex align-items-center justify-content-center ">
-                      <div class="mx-2">
-                          <span class="text-primary">entries per page</span>
-                      </div>
-                      <div class="">
-                          <select class="form-control" id="itemsPerPageSelect" [(ngModel)]="PageSize"
-                              (change)="changePage(PageSize)">
-                              <option *ngFor="let option of pageSizeOptions" [value]="option">{{ option }}
-                              </option>
-                          </select>
-                      </div>
-                  </div>
-              </div>
-                <div class="card-body table-border-style pb-1">
-                    
-                    <!-- Table -->
-                    <div class="table-responsive">
-                        <table class="table">
-                            <thead>
-                                <tr>
-                                    <th></th>
-                                    <th (click)="changeSort('name')">
-                                        Name
-                                        <i class="fa"
-                                            [ngClass]="{'fa-sort-up': sortBy === 'name' && !sortDesc, 'fa-sort-down': sortBy === 'name' && sortDesc}"></i>
-                                    </th>
-                                    <th (click)="changeSort('phone')">
-                                        Phone
-                                        <i class="fa"
-                                            [ngClass]="{'fa-sort-up': sortBy === 'phone' && !sortDesc, 'fa-sort-down': sortBy === 'phone' && sortDesc}"></i>
-                                    </th>
-                                    <th (click)="changeSort('email')">
-                                        Email
-                                        <i class="fa"
-                                            [ngClass]="{'fa-sort-up': sortBy === 'email' && !sortDesc, 'fa-sort-down': sortBy === 'email' && sortDesc}"></i>
-                                    </th>
-                                    <th (click)="changeSort('address')">
-                                        Address
-                                        <i class="fa"
-                                            [ngClass]="{'fa-sort-up': sortBy === 'address' && !sortDesc, 'fa-sort-down': sortBy === 'address' && sortDesc}"></i>
-                                    </th>
-                                    <th (click)="changeSort('ownerName')">
-                                        Owner Name
-                                        <i class="fa"
-                                            [ngClass]="{'fa-sort-up': sortBy === 'ownerName' && !sortDesc, 'fa-sort-down': sortBy === 'ownerName' && sortDesc}"></i>
-                                    </th>
-                                    <th *ngIf="this.service.User.role == 1">Approve</th>
-                                    <th *ngIf="this.service.User.role == 1">Action</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr *ngFor="let item of Organisations; let i = index">
-                                    <td>{{ (currentPage - 1) * PageSize + i + 1 }}</td>
-                                    <td>{{ item.name }}</td>
-                                    <td>{{ item.phone }}</td>
-                                    <td>{{ item.email }}</td>
-                                    <td>{{ item.address }}</td>
-                                    <td>{{ item.ownerName }}</td>
-                                    <td *ngIf="this.service.User.role == 1">
-                                        <a class="pointer" (click)="approveItem(i)">
-                                            <i class="fa fa-check-circle"
-                                                [ngClass]="{'text-success': item.isApproved}"></i>
-                                        </a>
-                                    </td>
-                                    <td *ngIf="this.service.User.role == 1">
-                                        <button class="btn mx-2 py-1"
-                                            [ngClass]="item.isDeleted ? 'border' : 'btn-danger'"
-                                            (click)="item.isDeleted ?openSuspendModal(item.id,true) : openSuspendModal(item.id )">
-                                            {{ item.isDeleted ? 'Recover' : 'Suspend' }}
-                                        </button>
-                                        <button (click)="onLogin(item)" class="btn btn-primary py-1">
-                                            Login
-                                        </button>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                        <div class="d-flex justify-content-end mb-0">
-                          <pagination-controls class="pagination" (pageChange)="pageChangeEvent($event)"></pagination-controls>
-                      </div>
-                    </div>
+                <div class="d-flex gap-1">
+                     <div class="d-flex mr-2">
+                                    <label class="m-3">Filter Suspended :</label>
+                                    <select [(ngModel)]="isSuspendedFilter" [ngModelOptions]="{standalone:true}"
+                                        class="form-control w-auto" (change)="loadOrganisations();currentPage = 1">
+                                        <option value="">All</option>
+                                        <option value="true">Suspended</option>
+                                        <option value="false">Active</option>
+                                    </select>
+                                </div>
+                                <div *ngIf="this.service.User.role == 1">
+                                    <a [routerLink]="'/create-organisation'"><button type="button"
+                                            class="btn  btn-outline-primary">Add New</button>
+                                    </a>
+                                </div>
+                </div>
+            </div> -->
+            <!-- [ breadcrumb ] start -->
 
-                    <!-- Pagination -->
-                    <!-- <div class="d-flex justify-content-between align-items-center mt-3">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="card">
+                        <div class="card-header d-flex aligin-item-center justify-content-between py-2">
+                            <div class="title-table d-flex align-items-center">
+                                <h5>Organisation</h5>
+                            </div>
+
+                            <div class="d-flex">
+                                <div class="d-flex mr-2">
+                                    <label class="m-3">Filter Suspended :</label>
+                                    <select [(ngModel)]="isSuspendedFilter" [ngModelOptions]="{standalone:true}"
+                                        class="form-control w-auto" (change)="loadOrganisations();currentPage = 1">
+                                        <option value="">All</option>
+                                        <option value="true">Suspended</option>
+                                        <option value="false">Active</option>
+                                    </select>
+                                </div>
+                                <div *ngIf="this.service.User.role == 1">
+                                    <a [routerLink]="'/create-organisation'"><button type="button"
+                                            class="btn  btn-outline-primary">Add New</button>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-header d-flex aligin-item-center justify-content-between py-2">
+                            <input type="text" class="form-control w-25" placeholder="Search..."
+                                [(ngModel)]="SearchText" (input)="loadOrganisations()" />
+                            <div class="d-flex align-items-center justify-content-center ">
+                                <div class="mx-2">
+                                    <span class="text-primary">entries per page</span>
+                                </div>
+                                <div class="">
+                                    <select class="form-control" id="itemsPerPageSelect" [(ngModel)]="PageSize"
+                                        (change)="changePage(PageSize)">
+                                        <option *ngFor="let option of pageSizeOptions" [value]="option">{{ option }}
+                                        </option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-body table-border-style pb-1">
+
+                            <!-- Table -->
+                            <div class="table-responsive">
+                                <table class="table">
+                                    <thead>
+                                        <tr>
+                                            <th></th>
+                                            <th (click)="changeSort('name')">
+                                                Name
+                                                <i class="fa"
+                                                    [ngClass]="{'fa-sort-up': sortBy === 'name' && !sortDesc, 'fa-sort-down': sortBy === 'name' && sortDesc}"></i>
+                                            </th>
+                                            <th (click)="changeSort('phone')">
+                                                Phone
+                                                <i class="fa"
+                                                    [ngClass]="{'fa-sort-up': sortBy === 'phone' && !sortDesc, 'fa-sort-down': sortBy === 'phone' && sortDesc}"></i>
+                                            </th>
+                                            <th (click)="changeSort('email')">
+                                                Email
+                                                <i class="fa"
+                                                    [ngClass]="{'fa-sort-up': sortBy === 'email' && !sortDesc, 'fa-sort-down': sortBy === 'email' && sortDesc}"></i>
+                                            </th>
+                                            <th (click)="changeSort('address')">
+                                                Address
+                                                <i class="fa"
+                                                    [ngClass]="{'fa-sort-up': sortBy === 'address' && !sortDesc, 'fa-sort-down': sortBy === 'address' && sortDesc}"></i>
+                                            </th>
+                                            <th (click)="changeSort('ownerName')">
+                                                Owner Name
+                                                <i class="fa"
+                                                    [ngClass]="{'fa-sort-up': sortBy === 'ownerName' && !sortDesc, 'fa-sort-down': sortBy === 'ownerName' && sortDesc}"></i>
+                                            </th>
+                                            <th *ngIf="this.service.User.role == 1">Approve</th>
+                                            <th *ngIf="this.service.User.role == 1">Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr *ngFor="let item of Organisations; let i = index">
+                                            <td>{{ (currentPage - 1) * PageSize + i + 1 }}</td>
+                                            <td>{{ item.name }}</td>
+                                            <td>{{ item.phone }}</td>
+                                            <td>{{ item.email }}</td>
+                                            <td>{{ item.address }}</td>
+                                            <td>{{ item.ownerName }}</td>
+                                            <td *ngIf="this.service.User.role == 1">
+                                                <a class="pointer" (click)="approveItem(i)">
+                                                    <i class="fa fa-check-circle"
+                                                        [ngClass]="{'text-success': item.isApproved}"></i>
+                                                </a>
+                                            </td>
+                                            <td *ngIf="this.service.User.role == 1" class="d-flex">
+                                                <button class="btn mx-2 py-1"
+                                                    [ngClass]="item.isDeleted ? 'border' : 'btn-danger'"
+                                                    (click)="item.isDeleted ?openSuspendModal(item.id,true) : openSuspendModal(item.id )">
+                                                    {{ item.isDeleted ? 'Recover' : 'Suspend' }}
+                                                </button>
+                                                <button (click)="onLogin(item)" class="btn btn-primary py-1">
+                                                    Login
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                                <div class="d-flex justify-content-end mb-0">
+                                    <pagination-controls class="pagination"
+                                        (pageChange)="pageChangeEvent($event)"></pagination-controls>
+                                </div>
+                            </div>
+
+                            <!-- Pagination -->
+                            <!-- <div class="d-flex justify-content-between align-items-center mt-3">
                         
                         <div class="d-flex align-items-center">
                             <label for="pageSize" class="me-2">Page Size:</label>
@@ -160,34 +190,35 @@
                             </ul>
                         </nav>
                     </div> -->
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
-</div>
 
-<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true"
-    data-bs-backdrop="static" data-bs-keyboard="false">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title " [ngClass]="!isRecovering?'text-danger':'text-primary'" id="deleteModalLabel">
-                    Suspention Confirmation
-                </h5>
-                <button type="button" class="btn ms-auto px-3 text-white"
-                    [ngClass]="!isRecovering?'btn-danger':'btn-primary'" data-bs-dismiss="modal"
-                    aria-label="Close">x</button>
-            </div>
-            <div class="modal-body">
-                Are you sure you want to @if(!isRecovering){Suspend}@else{Recover} this organisation?
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                <button type="button" class="btn" [ngClass]="!isRecovering?'btn-danger':'btn-primary'"
-                    (click)="SuspendOrRecover()">
-                    Yes, @if(!isRecovering){Suspend}@else{Recover} this !
-                </button>
+        <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true"
+            data-bs-backdrop="static" data-bs-keyboard="false">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title " [ngClass]="!isRecovering?'text-danger':'text-primary'"
+                            id="deleteModalLabel">
+                            Suspention Confirmation
+                        </h5>
+                        <button type="button" class="btn ms-auto px-3 text-white"
+                            [ngClass]="!isRecovering?'btn-danger':'btn-primary'" data-bs-dismiss="modal"
+                            aria-label="Close">x</button>
+                    </div>
+                    <div class="modal-body">
+                        Are you sure you want to @if(!isRecovering){Suspend}@else{Recover} this organisation?
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="button" class="btn" [ngClass]="!isRecovering?'btn-danger':'btn-primary'"
+                            (click)="SuspendOrRecover()">
+                            Yes, @if(!isRecovering){Suspend}@else{Recover} this !
+                        </button>
+                    </div>
+                </div>
             </div>
         </div>
-    </div>
-</div>
