@@ -51,7 +51,7 @@ public class CampaignController : ControllerBase
 
     [HttpPost("GetCampaigns")]
     [EnableCors("CorsPolicy")]
-    public async Task<IActionResult> GetCampaign(ApiRequest<Campaign> request)
+    public async Task<IActionResult> GetCampaign(ApiRequest<FilteredList> request)
     {
         try
         {
@@ -96,20 +96,20 @@ public class CampaignController : ControllerBase
     }
 
 
-    //[HttpPost("GetEventForCampaign")]
-    //[EnableCors("CorsPolicy")]
-    //public async Task<IActionResult> GetEventForCampaign(ApiRequest<long> request)
-    //{
-    //    try
-    //    {
-    //        var response = await _applicationService.GetEventForCampaign(request);
-    //        return Ok(response);
-    //    }
-    //    catch (Exception ex)
-    //    {
-    //        return BadRequest(ex);
-    //    }
-    //}
+    [HttpPost("GetEventForCampaignPost")]
+    [EnableCors("CorsPolicy")]
+    public async Task<IActionResult> GetEventForCampaign(ApiRequest<long> request)
+    {
+        try
+        {
+            var response = await _applicationService.GetEventForCampaignPost(request);
+            return Ok(response);
+        }
+        catch(Exception ex)
+        {
+            return BadRequest(ex);
+        }
+    }
 
     //[HttpPost("SendBulkMessagetoContacts")]
     //[EnableCors("CorsPolicy")]

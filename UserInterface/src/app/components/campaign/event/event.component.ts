@@ -26,8 +26,7 @@ export class EventComponent implements OnInit {
   total: number = 0;
   allSelected: boolean = false;
   searchTerm: string = '';
-  messageTemplates: any;
-  campagin:any;
+  Post: any;
   activeTab: string = 'SMS';
 
   //insta fb changes
@@ -42,7 +41,7 @@ export class EventComponent implements OnInit {
     })
   }
   ngOnInit(): void {
-    this.GetAllContacts();
+    this.GetData();
     if (this.accessToken) {
       this.service.getFacebookPages(this.accessToken).subscribe({
         next: (res: any) => {
@@ -54,34 +53,34 @@ export class EventComponent implements OnInit {
       });
     }
   }
-  GetAllContacts() {
-    debugger
-    this.service.GetEventForCampaign({ data: this.id }).subscribe({
+  GetData() {
+    
+    this.service.GetEventForCampaignPost({ data: this.id }).subscribe({
       next: (response: any) => {
-        this.contacts = response.data.contact
-        this.campagin=response.data.campaign
-        this.messageTemplates = response.data.campaignMessageTemplate
+        
+        this.contacts = response.data.contacts
+        this.Post = response.data.post
         this.filteredContacts = this.contacts
         this.total = this.contacts.length;
-        this.videoUrl = this.messageTemplates?.instagramTemplate?.videoUrl || '';
+        this.videoUrl = this.Post?.videoUrl || '';
         this.setActiveTab();
       }
     })
   }
   setActiveTab(): void {
-    if (this.messageTemplates?.smsTemplate) {
-      this.activeTab = 'SMS';
-    } else if (this.messageTemplates?.whatsappTemplate) {
-      this.activeTab = 'whatsApp';
-    } else if (this.messageTemplates?.emailTemplate) {
+    if (this.Post.type==1) {
       this.activeTab = 'email';
-    } else if (this.messageTemplates?.rcsTemplate) {
+    } else if (this.Post.type==2) {
+      this.activeTab = 'SMS';
+    } else if (this.Post.type==3) {
+      this.activeTab = 'whatsApp';
+    } else if (this.Post.type==4) {
       this.activeTab = 'rcs';
     }
-    else if (this.messageTemplates?.facebookTemplate) {
+    else if (this.Post.type==5) {
       this.activeTab = 'facebook';
     }
-    else if (this.messageTemplates?.instagramTemplate) {
+    else if (this.Post.type==6) {
       this.activeTab = 'instagram';
     }
   }
@@ -90,12 +89,12 @@ export class EventComponent implements OnInit {
   }
 
 sendMessage() {
-  debugger
-  const campaignId = this.campagin?.id;
+  
+  const campaignId = 0;
   if (!campaignId) return;
 
-  const facebookRaw = this.messageTemplates?.facebookTemplate?.message || '';
-  const instagramRaw = this.messageTemplates?.instagramTemplate?.message || '';
+  const facebookRaw = this.Post?.message || '';
+  const instagramRaw = this.Post?.message || '';
 
   const fbContent = this.extractContent(facebookRaw);
   const igContent = this.extractContent(instagramRaw);
@@ -103,8 +102,8 @@ sendMessage() {
   const pageId = this.selectedPage?.id;
   const pageAccessToken = this.selectedPage?.access_token;
 
-  if (this.activeTab === 'facebook') {
-    if (this.campagin?.isFacebookCampaign && pageId && pageAccessToken) {
+  if (this.activeTab === 'facebook' && pageId && pageAccessToken) {
+
       this.service.postToFacebook({
         pageId,
         pageAccessToken,
@@ -121,11 +120,9 @@ sendMessage() {
           this.toaster.error('Failed to post to Facebook.');
         }
       });
-    }
-  } else if (this.activeTab === 'instagram') {
-    debugger;
-    if (this.campagin?.isInstagramCampaign && this.instagramUserId && pageAccessToken) {
-      const igContent = this.extractContent(instagramRaw);
+
+  } else if (this.activeTab === 'instagram'&& this.instagramUserId && pageAccessToken) {
+    const igContent = this.extractContent(instagramRaw);
   
       if (this.videoUrl) {
         const payload: any = {
@@ -180,9 +177,7 @@ sendMessage() {
           }
         });
       }
-    }
   }
-  
  else {
     const selectedContacts = this.contacts.filter(contact => contact.selected);
     if (selectedContacts.length === 0) {

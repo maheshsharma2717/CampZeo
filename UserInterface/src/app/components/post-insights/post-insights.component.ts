@@ -54,7 +54,7 @@ export class PostInsightsComponent implements OnInit {
   constructor(private service: AppService ) {}
 
   ngOnInit(): void {
-    debugger;
+    
     // Fetch all posts
     this.service.getSocialMediaPosts().subscribe({
       next: (data) => {
@@ -70,7 +70,7 @@ export class PostInsightsComponent implements OnInit {
 
   // Function to fetch post insights when the user selects a post
   fetchPostInsights(): void {
-    debugger;
+    
     if (this.selectedPostId && this.accessToken && this.platform) {
       this.service.getPostInsights(this.selectedPostId, this.accessToken, this.platform).subscribe({
         next: (data) => {

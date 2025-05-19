@@ -10,7 +10,7 @@ export class PasswordChangeGuard implements CanActivate {
   constructor(private router: Router, private toastr: ToastrService) {}
 
   canActivate(): boolean {
-    debugger
+    
     const isFirstLogin = localStorage.getItem('IsFirstLogin') === 'true';
 
     if (isFirstLogin) {
