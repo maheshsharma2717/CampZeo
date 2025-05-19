@@ -102,11 +102,15 @@
     </div>
   </div>
 </div> -->
+    <div class="popup" [ngClass]="{'d-none':!showPostsPopup}">
+      <app-campaign-posts-popup (togglePopup)="Togglepopup()" #postsPopup></app-campaign-posts-popup>
 
+    </div>
 <!-- Modal -->
 <div class="modal fade " id="platformModal" tabindex="-1" aria-labelledby="platformModalLabel" aria-hidden="true"
   data-bs-backdrop="static" data-bs-keyboard="false">
   <div class="modal-dialog modal-dialog-centered modal-xl">
+
     <div class="modal-content rounded">
       <div class="modal-header">
         <div class="row w-100 align-items-center">
@@ -135,7 +139,7 @@
                 style="height: 227px;">
                 <h3>Add Your Own template </h3>
                 <p>Create a workflow from scratch or start with one of our templates.</p>
-                <a routerLink="/add-message-template" [queryParams]="{ type: smsPlatForm }" class="text-decoration-none"
+                <a routerLink="/add-campaign-post" [queryParams]="{ type: smsPlatForm }" class="text-decoration-none"
                   (click)="closeModal()">
                   <button class="btn btn-primary">
                     Add New</button>
@@ -154,7 +158,7 @@
                 </div>
               </div>
               <div class="card-footer">
-                <a [routerLink]="'/edit-message-template'" [queryParams]="{id: item.id, type: smsPlatForm}"
+                <a [routerLink]="'/edit-campaign-post'" [queryParams]="{id: item.id, type: smsPlatForm}"
                   (click)="closeModal()">
                   <i class="fa fa-eye"> &nbsp; Preview </i> and
                   <i class="fa fa-edit"> &nbsp; Edit </i>
@@ -266,7 +270,9 @@
                                   <i class="fab fa-instagram fa-1-3x pointer"></i>
                                 </span> -->
                                   <span>
-                                <i class="fa-solid fa-calendar"></i>
+                              <a class="pointer mx-3" title="Edit Campaign" [routerLink]="'/list-campaign-posts'"
+                                  [queryParams]="{campaignId: item.id}" >
+                                     <i class="far fa-calendar"></i></a>
                                 </span>
                               </td>
                               <td class="align-middle text-center">

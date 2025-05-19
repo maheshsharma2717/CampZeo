@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
 import { Route, Router, RouterModule, NavigationStart } from '@angular/router';
 import { AppService } from '../../../services/app-service.service';
 import { CommonModule, DATE_PIPE_DEFAULT_OPTIONS, DatePipe, NgFor } from '@angular/common';
@@ -7,11 +7,12 @@ import { DomSanitizer } from '@angular/platform-browser';
 import { FormsModule } from '@angular/forms';
 import { NgxPaginationModule } from 'ngx-pagination';
 import { ToastrService } from 'ngx-toastr';
+import { CampaignPostsPopupComponent } from "../campaign-posts-popup/campaign-posts-popup.component";
 
 @Component({
   selector: 'app-list-campaign',
   standalone: true,
-  imports: [NgFor, RouterModule, CommonModule, FormsModule,NgxPaginationModule],
+  imports: [NgFor, RouterModule, CommonModule, FormsModule, NgxPaginationModule, CampaignPostsPopupComponent],
   templateUrl: './list-campaign.component.html',
   styleUrl: './list-campaign.component.css',
   providers: [DatePipe, { provide: DATE_PIPE_DEFAULT_OPTIONS, useValue: "yyyy-MM-ddTHH:mm:ss" }]
@@ -34,27 +35,15 @@ export class ListCampaignComponent implements OnInit, OnDestroy {
   originalContacts: any[] = [];
   searchTerm: string = '';
   itemsPerPage: number = 5;
-  itemsPerPageOptions: number[] = [5,20, 100, 200, 1000];
+  itemsPerPageOptions: number[] = [5, 20, 100, 200, 1000];
   page: number = 1;
   total: number = 0;
-  constructor(private service: AppService,private toastr: ToastrService, private sanitizer: DomSanitizer, private router: Router) {
+  showPostsPopup:boolean=false;
+  constructor(private service: AppService, private toastr: ToastrService, private sanitizer: DomSanitizer, private router: Router) {
 
   }
   ngOnInit(): void {
-    this.service.GetCampaigns().subscribe({
-      next: (response: any) => {
-        this.Campaigns = response.data;
-        this.originalContacts=this.Campaigns;
-        this.total = this.Campaigns.length;
-        if (response.isSuccess) {
-        //this.toastr.success(response.message)
-        this.toastr.success('Campaigns loaded successfully')
-        }
-        else{
-          this.toastr.warning(response.message)
-        }
-      }
-    });
+    this.GetRecords();
     this.routerSubscription = this.router.events.subscribe((event) => {
       if (event instanceof NavigationStart) {
         this.closeModal();
@@ -62,7 +51,39 @@ export class ListCampaignComponent implements OnInit, OnDestroy {
       }
     });
   }
+  @ViewChild('postsPopup') postsPopup!: CampaignPostsPopupComponent;
 
+  showPosts(id:any) {
+    this.postsPopup.showPosts(id);
+  }
+  Togglepopup(){
+    this.showPostsPopup=!this.showPostsPopup;
+  }
+
+  GetRecords() {
+    var request: any = {
+      "data": {
+        "pageSize": this.itemsPerPage,
+        "pageNumber": this.page,
+        "searchText": this.searchTerm,
+        "sortBy": "id",
+        "sortDesc": true
+      }
+    };
+    this.service.GetCampaigns(request).subscribe({
+      next: (response: any) => {
+        this.Campaigns = response.data.list;
+        this.total = response.data.totalCount;
+        this.originalContacts = this.Campaigns;
+        if (response.isSuccess) {
+          this.toastr.success('Campaigns loaded successfully')
+        }
+        else {
+          this.toastr.warning(response.message)
+        }
+      }
+    });
+  }
   openModal(platform: string, item: any): void {
     this.smsPlatForm = platform;
     this.campaignId = item.id;
@@ -74,9 +95,9 @@ export class ListCampaignComponent implements OnInit, OnDestroy {
       this.type = 3;
     } else if (this.smsPlatForm === "RCS") {
       this.type = 4;
-    }    else if (this.smsPlatForm === "Facebook") {
+    } else if (this.smsPlatForm === "Facebook") {
       this.type = 5;
-    }    else if (this.smsPlatForm === "Instagram") {
+    } else if (this.smsPlatForm === "Instagram") {
       this.type = 6;
     }
     this.modalTitle = `${platform} template gallery`;
@@ -87,7 +108,7 @@ export class ListCampaignComponent implements OnInit, OnDestroy {
       modalInstance.show();
       localStorage.setItem("campainId", item.id);
 
-      this.service.GetMessageTemplateDetails(this.type, item.id).subscribe({
+      this.service.GetCampaignPostDetails(this.type, item.id).subscribe({
         next: (response: any) => {
           this.modalContentAll = response.data.messageTemplates || [];
           this.selectedTemplateId = response.data.selectedTemplateId;
@@ -98,8 +119,9 @@ export class ListCampaignComponent implements OnInit, OnDestroy {
     }
   }
 
+
   filterTemplates(): void {
-    debugger;
+
     if (!this.searchQuery || this.searchQuery.trim() === '') {
       this.filteredModalContentAll = [...this.modalContentAll];
     } else {
@@ -122,8 +144,8 @@ export class ListCampaignComponent implements OnInit, OnDestroy {
       },
 
     };
-    debugger;
-    this.service.createCampaignMessageTemplate(data).subscribe((response: any) => {
+
+    this.service.createCampaignCampaignPost(data).subscribe((response: any) => {
       this.closeModal();
     })
   }
@@ -164,7 +186,7 @@ export class ListCampaignComponent implements OnInit, OnDestroy {
     if (this.searchTerm) {
       this.Campaigns = this.originalContacts.filter(item =>
         item.name.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
-        item.description.toLowerCase().includes(this.searchTerm.toLowerCase()) 
+        item.description.toLowerCase().includes(this.searchTerm.toLowerCase())
       );
     } else {
       this.Campaigns = this.originalContacts;

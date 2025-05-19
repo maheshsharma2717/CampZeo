@@ -161,3 +161,97 @@
   .text-end{
     text-align: end !important;
   }
+
+  /* Popup overlay */
+.popup {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(44, 62, 80, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1050;
+}
+
+/* Hide popup when not active */
+.d-none {
+  display: none !important;
+}
+
+/* Popup content (the modal itself) */
+.popup app-campaign-posts-popup {
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.25);
+  padding: 0;
+  min-width: 50%;
+  max-width: 90vw;
+  max-height: 80vh;
+  overflow-y: auto;
+  display: block;
+}
+
+/* Modal header */
+.popup .modal-header {
+  border-bottom: 1px solid #e5e5e5;
+  padding: 1rem 1.5rem;
+  background: #f8f9fa;
+  border-radius: 8px 8px 0 0;
+}
+
+/* Modal title */
+.popup .modal-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+}
+
+/* Modal close button */
+.popup .close, .popup .btn-close {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  opacity: 0.7;
+  cursor: pointer;
+  position: absolute;
+  right: 1.5rem;
+  top: 1.2rem;
+}
+
+/* Modal body */
+.popup .modal-body {
+  padding: 1.5rem;
+}
+
+/* Table styling */
+.popup table.table {
+  margin-bottom: 0;
+  background: #fff;
+}
+
+.popup th, .popup td {
+  vertical-align: middle;
+  text-align: left;
+}
+
+.popup th {
+  background: #f1f1f1;
+  font-weight: 600;
+}
+
+.popup tr:nth-child(even) {
+  background: #fafbfc;
+}
+
+/* Responsive adjustments */
+@media (max-width: 700px) {
+  .popup app-campaign-posts-popup {
+    min-width: 95vw;
+    padding: 0.5rem;
+  }
+  .popup .modal-body {
+    padding: 0.5rem;
+  }
+}

@@ -17,7 +17,7 @@ export class AuthCallbackComponent implements OnInit {
   constructor( private route: ActivatedRoute, private router: Router, private http: HttpClient,public service: AppService ) {}
 
   ngOnInit(): void {
-    debugger;
+    
     const code = this.route.snapshot.queryParamMap.get('code');
     const platform = this.route.snapshot.queryParamMap.get('state') || 'facebook';
     const userId = this.service.User.id;

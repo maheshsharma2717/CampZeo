@@ -22,7 +22,7 @@ export class CreateOrganisationComponent {
 });
 
   onSubmit() {
-    debugger
+    
     var request  = {data:this.form.value};
     this.service.CreateOrganisation(request).subscribe({
       next: (response: any) => {
