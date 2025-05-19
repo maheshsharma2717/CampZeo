@@ -12,7 +12,8 @@
   import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
   import { provideToastr } from 'ngx-toastr';
   import { registerLicense } from '@syncfusion/ej2-base';
-  registerLicense('Ngo9BigBOggjHTQxAR8/V1NNaF5cXmBCe0xxWmFZfVtgcl9GaFZSQ2YuP1ZhSXxWdkFgWX9YcHxWQWZZVkZ9XUs=');
+  registerLicense('ORg4AjUWIQA/Gnt2XFhhQlJHfV5AQmBIYVp/TGpJfl96cVxMZVVBJAtUQF1hTH5Wd0NjXHpcc3xVRWdZWkZ/');
+  
   bootstrapApplication(AppComponent, {
     ...appConfig,
     providers: [

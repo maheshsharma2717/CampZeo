@@ -70,7 +70,7 @@ namespace MC.Basic.API
             builder.Services.AddPersistanceServices(builder.Configuration);
 
             builder.Services.AddControllers();
-
+            builder.Services.AddHttpClient();
 
             //builder.Services.AddCors(options => options.AddPolicy("open", policy => policy
             //.WithOrigins([builder.Configuration["ApiUrl"] ?? "https://localhost:7020",
@@ -89,6 +89,11 @@ namespace MC.Basic.API
                            .AllowCredentials();
                 });
             });
+            builder.Services.AddControllers()
+    .AddNewtonsoftJson(options =>
+    {
+        options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
+    });
 
 
             Log.Logger = new LoggerConfiguration()

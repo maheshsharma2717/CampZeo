@@ -1,4 +1,12 @@
-.logo{
-    /* height: 35px; */
+/* .logo{
     width: 150px;
+} */
+
+.main-panel-topbar {
+    position: relative;
+    width: calc(100% - 265px);
+
+    min-height: 100%;
+    float: right;
+    transition: all .3s;
 }

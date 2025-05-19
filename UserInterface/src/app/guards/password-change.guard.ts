@@ -7,13 +7,12 @@ import { ToastrService } from 'ngx-toastr';
 })
 export class PasswordChangeGuard implements CanActivate {
 
-  constructor(private router: Router, private toastr: ToastrService) {}
+  constructor(private router: Router, private toastr: ToastrService) { }
 
   canActivate(): boolean {
-    
     const isFirstLogin = localStorage.getItem('IsFirstLogin') === 'true';
-
-    if (isFirstLogin) {
+    const userRole = Number(localStorage.getItem('UserRole'));
+    if (isFirstLogin && userRole !== 1) {
       this.toastr.warning('Please change your password before continuing');
       this.router.navigate(['/profile']);
       return false;

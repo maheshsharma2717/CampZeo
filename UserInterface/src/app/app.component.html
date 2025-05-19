@@ -3,28 +3,15 @@
 }@else{
 
 <div class=""[ngClass]="{'expanded': !service.toggle, 'collapsed': service.toggle,'toggle-sidebar':!service.toggle}">
-   <div class="">
-      <!-- <nav id="sidebar">
-         <app-sidebar></app-sidebar>
-      </nav> -->
-      
+   <div class="">      
          <app-sidebar [collapsed]="isSidebarCollapsed" [isMobileNavOpen]="isMobileNavOpen"></app-sidebar>
-   
-      <!-- <div id="content" [ngClass]="{'wider-content': !service.toggle, 'narrow-content': service.toggle}"> -->
       <div>
-         <!-- topbar -->
-         <!-- <div class="topbar">
-            <nav class="navbar navbar-expand-lg navbar-light ">
-               <app-topbar class="w-100"></app-topbar>
-            </nav>
-         </div> -->
          <div class="">
             <nav class="">
-               <app-topbar (toggleSidebar)="toggleSidebar()" class=""></app-topbar>
+               <!-- <app-topbar (toggleSidebar)="toggleSidebar()" class=""></app-topbar> -->
+               <app-topbar></app-topbar>
             </nav>
          </div>
-         <!-- end topbar -->
-         <!-- dashboard inner -->
          <div class="" >
             <div class="">
                <div [ngClass]=" service.showSpinner?'showSpinner':'hideSpinner'">
@@ -39,13 +26,17 @@
                      </div>
                   </div>
                </div>
-               <section
+               <!-- <section
               class="pcoded-main-container"
                [class.main-collapsed]="isSidebarCollapsed && !isMobileNavOpen">
                <router-outlet class=""></router-outlet>
+               </section> -->
+               <section>
+                  <div class="">
+                     <router-outlet class=""></router-outlet>
+                  </div>
                </section>
             </div>
-            <!-- end dashboard inner -->
          </div>
       </div>
    </div>

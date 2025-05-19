@@ -22,6 +22,7 @@
     "@angular/router": "^18.2.0",
     "@daypilot/daypilot-lite-angular": "^3.32.1",
     "@syncfusion/ej2-angular-base": "^29.1.33",
+    "@syncfusion/ej2-angular-grids": "^29.2.4",
     "@syncfusion/ej2-angular-schedule": "^29.1.38",
     "@syncfusion/ej2-base": "^29.1.36",
     "angular-email-editor": "^15.2.0",
