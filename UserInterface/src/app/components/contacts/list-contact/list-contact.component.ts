@@ -105,7 +105,6 @@ export class ListContactComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    debugger
     this.service.GetContacts().subscribe({
       next: (response: any) => {
         if (response.isSuccess) {
