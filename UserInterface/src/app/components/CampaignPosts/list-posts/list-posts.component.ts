@@ -57,7 +57,7 @@ GetCampaignPosts(){
         this.total = response.data.totalCount
         if (response.isSuccess) {
           // this.toastr.success(response.message)
-          this.toastr.success('Campaign Posts loaded successfully')
+        //  this.toastr.success('Campaign Posts loaded successfully')
         }
         else {
           this.toastr.warning(response.message)

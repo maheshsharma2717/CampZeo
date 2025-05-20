@@ -9,7 +9,7 @@ import Quill from 'quill';
 @Component({
   selector: 'app-event',
   standalone: true,
-  imports: [ReactiveFormsModule, CommonModule, FormsModule, NgxPaginationModule,RouterModule],
+  imports: [ReactiveFormsModule, CommonModule, FormsModule, NgxPaginationModule, RouterModule],
   templateUrl: './event.component.html',
   styleUrl: './event.component.css'
 })
@@ -54,10 +54,10 @@ export class EventComponent implements OnInit {
     }
   }
   GetData() {
-    
+
     this.service.GetEventForCampaignPost({ data: this.id }).subscribe({
       next: (response: any) => {
-        
+
         this.contacts = response.data.contacts
         this.Post = response.data.post
         this.filteredContacts = this.contacts
@@ -68,19 +68,19 @@ export class EventComponent implements OnInit {
     })
   }
   setActiveTab(): void {
-    if (this.Post.type==1) {
+    if (this.Post.type == 1) {
       this.activeTab = 'email';
-    } else if (this.Post.type==2) {
+    } else if (this.Post.type == 2) {
       this.activeTab = 'SMS';
-    } else if (this.Post.type==3) {
+    } else if (this.Post.type == 3) {
       this.activeTab = 'whatsApp';
-    } else if (this.Post.type==4) {
+    } else if (this.Post.type == 4) {
       this.activeTab = 'rcs';
     }
-    else if (this.Post.type==5) {
+    else if (this.Post.type == 5) {
       this.activeTab = 'facebook';
     }
-    else if (this.Post.type==6) {
+    else if (this.Post.type == 6) {
       this.activeTab = 'instagram';
     }
   }
@@ -88,21 +88,25 @@ export class EventComponent implements OnInit {
     this.activeTab = tab;
   }
 
-sendMessage() {
-  
-  const campaignId = 0;
-  if (!campaignId) return;
+  sendMessage() {
+    debugger
+    // const campaignId = 0;
+    // if (!campaignId) return;
+  const campaignId = this.Post?.campaignId;  
+  if (!campaignId) {
+    this.toaster.error('Campaign ID is missing.');
+    return;
+  }
+    const facebookRaw = this.Post?.message || '';
+    const instagramRaw = this.Post?.message || '';
 
-  const facebookRaw = this.Post?.message || '';
-  const instagramRaw = this.Post?.message || '';
+    const fbContent = this.extractContent(facebookRaw);
+    const igContent = this.extractContent(instagramRaw);
 
-  const fbContent = this.extractContent(facebookRaw);
-  const igContent = this.extractContent(instagramRaw);
+    const pageId = this.selectedPage?.id;
+    const pageAccessToken = this.selectedPage?.access_token;
 
-  const pageId = this.selectedPage?.id;
-  const pageAccessToken = this.selectedPage?.access_token;
-
-  if (this.activeTab === 'facebook' && pageId && pageAccessToken) {
+    if (this.activeTab === 'facebook' && pageId && pageAccessToken) {
 
       this.service.postToFacebook({
         pageId,
@@ -121,9 +125,9 @@ sendMessage() {
         }
       });
 
-  } else if (this.activeTab === 'instagram'&& this.instagramUserId && pageAccessToken) {
-    const igContent = this.extractContent(instagramRaw);
-  
+    } else if (this.activeTab === 'instagram' && this.instagramUserId && pageAccessToken) {
+      const igContent = this.extractContent(instagramRaw);
+
       if (this.videoUrl) {
         const payload: any = {
           instagramUserId: this.instagramUserId,
@@ -131,7 +135,7 @@ sendMessage() {
           caption: igContent.text,
           videos: [this.videoUrl]
         };
-  
+
         this.service.postToInstagram(payload).subscribe({
           next: () => {
             this.toaster.success('Posted video to Instagram successfully!');
@@ -142,24 +146,24 @@ sendMessage() {
             this.toaster.error('Failed to post to Instagram.');
           }
         });
-  
+
       } else {
         let base64Image = igContent.images[0];
-  
+
         if (!base64Image) {
           this.toaster.warning('Instagram requires an image or video. Please add one.');
           return;
         }
-  
+
         this.service.uploadMedia(base64Image).subscribe({
           next: (uploadedImageUrl) => {
             const payload: any = {
               instagramUserId: this.instagramUserId,
               accessToken: pageAccessToken,
               caption: igContent.text,
-              imageUrl: uploadedImageUrl 
+              imageUrl: uploadedImageUrl
             };
-  
+
             this.service.postToInstagram(payload).subscribe({
               next: () => {
                 this.toaster.success('Posted image to Instagram successfully!');
@@ -177,29 +181,56 @@ sendMessage() {
           }
         });
       }
-  }
- else {
-    const selectedContacts = this.contacts.filter(contact => contact.selected);
-    if (selectedContacts.length === 0) {
-      alert('Please select at least one contact.');
-      return;
+    }
+    else {
+      debugger
+      const selectedContacts = this.contacts.filter(contact => contact.selected);
+      if (selectedContacts.length === 0) {
+        alert('Please select at least one contact.');
+        return;
+      }
+
+      const platformTypeMap: any = {
+        email: 1,
+        SMS: 2,
+        whatsApp: 3,
+        RCS: 4
+      };
+
+      const platformType = platformTypeMap[this.activeTab];
+
+      if (platformType === undefined) {
+        this.toaster.error('Invalid platform type selected.');
+        return;
+      }
+
+      const request = {
+        data: {
+          campaignId: campaignId,
+          type: platformType,
+          message: this.Post?.message || '',
+          contacts: selectedContacts.map(c => ({
+            contactName: c.contactName,
+            contactEmail: c.contactEmail,
+            contactMobile: c.contactMobile,
+            contactWhatsApp: c.contactWhatsApp
+          }))
+        }
+      };
+
+      this.service.SendCampPost(request).subscribe({
+        next: (response: any) => {
+          this.toaster.success(response.data);
+          this.router.navigate(['list-campaigns']);
+        },
+        error: err => {
+          console.error('Campaign post failed:', err);
+          this.toaster.error('Failed to send message.');
+        }
+      });
     }
 
-    const request = {
-      data: {
-        contacts: selectedContacts,
-        campaignId
-      }
-    };
-
-    this.service.SendBulkMessagetoContacts(request).subscribe({
-      next: (response: any) => {
-        this.toaster.success(response.data);
-        this.router.navigate(['list-campaigns']);
-      }
-    });
   }
-}
 
 
   checkChange(i: number) {
@@ -249,7 +280,7 @@ sendMessage() {
     var html = message.split('[{(break)}]');
     return html[0];
   }
- 
+
   //instagram fb changes
   onPageSelect(): void {
     this.instagramUserId = '';
@@ -266,27 +297,27 @@ sendMessage() {
   }
   extractContent(message: string) {
     if (!message) return { text: '', images: [], videos: [] };
-  
+
     const htmlParts = message.split('[{(break)}]');
-    const html = htmlParts[0]; 
+    const html = htmlParts[0];
     const doc = new DOMParser().parseFromString(html, 'text/html');
-  
+
     const text = doc.body.textContent?.trim() || '';
-  
+
     const images: string[] = [];
     doc.querySelectorAll('img').forEach(img => {
       if (img.src.startsWith('data:image')) {
         images.push(img.src);
       }
     });
-  
+
     const videos: string[] = [];
     doc.querySelectorAll('video').forEach(video => {
       if (video.src.startsWith('data:video')) {
         videos.push(video.src);
       }
     });
-  
+
     return { text, images, videos };
   }
 }
