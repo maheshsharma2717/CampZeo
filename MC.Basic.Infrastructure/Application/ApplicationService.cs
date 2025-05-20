@@ -1,5 +1,6 @@
 ﻿using MC.Basic.Application.Contracts.Infrasructure;
 using MC.Basic.Application.Contracts.Persistance;
+using MC.Basic.Application.Models.Calender;
 using MC.Basic.Application.Models.DataModel;
 using MC.Basic.Application.Models.Organisation;
 using MC.Basic.Application.Models.Post;
@@ -1023,22 +1024,48 @@ public class ApplicationService : IApplicationService
         return new ApiResponse<Campaign> { Data = finalCampaign };
     }
 
-    public async Task<ApiResponse<List<ScheduledPostDto>>> GetScheduledPosts(ApiRequest<long?> request)
+    public async Task<ApiResponse<List<ScheduledPostDto>>> GetScheduledPosts(ApiRequest<CalenderPostRequest> request)
     {
         var organisationId = GetOrganisationIdFromToken(request.Token);
-        var campaignId = request.Data;
+        string mode = request.Data.Mode; 
+        DateTime date = Convert.ToDateTime(request.Data.Date); 
 
-        var templates = await _campaignPostRepository.GetMessageTemplatesForOrganisation(organisationId);
+        DateTime startDate, endDate;
 
-        var filteredTemplates = templates
-            .Where(t => t.IsAttachedToCampaign && t.ScheduledPostTime.HasValue)
-            .Where(t => !campaignId.HasValue || t.CampaignId == campaignId.Value)
-            .ToList();
+        switch(mode.ToLower())
+        {
+            case "day":
+            startDate = date.Date;
+            endDate = date.Date.AddDays(1).AddTicks(-1);
+            break;
 
-        var campaignIds = filteredTemplates.Select(t => t.CampaignId).Distinct().ToList();
+            case "week":
+            // Week starts on Monday
+            int diff = (7 + (date.DayOfWeek - DayOfWeek.Monday)) % 7;
+            startDate = date.AddDays(-diff).Date;
+            endDate = startDate.AddDays(7).AddTicks(-1); // End of Sunday
+            break;
+
+            case "month":
+            startDate = new DateTime(date.Year, date.Month, 1);
+            endDate = startDate.AddMonths(1).AddTicks(-1); // End of last day in the month
+            break;
+
+            default:
+            throw new ArgumentException("Invalid mode. Must be 'day', 'week', or 'month'.");
+        }
+
+        var posts = await _campaignPostRepository.ToListWhereAsync(
+            x => x.ScheduledPostTime >= startDate && x.ScheduledPostTime <= endDate);
+        //var filteredPosts = posts
+        //    .Where(t => t.IsAttachedToCampaign && t.ScheduledPostTime.HasValue)
+        //    .Where(t => !campaignId.HasValue || t.CampaignId == campaignId.Value)
+        //    .ToList();
+
+
+        var campaignIds = posts.Select(t => t.CampaignId).Distinct().ToList();
         var campaigns = await _campaignRepository.GetCampaignsByIds(campaignIds);
-
-        var result = filteredTemplates.Select(t =>
+        var result = posts.Select(t =>
         {
             var campaign = campaigns.FirstOrDefault(c => c.Id == t.CampaignId);
             return new ScheduledPostDto
@@ -1059,15 +1086,14 @@ public class ApplicationService : IApplicationService
         };
     }
 
-    public async Task<ApiResponse<CampaignPostDto>> GetTemplateById(ApiRequest<TemplateLookupDto> request)
+    public async Task<ApiResponse<CampaignPostDto>> GetPostById(ApiRequest<long> request)
     {
         var organisationId = GetOrganisationIdFromToken(request.Token);
-        var templateId = request.Data.TemplateId;
-        var type = request.Data.Type;
+        var postId = request.Data;
 
-        var template = await _campaignPostRepository.GetById(templateId);
+        var post = await _campaignPostRepository.GetById(postId);
 
-        if(template == null || template.Type != (PlatformType)type)
+        if(post == null)
         {
             return new ApiResponse<CampaignPostDto>
             {
@@ -1077,12 +1103,12 @@ public class ApplicationService : IApplicationService
         }
         var result = new CampaignPostDto
         {
-            Type = (int)template.Type,
-            Message = template.Message,
-            VideoUrl = template.VideoUrl,
-            ScheduledPostTime = template.ScheduledPostTime,
-            Subject = template.Subject,
-            SenderEmail = template.SenderEmail,
+            Type = (int)post.Type,
+            Message = post.Message,
+            VideoUrl = post.VideoUrl,
+            ScheduledPostTime = post.ScheduledPostTime,
+            Subject = post.Subject,
+            SenderEmail = post.SenderEmail,
         };
 
         return new ApiResponse<CampaignPostDto>

@@ -9,6 +9,7 @@
                     <ul class="breadcrumb">
                         <li class="breadcrumb-item"><a [routerLink]="'/dashboard'"><i class="feather icon-home"></i></a>
                         </li>
+                        <li class="breadcrumb-item"><a [routerLink]="'/list-campaigns'">Campaign List</a></li>
                         <li class="breadcrumb-item"><a [routerLink]="'/list-campaign-posts'">Campaign Posts</a></li>
                     </ul>
                 </div>
@@ -24,7 +25,7 @@
                 <div class="card-body px-4 py-3">
                     <div class="row g-3">
                         <div class="col-sm-6">
-                            <label class="form-label fw-semibold text-muted">Name</label>
+                            <label class="form-label fw-bold text-muted">Name</label>
                             <div class="text-dark fs-6">{{ Campaign.name }}</div>
                         </div>
                         <div class="col-sm-6">
@@ -124,11 +125,12 @@
 
                                     <td class="align-middle"><a class="pointer" [routerLink]="'/edit-post'"
                                             [queryParams]="{id:item.id}">
-                                            <i class="feather icon-edit"></i>
-                                            </a> &nbsp;<a class="pointer" [routerLink]="'/campaign-events'"
-                                            [queryParams]="{id:item.id}">
-                                            <i class="fas fa-send"></i>
-                                        </a>
+                                            <i class="feather icon-edit"></i></a>
+                                            &nbsp;&nbsp;
+                                          <a class="pointer" title="Campaign Events" [routerLink]="'/campaign-events'"
+                                  [queryParams]="{id: item.id}">
+                                  <i class="far fa-comment-dots"></i>
+                                </a>
                                        
                                     </td>
                                    

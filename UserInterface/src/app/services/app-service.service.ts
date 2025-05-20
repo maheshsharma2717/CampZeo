@@ -96,9 +96,10 @@ export class AppService {
 
     return this.http.post(ApiUrl + "Campaign/GetCampaigns", request);
   }
-  GetScheduledPosts() {
+  GetScheduledPosts(date: any, selectMode: string | undefined) {
     var request = {
-      token: this.Token
+      token: this.Token,
+      data:{date:date.toString(),mode:selectMode}
     }
     return this.http.post(ApiUrl + "Campaign/GetScheduledPosts", request);
   }
@@ -275,7 +276,7 @@ export class AppService {
     };
 
     console.log('Request Body:', requestBody);  // Debugging to check request structure
-    return this.http.post(ApiUrl + `Campaign/GetTemplateById`, requestBody);
+    return this.http.post(ApiUrl + `Campaign/GetPostById`, requestBody);
   }
 
 

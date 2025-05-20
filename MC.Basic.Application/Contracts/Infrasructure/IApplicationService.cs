@@ -1,6 +1,8 @@
 ﻿
+using MC.Basic.Application.Models.Calender;
 using MC.Basic.Application.Models.DataModel;
 using MC.Basic.Application.Models.Organisation;
+using MC.Basic.Application.Models.Post;
 using MC.Basic.Domains.Entities;
 using Microsoft.AspNetCore.Http;
 
@@ -40,9 +42,9 @@ namespace MC.Basic.Application.Contracts.Infrasructure
         Task<ApiResponse<Organisation>> SuspendOrRecoverOrganisation(ApiRequest<long> request);
 
         Task<ApiResponse<Organisation>> GetOrgenisationById(ApiRequest<long> request);
-     //   Task<ApiResponse<Campaign>> SaveCampaignWithTemplate(ApiRequest<SaveCampaignWithTemplateDto> request);
-     //   Task<ApiResponse<List<ScheduledPostDto>>> GetScheduledPosts(ApiRequest<long?> request);
-      //  Task<ApiResponse<MessageTemplateDto>> GetTemplateById(ApiRequest<TemplateLookupDto> request);
+        //   Task<ApiResponse<Campaign>> SaveCampaignWithTemplate(ApiRequest<SaveCampaignWithTemplateDto> request);
+        Task<ApiResponse<List<ScheduledPostDto>>> GetScheduledPosts(ApiRequest<CalenderPostRequest> request);
+          Task<ApiResponse<CampaignPostDto>> GetPostById(ApiRequest<long> request);
 
     }
 }
