@@ -54,14 +54,7 @@
                             <p class="">Campaigns</p>
                         </a>
                     </li>
-                    <li class="nav-item" [ngClass]="{'active':router.url.includes('list-message-templates')|| 
-                        router.url.includes('add-message-template')||
-                         router.url.includes('edit-message-template')}" *ngIf="service.User.role > 1">
-                        <a [routerLink]="'/list-message-templates'" class="">
-                            <i class="far fa-clone"></i>
-                            <p class="pcoded-mtext">Message Templates</p>
-                        </a>
-                    </li>
+     
                     <li class="nav-item" [ngClass]="{'active':router.url.includes('event-logs')}"
                         *ngIf="service.User.role > 1">
                         <a [routerLink]="'/event-logs'" class="">

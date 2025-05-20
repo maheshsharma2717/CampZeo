@@ -1,6 +1,7 @@
 ﻿
 using MC.Basic.API.Helpers;
 using MC.Basic.Application.Contracts.Infrasructure;
+using MC.Basic.Application.Models.Calender;
 using MC.Basic.Application.Models.DataModel;
 using MC.Basic.Domains.Entities;
 using Microsoft.AspNetCore.Cors;
@@ -200,34 +201,22 @@ public class CampaignController : ControllerBase
     //    }
     //}
 
-    //[HttpPost("GetScheduledPosts")]
-    //[EnableCors("CorsPolicy")]
-    //public async Task<IActionResult> GetScheduledPosts(ApiRequest<long?> request)
-    //{
-    //    try
-    //    {
-    //        var response = await _applicationService.GetScheduledPosts(request);
-    //        return Ok(response);
-    //    }
-    //    catch (Exception ex)
-    //    {
-    //        return BadRequest(ex);
-    //    }
-    //}
+    [HttpPost("GetScheduledPosts")]
+    [EnableCors("CorsPolicy")]
+    public async Task<IActionResult> GetScheduledPosts(ApiRequest<CalenderPostRequest> request)
+    {
+        try
+        {
+            var response = await _applicationService.GetScheduledPosts(request);
+            return Ok(response);
+        }
+        catch(Exception ex)
+        {
+            return BadRequest(ex);
+        }
+    }
 
-    //[HttpPost("GetTemplateById")]
-    //public async Task<IActionResult> GetTemplateById(ApiRequest<TemplateLookupDto> request)
-    //{
-    //    try
-    //    {
-    //        var response = await _applicationService.GetTemplateById(request);
-    //        return Ok(response);
-    //    }
-    //    catch (Exception ex)
-    //    {
-    //        return BadRequest(new ApiResponse<string> { IsSuccess = false, Message = ex.Message });
-    //    }
-    //}
+
 
 
 }

@@ -1,6 +1,7 @@
 ﻿using MC.Basic.API.Helpers;
 using MC.Basic.Application.Contracts.Infrasructure;
 using MC.Basic.Application.Models.DataModel;
+using MC.Basic.Application.Models.Post;
 using MC.Basic.Domains.Entities;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
@@ -95,5 +96,17 @@ public class CampaignPostController  : ControllerBase
         }
     }
 
-    
+    [HttpPost("GetPostById")]
+    public async Task<IActionResult> GetPostById(ApiRequest<long> request)
+    {
+        try
+        {
+            var response = await _applicationService.GetPostById(request);
+            return Ok(response);
+        }
+        catch(Exception ex)
+        {
+            return BadRequest(new ApiResponse<string> { IsSuccess = false, Message = ex.Message });
+        }
+    }
 }

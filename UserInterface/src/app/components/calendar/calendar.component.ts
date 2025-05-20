@@ -138,11 +138,10 @@ export class CalendarComponent implements OnInit {
   }
   ngOnInit(): void {
     this.initializeComponentData();
-    this.loadScheduledPosts();
+    this.loadScheduledPosts(DayPilot.Date.now());
   }
-  loadScheduledPosts(): void {
-    
-    this.service.GetScheduledPosts().subscribe({
+  loadScheduledPosts(date: DayPilot.Date): void {
+    this.service.GetScheduledPosts(date,this.configNavigator.selectMode).subscribe({
       next: (response: any) => {
         if (response.isSuccess) {
           const posts = response.data;
@@ -343,20 +342,13 @@ export class CalendarComponent implements OnInit {
 
   // Preview changes
   async onEventClick(args: any) {
-    
+    debugger
     const data = args.e.data;
 
     const [templateId, type] = data.id.split('-');
     const templateType = this.mapStringToTemplateType(type);
 
-    const payload = {
-      data: {
-        templateId: parseInt(templateId),
-        type: templateType
-      }
-    };
-
-    this.service.GetTemplateById(payload).subscribe({
+    this.service.GetTemplateById(parseInt(templateId)).subscribe({
       next: (response: any) => {
         if (response.isSuccess) {
           this.previewData = response.data;
@@ -411,6 +403,7 @@ export class CalendarComponent implements OnInit {
     this.configDay.startDate = date;
     this.configWeek.startDate = date;
     this.configMonth.startDate = date;
+    this.loadScheduledPosts(date)
   }
 
 
@@ -674,7 +667,7 @@ export class CalendarComponent implements OnInit {
         next: () => {
           this.toaster.success('Campaign saved successfully');
           this.closeCampaignModal();
-          this.loadScheduledPosts();
+          this.loadScheduledPosts(DayPilot.Date.now());
         },
         error: (err) => {
           this.toaster.error('Error saving campaign');

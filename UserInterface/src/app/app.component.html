@@ -2,9 +2,9 @@
 <app-login></app-login>
 }@else{
 
-<div class=""[ngClass]="{'expanded': !service.toggle, 'collapsed': service.toggle,'toggle-sidebar':!service.toggle}">
-   <div class="">      
-         <app-sidebar [collapsed]="isSidebarCollapsed" [isMobileNavOpen]="isMobileNavOpen"></app-sidebar>
+<div class="" [ngClass]="{'expanded': !service.toggle, 'collapsed': service.toggle,'toggle-sidebar':!service.toggle}">
+   <div class="">
+      <app-sidebar [collapsed]="isSidebarCollapsed" [isMobileNavOpen]="isMobileNavOpen"></app-sidebar>
       <div>
          <div class="">
             <nav class="">
@@ -12,7 +12,7 @@
                <app-topbar></app-topbar>
             </nav>
          </div>
-         <div class="" >
+         <div class="">
             <div class="">
                <div [ngClass]=" service.showSpinner?'showSpinner':'hideSpinner'">
                   <div id="loader-wrapper">
@@ -32,8 +32,13 @@
                <router-outlet class=""></router-outlet>
                </section> -->
                <section>
-                  <div class="">
-                     <router-outlet class=""></router-outlet>
+                  <div class="main-panel">
+
+                     <div class="container">
+                        <div class="page-inner">
+                           <router-outlet></router-outlet>
+                        </div>
+                     </div>
                   </div>
                </section>
             </div>
