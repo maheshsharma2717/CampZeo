@@ -114,4 +114,21 @@ namespace MC.Basic.Application.Models.Post
         public IFormFile File { get; set; }
     }
 
+
+    //for share post 
+    public class CampaignPostRequest
+    {
+        public int CampaignId { get; set; }
+        public PlatformType Type { get; set; } 
+        public string Message { get; set; }
+        public List<ContactModel> Contacts { get; set; }
+    }
+    public class ContactModel
+    {
+        public string ContactName { get; set; }
+        public string ContactEmail { get; set; }
+        public string ContactMobile { get; set; }
+        public string ContactWhatsApp { get; set; }
+    }
+
 }

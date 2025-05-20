@@ -1093,7 +1093,7 @@ public class ApplicationService : IApplicationService
 
         var post = await _campaignPostRepository.GetById(postId);
 
-        if(post == null)
+        if (post == null)
         {
             return new ApiResponse<CampaignPostDto>
             {
@@ -1115,6 +1115,79 @@ public class ApplicationService : IApplicationService
         {
             Data = result,
             IsSuccess = true
+        };
+    }
+    public async Task<ApiResponse<string>> SendCampPost(ApiRequest<CampaignPostRequest> request)
+    {
+        var campaign = await _campaignRepository.GetQuariable()
+            .FirstOrDefaultAsync(x => x.Id == request.Data.CampaignId);
+
+        if (campaign == null)
+        {
+            return new ApiResponse<string>
+            {
+                IsSuccess = false,
+                Data = "Campaign not found."
+            };
+        }
+
+        if (request.Data.Contacts == null || !request.Data.Contacts.Any())
+        {
+            return new ApiResponse<string>
+            {
+                IsSuccess = false,
+                Data = "No contacts selected."
+            };
+        }
+
+        var contacts = request.Data.Contacts.Select(x => new Contact
+        {
+            ContactName = x.ContactName,
+            ContactEmail = x.ContactEmail,
+            ContactMobile = x.ContactMobile,
+            ContactWhatsApp = x.ContactWhatsApp
+        }).ToList();
+
+        var messageTemplate = new CampaignPost
+        {
+            Message = request.Data.Message,
+            Type = request.Data.Type,
+            CampaignId = request.Data.CampaignId,
+            IsAttachedToCampaign = true
+        };
+
+        StringBuilder sb = new StringBuilder();
+
+        switch (request.Data.Type)
+        {
+            case PlatformType.Email:
+                sb.AppendLine(await SendMail(contacts, messageTemplate));
+                break;
+
+            case PlatformType.SMS:
+                sb.AppendLine(await SendSms(contacts, messageTemplate));
+                break;
+
+            case PlatformType.WhatsApp:
+                sb.AppendLine(await SendWhatsapp(contacts, messageTemplate));
+                break;
+
+            case PlatformType.RCS:
+                sb.AppendLine(await SendRcs(contacts, messageTemplate));
+                break;
+
+            default:
+                return new ApiResponse<string>
+                {
+                    IsSuccess = false,
+                    Data = "Unsupported platform type."
+                };
+        }
+
+        return new ApiResponse<string>
+        {
+            IsSuccess = true,
+            Data = "Message(s) sent successfully.\n" + sb.ToString()
         };
     }
 

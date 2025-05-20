@@ -3,6 +3,7 @@ using MC.Basic.API.Helpers;
 using MC.Basic.Application.Contracts.Infrasructure;
 using MC.Basic.Application.Models.Calender;
 using MC.Basic.Application.Models.DataModel;
+using MC.Basic.Application.Models.Post;
 using MC.Basic.Domains.Entities;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
@@ -106,7 +107,7 @@ public class CampaignController : ControllerBase
             var response = await _applicationService.GetEventForCampaignPost(request);
             return Ok(response);
         }
-        catch(Exception ex)
+        catch (Exception ex)
         {
             return BadRequest(ex);
         }
@@ -210,13 +211,24 @@ public class CampaignController : ControllerBase
             var response = await _applicationService.GetScheduledPosts(request);
             return Ok(response);
         }
-        catch(Exception ex)
+        catch (Exception ex)
         {
             return BadRequest(ex);
         }
     }
 
-
-
+    [HttpPost("send-campaign-post")]
+    public async Task<IActionResult> SendCampaignPost(ApiRequest<CampaignPostRequest> request)
+    {
+        try
+        {
+            var response = await _applicationService.SendCampPost(request);
+            return Ok(response);
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(ex);
+        }
+    }
 
 }

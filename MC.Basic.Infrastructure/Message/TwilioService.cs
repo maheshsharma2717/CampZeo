@@ -13,6 +13,7 @@ using Newtonsoft.Json;
 using RestSharp;
 using System.Text.RegularExpressions;
 using System.Text;
+using System.Collections.Concurrent;
 
 namespace MC.Basic.Infrastructure.Message 
 {
@@ -200,29 +201,32 @@ namespace MC.Basic.Infrastructure.Message
 
         public async Task<string> SendBatchWhatsappSms(Application.Models.DataModel.TwilioMessageParams smsParams)
         {
-            var accountSid = _accountSid;
-            var authToken = _authToken;
-            TwilioClient.Init(accountSid, authToken);
+            TwilioClient.Init(_accountSid, _authToken);
 
-            StringBuilder logs = new StringBuilder();
-            var tasks = new List<Task>();
-
-            foreach(var receiver in smsParams.Recipients)
+            var logs = new ConcurrentBag<string>(); // Thread-safe
+            var tasks = smsParams.Recipients.Select(async receiver =>
             {
-                tasks.Add(Task.Run(async () =>
+                try
                 {
                     var message = await MessageResource.CreateAsync(
                         body: smsParams.Message,
-                        from: new PhoneNumber($@"whatsapp:{_twilioWhatsappNumber}"),
-                        to: new PhoneNumber($@"whatsapp:{receiver}")
+                        from: new PhoneNumber($"whatsapp:{_twilioWhatsappNumber}"),
+                        to: new PhoneNumber($"whatsapp:{receiver}")
                     );
-                    logs.AppendLine($@"To:{receiver}, Status:{message.Status}");
-                }));
-            }
+
+                    logs.Add($"To: {receiver}, Status: {message.Status}");
+                }
+                catch (Exception ex)
+                {
+                    logs.Add($"To: {receiver}, Error: {ex.Message}");
+                }
+            });
 
             await Task.WhenAll(tasks);
-            return logs.ToString();
+
+            return string.Join(Environment.NewLine, logs);
         }
+
 
 
         // Get logs from Twilio
