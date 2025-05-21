@@ -246,12 +246,12 @@ export class CalendarComponent implements OnInit {
 
   getIconByType(type: string): string {
     switch (type) {
-      case "facebook": return "fa fa-facebook-f";
-      case "instagram": return "fa fa-instagram";
+      case "facebook": return "fab fa-facebook-f";
+      case "instagram": return "fab fa-instagram";
       case "email": return "fa fa-envelope";
       case "sms": return "fa fa-comment";
       case "rcs": return "fa fa-comments";
-      case "whatsapp": return "fa fa-whatsapp";
+      case "whatsapp": return "fab fa-whatsapp";
       default: return "fa fa-bullhorn";
     }
   }
@@ -353,7 +353,9 @@ export class CalendarComponent implements OnInit {
         if (response.isSuccess) {
           this.previewData = response.data;
           this.editorContent = this.previewData.message;
+           this.simpleText = this.previewData.message;
           this.isPreviewModalOpen = true;
+          
         } else {
           this.toaster.warning(response.message);
         }

@@ -169,10 +169,10 @@
                             </div>
                         </div>
                         }
-                        <div class="row my-4 mx-auto " style="width: 100%;">
+                        <div class="row my-4 mx-auto mb-5" style="width: 100%;">
                             <quill-editor [ngStyle]="{width:'100%'} " [(ngModel)]="editorContent"
                                 [ngModelOptions]="{standalone:true}" (onFocus)="focus($event)" (onBlur)="blur($event)"
-                                (onEditorCreated)="created($event)"></quill-editor>
+                                (onEditorCreated)="created($event)" class="mb-4"></quill-editor>
                         </div>
                         }
                     </div>

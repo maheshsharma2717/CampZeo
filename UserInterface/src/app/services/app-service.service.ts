@@ -261,23 +261,40 @@ export class AppService {
 
   // preview clander
   // Ensure token is fetched correctly
-  GetTemplateById(payload: any): Observable<any> {
+  // GetTemplateById(payload: any): Observable<any> {
 
-    const token = this.Token // Get token from local storage
+  //   const token = this.Token // Get token from local storage
 
-    if (!token) {
-      console.error('Token is missing!');
-      throw new Error('Token is missing');  // Ensure that if token is missing, it throws an error
-    }
+  //   if (!token) {
+  //     console.error('Token is missing!');
+  //     throw new Error('Token is missing');  // Ensure that if token is missing, it throws an error
+  //   }
 
-    const requestBody = {
-      token: token,  // Include token from local storage
-      data: payload.data  // Use the data passed from the onEventClick function
-    };
+  //   const requestBody = {
+  //     token: token,  // Include token from local storage
+  //     data: payload.data  // Use the data passed from the onEventClick function
+  //   };
 
-    console.log('Request Body:', requestBody);  // Debugging to check request structure
-    return this.http.post(ApiUrl + `Campaign/GetPostById`, requestBody);
+  //   console.log('Request Body:', requestBody);  // Debugging to check request structure
+  //   return this.http.post(ApiUrl + `CampaignPost/GetPostById`, requestBody);
+  // }
+
+  GetTemplateById(templateId: number){
+  const token = this.Token;
+
+  if (!token) {
+    console.error('Token is missing!');
+    throw new Error('Token is missing');
   }
+
+  const requestBody = {
+    token: token,
+    data: templateId  
+  };
+
+  console.log('Request Body:', requestBody);
+  return this.http.post(ApiUrl + `CampaignPost/GetPostById`, requestBody);
+}
 
 //post
 
