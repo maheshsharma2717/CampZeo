@@ -105,7 +105,7 @@
                             <e-column headerText="Event" width="250" [template]="eventTemplate"></e-column>
                             <e-column headerText="Recipient" width="250" [template]="recipientTemplate"></e-column>
                             <e-column headerText="Timestamp" width="250" [template]="timeTemplate"></e-column>
-                            <e-column headerText="Action" width="250" [template]="actionTemplate"></e-column>
+                            <!-- <e-column headerText="Action" width="250" [template]="actionTemplate"></e-column> -->
                         </e-columns>
 
                     </ejs-grid>
@@ -123,12 +123,12 @@
                             {{data.timestamp}}
                         </p>
                     </ng-template>
-                    <ng-template #actionTemplate let-data>
-                        <a class="pointer mx-3" title="Edit Log" [routerLink]="'/edit-campaign'"
+                    <!-- <ng-template #actionTemplate let-data>
+                        <a class="pointer mx-3" title="Edit Log" [routerLink]="'/'"
                             [queryParams]="{ id: data.id }">
                             <i class="far fa-edit"></i>
                         </a>
-                    </ng-template>
+                    </ng-template> -->
 
 
                     <div class="d-flex justify-content-end mb-0">
