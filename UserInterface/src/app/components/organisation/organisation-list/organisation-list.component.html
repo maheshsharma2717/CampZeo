@@ -54,7 +54,7 @@
                                 <div class="d-flex mx-2">
                                     <label class="m-3">Filter Suspended :</label>
                                     <select [(ngModel)]="isSuspendedFilter" [ngModelOptions]="{standalone:true}"
-                                        class="form-control w-auto py-0" (change)="loadOrganisations();currentPage = 1">
+                                        class="form-control w-auto py-0 mb-2" (change)="loadOrganisations();currentPage = 1">
                                         <option value="">All</option>
                                         <option value="true">Suspended</option>
                                         <option value="false">Active</option>

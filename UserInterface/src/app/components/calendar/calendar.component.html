@@ -1,6 +1,6 @@
 <div class="pcoded-content">
     <div class="page-header">
-        <div class="page-block">
+        <div class="page-block w-100">
             <div class="container">
                 <div class="navigator">
                     <daypilot-navigator [config]="configNavigator" [events]="events" [(date)]="date"
@@ -444,9 +444,9 @@
                     <div class="d-flex justify-content-between mt-4">
                         <button *ngIf="currentStep > 1" class="btn btn-secondary mr-3"
                             (click)="goToPreviousStep()">Back</button>
-                        <button *ngIf="currentStep < 3" class="btn btn-primary"
-                            (click)="proceedToNextStep()">Next</button>
-                        <button (click)="nextStep()">Next</button>
+                        <!-- <button *ngIf="currentStep < 3" class="btn btn-primary"
+                            (click)="proceedToNextStep()">Next</button> -->
+                        <button (click)="nextStep()"class="btn btn-primary">Next</button>
                         <button *ngIf="currentStep === 3" class="btn btn-primary" (click)="saveCampaign()">Save</button>
                     </div>
 
@@ -491,11 +491,11 @@
                     </div>
                 </div>
 
-                <div class="text-start mb-2">
+                <!-- <div class="text-start mb-2">
                     <label for="organisationName">Organisation Name</label>
                     <input class="form-control" id="organisationName" formControlName="organisationName"
                         [value]="previewData?.organisationName" type="text" readonly />
-                </div>
+                </div> -->
 
                 <div class="text-start">
                     <label for="senderEmail">Sender Email</label>
