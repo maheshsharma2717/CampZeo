@@ -109,7 +109,7 @@ export class ListContactComponent implements OnInit {
       next: (response: any) => {
         if (response.isSuccess) {
           this.Contacts = response.data;
-          this.toastr.success('Contacts loaded successfully');
+          //this.toastr.success('Contacts loaded successfully');
         } else {
           this.toastr.warning(response.message);
         }

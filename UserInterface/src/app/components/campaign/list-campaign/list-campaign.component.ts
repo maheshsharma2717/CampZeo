@@ -8,14 +8,18 @@ import { FormsModule } from '@angular/forms';
 import { NgxPaginationModule } from 'ngx-pagination';
 import { ToastrService } from 'ngx-toastr';
 import { CampaignPostsPopupComponent } from "../campaign-posts-popup/campaign-posts-popup.component";
+import { GridModule, PageService, SortService, ToolbarService } from '@syncfusion/ej2-angular-grids';
 
 @Component({
   selector: 'app-list-campaign',
   standalone: true,
-  imports: [NgFor, RouterModule, CommonModule, FormsModule, NgxPaginationModule, CampaignPostsPopupComponent],
+  imports: [NgFor, RouterModule, CommonModule, FormsModule, NgxPaginationModule, CampaignPostsPopupComponent,  GridModule,],
   templateUrl: './list-campaign.component.html',
   styleUrl: './list-campaign.component.css',
-  providers: [DatePipe, { provide: DATE_PIPE_DEFAULT_OPTIONS, useValue: "yyyy-MM-ddTHH:mm:ss" }]
+  providers: [DatePipe, { provide: DATE_PIPE_DEFAULT_OPTIONS, useValue: "yyyy-MM-ddTHH:mm:ss" },    PageService,
+    SortService,
+    ToolbarService,
+     ]
 })
 export class ListCampaignComponent implements OnInit, OnDestroy {
 
@@ -39,6 +43,11 @@ export class ListCampaignComponent implements OnInit, OnDestroy {
   page: number = 1;
   total: number = 0;
   showPostsPopup:boolean=false;
+  // syncfusion grid 
+  
+  pageSettings = { pageSize: 10, pageSizes: [5, 10, 20, 50] };
+  //pageSizes = [5, 10, 20, 50];
+  toolbarOptions = ['Custom'];
   constructor(private service: AppService, private toastr: ToastrService, private sanitizer: DomSanitizer, private router: Router) {
 
   }
@@ -52,7 +61,7 @@ export class ListCampaignComponent implements OnInit, OnDestroy {
     });
   }
   @ViewChild('postsPopup') postsPopup!: CampaignPostsPopupComponent;
-
+  @ViewChild('grid') grid: any;
   showPosts(id:any) {
     this.postsPopup.showPosts(id);
   }
@@ -76,7 +85,7 @@ export class ListCampaignComponent implements OnInit, OnDestroy {
         this.total = response.data.totalCount;
         this.originalContacts = this.Campaigns;
         if (response.isSuccess) {
-          this.toastr.success('Campaigns loaded successfully')
+          //this.toastr.success('Campaigns loaded successfully')
         }
         else {
           this.toastr.warning(response.message)
@@ -197,6 +206,24 @@ export class ListCampaignComponent implements OnInit, OnDestroy {
   }
   pageChangeEvent(event: number) {
     this.page = event;
+  }
+
+  // syncfusion grid 
+  onSearch(event: any) {
+    this.searchTerm = event.target.value.trim();
+    this.pageSettings.pageSize = 1;
+    this.GetRecords();
+  }
+
+  onPageSizeChange(event: any) {
+    this.pageSettings.pageSize = +event.target.value;
+    this.pageSettings.pageSize = 1;
+    this.GetRecords();
+  }
+
+  onPageChange(event: any) {
+    this.pageSettings.pageSize = event.currentPage;
+    this.GetRecords();
   }
 }
 
