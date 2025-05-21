@@ -137,6 +137,28 @@
                                 </tr>
                             </tbody>
                         </table>
+
+                        <ejs-grid [dataSource]='CampaignPosts' #grid allowPaging="true" [pageSettings]="pageSettings" 
+                        [toolbar]="toolBarOptions" [sortSettings]="{ columns: [{ field: 'id', direction: 'Descending' }] }"
+                         height='400px' [enableHover]="false">
+
+                        <ng-template #toolbarTemplate></ng-template>
+
+                        <e-columns>
+                            <e-column field="id" headerText="#" width="80" textAlign="Left"></e-column>
+                            <e-column headerText="Details" width="250" [template]="detailsTemplate"></e-column>
+                            <e-column headerText="Post/Message" width="250" [template]="messageTemplate"></e-column>
+                            <e-column headerText="Type" width="250" [template]="typeTemplate"></e-column>
+                            <e-column headerText="Action" width="250" [template]="actionTemplate"></e-column>
+                        </e-columns>
+
+                        </ejs-grid>
+
+                        <ng-template #detailsTemplate let-data></ng-template>
+                        <ng-template #messageTemplate let-data></ng-template>
+                        <ng-template #typeTemplate let-data></ng-template>
+                        <ng-template #actionTemplate let-data></ng-template>
+
                         <div class="d-flex justify-content-end mb-0">
                             <pagination-controls class="pagination"
                                 (pageChange)="pageChangeEvent($event)"></pagination-controls>
