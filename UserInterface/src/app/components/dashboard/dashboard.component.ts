@@ -1,7 +1,7 @@
 import { Component, NgModule, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { SidebarComponent } from "../../layout/sidebar/sidebar.component";
 import { TopbarComponent } from "../../layout/topbar/topbar.component";
-import { ActivatedRoute, Router, RouterOutlet } from '@angular/router';
+import { ActivatedRoute, Router, RouterModule, RouterOutlet } from '@angular/router';
 import { ChangePasswordDialogComponent } from '../../change-password-dialog/change-password-dialog.component';
 import { MatDialog } from '@angular/material/dialog';
 import { HttpClient } from '@angular/common/http';
@@ -19,7 +19,7 @@ import { CalendarComponent } from '../calendar/calendar.component';
   selector: 'app-dashboard',
   standalone: true,
   imports: [SidebarComponent, TopbarComponent, RouterOutlet, FormsModule, CommonModule,
-    ScheduleModule, EmailEditorModule, ReactiveFormsModule, QuillModule, CalendarComponent],
+    ScheduleModule, EmailEditorModule, ReactiveFormsModule, QuillModule, CalendarComponent,RouterModule],
   providers: [
     DayService,
     WeekService,
@@ -31,8 +31,7 @@ import { CalendarComponent } from '../calendar/calendar.component';
   styleUrl: './dashboard.component.css'
 })
 export class DashboardComponent implements OnInit {
-
-  constructor(private dialog: MatDialog, private activatedRoute: ActivatedRoute,
+    constructor(private dialog: MatDialog, private activatedRoute: ActivatedRoute,
     private router: Router,
     private http: HttpClient, private service: AppService, private toaster: ToastrService, private route: Router) { }
 

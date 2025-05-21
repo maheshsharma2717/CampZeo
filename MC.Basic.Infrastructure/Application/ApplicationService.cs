@@ -1024,47 +1024,47 @@ public class ApplicationService : IApplicationService
         return new ApiResponse<Campaign> { Data = finalCampaign };
     }
 
+  
     public async Task<ApiResponse<List<ScheduledPostDto>>> GetScheduledPosts(ApiRequest<CalenderPostRequest> request)
     {
         var organisationId = GetOrganisationIdFromToken(request.Token);
-        string mode = request.Data.Mode; 
-        DateTime date = Convert.ToDateTime(request.Data.Date); 
+        string mode = request.Data.Mode;
+        DateTime date = Convert.ToDateTime(request.Data.Date);
 
         DateTime startDate, endDate;
 
-        switch(mode.ToLower())
+        switch (mode.ToLower())
         {
             case "day":
-            startDate = date.Date;
-            endDate = date.Date.AddDays(1).AddTicks(-1);
-            break;
+                startDate = date.Date;
+                endDate = date.Date.AddDays(1).AddTicks(-1);
+                break;
 
             case "week":
-            // Week starts on Monday
-            int diff = (7 + (date.DayOfWeek - DayOfWeek.Monday)) % 7;
-            startDate = date.AddDays(-diff).Date;
-            endDate = startDate.AddDays(7).AddTicks(-1); // End of Sunday
-            break;
+                int diff = (7 + (date.DayOfWeek - DayOfWeek.Monday)) % 7;
+                startDate = date.AddDays(-diff).Date;
+                endDate = startDate.AddDays(7).AddTicks(-1);
+                break;
 
             case "month":
-            startDate = new DateTime(date.Year, date.Month, 1);
-            endDate = startDate.AddMonths(1).AddTicks(-1); // End of last day in the month
-            break;
+                startDate = new DateTime(date.Year, date.Month, 1);
+                endDate = startDate.AddMonths(1).AddTicks(-1);
+                break;
 
             default:
-            throw new ArgumentException("Invalid mode. Must be 'day', 'week', or 'month'.");
+                throw new ArgumentException("Invalid mode. Must be 'day', 'week', or 'month'.");
         }
 
+        var campaigns = await _campaignRepository.ToListWhereAsync(c => c.OrganisationId == organisationId);
+        var campaignIds = campaigns.Select(c => c.Id).ToList();
+
         var posts = await _campaignPostRepository.ToListWhereAsync(
-            x => x.ScheduledPostTime >= startDate && x.ScheduledPostTime <= endDate);
-        //var filteredPosts = posts
-        //    .Where(t => t.IsAttachedToCampaign && t.ScheduledPostTime.HasValue)
-        //    .Where(t => !campaignId.HasValue || t.CampaignId == campaignId.Value)
-        //    .ToList();
+            x => x.ScheduledPostTime >= startDate &&
+                 x.ScheduledPostTime <= endDate &&
+                 x.CampaignId != null &&
+                 campaignIds.Contains(x.CampaignId.Value)
+        );
 
-
-        var campaignIds = posts.Select(t => t.CampaignId).Distinct().ToList();
-        var campaigns = await _campaignRepository.GetCampaignsByIds(campaignIds);
         var result = posts.Select(t =>
         {
             var campaign = campaigns.FirstOrDefault(c => c.Id == t.CampaignId);

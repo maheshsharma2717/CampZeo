@@ -173,34 +173,6 @@ public class CampaignController : ControllerBase
     }
 
 
-    //[HttpPost("GetCampaignsMessageTemplates")]
-    //[EnableCors("CorsPolicy")]
-    //public async Task<IActionResult> GetCampaignsMessageTemplates(ApiRequest<CampaignTemplateRequestDto> request)
-    //{
-    //    try
-    //    {
-    //        var response = await _applicationService.GetCampaignsMessageTemplate(request);
-    //        return Ok(response);
-    //    }
-    //    catch (Exception ex)
-    //    {
-    //        return BadRequest(ex);
-    //    }
-    //}
-    //[HttpPost("SaveCampaignWithTemplates")]
-    //[EnableCors("CorsPolicy")]
-    //public async Task<IActionResult> SaveCampaignWithTemplates([FromBody] ApiRequest<SaveCampaignWithTemplateDto> request)
-    //{
-    //    try
-    //    {
-    //        var response = await _applicationService.SaveCampaignWithTemplate(request);
-    //        return Ok(response);
-    //    }
-    //    catch (Exception ex)
-    //    {
-    //        return BadRequest(ex.Message);
-    //    }
-    //}
 
     [HttpPost("GetScheduledPosts")]
     [EnableCors("CorsPolicy")]

@@ -1,63 +1,25 @@
-<!-- <div class="container mt-5">
-    <h3>Import contacts for bulk creation or updating</h3>
-    <p>Create, update, or blocklist contacts in bulk in Brevo. And manage unlimited contacts in one place.
-        Keep in mind you must have your contacts' consent to send them campaigns.</p>
-
-    <div class="row h-50">
-        <div class="col-md-6">
-            <div class="card text-center p-4 shadow-sm pointer" style="min-height :40vh" (click)="ImportCsv.click()">
-                <div class="card-body">
-                    <div class="mb-3">
-                        <i class="fa fa-file" style="font-size: 2rem;"></i>
-                    </div>
-                    <h5 class="card-title">Import from a file</h5>
-                    <p class="card-text">Import your contacts from a csv, xlsx, or txt file.</p>
-                </div>
-            </div>
-            <input type="file" class="d-none" accept=".csv" #ImportCsv (change)="UploadCsvFile($event)">
-        </div>
-
-        <div class="col-md-6 ">
-            <div class="card text-center p-4 pointer shadow-sm" style="min-height :40vh" (click)="onPasteClick()">
-                <div class="card-body">
-                    <div class="mb-3">
-                        <i class="fa fa-clipboard" style="font-size: 2rem;"></i>
-                    </div>
-                    <h5 class="card-title">Copy-paste</h5>
-                    <p class="card-text">Paste the contacts as text from a spreadsheet or a similar list.</p>
-                </div>
-            </div>
-
-            <textarea id="pasteArea" class="d-none" #PasteArea></textarea>
-        </div>
-
-        <div class="mt-3">
-            <a href="#" class="link-primary">Learn about contacts you're allowed to import for optimal delivery and
-                compliance</a>
-        </div>
-    </div>
-</div> -->
-
 <div class="pcoded-content">
     <!-- [ breadcrumb ] start -->
-    <div class="page-header">
-        <div class="page-block">
-            <div class="row align-items-center">
-                <div class="col-md-12">
-                    <div class="page-header-title">
-                        <h5 class="m-b-10">Contact</h5>
-                    </div>
-                    <ul class="breadcrumb">
-                        <li class="breadcrumb-item"><a [routerLink]="'/dashboard'"><i class="feather icon-home"></i></a>
-                        </li>
-                        <li class="breadcrumb-item"><a [routerLink]="'/list-contacts'">Contact List</a></li>
-                        <li class="breadcrumb-item"><a [routerLink]="'/import-contacts'">Import Contact</a></li>
-                    </ul>
-                </div>
-            </div>
-        </div>
+    <div class="page-header mb-0">
+        <h3 class="fw-bold mb-3">Contact</h3>
+        <ul class="breadcrumbs mb-3">
+            <li class="nav-item">
+                <a [routerLink]="'/dashboard'"><i class=" icon-home"></i></a>
+            </li>
+            <li class="separator">
+                <i class="icon-arrow-right"></i>
+            </li>
+            <li class="nav-item">
+                <a [routerLink]="'/list-contacts'">Contact List</a>
+            </li>
+            <li class="separator">
+                <i class="icon-arrow-right"></i>
+            </li>
+            <li class="nav-item">
+                <a [routerLink]="'/import-contacts'">Import Contact</a>
+            </li>
+        </ul>
     </div>
-
     <h3>Import contacts for bulk creation or updating</h3>
     <p>Create, update, or blocklist contacts in bulk in Brevo. And manage unlimited contacts in one place.
         Keep in mind you must have your contacts' consent to send them campaigns.</p>
@@ -91,7 +53,7 @@
 
             <!-- Hidden Textarea for pasting data -->
             <textarea id="pasteArea" class="d-none col-md-12" #PasteArea></textarea>
-            
+
         </div>
 
         <div class="col-12">

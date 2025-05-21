@@ -295,3 +295,25 @@
   .selected{
     box-shadow: 0px 0px 8px 0px #00c4b7;
   }
+
+  .email-editor-container {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
+  box-sizing: border-box;
+  padding-right: 0;
+  padding-left: 0;
+}
+
+::ng-deep email-editor {
+  width: 100% !important;
+  max-width: 100% !important;
+  display: block;
+}
+
+::ng-deep email-editor iframe {
+  width: 100% !important;
+  max-width: 100% !important;
+  display: block;
+  box-sizing: border-box;
+}

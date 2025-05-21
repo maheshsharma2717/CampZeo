@@ -167,9 +167,9 @@
    margin-left: 70px !important;
 }
 
-.inner-width {
+/* .inner-width {
    width: calc(100vw - 25%);
-}
+} */
 
 .uncollapsed-width{
    width: calc(100% - 75px);

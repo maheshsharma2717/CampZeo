@@ -1,256 +1,83 @@
-<!-- <div class="card p-3 pt-0">
-  <div class="card-body">
-    <div class="col-md-12">
-      <div class="white_shd full margin_bottom_30">
-        <div class="full graph_head d-flex align-items-center justify-content-between my-2 py-2 ">
-          <div class="heading1 margin_0">
-            <h2 class="pagetitle">Campaign</h2>
-          </div>
-          <div>
-            <a [routerLink]="'/add-campaign'"><button type="button"
-                class="btn cur-p btn-outline-primary px-2 py-1 mx-2">Add New</button>
-            </a>
-          </div>
-        </div>
-        <div class="d-flex justify-content-between align-items-center mb-3">
-          <input type="text" class="form-control w-25" placeholder="Search..." [(ngModel)]="searchTerm"
-              (input)="onSearchChange()" />
-          <div class="form-group d-flex align-items-center justify-content-center gap-1">
-              <div>
-                  <span class="text-primary">entries per page</span>
-              </div>
-              <div>
-                  <select id="itemsPerPageSelect" class="form-select d-inline w-auto"
-                      [(ngModel)]="itemsPerPage" (change)="onItemsPerPageChange(itemsPerPage)">
-                      <option *ngFor="let option of itemsPerPageOptions" [value]="option">{{ option }}
-                      </option>
-                  </select>
-              </div>
-
-          </div>
-      </div>
-
-        <div class="table_section padding_infor_info">
-          <div class="table-responsive-sm">
-            <table class="table table-hover">
-              <thead class="table-light">
-                <tr>
-                  <th scope="col">#</th>
-                  <th scope="col">Details</th>
-                  <th scope="col">Dates</th>
-                  <th scope="col">Platform</th>
-                  <th scope="col" class="text-center">Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr *ngFor="let item of Campaigns | paginate: { itemsPerPage: itemsPerPage, currentPage: page, totalItems: total }; let i = index">
-                  <td>{{ (page - 1) * itemsPerPage + (i + 1) }}</td>
-                  <td class="align-middle">
-                    <p class="fw-semibold m-0">{{ item.name }}</p>
-                    <p class="text-muted m-0">{{ item.description }}</p>
-                  </td>
-                  <td class="align-middle">
-                    <p class="m-0">
-                      @if(item.startDate != item.endDate) {
-                      From {{ item.startDate | date:'dd-MM-yyyy' }} to {{ item.endDate |
-                      date:'dd-MM-yyyy' }}
-                      } @else {
-                      On {{ item.startDate | date:'dd-MM-yyyy' }}
-                      }
-                    </p>
-                  </td>
-                  <td class="align-middle">
-                    <span *ngIf="item.isSmsCampaign" class="mx-2 pointer" title="SMS" (click)="openModal('SMS',item)">
-                      <i class="fas fa-sms fa-1-3x pointer"></i>
-                    </span>
-                    <span *ngIf="item.isEmailCampaign" class="mx-2 pointer" title="Email" (click)="openModal('Email',item)">
-                      <i class="fa-regular fa-envelope-open fa-1-3x pointer"></i>
-                    </span>
-                    <span *ngIf="item.isWhatsAppCampaign" class="mx-2 pointer" title="WhatsApp"
-                      (click)="openModal('WhatsApp',item)">
-                      <i class="fab fa-whatsapp fa-1-3x pointer"></i>
-                    </span>
-                    <span *ngIf="item.isRCSCampaign" class="mx-2 pointer" title="RCS" (click)="openModal('RCS',item)">
-                      <i class="fa fa-globe fa-1-3x pointer"></i>
-                    </span>
-                    <span *ngIf="item.isFacebookCampaign" class="mx-2 pointer" title="Facebook" (click)="openModal('Facebook',item)">
-                      <i class="fab fa-facebook fa-1-3x pointer"></i>
-                    </span>
-                    <span *ngIf="item.isInstagramCampaign" class="mx-2 pointer" title="Instagram" (click)="openModal('Instagram',item)">
-                      <i class="fab fa-instagram fa-1-3x pointer"></i>
-                    </span>
-                  </td>
-                  <td class="align-middle text-center">
-                    <a class="pointer me-3" title="Edit Campaign" [routerLink]="'/edit-campaign'"
-                      [queryParams]="{id: item.id}">
-                      <i class="fa fa-edit fa-1-3x"></i>
-                    </a>
-                    <a class="pointer" title="Campaign Events" [routerLink]="'/campaign-events'"
-                      [queryParams]="{id: item.id}">
-                      <i class="ri ri-message-2-line fa-1-3x text-success"></i>
-                    </a>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-            <div class="d-flex justify-content-end pt-3 mb-0">
-              <pagination-controls (pageChange)="pageChangeEvent($event)"></pagination-controls>
-          </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</div> -->
 <div class="popup" [ngClass]="{'d-none':!showPostsPopup}">
   <app-campaign-posts-popup (togglePopup)="Togglepopup()" #postsPopup></app-campaign-posts-popup>
 
 </div>
-<!-- Modal -->
-<!-- <div class="modal fade " id="platformModal" tabindex="-1" aria-labelledby="platformModalLabel" aria-hidden="true"
-  data-bs-backdrop="static" data-bs-keyboard="false">
-  <div class="modal-dialog modal-dialog-centered modal-xl">
-
-    <div class="modal-content rounded">
-      <div class="modal-header">
-        <div class="row w-100 align-items-center">
-          <div class="col-sm-3">
-            <h5 class="modal-title pagetitle" id="platformModalLabel">{{ modalTitle }}</h5>
-          </div>
-          <div class="col-sm-5">
-            <input type="text" class="form-control" placeholder="Search templates..." [(ngModel)]="searchQuery"
-              (input)="filterTemplates()" />
-          </div>
-          <div class="col-sm-4 text-end">
-            <button type="button" class="btn-close custom-close-button" data-bs-dismiss="modal"
-              aria-label="Close">X</button>
-          </div>
-        </div>
-      </div>
-      <div class="modal-body" style="height: 70vh; overflow-y: auto;">
-        <div class="row ">
-          <div class="col-md-3">
-            <div class="card-box">
-              <div class="card-header-1">
-                <span class="team-label">Create Your Own</span>
-                <span class="team-tag">New</span>
-              </div>
-              <div class="card-body d-flex align-items-center justify-content-center flex-column"
-                style="height: 227px;">
-                <h3>Add Your Own template </h3>
-                <p>Create a workflow from scratch or start with one of our templates.</p>
-                <a routerLink="/add-campaign-post" [queryParams]="{ type: smsPlatForm }" class="text-decoration-none"
-                  (click)="closeModal()">
-                  <button class="btn btn-primary">
-                    Add New</button>
-                </a>
-              </div>
-            </div>
-          </div>
-          <div class="col-md-3" *ngFor="let item of filteredModalContentAll; let i = index">
-            <div class="card-box" [ngClass]="{'selected-box-shadow': selectedTemplateId == item.id}">
-              <div class="card-header-1" [ngClass]="{'selected-box-header': selectedTemplateId == item.id}">
-                <span class="team-label">{{ item.subject }}</span>
-              </div>
-              <div class="card-body">
-                <div class="form-control yourDivId" id="messageText" rows="5" [innerHTML]="GetHtml(item.message)"
-                  style="height: 200px; background: transparent; border: none;">
-                </div>
-              </div>
-              <div class="card-footer">
-                <a [routerLink]="'/edit-campaign-post'" [queryParams]="{id: item.id, type: smsPlatForm}"
-                  (click)="closeModal()">
-                  <i class="fa fa-eye"> &nbsp; Preview </i> and
-                  <i class="fa fa-edit"> &nbsp; Edit </i>
-                </a>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</div> -->
-
-
 
 <div class="pcoded-content">
   <div class="page-header mb-0">
-    <div class="page-block">
-      <div class="row align-items-center">
-        <div class="col-md-12">
-          <div class="page-header-title ">
-            <h5 class="m-b-10">Campaign</h5>
-          </div>
-          <ul class="breadcrumb">
-            <li class="breadcrumb-item"><a [routerLink]="'/dashboard'"><i class="feather icon-home"></i></a>
-            </li>
-            <li class="breadcrumb-item"><a [routerLink]="'/list-campaigns'">Campaign List</a></li>
-          </ul>
-        </div>
-      </div>
-    </div>
+    <h3 class="fw-bold mb-3">Campaign</h3>
+    <ul class="breadcrumbs mb-3">
+      <li class="nav-item">
+        <a [routerLink]="'/dashboard'"><i class=" icon-home"></i></a>
+      </li>
+      <li class="separator">
+        <i class="icon-arrow-right"></i>
+      </li>
+      <li class="nav-item">
+        <a [routerLink]="'/list-campaigns'">Campaign List</a>
+      </li>
+    </ul>
   </div>
   <div class="row">
     <div class="col-md-12">
       <div class="d-flex justify-content-between align-items-center py-2 px-3 bg-white">
-  <div class="title-table">
-    <h5 class="m-0">Campaign List</h5>
-  </div>
- 
-   <div class="d-flex justify-content-end bg-white">
-       <input id="gridSearch" type="text" placeholder="Search..."
-        (input)="onSearch($event)" class="form-control" style="width:500px" />
-    </div>
-     <div>
-    <a [routerLink]="'/add-campaign'">
-      <button type="button" class="btn btn-outline-primary">Add New</button>
-    </a>
-  </div>
-</div>
-<ejs-grid #grid [dataSource]="Campaigns" [allowPaging]="true" [pageSettings]="pageSettings" [toolbar]="toolbarOptions"
-  [sortSettings]="{ columns: [{ field: 'id', direction: 'Descending' }] }" height="400px" [enableHover]="false"
-  [rowHeight]="60">
+        <div class="title-table">
+          <h5 class="m-0">Campaign List</h5>
+        </div>
 
-  <ng-template #toolbarTemplate></ng-template>
+        <div class="d-flex justify-content-end bg-white">
+          <input id="gridSearch" type="text" placeholder="Search..." (input)="onSearch($event)" class="form-control"
+            style="width:500px" />
+        </div>
+        <div>
+          <a [routerLink]="'/add-campaign'">
+            <button type="button" class="btn btn-outline-primary">Add New</button>
+          </a>
+        </div>
+      </div>
+      <ejs-grid #grid [dataSource]="Campaigns" [allowPaging]="true" [pageSettings]="pageSettings"
+        [toolbar]="toolbarOptions" [sortSettings]="{ columns: [{ field: 'id', direction: 'Descending' }] }"
+        height="400px" [enableHover]="false" [rowHeight]="60">
 
-  <e-columns>
-    <e-column field="id" headerText="#" width="80" textAlign="Left"></e-column>
-    <e-column headerText="Details" width="250" [template]="detailsTemplate"></e-column>
-    <e-column headerText="Dates" width="250" [template]="dateTemplate"></e-column>
-    <e-column headerText="Posts" width="150" [template]="postsTemplate"></e-column>
-    <e-column headerText="Actions" width="150" textAlign="Center" [template]="actionTemplate"></e-column>
-  </e-columns>
-</ejs-grid>
+        <ng-template #toolbarTemplate></ng-template>
 
-<ng-template #detailsTemplate let-data>
-  <p class="fw-semibold m-0">{{ data.name }}</p>
-  <p class="text-muted m-0">{{ data.description }}</p>
-</ng-template>
+        <e-columns>
+          <e-column field="id" headerText="#" width="80" textAlign="Left"></e-column>
+          <e-column headerText="Details" width="250" [template]="detailsTemplate"></e-column>
+          <e-column headerText="Dates" width="250" [template]="dateTemplate"></e-column>
+          <e-column headerText="Posts" width="150" [template]="postsTemplate"></e-column>
+          <e-column headerText="Actions" width="150" textAlign="Center" [template]="actionTemplate"></e-column>
+        </e-columns>
+      </ejs-grid>
 
-<ng-template #dateTemplate let-data>
-  <p class="m-0">
-    <ng-container *ngIf="data.startDate !== data.endDate; else sameDate">
-      From {{ data.startDate | date:'dd-MM-yyyy' }} to {{ data.endDate | date:'dd-MM-yyyy' }}
-    </ng-container>
-    <ng-template #sameDate>
-      On {{ data.startDate | date:'dd-MM-yyyy' }}
-    </ng-template>
-  </p>
-</ng-template>
+      <ng-template #detailsTemplate let-data>
+        <p class="fw-semibold m-0">{{ data.name }}</p>
+        <p class="text-muted m-0">{{ data.description }}</p>
+      </ng-template>
 
-<ng-template #postsTemplate let-data>
-  <a class="pointer mx-3" title="Manage Posts" [routerLink]="'/list-campaign-posts'"
-    [queryParams]="{ campaignId: data.id }">
-    <i class="far fa-calendar"></i>
-  </a>
-</ng-template>
+      <ng-template #dateTemplate let-data>
+        <p class="m-0">
+          <ng-container *ngIf="data.startDate !== data.endDate; else sameDate">
+            From {{ data.startDate | date:'dd-MM-yyyy' }} to {{ data.endDate | date:'dd-MM-yyyy' }}
+          </ng-container>
+          <ng-template #sameDate>
+            On {{ data.startDate | date:'dd-MM-yyyy' }}
+          </ng-template>
+        </p>
+      </ng-template>
 
-<ng-template #actionTemplate let-data>
-  <a class="pointer mx-3" title="Edit Campaign" [routerLink]="'/edit-campaign'" [queryParams]="{ id: data.id }">
-    <i class="far fa-edit"></i>
-  </a>
-</ng-template>
+      <ng-template #postsTemplate let-data>
+        <a class="pointer mx-3" title="Manage Posts" [routerLink]="'/list-campaign-posts'"
+          [queryParams]="{ campaignId: data.id }">
+          <i class="far fa-calendar"></i>
+        </a>
+      </ng-template>
+
+      <ng-template #actionTemplate let-data>
+        <a class="pointer mx-3" title="Edit Campaign" [routerLink]="'/edit-campaign'" [queryParams]="{ id: data.id }">
+          <i class="far fa-edit"></i>
+        </a>
+      </ng-template>
       <!-- <div class="card">
         <div class="card-header d-flex aligin-item-center justify-content-between py-2">
           <div class="title-table d-flex align-items-center">

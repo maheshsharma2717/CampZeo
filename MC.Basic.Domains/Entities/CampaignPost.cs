@@ -17,6 +17,7 @@ namespace MC.Basic.Domains.Entities
         public bool IsAttachedToCampaign { get; set; } = false;
 
         public long? CampaignId { get; set; }
+        public Campaign Campaign { get; set; }
         public string? VideoUrl { get; set; }
         public DateTime? ScheduledPostTime { get; set; }
         public bool IsPostSent { get; set; } = false;

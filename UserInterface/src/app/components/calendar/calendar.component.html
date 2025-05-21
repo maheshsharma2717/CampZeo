@@ -25,8 +25,8 @@
     </div>
 </div>
 
-<!-- model for the camp -->
-<div class="modal" tabindex="-1" [ngClass]="{'show d-block': showCampaignModal}"
+<!-- model for the add campaign on the clander click-->
+<!-- <div class="modal" tabindex="-1" [ngClass]="{'show d-block': showCampaignModal}"
     style="background: rgba(0,0,0,0.5); overflow-y: scroll;">
 
     <div class="modal-dialog  modal-xl">
@@ -135,7 +135,6 @@
                                     </div>
                                 </div>
                             </div>
-                            <!-- Start DateTime -->
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label for="startDate" class="floating-label">Start Date <span
@@ -149,8 +148,6 @@
                                     </div>
                                 </div>
                             </div>
-
-                            <!-- End DateTime -->
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label for="endDate" class="floating-label">End Date <span
@@ -205,7 +202,6 @@
                                 formControlName="isInstagramCampaign">
                             <label class="form-check-label" for="isInstagramCampaign">is Instagram Campaign</label>
                         </div>
-                        <!-- </form> -->
                     </div>
                     <div *ngIf="currentStep === 2">
                         <div class="row ">
@@ -263,7 +259,6 @@
                             </div>
                         </div>
 
-                        <!-- Contact Grid (only for non-Facebook & non-Instagram campaigns) -->
                         <div class="row">
                             <div class="col-md-12">
                                 <div class="card">
@@ -293,7 +288,6 @@
                                         </div>
                                     </div>
                                     <div class="card-body table-border-style pb-1">
-                                        <!-- <div class="table-responsive"> -->
                                         <div class="table-responsive mt-4"
                                             *ngIf="campaignForm.get('type')?.value !== 5 && campaignForm.get('type')?.value !== 6">
 
@@ -352,8 +346,8 @@
                             </div>
                         </div>
 
-                        <!-- </div> -->
                         <div class="card-body ">
+
                             <div class="text-start">
                                 <label for="subject">Subject</label>
                                 <input class="form-control" id="subject" formControlName="subject" type="text" />
@@ -369,8 +363,6 @@
                                     <label for="organisationName " style="float: inline-start; width: 100%;">Message
                                         Template</label> @if(campaignForm.get('type').value==1 ){
                                     <div class="row my-4 mx-auto p-5 " style="width: 100%;">
-                                        <email-editor (loaded)="editorLoaded($event)"
-                                            (ready)="editorReady($event)"></email-editor>
                                     </div>}
                                     @if(campaignForm.get('type').value==2||campaignForm.get('type').value==3){
 
@@ -444,9 +436,7 @@
                     <div class="d-flex justify-content-between mt-4">
                         <button *ngIf="currentStep > 1" class="btn btn-secondary mr-3"
                             (click)="goToPreviousStep()">Back</button>
-                        <!-- <button *ngIf="currentStep < 3" class="btn btn-primary"
-                            (click)="proceedToNextStep()">Next</button> -->
-                        <button (click)="nextStep()"class="btn btn-primary">Next</button>
+                        <button (click)="nextStep()" class="btn btn-primary">Next</button>
                         <button *ngIf="currentStep === 3" class="btn btn-primary" (click)="saveCampaign()">Save</button>
                     </div>
 
@@ -454,7 +444,7 @@
             </div>
         </div>
     </div>
-</div>
+</div> -->
 
 <div class="modal fade show d-block" tabindex="-1" role="dialog" *ngIf="isPreviewModalOpen"
     style="background: rgba(0,0,0,0.5); overflow-y: scroll;">
@@ -467,6 +457,41 @@
                 </button>
             </div>
             <div class="card-body">
+             
+                <div class="card shadow rounded-4 overflow-hidden border-0">
+                    <div class="bg-gradient bg-secondary text-white px-4 py-3">
+                        <h5 class="mb-0 d-flex align-items-center gap-2">
+                            📋 <span>Campaign Details</span>
+                        </h5>
+                    </div>
+                    <div class="card-body px-5 py-4">
+                        <div class="row gy-4">
+                            <div class="col-md-6 text-start">
+                                <label class="form-label fw-semibold text-secondary">📛 Name</label>
+                                <div class="fs-5 fw-medium text-dark ms-4">{{ campaignData?.name }}</div>
+                            </div>
+                            <div class="col-md-6 text-start">
+                                <label class="form-label fw-semibold text-secondary">⏱️ Start Date</label>
+                                <div class="fs-5 fw-medium text-dark ms-4">
+                                    {{ campaignData?.startDate | date:'medium' }}
+                                </div>
+                            </div>
+
+                            <div class="col-md-6 text-start">
+                                <label class="form-label fw-semibold text-secondary">📅 End Date</label>
+                                <div class="fs-5 fw-medium text-dark ms-4">
+                                    {{ campaignData?.endDate | date:'medium' }}
+                                </div>
+                            </div>
+
+                            <div class="col-md-6 text-start">
+                                <label class="form-label fw-semibold text-secondary">📝 Description</label>
+                                <div class="fs-6 text-muted ms-4">{{ campaignData?.description }}</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="text-start">
                     <label for="subject">Subject</label>
                     <input class="form-control" id="subject" formControlName="subject" [value]="previewData?.subject"
@@ -478,8 +503,14 @@
                         <label for="organisationName" style="float: inline-start; width: 100%;">Message Template</label>
 
                         <div *ngIf="previewData?.type === 1">
-                            <email-editor [(ngModel)]="editorHtml"></email-editor>
+                            <!-- <email-editor [(ngModel)]="editorHtml"></email-editor> -->
+                            <!-- <email-editor #emailEditor (onLoad)="onEditorLoaded()"></email-editor> -->
+                            <email-editor #emailEditor (ready)="onEditorReady()"></email-editor>
+
+
+
                         </div>
+
                         <div *ngIf="previewData?.type === 2 || previewData?.type === 3">
                             <textarea class="form-control" [(ngModel)]="simpleText" style="min-height: 30vh;"
                                 readonly></textarea>
