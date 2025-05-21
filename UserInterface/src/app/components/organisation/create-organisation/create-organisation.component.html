@@ -1,104 +1,100 @@
-<div class="main-panel">
-    <div class="container">
-        <div class="page-inner">
-  
-     <div class="page-header pb-0">
-                <h3 class="fw-bold mb-3">Create Organisations</h3>
-                <ul class="breadcrumbs mb-3">
-                    <li class="nav-item">
-                        <a [routerLink]="'/dashboard'"><i class=" icon-home"></i></a>
-                    </li>
-                    <li class="separator">
-                        <i class="icon-arrow-right"></i>
-                    </li>
-                    <li class="nav-item">
-                        <a [routerLink]="'/list-organisation'">Organisations List</a>
-                    </li>
-                    <li class="separator">
-                        <i class="icon-arrow-right"></i>
-                    </li>
-                    <li class="nav-item">
-                        <a [routerLink]="'/create-organisation'">CreateOrganisations </a>
-                    </li>
-                </ul>
+<div class="page-header pb-0">
+    <h3 class="fw-bold mb-3">Create Organisations</h3>
+    <ul class="breadcrumbs mb-3">
+        <li class="nav-item">
+            <a [routerLink]="'/list-organisation'"><i class=" icon-home"></i></a>
+        </li>
+        <li class="separator">
+            <i class="icon-arrow-right"></i>
+        </li>
+        <li class="nav-item">
+            <a [routerLink]="'/list-organisation'">Organisations List</a>
+        </li>
+        <li class="separator">
+            <i class="icon-arrow-right"></i>
+        </li>
+        <li class="nav-item">
+            <a [routerLink]="'/create-organisation'">CreateOrganisations </a>
+        </li>
+    </ul>
+</div>
+<div class="row">
+    <div class="col-sm-12">
+        <div class="card">
+            <div class="card-header">
+                <h5>Add Organisation</h5>
             </div>
-    <div class="row">
-        <div class="col-sm-12">
-            <div class="card">
-                <div class="card-header">
-                    <h5>Add Organisation</h5>
-                </div>
-                <div class="card-body">
-                    <form [formGroup]="form" (ngSubmit)="onSubmit()">
-                        <div class="row">
+            <div class="card-body">
+                <form [formGroup]="form" (ngSubmit)="onSubmit()">
+                    <div class="row">
 
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label class="floating-label" for="name">Organisation Name<span class="text-danger ">*</span></label>
-                                    <input type="text" class="form-control" id="name"
-                                        placeholder="Enter Organisation Name" formControlName="name">
-                                    @if(form.get('name')?.invalid && form.get('name')?.touched){ <span
-                                        class="text-danger">
-                                        Organisation Name is required.
-                                    </span>}
-                                </div>
-                            </div>
-
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label class="floating-label" for="ownerName">Owner Name<span class="text-danger ">*</span></label>
-                                    <input type="text" class="form-control" id="ownerName"
-                                        placeholder="Enter Organisation Name" formControlName="ownerName">
-                                    @if(form.get('ownerName')?.invalid && form.get('ownerName')?.touched){ <span
-                                        class="text-danger">
-                                        Owner Name is required.
-                                    </span>}
-                                </div>
-                            </div>
-
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label class="floating-label" for="phone">Phone<span class="text-danger ">*</span></label>
-                                    <input type="tel" class="form-control" id="phone" placeholder="Enter Phone Number"
-                                        formControlName="phone">
-                                    @if(form.get('phone')?.invalid && form.get('phone')?.touched){ <span
-                                        class="text-danger">
-                                        Phone number is required.
-                                    </span>}
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label for="email">Email address<span class="text-danger ">*</span></label>
-                                    <input type="email" class="form-control" id="email" aria-describedby="emailHelp"
-                                        placeholder="Enter email" formControlName="email">
-                                    @if(form.get('email')?.invalid && form.get('email')?.touched){ <span
-                                        class="text-danger">
-                                        A valid email address is required.
-                                    </span>}
-                                    <small id="email" class="form-text text-muted">We'll never share your email with
-                                        anyone
-                                        else.</small>
-                                </div>
-                            </div>
-                            <div class="col-md-12">
-                                <div class="form-group">
-                                    <label for="address">Address<span class="text-danger ">*</span></label>
-                                    <input class="form-control" id="address" rows="3" formControlName="address">
-                                    @if(form.get('address')?.invalid && form.get('address')?.touched){ <span
-                                        class="text-danger">
-                                        Address is required.
-                                    </span>}
-                                </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label class="floating-label" for="name">Organisation Name<span
+                                        class="text-danger ">*</span></label>
+                                <input type="text" class="form-control" id="name" placeholder="Enter Organisation Name"
+                                    formControlName="name">
+                                @if(form.get('name')?.invalid && form.get('name')?.touched){ <span class="text-danger">
+                                    Organisation Name is required.
+                                </span>}
                             </div>
                         </div>
-                        <div class="mt-3 ">
-                            <button type="submit" class="btn btn-primary mx-3" [disabled]="form.invalid">Submit</button>
+
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label class="floating-label" for="ownerName">Owner Name<span
+                                        class="text-danger ">*</span></label>
+                                <input type="text" class="form-control" id="ownerName"
+                                    placeholder="Enter Organisation Name" formControlName="ownerName">
+                                @if(form.get('ownerName')?.invalid && form.get('ownerName')?.touched){ <span
+                                    class="text-danger">
+                                    Owner Name is required.
+                                </span>}
+                            </div>
                         </div>
-                    </form>
-                </div>
+
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label class="floating-label" for="phone">Phone<span
+                                        class="text-danger ">*</span></label>
+                                <input type="tel" class="form-control" id="phone" placeholder="Enter Phone Number"
+                                    formControlName="phone">
+                                @if(form.get('phone')?.invalid && form.get('phone')?.touched){ <span
+                                    class="text-danger">
+                                    Phone number is required.
+                                </span>}
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="email">Email address<span class="text-danger ">*</span></label>
+                                <input type="email" class="form-control" id="email" aria-describedby="emailHelp"
+                                    placeholder="Enter email" formControlName="email">
+                                @if(form.get('email')?.invalid && form.get('email')?.touched){ <span
+                                    class="text-danger">
+                                    A valid email address is required.
+                                </span>}
+                                <small id="email" class="form-text text-muted">We'll never share your email with
+                                    anyone
+                                    else.</small>
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label for="address">Address<span class="text-danger ">*</span></label>
+                                <input class="form-control" id="address" rows="3" formControlName="address">
+                                @if(form.get('address')?.invalid && form.get('address')?.touched){ <span
+                                    class="text-danger">
+                                    Address is required.
+                                </span>}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mt-3 ">
+                        <button type="submit" class="btn btn-primary mx-3" [disabled]="form.invalid">Submit</button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
-</div>
 </div>

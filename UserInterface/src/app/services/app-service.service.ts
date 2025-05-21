@@ -279,7 +279,12 @@ export class AppService {
     return this.http.post(ApiUrl + `Campaign/GetPostById`, requestBody);
   }
 
+//post
 
+SendCampPost(request: any) {
+    request.token = this.Token;
+    return this.http.post(ApiUrl + "Campaign/send-campaign-post", request);
+  }
 
 }
 

@@ -12,8 +12,8 @@ namespace MC.Basic.Application.Contracts.Infrasructure
     {
 
         Task<ApiResponse<Organisation>> ApproveOrganisation(ApiRequest<long> request);
-//Todo
-      //  Task<ApiResponse<string>> SelectOrganisation(ApiRequest<long> request);
+        //Todo
+        //  Task<ApiResponse<string>> SelectOrganisation(ApiRequest<long> request);
         Task<ApiResponse<Organisation>> CreateOrganisation(ApiRequest<OrganisationCreateDto> request);
         Task<ApiResponse<ListResponse<List<Organisation>>>> GetOrganisation(ApiRequest<FilteredList> request);
         Task<ApiResponse<User>> UpdateUser(ApiRequest<User> request);
@@ -22,10 +22,10 @@ namespace MC.Basic.Application.Contracts.Infrasructure
         Task<ApiResponse<Contact>> CreateContact(ApiRequest<Contact> request);
         Task<ApiResponse<Contact>> GetContactById(ApiRequest<long> request);
         Task<ApiResponse<Campaign>> CreateCampaign(ApiRequest<Campaign> request);
-      //  Task<ApiResponse<bool>> CreateCampaignMessageTemplate(ApiRequest<CampaignMessageTemplateDto> request);
+        //  Task<ApiResponse<bool>> CreateCampaignMessageTemplate(ApiRequest<CampaignMessageTemplateDto> request);
         Task<ApiResponse<ListResponse<List<Campaign>>>> GetCampaigns(ApiRequest<FilteredList> request);
         //Task<ApiResponse<CampaiegnTemplateResponseDto>> GetCampaignsMessageTemplate(ApiRequest<CampaignTemplateRequestDto> request);
-        Task<ApiResponse<Campaign>> GetCampaignById(ApiRequest<long> request);  
+        Task<ApiResponse<Campaign>> GetCampaignById(ApiRequest<long> request);
         Task<ApiResponse<CampaignPost>> CreateCampaignPost(ApiRequest<CampaignPost> request);
         Task<ApiResponse<CampaignPost>> CreateCampaignPostFromCampain(long campainId, ApiRequest<CampaignPost> request);
         Task<ApiResponse<List<CampaignPost>>> GetCampaignPosts(ApiRequest<CampaignPost> request);
@@ -37,14 +37,18 @@ namespace MC.Basic.Application.Contracts.Infrasructure
         Task<ApiResponse<object>> GetMessageinLogs();
         Task<ApiResponse<string>> GetAnswerForQuestion(ApiRequest<string> request);
 
-       // Task<ApiResponse<CampaignWithTemplateDto>> GetEventForCampaign(ApiRequest<long> request);
-       // Task<ApiResponse<CampaignMessageTemplates>> GetCampaignsTemplates(ApiRequest<long> request);
+        // Task<ApiResponse<CampaignWithTemplateDto>> GetEventForCampaign(ApiRequest<long> request);
+        // Task<ApiResponse<CampaignMessageTemplates>> GetCampaignsTemplates(ApiRequest<long> request);
         Task<ApiResponse<Organisation>> SuspendOrRecoverOrganisation(ApiRequest<long> request);
 
         Task<ApiResponse<Organisation>> GetOrgenisationById(ApiRequest<long> request);
         //   Task<ApiResponse<Campaign>> SaveCampaignWithTemplate(ApiRequest<SaveCampaignWithTemplateDto> request);
         Task<ApiResponse<List<ScheduledPostDto>>> GetScheduledPosts(ApiRequest<CalenderPostRequest> request);
-          Task<ApiResponse<CampaignPostDto>> GetPostById(ApiRequest<long> request);
+        Task<ApiResponse<CampaignPostDto>> GetPostById(ApiRequest<long> request);
 
+        //post email sms whatsapp etc
+
+        Task<ApiResponse<string>> SendCampPost(ApiRequest<CampaignPostRequest> request);
+        
     }
 }
