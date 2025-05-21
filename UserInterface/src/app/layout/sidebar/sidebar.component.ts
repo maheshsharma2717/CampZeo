@@ -18,16 +18,18 @@ export class SidebarComponent {
   }
   @Input() collapsed = false;
   @Input() isMobileNavOpen = false;
+  @Output() togglebar = new EventEmitter<boolean>();
   
 
   toggleSidebar() {
     this.isSidebarMinimized = !this.isSidebarMinimized;
+    this.collapsed = !this.collapsed;
+    this.togglebar.emit(this.collapsed);
   }
   LogoutUser() {
     this.service.ClearToken()
     }
     
-    @Output() togglebar = new EventEmitter<void>();
     
     onToggleSidebar() {
       this.togglebar.emit();

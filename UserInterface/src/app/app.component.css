@@ -51,7 +51,8 @@
    left: 0;
    width: 100%;
    height: 100%;
-   background-color: rgba(255, 255, 255, 0.8); /* Optional: Background overlay */
+   background-color: rgba(255, 255, 255, 0.8);
+   /* Optional: Background overlay */
    z-index: 1000;
    display: flex;
    justify-content: center;
@@ -71,7 +72,8 @@
    position: absolute;
    top: 50%;
    left: 50%;
-   width: 80px; /* Adjust logo size as needed */
+   width: 80px;
+   /* Adjust logo size as needed */
    height: auto;
    transform: translate(-50%, -50%);
    z-index: 1600;
@@ -88,7 +90,9 @@
 }
 
 /* Circles inside the spinner with animations */
-#inner-circle, #middle-circle, #outer-circle {
+#inner-circle,
+#middle-circle,
+#outer-circle {
    position: absolute;
    border-radius: 50%;
    border: 3px solid transparent;
@@ -104,6 +108,7 @@
    animation-duration: 2s;
    border-top-width: 1vh;
 }
+
 #middle-circle {
    width: 72%;
    height: 72%;
@@ -111,6 +116,7 @@
    animation-duration: 3s;
    border-top-width: 0.8vh;
 }
+
 #outer-circle {
    width: 100%;
    height: 100%;
@@ -120,8 +126,13 @@
 
 /* Keyframes for rotation */
 @keyframes spin {
-   0% { transform: rotate(0deg); }
-   100% { transform: rotate(360deg); }
+   0% {
+      transform: rotate(0deg);
+   }
+
+   100% {
+      transform: rotate(360deg);
+   }
 }
 
 /* Show/hide spinner with transitions */
@@ -129,11 +140,13 @@
    visibility: visible;
    opacity: 1;
 }
+
 .hideSpinner {
    visibility: hidden;
    opacity: 0;
 }
-.narrow-content .content{
+
+.narrow-content .content {
    width: 93%;
    height: 90vh;
    margin-top: 1%;
@@ -141,14 +154,23 @@
    margin-right: auto;
    padding-top: 5%;
 }
-.wider-content .content{
-   width:98%;
-   height:95vh;
-   margin:auto;
-   margin-top:5% !important;
+
+.wider-content .content {
+   width: 98%;
+   height: 95vh;
+   margin: auto;
+   margin-top: 5% !important;
 }
 
 
 .main-collapsed {
    margin-left: 70px !important;
- }
+}
+
+.inner-width {
+   width: calc(100vw - 25%);
+}
+
+.uncollapsed-width{
+   width: calc(100% - 75px);
+}
