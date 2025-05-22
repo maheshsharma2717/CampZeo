@@ -238,9 +238,17 @@
     flex-direction: row;
   }
 
-  .navigator {
-    margin-right: 10px;
-  }
+.navigator-popup {
+  position: absolute;
+  top: 100%; 
+  right: 20px;
+  z-index: 9999;
+  background: white;
+  border: 1px solid #ddd;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+  padding: 5px;
+}
+
 
   .content {
     flex-grow: 1;
@@ -316,4 +324,22 @@
   max-width: 100% !important;
   display: block;
   box-sizing: border-box;
+}
+
+.br-50{
+  border-radius: 50% !important;
+}
+
+.navigator-popup {
+  display: none;
+  position: absolute;
+  z-index: 10;
+  background: white;
+  border: 1px solid #ccc;
+  padding: 10px;
+  box-shadow: 0 0 5px rgba(0,0,0,0.2);
+}
+
+.navigator-popup.visible {
+  display: block;
 }
