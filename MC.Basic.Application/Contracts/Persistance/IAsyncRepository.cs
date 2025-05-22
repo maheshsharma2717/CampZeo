@@ -27,6 +27,8 @@ namespace MC.Basic.Application.Contracts.Persistance {
            string searchText = "",
            string sortBy = "",
            bool sortDesc = false);
+        
+        Task<int> GetCount(Expression<Func<T, bool>> filter);
     }
 }
 
