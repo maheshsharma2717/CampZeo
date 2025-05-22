@@ -1,6 +1,7 @@
 ﻿using MC.Basic.Application.Contracts.Infrasructure;
 using MC.Basic.Application.Contracts.Persistance;
 using MC.Basic.Application.Models.Calender;
+using MC.Basic.Application.Models.Campaign;
 using MC.Basic.Application.Models.DataModel;
 using MC.Basic.Application.Models.Organisation;
 using MC.Basic.Application.Models.Post;
@@ -389,10 +390,10 @@ public class ApplicationService : IApplicationService
     //    return response;
     //}
 
-    public async Task<ApiResponse<ListResponse<List<Campaign>>>> GetCampaigns(ApiRequest<FilteredList> request)
+    public async Task<ApiResponse<ListResponse<List<CampaignListModel>>>> GetCampaigns(ApiRequest<FilteredList> request)
     {
         var OrganizationId = GetOrganisationIdFromToken(request.Token);
-        ApiResponse<ListResponse<List<Campaign>>> response = new ApiResponse<ListResponse<List<Campaign>>>();
+        ApiResponse<ListResponse<List<CampaignListModel>>> response = new ApiResponse<ListResponse<List<CampaignListModel>>>();
         var dbCapmaigns = await _campaignRepository.GetPagedRecords(x =>
         x.OrganisationId == OrganizationId,
         request.Data.PageSize,
@@ -402,13 +403,30 @@ public class ApplicationService : IApplicationService
         true);
         if (dbCapmaigns != null)
         {
-            response.Data = dbCapmaigns;
+            response.Data = new ListResponse<List<CampaignListModel>>( dbCapmaigns.List.Select(campaign =>
+            {
+                
+                return new CampaignListModel
+                {
+                    Id = campaign.Id,
+                    Name = campaign.Name,
+                    Description = campaign.Description,
+                    StartDate = campaign.StartDate,
+                    EndDate = campaign.EndDate,
+                    PostData =  _campaignPostRepository.GetQuariable().Where(x=>x.CampaignId==campaign.Id)
+                    .GroupBy(x => x.Type).Select(g => new CampaignPostCount
+                    {
+                        Type = g.Key,
+                        Count = g.Count()
+                    }).ToList()
+                };
+            }).ToList(),dbCapmaigns.TotalCount); ;
             response.IsSuccess = true;
             response.Message = "";
         }
         else
         {
-            response.Data = dbCapmaigns;
+            response.Data = new ListResponse<List<CampaignListModel>>(new List<CampaignListModel>(),0);
             response.IsSuccess = false;
             response.Message = "No campaigns found";
         }

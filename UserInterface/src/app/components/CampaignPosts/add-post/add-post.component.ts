@@ -68,26 +68,7 @@ export class AddPostComponent {
 
     })
   }
-  filterCampaigns(selectedId: any = 0) {
-    var request: any = {
-      "data": {
-        "pageSize": 100,
-        "pageNumber": 1,
-        "searchText": this.campaignSearch.name,
-        "sortBy": "id",
-        "sortDesc": true
-      }
-    };
-    this.service.GetCampaigns(request).subscribe({
-      next: (response: any) => {
-        this.filteredCampaigns = response.data.list;
-        this.campaigns = response.data.list;
-        if (selectedId > 0) {
-          this.selectCampaign(this.campaigns.find((item) => item.id === selectedId))
-        }
-      }
-    });
-  }
+  
   ngOnInit(): void {
     if (this.id) {
       const request = { data: this.id };
@@ -96,9 +77,6 @@ export class AddPostComponent {
           if (response?.data) {
             this.CampainIdFromTemplate = response.data.campaignId
             this.CampaignPostForm.patchValue(response.data);
-            if (response.data.campaignId > 0) {
-              this.filterCampaigns(response.data.campaignId)
-            }
             if (this.CampaignPostForm.get('type').value === 1) {
               const HtmlJson = response.data.message.split('[{(break)}]');
               if (HtmlJson.length > 1) {
@@ -135,10 +113,7 @@ export class AddPostComponent {
           console.error('Error fetching message template:', error);
         }
       });
-    } else {
-
-      this.filterCampaigns();
-    }
+    } 
     this.setFormTypeBasedOnPlatform();
     document.addEventListener('click', this.closeDropdownOnOutsideClick.bind(this));
 

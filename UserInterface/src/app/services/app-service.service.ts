@@ -16,6 +16,15 @@ export class AppService {
   showSpinner: boolean = false;
   promptData: string = '';
   isChatPopupOpen: boolean = false;
+  platformTypeMapping: { [key: number]: {name:string,class:string} } = {
+    1: {name:'Email', class:"fas fa-envelope-open"},
+    2: {name:'SMS', class:"fa fa-envelope text-warning"},
+    3: {name:'WhatsApp', class:"fab fa-whatsapp"},
+    4: {name:'RCS', class:"fa fa-globe"},
+    5: {name:'Facebook', class:"fab fa-facebook"},
+    6: {name:'Instagram', class:"fab fa-instagram"}
+  };
+
   constructor(private http: HttpClient, private router: Router) { }
 
   SetToken(token: any, rememberMe: boolean) {

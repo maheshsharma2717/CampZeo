@@ -67,9 +67,15 @@
       </ng-template>
 
       <ng-template #postsTemplate let-data>
-        <a class="pointer mx-3" title="Manage Posts" [routerLink]="'/list-campaign-posts'"
+        <a class="pointer d-flex w-100 gap-2 mx-3" title="Manage Posts" [routerLink]="'/list-campaign-posts'"
           [queryParams]="{ campaignId: data.id }">
-          <i class="far fa-calendar"></i>
+          @for(post of data.postData;track $index) { 
+         
+           <i class="{{service.platformTypeMapping[post.type].class}} fa-2x"></i> 
+          
+          <span class="count-badge ">
+            {{ post.count }}
+          </span>}
         </a>
       </ng-template>
 

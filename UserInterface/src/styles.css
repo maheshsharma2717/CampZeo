@@ -30,15 +30,42 @@
   display: none;
 }
 
-/* .ql-tooltip.ql-editing a.ql-action {
-  padding-inline: 10px;
-  margin-inline: 2px;
-  color: white;
-  background-color: blue;
-  font-weight: 500;
-  border-radius: 5px;
-  text-align: left;
-  } */
+.fa-sms {
+  color: #c49700 !important;
+}
+
+.fa-envelope-open {
+  color: #e04d3b !important;
+}
+
+.fa-whatsapp {
+  color: #1ee000 !important;
+}
+
+.fa-globe {
+  color: #00c4b7 !important;
+}
+
+.pointer {
+  cursor: pointer !important;
+}
+
+.fa-facebook {
+  color: #316FF6 !important;
+}
+
+.fa-instagram {
+  color: transparent;
+  background: radial-gradient(circle at 30% 107%, #fdf497 0%, #fdf497 5%, #fd5949 45%, #d6249f 60%, #285AEB 90%) ;
+  background: -webkit-radial-gradient(circle at 30% 107%, #fdf497 0%, #fdf497 5%, #fd5949 45%, #d6249f 60%, #285AEB 90%);
+  background-clip: text;
+  -webkit-background-clip: text;
+}
+
+.text-end {
+  text-align: end !important;
+}
+
 ::ng-deep .ql-tooltip {
   top: 0px !important;
   left: 0px !important;
@@ -70,4 +97,8 @@
 .e-input-group.e-control-wrapper.e-float-icon-left:not(.e-float-input) .e-input-in-wrap::before,
 .e-input-group.e-control-wrapper.e-float-icon-left:not(.e-float-input) .e-input-in-wrap::after {
   background: #5867dd;
+}
+html {
+  font-size: 0.75em;
+  font-family: Arial, Helvetica, sans-serif;
 }
