@@ -18,7 +18,7 @@ namespace MC.Basic.Infrastructure.Mail
         public MailgunEmailService()
         {
             //The services key gose here
-         
+           
         }
 
         public async Task<RestResponse> SendMessage(List<string> emails, string template)

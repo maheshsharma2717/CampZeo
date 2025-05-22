@@ -44,7 +44,7 @@ namespace MC.Basic.Infrastructure.Mail
         private readonly int _smtpPort = 587; // or your provider's SMTP port
         private readonly string _smtpUser = "office@mandavconsultancy.com";
         //private readonly string _smtpPass = "Anay#123@";
-        private readonly string _smtpPass = "AnBqrAe7j4mP9rU%";
+        private readonly string _smtpPass = "aouownmhogfobzbc";
         private readonly string _websiteUrl = "http://localhost:4200"; // Your website address
 
         public async Task SendPasswordToUserEmail(string userEmail, string password)
