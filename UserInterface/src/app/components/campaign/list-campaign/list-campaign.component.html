@@ -42,10 +42,10 @@
         <ng-template #toolbarTemplate></ng-template>
 
         <e-columns>
-          <e-column field="id" headerText="#" width="80" textAlign="Left"></e-column>
+          <!-- <e-column field="id" headerText="#" width="80" textAlign="Left"></e-column> -->
           <e-column headerText="Details" width="250" [template]="detailsTemplate"></e-column>
-          <e-column headerText="Dates" width="250" [template]="dateTemplate"></e-column>
-          <e-column headerText="Posts" width="150" [template]="postsTemplate"></e-column>
+          <e-column headerText="Dates" width="150" [template]="dateTemplate"></e-column>
+          <e-column headerText="Posts" width="200" [template]="postsTemplate"></e-column>
           <e-column headerText="Actions" width="150" textAlign="Center" [template]="actionTemplate"></e-column>
         </e-columns>
       </ejs-grid>
@@ -58,26 +58,43 @@
       <ng-template #dateTemplate let-data>
         <p class="m-0">
           <ng-container *ngIf="data.startDate !== data.endDate; else sameDate">
-            From {{ data.startDate | date:'dd-MM-yyyy' }} to {{ data.endDate | date:'dd-MM-yyyy' }}
+            {{ data.startDate | date:'d MMMM y' }} – {{ data.endDate | date:'d MMMM y' }}
           </ng-container>
           <ng-template #sameDate>
-            On {{ data.startDate | date:'dd-MM-yyyy' }}
+            {{ data.startDate | date:'d MMMM y' }}
           </ng-template>
         </p>
       </ng-template>
 
-      <ng-template #postsTemplate let-data>
+      <!-- <ng-template #postsTemplate let-data>
         <a class="pointer d-flex w-100 gap-2 mx-3" title="Manage Posts" [routerLink]="'/list-campaign-posts'"
           [queryParams]="{ campaignId: data.id }">
-          @for(post of data.postData;track $index) { 
-         
-           <i class="{{service.platformTypeMapping[post.type].class}} fa-2x"></i> 
-          
+          @for(post of data.postData;track $index) {
+          <i class="{{service.platformTypeMapping[post.type].class}} f-20 fa-1x"></i>
           <span class="count-badge ">
             {{ post.count }}
           </span>}
         </a>
+      </ng-template> -->
+      <ng-template #postsTemplate let-data>
+        <a class="pointer d-flex w-100 gap-2 mx-3" title="Manage Posts"
+          [routerLink]="'/list-campaign-posts'" [queryParams]="{ campaignId: data.id }">
+
+          <ng-container *ngIf="data.postData?.length > 0; else noPosts">
+             @for(post of data.postData;track $index) {
+          <i class="{{service.platformTypeMapping[post.type].class}} f-20 fa-1x"></i>
+          <span class="count-badge ">
+            {{ post.count }}
+          </span>}
+          </ng-container>
+
+          <ng-template #noPosts>
+            <i class="icon-plus fa-2x text-secondary" title="Add new post"></i>
+          </ng-template>
+
+        </a>
       </ng-template>
+
 
       <ng-template #actionTemplate let-data>
         <a class="pointer mx-3" title="Edit Campaign" [routerLink]="'/edit-campaign'" [queryParams]="{ id: data.id }">

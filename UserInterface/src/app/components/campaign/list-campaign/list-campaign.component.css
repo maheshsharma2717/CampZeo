@@ -16,7 +16,7 @@
   color: white;
   border-radius: 50%;
   font-size: 0.75rem;
-  width: 23px;
+  min-width: 17px;
   display: flex;
   align-items: anchor-center;
   justify-content: center;
