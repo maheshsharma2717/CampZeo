@@ -28,20 +28,13 @@ export class ListPostsComponent {
   pageSettings = {pageSize: 10, pageSizes: [5, 10, 20, 50]};
   toolBarOptions = ['Custom'];
 
-  constructor(private toastr: ToastrService, private service: AppService, private activatedRoutes: ActivatedRoute) {
+  constructor(private toastr: ToastrService, public service: AppService, private activatedRoutes: ActivatedRoute) {
     this.activatedRoutes.queryParams.subscribe(param => {
       this.campaignId = param['campaignId']
     })
   }
-  typeMapping: { [key: number]: string } = {
-    1: 'Email',
-    2: 'SMS',
-    3: 'WhatsApp',
-    4: 'RCS',
-    5: 'Facebook',
-    6: 'Instagram'
-  };
 
+  
   ngOnInit(): void {
     this.GetCampaignDetails();
     this.GetCampaignPosts();
@@ -103,7 +96,7 @@ export class ListPostsComponent {
         const message = campaignPost.message?.toLowerCase() || '';
         const senderEmail = campaignPost.senderEmail?.toLowerCase() || '';
         const organisationName = campaignPost.organisationName?.toLowerCase() || '';
-        const type = this.typeMapping[campaignPost.type]?.toLowerCase() || '';
+        const type = this.service.platformTypeMapping[campaignPost.type]?.name.toLowerCase() || '';
 
         return (
           subject.includes(searchTerm) ||

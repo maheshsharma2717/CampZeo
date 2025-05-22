@@ -48,7 +48,7 @@ export class ListCampaignComponent implements OnInit, OnDestroy {
   pageSettings = { pageSize: 10, pageSizes: [5, 10, 20, 50] };
   //pageSizes = [5, 10, 20, 50];
   toolbarOptions = ['Custom'];
-  constructor(private service: AppService, private toastr: ToastrService, private sanitizer: DomSanitizer, private router: Router) {
+  constructor(public service: AppService, private toastr: ToastrService, private sanitizer: DomSanitizer, private router: Router) {
 
   }
   ngOnInit(): void {

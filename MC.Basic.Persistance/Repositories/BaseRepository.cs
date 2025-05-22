@@ -158,6 +158,17 @@ namespace MC.Basic.Persistance.Repositories
                 throw;
             }
         }
+       public Task<int> GetCount(Expression<Func<T, bool>> filter)
+        {
+            try
+            {
+                return _dbContext.Set<T>().Where(filter).CountAsync(filter);
+            }
+            catch(Exception ex)
+            {
+                throw;
+            }
+        }
         public IQueryable<T> GetQuariable()
         {
             return _dbContext.Set<T>();

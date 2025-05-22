@@ -82,62 +82,7 @@
                 </div>
                 <div class="card-body table-border-style pb-1">
                     <div class="table-responsive">
-                        <!-- <table class="table">
-                            <thead>
-                                <tr>
-                                    <th>#</th>
-                                    <th>Details</th>
-                                    <th>Post/Message</th>
-                                    <th>Type</th>
-                                    <th>Action</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr
-                                    *ngFor="let item of CampaignPosts | paginate: { itemsPerPage: itemsPerPage, currentPage: page, totalItems: total }; let i = index">
-                                    <td class="title align-middle">{{ (page - 1) * itemsPerPage + (i + 1) }}</td>
-                                    <td>
-                                        <div class="title align-middle">
-                                            <span>{{item.subject}}</span><br>
-                                            <span>{{item.senderEmail}}<br>{{item.organisationName}}</span>
-                                        </div>
-                                    </td>
-
-                                    <td class="align-middle ">
-                                        @if(item.type == 1 || item.type == 4 || item.type == 5 || item.type == 6) {
-                                        <div [innerHTML]="GetHtml(item.message)" class="custom-inner-html"></div>
-                                        <video *ngIf="item.videoUrl" [src]="item.videoUrl" controls width="250">
-                                            Your browser does not support the video tag.
-                                        </video>
-                                        }
-
-                                        @else {
-                                        <p>{{item.message}}</p>
-                                        }
-                                    </td>
-                                    <td class="align-middle ">
-                                        <div class="type mx-3">
-                                            <p class="pb-0">
-                                                {{ typeMapping[item.type] || 'Unknown' }}
-                                            </p>
-                                        </div>
-                                    </td>
-
-                                    <td class="align-middle"><a class="pointer" [routerLink]="'/edit-post'"
-                                            [queryParams]="{id:item.id}">
-                                            <i class="feather icon-edit"></i></a>
-                                        &nbsp;&nbsp;
-                                        <a class="pointer" title="Campaign Events" [routerLink]="'/campaign-events'"
-                                            [queryParams]="{id: item.id}">
-                                            <i class="far fa-comment-dots"></i>
-                                        </a>
-
-                                    </td>
-
-                                </tr>
-                            </tbody>
-                        </table> -->
-
+             
                         <ejs-grid [dataSource]='CampaignPosts' [rowHeight]="" #grid allowPaging="true"
                             [pageSettings]="pageSettings" [toolbar]="toolBarOptions"
                             [sortSettings]="{ columns: [{ field: 'id', direction: 'Descending' }] }" height='400px'
@@ -147,8 +92,8 @@
 
                             <e-columns>
                                 <e-column field="id" headerText="#" width="80" textAlign="Left"></e-column>
-                                <e-column headerText="Details" width="250" [template]="detailsTemplate"></e-column>
-                                <e-column headerText="Post/Message" width="250" [template]="messageTemplate"></e-column>
+                                <e-column headerText="Subject" width="250" [template]="detailsTemplate"></e-column>
+                                <e-column headerText="Post/Message Scheduled Time" width="250" [template]="messageTemplate"></e-column>
                                 <e-column headerText="Type" width="250" [template]="typeTemplate"></e-column>
                                 <e-column headerText="Action" width="250" [template]="actionTemplate"></e-column>
                             </e-columns>
@@ -162,18 +107,20 @@
                         </ng-template>
                         <ng-template #messageTemplate let-data>
                             <p class="m-0 text-truncate" style="max-width: 230px;" [title]="data.message">
-                                {{data.message}}
+                                {{data.scheduledPostTime |date :'dd/MM/yyyy HH:mm'}}
                             </p>
                         </ng-template>
                         <ng-template #typeTemplate let-data>
-                            <p class="m-0">
-                                {{ typeMapping[data.type] }}
-                            </p>
+                           <i class="fa-2x {{service.platformTypeMapping[data.type].class}}"></i>
                         </ng-template>
                         <ng-template #actionTemplate let-data>
                             <a class="pointer mx-3" title="Manage Posts" [routerLink]="'/campaign-events'"
                                 [queryParams]="{ id: data.id }">
                                 <i class="far fa-edit"></i>
+                            </a> &nbsp; &nbsp;
+                            <a class="pointer mx-3" title="Manage Posts" [routerLink]="'/campaign-events'"
+                                [queryParams]="{ id: data.id }">
+                                <i class="fa fa-eye"></i>
                             </a>
                         </ng-template>
 
