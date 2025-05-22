@@ -5,12 +5,15 @@ import { NgxPaginationModule } from 'ngx-pagination';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { ToastrService } from 'ngx-toastr';
+import { GridModule, PageService, SortService, ToolbarService } from "@syncfusion/ej2-angular-grids";
+
 @Component({
   selector: 'app-list-posts',
   standalone: true,
-  imports: [RouterModule, NgxPaginationModule, CommonModule, FormsModule],
+  imports: [RouterModule, NgxPaginationModule, CommonModule, FormsModule, GridModule],
   templateUrl: './list-posts.component.html',
-  styleUrl: './list-posts.component.css'
+  styleUrl: './list-posts.component.css',
+  providers: [PageService, SortService, ToolbarService]
 })
 export class ListPostsComponent {
   CampaignPosts: any[] = [];
@@ -20,11 +23,14 @@ export class ListPostsComponent {
   itemsPerPage: number = 10;
   itemsPerPageOptions: number[] = [5, 10, 20, 100, 200];
   total: number = 0;
-  campaignId: any=0;
-  Campaign: any={};
+  campaignId: any = 0;
+  Campaign: any = {};
+  pageSettings = {pageSize: 10, pageSizes: [5, 10, 20, 50]};
+  toolBarOptions = ['Custom'];
+
   constructor(private toastr: ToastrService, private service: AppService, private activatedRoutes: ActivatedRoute) {
     this.activatedRoutes.queryParams.subscribe(param => {
-this.campaignId=param['campaignId']
+      this.campaignId = param['campaignId']
     })
   }
   typeMapping: { [key: number]: string } = {
@@ -40,8 +46,8 @@ this.campaignId=param['campaignId']
     this.GetCampaignDetails();
     this.GetCampaignPosts();
   }
-GetCampaignPosts(){
-  var request: any = {
+  GetCampaignPosts() {
+    var request: any = {
       "data": {
         "pageSize": this.itemsPerPage,
         "pageNumber": this.page,
@@ -57,7 +63,7 @@ GetCampaignPosts(){
         this.total = response.data.totalCount
         if (response.isSuccess) {
           // this.toastr.success(response.message)
-        //  this.toastr.success('Campaign Posts loaded successfully')
+          //  this.toastr.success('Campaign Posts loaded successfully')
         }
         else {
           this.toastr.warning(response.message)
@@ -65,15 +71,15 @@ GetCampaignPosts(){
       }
     });
 
-}
-GetCampaignDetails(){
+  }
+  GetCampaignDetails() {
     var request = { data: parseInt(this.campaignId ?? "0") }
-      this.service.GetCampaignById(request).subscribe({
-        next: (response: any) => {
-          this.Campaign=response.data
-        }
-      })
-}
+    this.service.GetCampaignById(request).subscribe({
+      next: (response: any) => {
+        this.Campaign = response.data
+      }
+    })
+  }
   GetHtml(message: any) {
     var html = message.split('[{(break)}]');
     return html[0];

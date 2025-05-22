@@ -13,13 +13,13 @@ import { TopbarComponent } from '../topbar/topbar.component';
 })
 export class SidebarComponent {
   isSidebarMinimized = false;
-  constructor(public service: AppService , public router:Router) {
+  constructor(public service: AppService, public router:Router) {
 
   }
   @Input() collapsed = false;
   @Input() isMobileNavOpen = false;
   @Output() togglebar = new EventEmitter<boolean>();
-  
+
 
   toggleSidebar() {
     this.isSidebarMinimized = !this.isSidebarMinimized;
@@ -28,10 +28,10 @@ export class SidebarComponent {
   }
   LogoutUser() {
     this.service.ClearToken()
-    }
-    
-    
-    onToggleSidebar() {
-      this.togglebar.emit();
-    }
+  }
+
+
+  onToggleSidebar() {
+    this.togglebar.emit();
+  }
 }

@@ -5,14 +5,15 @@ import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { ChatComponentComponent } from "../../chat-component/chat-component.component";
 import { NgxPaginationModule } from 'ngx-pagination';
 import { FormsModule } from '@angular/forms';
+import { GridModule, PageService, SortService, ToolbarService } from "@syncfusion/ej2-angular-grids";
 
 @Component({
   selector: 'app-event-logs',
   standalone: true,
-  imports: [RouterModule, CommonModule, ChatComponentComponent,NgxPaginationModule,FormsModule],
+  imports: [RouterModule, CommonModule, ChatComponentComponent,NgxPaginationModule,FormsModule, GridModule],
   templateUrl: './event-logs.component.html',
   styleUrl: './event-logs.component.css',
-  providers: [DatePipe]
+  providers: [DatePipe, PageService, SortService, ToolbarService]
 })
 export class EventLogsComponent implements OnInit {
 
@@ -26,6 +27,9 @@ export class EventLogsComponent implements OnInit {
   itemsPerPage: number = 5;
   itemsPerPageOptions: number[] = [5, 20, 100, 200, 1000];
   total: number = 0;
+  pageSettings = {pageSize: 10, pageSizes: [5, 10, 20, 50]};
+  toolBarOptions = ['Custom'];
+  
   constructor(public service: AppService, private activatedRoutes: ActivatedRoute, private router: Router) {
     this.activatedRoutes.queryParams.subscribe(param => {
       this.type = param['type'];
