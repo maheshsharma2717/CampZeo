@@ -174,7 +174,7 @@ public class ApplicationService : IApplicationService
                 </div>
             </body>
             </html>";
-        if(dbOrganisation.IsDeleted) message = $@"
+        if (dbOrganisation.IsDeleted) message = $@"
 <!DOCTYPE html>
 <html>
 <head>
@@ -255,7 +255,7 @@ public class ApplicationService : IApplicationService
 
         Expression<Func<Organisation, bool>> filter = c => true;
 
-        if(request.Data.IsDeleted != null)
+        if (request.Data.IsDeleted != null)
             filter = c => c.IsDeleted == request.Data.IsDeleted;
 
         response.Data = await _organisationRepository.GetPagedRecords(
@@ -287,7 +287,7 @@ public class ApplicationService : IApplicationService
     {
         var OrganizationId = GetOrganisationIdFromToken(request.Token);
         ApiResponse<List<Contact>> response = new ApiResponse<List<Contact>>();
-        if(OrganizationId == 0)
+        if (OrganizationId == 0)
         {
             response.Data = new List<Contact>();
             response.IsSuccess = false;
@@ -400,7 +400,7 @@ public class ApplicationService : IApplicationService
         request.Data.SearchText,
         "id",
         true);
-        if(dbCapmaigns != null)
+        if (dbCapmaigns != null)
         {
             response.Data = dbCapmaigns;
             response.IsSuccess = true;
@@ -434,7 +434,7 @@ public class ApplicationService : IApplicationService
 
         var postId = request.Data;
         var dbpost = await _campaignPostRepository.GetAsyncById(postId);
-        if(dbpost != null)
+        if (dbpost != null)
         {
             var org = _organisationRepository.GetQuariable().Include(x => x.Contacts).SingleOrDefault(x => x.Id == OrganizationId);
             var contacts = org.Contacts;
@@ -472,7 +472,7 @@ public class ApplicationService : IApplicationService
         var OrganizationId = GetOrganisationIdFromToken(request.Token);
 
         ApiResponse<CampaignPost> response = new ApiResponse<CampaignPost>();
-        if(campainId == request.Data.CampaignId)
+        if (campainId == request.Data.CampaignId)
         {
 
             response.Data = await _campaignPostRepository.CreateUpdateMessageTemplate(request.Data);
@@ -481,14 +481,14 @@ public class ApplicationService : IApplicationService
         else
         {
             var removePrevious = _campaignPostRepository.GetQuariable().Where(x => x.CampaignId == campainId && x.Type == request.Data.Type).FirstOrDefault();
-            if(removePrevious != null)
+            if (removePrevious != null)
             {
                 removePrevious.CampaignId = null;
                 removePrevious.IsAttachedToCampaign = false;
                 await _campaignPostRepository.UpdateAsync(removePrevious);
             }
 
-            if(request.Data.CampaignId == null)
+            if (request.Data.CampaignId == null)
             {
                 request.Data.CampaignId = campainId;
                 request.Data.IsAttachedToCampaign = true;
@@ -584,7 +584,7 @@ public class ApplicationService : IApplicationService
 
         var OrganizationId = GetOrganisationIdFromToken(request.Token);
         ApiResponse<List<CampaignPost>> response = new ApiResponse<List<CampaignPost>>();
-        if(OrganizationId == 0)
+        if (OrganizationId == 0)
         {
             response.Data = new List<CampaignPost>();
             response.IsSuccess = false;
@@ -604,7 +604,7 @@ public class ApplicationService : IApplicationService
 
         var campaignId = request.Data.ParentId;
         ApiResponse<ListResponse<List<CampaignPost>>> response = new ApiResponse<ListResponse<List<CampaignPost>>>();
-        if(campaignId == 0)
+        if (campaignId == 0)
         {
             response.Data = new ListResponse<List<CampaignPost>>(new List<CampaignPost>(), 0);
             response.IsSuccess = false;
@@ -770,7 +770,7 @@ public class ApplicationService : IApplicationService
         password.Append(lowerChars[random.Next(lowerChars.Length)]);
         password.Append(digits[random.Next(digits.Length)]);
         password.Append(specialChars[random.Next(specialChars.Length)]);
-        for(int i = 4; i < length; i++)
+        for (int i = 4; i < length; i++)
         {
             password.Append(allChars[random.Next(allChars.Length)]);
         }
@@ -781,7 +781,7 @@ public class ApplicationService : IApplicationService
     private static void ShuffleArray(char[] array)
     {
         Random random = new Random();
-        for(int i = array.Length - 1; i > 0; i--)
+        for (int i = array.Length - 1; i > 0; i--)
         {
             int j = random.Next(i + 1);
             // Swap
@@ -795,18 +795,18 @@ public class ApplicationService : IApplicationService
         byte[] iv = new byte[16];
         byte[] array;
 
-        using(Aes aes = Aes.Create())
+        using (Aes aes = Aes.Create())
         {
             aes.Key = Encoding.UTF8.GetBytes(key);
             aes.IV = iv;
 
             ICryptoTransform encryptor = aes.CreateEncryptor(aes.Key, aes.IV);
 
-            using(MemoryStream memoryStream = new MemoryStream())
+            using (MemoryStream memoryStream = new MemoryStream())
             {
-                using(CryptoStream cryptoStream = new CryptoStream((Stream)memoryStream, encryptor, CryptoStreamMode.Write))
+                using (CryptoStream cryptoStream = new CryptoStream((Stream)memoryStream, encryptor, CryptoStreamMode.Write))
                 {
-                    using(StreamWriter streamWriter = new StreamWriter((Stream)cryptoStream))
+                    using (StreamWriter streamWriter = new StreamWriter((Stream)cryptoStream))
                     {
                         streamWriter.Write(plainText);
                     }
@@ -820,11 +820,11 @@ public class ApplicationService : IApplicationService
     }
     private List<Contact> GetContactsFromCsv(IFormFile file)
     {
-        using(var stream = new StreamReader(file.OpenReadStream()))
+        using (var stream = new StreamReader(file.OpenReadStream()))
         {
             // You can use CsvHelper or similar to process the CSV file.
             var contacts = new List<Contact>();
-            using(var csv = new CsvHelper.CsvReader(stream, CultureInfo.InvariantCulture))
+            using (var csv = new CsvHelper.CsvReader(stream, CultureInfo.InvariantCulture))
             {
 
                 //skip headers
@@ -850,7 +850,7 @@ public class ApplicationService : IApplicationService
     }
     private long GetOrganisationIdFromToken(string token)
     {
-        if(string.IsNullOrEmpty(token))
+        if (string.IsNullOrEmpty(token))
         {
             return 0; // Return 0 if the token is invalid or empty
         }
@@ -860,7 +860,7 @@ public class ApplicationService : IApplicationService
             var tokenHandler = new JwtSecurityTokenHandler();
             var jwtToken = tokenHandler.ReadToken(token) as JwtSecurityToken;
 
-            if(jwtToken == null)
+            if (jwtToken == null)
             {
                 return 0; // Return 0 if token can't be read as JwtSecurityToken
             }
@@ -868,7 +868,7 @@ public class ApplicationService : IApplicationService
             // Extract the organisationId claim from the token
             var organisationIdClaim = jwtToken.Claims.FirstOrDefault(claim => claim.Type == "organisationId");
 
-            if(organisationIdClaim != null && long.TryParse(organisationIdClaim.Value, out var organisationId))
+            if (organisationIdClaim != null && long.TryParse(organisationIdClaim.Value, out var organisationId))
             {
                 return organisationId;
             }
@@ -915,7 +915,7 @@ public class ApplicationService : IApplicationService
     private async Task<string> SendWhatsapp(List<Contact> contacts, CampaignPost messageTemplate)
     {
         var recipients = contacts.Select(x => x.ContactWhatsApp).ToList();
-        if(messageTemplate != null && recipients.Any())
+        if (messageTemplate != null && recipients.Any())
         {
             var result = await _smsService.SendBatchWhatsappSms(new Application.Models.DataModel.TwilioMessageParams(recipients, messageTemplate.Message));
             return result;
@@ -928,7 +928,7 @@ public class ApplicationService : IApplicationService
     private async Task<string> SendSms(List<Contact> contacts, CampaignPost messageTemplate)
     {
         var recipients = contacts.Select(x => x.ContactMobile).ToList();
-        if(messageTemplate != null && recipients.Any())
+        if (messageTemplate != null && recipients.Any())
         {
             var result = await _smsService.SendBatchSms(new TwilioSmsParams(recipients, messageTemplate.Message));
             return result;
@@ -947,7 +947,7 @@ public class ApplicationService : IApplicationService
             .Select(x => x.ContactMobile)
             .ToList();
 
-        if(!recipients.Any())
+        if (!recipients.Any())
         {
             return "No valid recipients found.";
         }
@@ -957,7 +957,7 @@ public class ApplicationService : IApplicationService
             var result = await _infoBipSmsService.SendMediaMessageAsync(new Application.Models.DataModel.InfobipMessageParams(recipients, messageTemplate.Message));
             return $"RCS messages sent successfully. ";
         }
-        catch(Exception ex)
+        catch (Exception ex)
         {
             return $"Failed to send RCS messages: {ex.Message}";
         }
@@ -980,9 +980,9 @@ public class ApplicationService : IApplicationService
 
         var savedCampaign = await _campaignRepository.CreateUpdateCampaign(campaign, organisationId);
 
-        foreach(var templateDto in request.Data.CampaignMessageTemplates)
+        foreach (var templateDto in request.Data.CampaignMessageTemplates)
         {
-            if(templateDto.ScheduledPostTime < savedCampaign.StartDate || templateDto.ScheduledPostTime > savedCampaign.EndDate)
+            if (templateDto.ScheduledPostTime < savedCampaign.StartDate || templateDto.ScheduledPostTime > savedCampaign.EndDate)
             {
                 return new ApiResponse<Campaign>
                 {
@@ -992,9 +992,9 @@ public class ApplicationService : IApplicationService
             }
         }
         var campaignMessageTemplates = new CampaignPost();
-        foreach(var templateDto in request.Data.CampaignMessageTemplates)
+        foreach (var templateDto in request.Data.CampaignMessageTemplates)
         {
-            if(templateDto.ScheduledPostTime < savedCampaign.StartDate ||
+            if (templateDto.ScheduledPostTime < savedCampaign.StartDate ||
                 templateDto.ScheduledPostTime > savedCampaign.EndDate)
                 continue;
 
@@ -1027,32 +1027,32 @@ public class ApplicationService : IApplicationService
     public async Task<ApiResponse<List<ScheduledPostDto>>> GetScheduledPosts(ApiRequest<CalenderPostRequest> request)
     {
         var organisationId = GetOrganisationIdFromToken(request.Token);
-        string mode = request.Data.Mode; 
-        DateTime date = Convert.ToDateTime(request.Data.Date); 
+        string mode = request.Data.Mode;
+        DateTime date = Convert.ToDateTime(request.Data.Date);
 
         DateTime startDate, endDate;
 
-        switch(mode.ToLower())
+        switch (mode.ToLower())
         {
             case "day":
-            startDate = date.Date;
-            endDate = date.Date.AddDays(1).AddTicks(-1);
-            break;
+                startDate = date.Date;
+                endDate = date.Date.AddDays(1).AddTicks(-1);
+                break;
 
             case "week":
-            // Week starts on Monday
-            int diff = (7 + (date.DayOfWeek - DayOfWeek.Monday)) % 7;
-            startDate = date.AddDays(-diff).Date;
-            endDate = startDate.AddDays(7).AddTicks(-1); // End of Sunday
-            break;
+                // Week starts on Monday
+                int diff = (7 + (date.DayOfWeek - DayOfWeek.Monday)) % 7;
+                startDate = date.AddDays(-diff).Date;
+                endDate = startDate.AddDays(7).AddTicks(-1); // End of Sunday
+                break;
 
             case "month":
-            startDate = new DateTime(date.Year, date.Month, 1);
-            endDate = startDate.AddMonths(1).AddTicks(-1); // End of last day in the month
-            break;
+                startDate = new DateTime(date.Year, date.Month, 1);
+                endDate = startDate.AddMonths(1).AddTicks(-1); // End of last day in the month
+                break;
 
             default:
-            throw new ArgumentException("Invalid mode. Must be 'day', 'week', or 'month'.");
+                throw new ArgumentException("Invalid mode. Must be 'day', 'week', or 'month'.");
         }
 
         var posts = await _campaignPostRepository.ToListWhereAsync(
@@ -1065,9 +1065,10 @@ public class ApplicationService : IApplicationService
 
         var campaignIds = posts.Select(t => t.CampaignId).Distinct().ToList();
         var campaigns = await _campaignRepository.GetCampaignsByIds(campaignIds);
-        var result = posts.Select(t =>
+        var result = posts.Where(t => campaigns.Any(c => c.Id == t.CampaignId && c.OrganisationId == organisationId))
+        .Select(t =>
         {
-            var campaign = campaigns.FirstOrDefault(c => c.Id == t.CampaignId);
+            var campaign = campaigns.SingleOrDefault(c => c.Id == t.CampaignId);
             return new ScheduledPostDto
             {
                 TemplateId = t.Id,

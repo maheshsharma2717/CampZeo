@@ -6,6 +6,7 @@ import { EmailEditorComponent, EmailEditorModule } from 'angular-email-editor';
 import { QuillModule } from 'ngx-quill';
 import { AppService } from '../../../services/app-service.service';
 import { ToastrService } from 'ngx-toastr';
+import { queryParams } from '@syncfusion/ej2-base';
 
 @Component({
   selector: 'app-add-post',
@@ -158,7 +159,8 @@ export class AddPostComponent {
       this.GetMessagePromise()
         .then(() => {
           var templateData = this.CampaignPostForm.value;
-          templateData.id = this.id ? this.id : 0
+          this.CampainIdFromTemplate = this.CampaignPostForm.value.campaignId;
+          templateData.id = this.id ? this.id : 0;
           templateData.campainId = this.CampainIdFromTemplate;
           templateData.VideoUrl = this.uploadedVideoUrl;
           var request = { data: templateData };
@@ -166,7 +168,10 @@ export class AddPostComponent {
             this.service.AddCampaignPost(request).subscribe({
               next: (response: any) => {
                 this.toaster.success(this.editMode ? "Updated successfully" : "Created successfully");
-                this.route.navigate(['/list-campaign-posts', { campaignId: this.CampainIdFromTemplate }])
+                this.route.navigate(['/list-campaign-posts'], {
+                  queryParams: { campaignId: this.CampainIdFromTemplate }
+                });``
+
               }
             })
           } else {
