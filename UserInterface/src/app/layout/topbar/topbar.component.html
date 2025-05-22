@@ -1,7 +1,7 @@
 
-<div class="main-panel-topbar">
+<div [ngClass]="collapsed ? 'main-panel-topbar-collapsed' : 'main-panel-topbar'">
 
-  <div class="main-header">
+  <div [ngClass]="collapsed ? 'main-header-collapsed' : 'main-header'">
     <div class="main-header-logo">
       <!-- Logo Header -->
       <div class="logo-header" data-background-color="dark">
@@ -25,7 +25,7 @@
       <!-- End Logo Header -->
     </div>
     <!-- Navbar Header -->
-    <nav class="navbar navbar-header navbar-header-transparent navbar-expand-lg border-bottom">
+    <nav [ngClass]="collapsed ? 'navbar-header-collapsed' : 'navbar-header'" class="navbar navbar-header-transparent navbar-expand-lg border-bottom">
 
       <div class="container-fluid">
         <nav class="navbar navbar-header-left navbar-expand-lg navbar-form nav-search p-0 d-none d-lg-flex">

@@ -9,7 +9,7 @@
          <div class="">
             <nav class="">
                <!-- <app-topbar (toggleSidebar)="toggleSidebar()" class=""></app-topbar> -->
-               <app-topbar></app-topbar>
+               <app-topbar (toggleSidebar)="isCollapsed = $event" [collapsed]="isCollapsed"></app-topbar>
             </nav>
          </div>
          <div class="">
