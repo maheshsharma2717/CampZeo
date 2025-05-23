@@ -1,20 +1,23 @@
 <div class="pcoded-content pt-2">
-    <div class="page-header mb-3">
-        <div class="page-block">
-            <div class="row align-items-center">
-                <div class="col-md-12">
-                    <div class="page-header-title">
-                        <h5 class="m-b-10">Campaign Events</h5>
-                    </div>
-                    <ul class="breadcrumb">
-                        <li class="breadcrumb-item"><a [routerLink]="'/dashboard'"><i class="feather icon-home"></i></a>
-                        </li>
-                        <li class="breadcrumb-item"><a [routerLink]="'/list-campaigns'">Campaign List</a></li>
-                        <li class="breadcrumb-item"><a [routerLink]="'/campaign-events'">Campaign Events </a></li>
-                    </ul>
-                </div>
-            </div>
-        </div>
+    <div class="page-header mb-0">
+        <h3 class="fw-bold mb-3">Campaign Events</h3>
+        <ul class="breadcrumbs mb-3">
+            <li class="nav-item">
+                <a [routerLink]="'/dashboard'"><i class=" icon-home"></i></a>
+            </li>
+            <li class="separator">
+                <i class="icon-arrow-right"></i>
+            </li>
+            <li class="nav-item">
+                <a [routerLink]="'/list-campaigns'">Campaign List</a>
+            </li>
+            <li class="separator">
+                <i class="icon-arrow-right"></i>
+            </li>
+            <li class="nav-item">
+                <a [routerLink]="'/campaign-event'">Post a Campaign</a>
+            </li>
+        </ul>
     </div>
     <div class="row">
         <div class="col-md-12">
@@ -43,9 +46,7 @@
                     </div>
                 </div>
                 <div class="card-body table-border-style pb-1">
-                    <!-- <div class="table-responsive"> -->
-                    <div class="table-responsive"
-                        *ngIf="Post?.type!=5 && Post?.type!=6">
+                    <div class="table-responsive" *ngIf="Post?.type!=5 && Post?.type!=6">
 
                         <table class="table">
                             <thead>
@@ -111,8 +112,7 @@
                         <div class="tab-pane fade" [class.show]="activeTab === 'SMS'"
                             [class.active]="activeTab === 'SMS'" id="SMS" role="tabpanel" aria-labelledby="SMS-tab">
                             <div class="form-group">
-                                <div class="form-control" id="messageText" rows="5"
-                                    [innerHTML]="GetHtml(Post?.message)"
+                                <div class="form-control" id="messageText" rows="5" [innerHTML]="GetHtml(Post?.message)"
                                     style="min-height: 3vh; border: none"></div>
                             </div>
                         </div>
@@ -120,8 +120,7 @@
                             [class.active]="activeTab === 'whatsApp'" id="whatsApp" role="tabpanel"
                             aria-labelledby="whatsApp-tab">
                             <div class="form-group">
-                                <div class="form-control" id="messageText" rows="5"
-                                    [innerHTML]="GetHtml(Post?.message)"
+                                <div class="form-control" id="messageText" rows="5" [innerHTML]="GetHtml(Post?.message)"
                                     style="min-height: 3vh; border: none"></div>
                             </div>
                         </div>
@@ -129,8 +128,7 @@
                             [class.active]="activeTab === 'email'" id="email" role="tabpanel"
                             aria-labelledby="email-tab">
                             <div class="form-group">
-                                <div class="form-control" id="messageText" rows="5"
-                                    [innerHTML]="GetHtml(Post?.message)"
+                                <div class="form-control" id="messageText" rows="5" [innerHTML]="GetHtml(Post?.message)"
                                     style="min-height: 3vh; border: none">
                                 </div>
                             </div>
@@ -138,8 +136,7 @@
                         <div class="tab-pane fade" [class.show]="activeTab === 'rcs'"
                             [class.active]="activeTab === 'rcs'" id="rcs" role="tabpanel" aria-labelledby="rcs-tab">
                             <div class="form-group">
-                                <div class="form-control" id="messageText" rows="5"
-                                    [innerHTML]="GetHtml(Post?.message)"
+                                <div class="form-control" id="messageText" rows="5" [innerHTML]="GetHtml(Post?.message)"
                                     style="min-height: 3vh; border: none"></div>
                             </div>
                         </div>
@@ -159,8 +156,7 @@
                                             </select>
                                         </div>
                                     </div>
-                                    <div class="card-body custom-inner-html"
-                                        [innerHTML]="GetHtml(Post?.message)">
+                                    <div class="card-body custom-inner-html" [innerHTML]="GetHtml(Post?.message)">
                                     </div>
                                 </div>
                             </div>
@@ -182,8 +178,7 @@
                                             </select>
                                         </div>
                                     </div>
-                                    <div class="card-body custom-inner-html"
-                                        [innerHTML]="GetHtml(Post?.message)">
+                                    <div class="card-body custom-inner-html" [innerHTML]="GetHtml(Post?.message)">
                                     </div>
                                     <video [src]="videoUrl" controls width="400">
                                         Your browser does not support the video tag.
