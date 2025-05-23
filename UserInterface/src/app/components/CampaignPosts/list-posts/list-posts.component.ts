@@ -27,6 +27,13 @@ export class ListPostsComponent {
   Campaign: any = {};
   pageSettings = {pageSize: 10, pageSizes: [5, 10, 20, 50]};
   toolBarOptions = ['Custom'];
+  //Modal priview
+isPreviewModalOpen: boolean = false;
+previewData: any;
+editorContent: string = '';
+simpleText: string = '';
+emailHtmlContent: string = '';
+jsonValue: any = {};
 
   constructor(private toastr: ToastrService, public service: AppService, private activatedRoutes: ActivatedRoute) {
     this.activatedRoutes.queryParams.subscribe(param => {
@@ -117,4 +124,43 @@ export class ListPostsComponent {
   pageChangeEvent(event: number) {
     this.page = event;
   }
+  openPreviewPopup(templateId: number): void {
+  if (!templateId) {
+    this.toastr.error('Invalid template ID.');
+    return;
+  }
+
+  this.service.GetTemplateById(templateId).subscribe({
+    next: (response: any) => {
+      if (response.isSuccess) {
+        console.log(response.data)
+        this.previewData = response.data;
+        this.editorContent = this.previewData.message;
+        this.simpleText = this.previewData.message;
+
+        if (response.data.type === 1) {
+          const parts = this.previewData.message.split('[{(break)}]');
+          if (parts.length > 1) {
+            this.emailHtmlContent = parts[0];
+            try {
+              this.jsonValue = JSON.parse(parts[1]);
+            } catch (error) {
+              console.error('Error parsing design JSON:', error);
+            }
+          } else {
+            this.emailHtmlContent = this.previewData.message;
+          }
+        }
+
+        this.isPreviewModalOpen = true;
+      } else {
+        this.toastr.warning(response.message || 'Failed to load template.');
+      }
+    },
+    error: () => {
+      this.toastr.error('Failed to load template preview.');
+    }
+  });
+}
+
 }
