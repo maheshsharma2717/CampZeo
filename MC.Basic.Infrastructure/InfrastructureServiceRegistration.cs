@@ -43,6 +43,7 @@ namespace MC.Basic.Infrastructure {
             services.AddScoped<ITwilioService, TwilioService>();
             services.AddScoped<IInfobipSmsService, InfobipSmsService>();
             services.AddScoped<IGeminiService, GeminiService>();
+            services.AddScoped<IPlatformConfigurationRepository, PlatformConfigurationRepository>();
 
             services.Configure<FacebookSettings>(configuration.GetSection("Facebook"));
             services.Configure<InstaSettings>(configuration.GetSection("Instagram"));

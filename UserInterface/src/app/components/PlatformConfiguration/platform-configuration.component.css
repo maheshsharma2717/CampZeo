@@ -1,0 +1,54 @@
+.selected-email{
+    box-shadow: 0px 0px 8px 0px #00d5ffbb;
+}
+.selected-email i{
+    color: #00d5ffbb;
+}
+.selected-sms{
+    box-shadow: 0px 0px 8px 0px #c49700;
+}
+.selected-sms i{
+    color: #c49700;
+}
+.selected-whatsapp{
+    box-shadow: 0px 0px 8px 0px #1ee000;
+}
+.selected-whatsapp i{
+    color: #1ee000;
+}
+.selected-rcs{
+    box-shadow: 0px 0px 8px 0px #00c4b7;
+}
+.selected-rcs i{
+    color: #00c4b7;
+}
+.selected-facebook{
+    box-shadow: 0 0 8px 0 #316FF6;
+}
+.selected-facebook i{
+    color: #316FF6 !important;
+}
+
+.selected-instagram {
+    /* content: '';
+    position: absolute;
+    top: -4px;
+    left: -4px;
+    right: -4px;
+    bottom: -4px;
+    z-index: -1;
+    border-radius: 8px; /* Adjust based on your element's shape */
+    
+    box-shadow: 0 0 8px 0 #d6249f; /* Optional extra glow */
+}
+.selected-instagram i{
+    color: radial-gradient(circle at 30% 107%, #fdf497 0%, #fdf497 5%, #fd5949 45%, #d6249f 60%, #285AEB 90%);
+}
+
+
+
+
+
+
+
+

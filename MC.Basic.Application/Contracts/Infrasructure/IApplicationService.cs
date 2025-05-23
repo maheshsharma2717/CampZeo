@@ -3,7 +3,9 @@ using MC.Basic.Application.Models.Calender;
 using MC.Basic.Application.Models.Campaign;
 using MC.Basic.Application.Models.DataModel;
 using MC.Basic.Application.Models.Organisation;
+using MC.Basic.Application.Models.PlatformConfiguration;
 using MC.Basic.Application.Models.Post;
+using MC.Basic.Domain;
 using MC.Basic.Domains.Entities;
 using Microsoft.AspNetCore.Http;
 
@@ -50,6 +52,7 @@ namespace MC.Basic.Application.Contracts.Infrasructure
         //post email sms whatsapp etc
 
         Task<ApiResponse<string>> SendCampPost(ApiRequest<CampaignPostRequest> request);
-        
+        Task<ApiResponse<PlatformConfigurationViewModel>> GetPlatformConfiguration(ApiRequest<PlatformType> request);
+        Task<ApiResponse<string>> UpdatePlatformConfiguration(ApiRequest<PlatformConfigurationDto> request);
     }
 }
