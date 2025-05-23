@@ -1,19 +1,28 @@
 import { CommonModule } from '@angular/common';
-import { Component, NgModule, OnInit } from '@angular/core';
+import { Component, NgModule, OnInit, ViewChild } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { AppService } from '../../../services/app-service.service';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { NgxPaginationModule } from 'ngx-pagination';
 import { ToastrService } from 'ngx-toastr';
-import Quill from 'quill';
+import { EditService, FilterService, GridComponent, GridModule, PageService, SelectionService, SortService, ToolbarService } from '@syncfusion/ej2-angular-grids';
 @Component({
   selector: 'app-event',
   standalone: true,
-  imports: [ReactiveFormsModule, CommonModule, FormsModule, NgxPaginationModule, RouterModule],
+  imports: [ReactiveFormsModule, CommonModule, FormsModule, NgxPaginationModule, RouterModule, GridModule],
+  providers: [
+    PageService,
+    SortService,
+    FilterService,
+    ToolbarService,
+    SelectionService,
+    EditService
+  ],
   templateUrl: './event.component.html',
   styleUrl: './event.component.css'
 })
 export class EventComponent implements OnInit {
+  @ViewChild('grid') grid: any;
   contacts: any[] = [];
   filteredContacts: any[] = [];
   selectedTemplate: any;
@@ -28,7 +37,8 @@ export class EventComponent implements OnInit {
   searchTerm: string = '';
   Post: any;
   activeTab: string = 'SMS';
-
+  public toolbar: string[] = ['Search'];
+  public pageSettings = { pageSize: this.itemsPerPage };
   //insta fb changes
   accessToken: string = localStorage.getItem('access_token') || '';
   pages: any[] = [];
@@ -40,6 +50,7 @@ export class EventComponent implements OnInit {
       this.id = param['id']
     })
   }
+
   ngOnInit(): void {
     this.GetData();
     if (this.accessToken) {
@@ -92,22 +103,18 @@ export class EventComponent implements OnInit {
     debugger
     // const campaignId = 0;
     // if (!campaignId) return;
-  const campaignId = this.Post?.campaignId;  
-  if (!campaignId) {
-    this.toaster.error('Campaign ID is missing.');
-    return;
-  }
+    const campaignId = this.Post?.campaignId;
+    if (!campaignId) {
+      this.toaster.error('Campaign ID is missing.');
+      return;
+    }
     const facebookRaw = this.Post?.message || '';
     const instagramRaw = this.Post?.message || '';
-
     const fbContent = this.extractContent(facebookRaw);
     const igContent = this.extractContent(instagramRaw);
-
     const pageId = this.selectedPage?.id;
     const pageAccessToken = this.selectedPage?.access_token;
-
     if (this.activeTab === 'facebook' && pageId && pageAccessToken) {
-
       this.service.postToFacebook({
         pageId,
         pageAccessToken,
@@ -183,33 +190,28 @@ export class EventComponent implements OnInit {
       }
     }
     else {
-      debugger
-      const selectedContacts = this.contacts.filter(contact => contact.selected);
-      if (selectedContacts.length === 0) {
-        alert('Please select at least one contact.');
+      const selectedContacts = this.grid.getSelectedRecords();
+      if (!selectedContacts || selectedContacts.length === 0) {
+        this.toaster.warning('Please select at least one contact.', 'Warning');
         return;
       }
-
       const platformTypeMap: any = {
         email: 1,
         SMS: 2,
         whatsApp: 3,
         RCS: 4
       };
-
       const platformType = platformTypeMap[this.activeTab];
-
       if (platformType === undefined) {
         this.toaster.error('Invalid platform type selected.');
         return;
       }
-
       const request = {
         data: {
           campaignId: campaignId,
           type: platformType,
           message: this.Post?.message || '',
-          contacts: selectedContacts.map(c => ({
+          contacts: selectedContacts.map((c: any) => ({
             contactName: c.contactName,
             contactEmail: c.contactEmail,
             contactMobile: c.contactMobile,
@@ -217,7 +219,6 @@ export class EventComponent implements OnInit {
           }))
         }
       };
-
       this.service.SendCampPost(request).subscribe({
         next: (response: any) => {
           this.toaster.success(response.data);
@@ -229,9 +230,7 @@ export class EventComponent implements OnInit {
         }
       });
     }
-
   }
-
 
   checkChange(i: number) {
     if (this.contacts[i].selected == true) {
@@ -253,10 +252,10 @@ export class EventComponent implements OnInit {
   pageChangeEvent(event: number) {
     this.page = event;
   }
-  onItemsPerPageChange(value: number): void {
-    this.itemsPerPage = value;
-    this.page = 1;
-  }
+  // onItemsPerPageChange(value: number): void {
+  //   this.itemsPerPage = value;
+  //   this.page = 1;
+  // }
 
   onSearchChange(): void {
     if (this.searchTerm) {
@@ -276,7 +275,6 @@ export class EventComponent implements OnInit {
     if (!message) {
       return '';
     }
-
     var html = message.split('[{(break)}]');
     return html[0];
   }
@@ -297,13 +295,10 @@ export class EventComponent implements OnInit {
   }
   extractContent(message: string) {
     if (!message) return { text: '', images: [], videos: [] };
-
     const htmlParts = message.split('[{(break)}]');
     const html = htmlParts[0];
     const doc = new DOMParser().parseFromString(html, 'text/html');
-
     const text = doc.body.textContent?.trim() || '';
-
     const images: string[] = [];
     doc.querySelectorAll('img').forEach(img => {
       if (img.src.startsWith('data:image')) {
@@ -320,4 +315,9 @@ export class EventComponent implements OnInit {
 
     return { text, images, videos };
   }
+
+  onItemsPerPageChange(value: number) {
+    this.pageSettings = { pageSize: value };
+  }
+
 }

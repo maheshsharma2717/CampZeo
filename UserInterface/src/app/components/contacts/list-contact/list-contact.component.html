@@ -1,54 +1,53 @@
-            <div class="page-header mb-0">
+<div class="page-header mb-0">
 
-                <h3 class="fw-bold mb-3">Contact</h3>
-                <ul class="breadcrumbs mb-3">
-                    <li class="nav-item">
-                        <a [routerLink]="'/dashboard'"><i class=" icon-home"></i></a>
-                    </li>
-                    <li class="separator">
-                        <i class="icon-arrow-right"></i>
-                    </li>
-                    <li class="nav-item">
-                        <a [routerLink]="'/list-contacts'">Contact List</a>
-                    </li>
-                </ul>
-            </div>
-            <div class="card-header d-flex aligin-item-center justify-content-between py-2 bg-white">
-                <div class="title-table d-flex align-items-center">
-                    <h5>Contact List</h5>
-                </div>
-                <div class="d-flex gap-1">
-                    <a [routerLink]="'/add-contact'"><button type="button" class="btn btn-primary btn-border mx-2">Add
-                            New</button>
-                    </a>
-                    <a [routerLink]="'/import-contacts'"><button type="button" class="btn btn-primary btn-border">Import
-                            bulk
-                            contacts</button>
-                    </a>
-                </div>
-            </div>
+    <h3 class="fw-bold mb-3">Contact</h3>
+    <ul class="breadcrumbs mb-3">
+        <li class="nav-item">
+            <a [routerLink]="'/dashboard'"><i class=" icon-home"></i></a>
+        </li>
+        <li class="separator">
+            <i class="icon-arrow-right"></i>
+        </li>
+        <li class="nav-item">
+            <a [routerLink]="'/list-contacts'">Contact List</a>
+        </li>
+    </ul>
+</div>
+<div class="card-header d-flex aligin-item-center justify-content-between py-2 bg-white">
+    <div class="title-table d-flex align-items-center">
+        <h5>Contact List</h5>
+    </div>
+    <div class="d-flex gap-1">
+        <a [routerLink]="'/add-contact'"><button type="button" class="btn btn-primary btn-border mx-2">Add
+                New</button>
+        </a>
+        <a [routerLink]="'/import-contacts'"><button type="button" class="btn btn-primary btn-border">Import
+                bulk
+                contacts</button>
+        </a>
+    </div>
+</div>
 
-            <div class="custom-grid-wrapper">
-                <ejs-grid [dataSource]="Contacts" [allowPaging]="true" [allowSorting]="true"
-                    [pageSettings]="pageSettings" [searchSettings]="searchSettings" [toolbar]="toolbar" height="400"
-                    class="custom-grid">
-                    <e-columns>
-                        <e-column field="contactName" headerText="Name" width="150"></e-column>
-                        <e-column field="contactEmail" headerText="Email" width="180"></e-column>
-                        <e-column field="contactMobile" headerText="Mobile" width="120"></e-column>
-                        <e-column field="contactWhatsApp" headerText="WhatsApp" width="120"></e-column>
-                    </e-columns>
-                </ejs-grid>
-            </div>
+<div class="custom-grid-wrapper">
+    <ejs-grid [dataSource]="Contacts" [allowPaging]="true" [allowSorting]="true" [pageSettings]="pageSettings"
+        [searchSettings]="searchSettings" [toolbar]="toolbar" height="400" class="custom-grid">
+        <e-columns>
+            <e-column field="contactName" headerText="Name" width="150"></e-column>
+            <e-column field="contactEmail" headerText="Email" width="180"></e-column>
+            <e-column field="contactMobile" headerText="Mobile" width="120"></e-column>
+            <e-column field="contactWhatsApp" headerText="WhatsApp" width="120"></e-column>
+        </e-columns>
+    </ejs-grid>
+</div>
 
-            <div class="page-header">
-                <div class="page-block">
-                    <div class="row align-items-center">
+<div class="page-header">
+    <div class="page-block">
+        <div class="row align-items-center">
 
-                    </div>
-                </div>
-            </div>
-            <!-- <div class="row">
+        </div>
+    </div>
+</div>
+<!-- <div class="row">
                 <div class="col-md-12">
                     <div class="card">
                         <div class="card-header d-flex aligin-item-center justify-content-between py-2">
@@ -118,4 +117,3 @@
                     </div>
                 </div>
             </div> -->
-  

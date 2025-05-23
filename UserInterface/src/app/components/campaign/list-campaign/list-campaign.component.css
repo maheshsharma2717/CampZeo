@@ -16,7 +16,7 @@
   color: white;
   border-radius: 50%;
   font-size: 0.75rem;
-  width: 23px;
+  min-width: 17px;
   display: flex;
   align-items: anchor-center;
   justify-content: center;
@@ -250,4 +250,14 @@
   .popup .modal-body {
     padding: 0.5rem;
   }
+}
+.fa-whatsapp {
+  color: #1ee000 !important;
+}
+.fa-instagram {
+  color: transparent;
+  background: radial-gradient(circle at 30% 107%, #fdf497 0%, #fdf497 5%, #fd5949 45%, #d6249f 60%, #285AEB 90%) ;
+  background: -webkit-radial-gradient(circle at 30% 107%, #fdf497 0%, #fdf497 5%, #fd5949 45%, #d6249f 60%, #285AEB 90%);
+  background-clip: text;
+  -webkit-background-clip: text;
 }

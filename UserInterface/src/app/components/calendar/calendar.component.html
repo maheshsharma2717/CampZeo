@@ -2,541 +2,119 @@
     <div class="page-header">
         <div class="page-block w-100">
             <div class="container">
-                <div class="navigator">
-                    <daypilot-navigator [config]="configNavigator" [events]="events" [(date)]="date"
-                        (dateChange)="changeDate($event)" #navigator></daypilot-navigator>
-                </div>
                 <div class="content">
-                    <div class="buttons">
-                        <button class="btn btn-primary btn-calendar" (click)="viewDay()"
-                            [class]="this.configNavigator.selectMode == 'Day' ? 'selected' : ''">Day</button>
-                        <button class="btn btn-primary btn-calendar" (click)="viewWeek()"
-                            [class]="this.configNavigator.selectMode == 'Week' ? 'selected' : ''">Week</button>
-                        <button class="btn btn-primary btn-calendar" (click)="viewMonth()"
-                            [class]="this.configNavigator.selectMode == 'Month' ? 'selected' : ''">Month</button>
+                    <div class="buttons d-inline-block">
+                        <button class="btn btn-secondary btn-calendar" (click)="viewDay()"
+                            [class.selected]="configNavigator.selectMode == 'Day'">Day</button>
+
+                        <button class="btn btn-secondary btn-calendar" (click)="viewWeek()"
+                            [class.selected]="configNavigator.selectMode == 'Week'">Week</button>
+
+                        <button class="btn btn-secondary btn-calendar" (click)="viewMonth()"
+                            [class.selected]="configNavigator.selectMode == 'Month'">Month</button>
+                    </div>
+
+                    <div class="position-relative d-inline-block float-end">
+                        <button class="btn btn-secondary py-2" (click)="toggleNavigator()">
+                            Select Date
+                        </button>
+
+                        <div class="navigator-popup" [class.visible]="showNavigator">
+                            <daypilot-navigator [config]="configNavigator" [events]="events" [(date)]="date"
+                                (dateChange)="onNavigatorDateChange($event)" #navigator>
+                            </daypilot-navigator>
+                        </div>
                     </div>
 
                     <daypilot-calendar [config]="configDay" [events]="events" #day></daypilot-calendar>
                     <daypilot-calendar [config]="configWeek" [events]="events" #week></daypilot-calendar>
                     <daypilot-month [config]="configMonth" [events]="events" #month></daypilot-month>
+
                 </div>
             </div>
+
         </div>
     </div>
 </div>
-
-<!-- model for the add campaign on the clander click-->
-<!-- <div class="modal" tabindex="-1" [ngClass]="{'show d-block': showCampaignModal}"
-    style="background: rgba(0,0,0,0.5); overflow-y: scroll;">
-
-    <div class="modal-dialog  modal-xl">
-        <div class="modal-content">
-            <div class="modal-header align-items-center">
-                <h5 class="modal-title">Create Campaign</h5>
-                <button type="button" class=" btn btn-danger " (click)="closeCampaignModal()">X</button>
-            </div>
-            <div class="modal-body">
-                <form [formGroup]="campaignForm">
-                    <div *ngIf="currentStep === 1">
-                        <div>
-                            <label for="name" class="form-label fw-bold ms-1">
-                                <h5>Select Campaigns @if(campaignForm.errors?.atLeastOneRequired){
-                                    <span class="text-danger ">*</span>
-                                    }
-                                </h5>
-                            </label>
-                        </div>
-                        <div class="d-flex align-items-center gap-3 justify-content-start w-100">
-                            <div class="card text-center rounded selected-email-hover"
-                                style="width: 8rem; border-radius: 10px;">
-
-                                <div class="card-body rounded pt-4 bg-white pointer border"
-                                    (click)="toggleSelection('isEmailCampaign')"
-                                    [ngClass]="{'selected-email': campaignForm.controls.isEmailCampaign.value}">
-                                    <i class="fas fa-envelope-open fa-2x"></i>
-                                    <p class="card-text mt-2">Email</p>
-                                </div>
-
-                            </div>
-
-                            <div class="card text-center selected-sms-hover" style="width: 8rem; border-radius: 10px;">
-                                <div class="card-body rounded pt-4 bg-white pointer border"
-                                    (click)="toggleSelection('isSmsCampaign')"
-                                    [ngClass]="{'selected-sms':campaignForm.controls.isSmsCampaign.value}">
-                                    <i class="fas fa-sms fa-2x"></i>
-                                    <p class="card-text mt-2">SMS</p>
-                                </div>
-                            </div>
-
-                            <div class="card text-center selected-whatsapp-hover"
-                                style="width: 8rem; border-radius: 10px;">
-                                <div class="card-body rounded pt-4 bg-white pointer border"
-                                    (click)="toggleSelection('isWhatsAppCampaign')"
-                                    [ngClass]="{'selected-whatsapp':campaignForm.controls.isWhatsAppCampaign.value}">
-                                    <i class="fab fa-whatsapp fa-2x"></i>
-                                    <p class="card-text mt-2">WhatsApp</p>
-                                </div>
-                            </div>
-
-                            <div class="card text-center selected-rcs-hover" style="width: 8rem; border-radius: 10px;">
-                                <div class="card-body rounded pt-4 bg-white pointer border"
-                                    (click)="toggleSelection('isRCSCampaign')"
-                                    [ngClass]="{'selected-rcs': campaignForm.controls.isRCSCampaign.value}">
-                                    <i class="fa fa-globe fa-2x"></i>
-                                    <p class="card-text mt-2">RCS</p>
-                                </div>
-                            </div>
-
-                            <div class="card text-center selected-facebook-hover"
-                                style="width: 8rem; border-radius: 10px;">
-                                <div class="card-body rounded pt-4 bg-white pointer border"
-                                    (click)="toggleSelection('isFacebookCampaign')"
-                                    [ngClass]="{'selected-facebook':campaignForm.controls.isFacebookCampaign.value}">
-                                    <i class="fab fa-facebook fa-2x"></i>
-                                    <p class="card-text mt-2">FaceBook</p>
-                                </div>
-                            </div>
-
-                            <div class="card text-center selected-instagram-hover"
-                                style="width: 8rem; border-radius: 10px;">
-                                <div class="card-body rounded pt-4 bg-white pointer border"
-                                    (click)="toggleSelection('isInstagramCampaign')"
-                                    [ngClass]="{'selected-instagram':campaignForm.controls.isInstagramCampaign.value}">
-                                    <i class="fab fa-instagram fa-2x"></i>
-                                    <p class="card-text mt-2">Instagram</p>
-                                </div>
-                            </div>
-                        </div>
-                        <div *ngIf="campaignForm.errors?.atLeastOneRequired && campaignForm.touched"
-                            class="text-danger mt-0 mb-2">
-                            Please select at least one campaign type.
-                        </div>
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label class="floating-label" for="name">Name
-                                        <span class="text-danger"
-                                            *ngIf="campaignForm.get('name')?.invalid && campaignForm.get('name')?.value === ''">*</span>
-                                    </label>
-                                    <input type="text" class="form-control" id="name" placeholder="Enter  Name"
-                                        formControlName="name">
-
-                                    <div *ngIf="campaignForm.get('name')?.hasError('required') && campaignForm.get('name')?.touched"
-                                        class="text-danger">
-                                        Name is required
-                                    </div>
-                                    <div *ngIf="campaignForm.get('name')?.hasError('minlength') && campaignForm.get('name')?.touched"
-                                        class="text-danger">
-                                        Name must be at least 3 characters
-                                    </div>
-                                    <div *ngIf="campaignForm.get('name')?.hasError('pattern') && campaignForm.get('name')?.touched"
-                                        class="text-danger">
-                                        Name must only contain letters
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label for="startDate" class="floating-label">Start Date <span
-                                            class="text-danger">*</span></label>
-                                    <input type="datetime-local" id="startDate" formControlName="startDate"
-                                        class="form-control p-2"
-                                        [value]="campaignForm.controls.startDate.value | date:'yyyy-MM-ddTHH:mm'">
-                                    <div *ngIf="campaignForm.controls.startDate.invalid && campaignForm.controls.startDate.touched"
-                                        class="text-danger">
-                                        Start Date is required
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label for="endDate" class="floating-label">End Date <span
-                                            class="text-danger">*</span></label>
-                                    <input type="datetime-local" id="endDate" formControlName="endDate"
-                                        class="form-control p-2"
-                                        [value]="campaignForm.controls.endDate.value | date:'yyyy-MM-ddTHH:mm'">
-                                    <div *ngIf="campaignForm.controls.endDate.invalid && campaignForm.controls.endDate.touched"
-                                        class="text-danger">
-                                        End Date is required
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label for="description">Description</label>
-                                    <textarea class="form-control" id="description" rows="1"
-                                        formControlName="description"></textarea>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="form-check mb-2 d-none">
-                            <input class="form-check-input" type="checkbox" #isEmailCampaign
-                                formControlName="isEmailCampaign">
-                            <label class="form-check-label" for="isEmailCampaign">Is Email Campaign</label>
-                        </div>
-
-                        <div class="form-check mb-2 d-none">
-                            <input class="form-check-input" type="checkbox" #isWhatsAppCampaign
-                                formControlName="isWhatsAppCampaign">
-                            <label class="form-check-label" for="isWhatsAppCampaign">Is WhatsApp Campaign</label>
-                        </div>
-
-                        <div class="form-check mb-2 d-none">
-                            <input class="form-check-input" type="checkbox" #isSmsCampaign
-                                formControlName="isSmsCampaign">
-                            <label class="form-check-label" for="isSmsCampaign">Is SMS Campaign</label>
-                        </div>
-                        <div class="form-check mb-2 d-none">
-                            <input class="form-check-input" type="checkbox" #isRCSCampaign
-                                formControlName="isRCSCampaign">
-                            <label class="form-check-label" for="isRCSCampaign">is RCSCampaign</label>
-                        </div>
-                        <div class="form-check mb-2 d-none">
-                            <input class="form-check-input" type="checkbox" #isFacebookCampaign
-                                formControlName="isFacebookCampaign">
-                            <label class="form-check-label" for="isFacebookCampaign">is Facebook Campaign</label>
-                        </div>
-                        <div class="form-check mb-2 d-none">
-                            <input class="form-check-input" type="checkbox" #isInstagramCampaign
-                                formControlName="isInstagramCampaign">
-                            <label class="form-check-label" for="isInstagramCampaign">is Instagram Campaign</label>
-                        </div>
-                    </div>
-                    <div *ngIf="currentStep === 2">
-                        <div class="row ">
-                            <div class="col-md-3">
-                                <div class="card-box">
-                                    <div class="card-header-1">
-                                        <span class="team-label">Create Your Own</span>
-                                        <span class="team-tag">New</span>
-                                    </div>
-                                    <div class="card-body d-flex align-items-center justify-content-center flex-column"
-                                        style="height: 227px;">
-                                        <h3>Add Your Own template </h3>
-                                        <p>Create a workflow from scratch or start with one of our templates.</p>
-
-                                        <button class="btn btn-primary" (click)="proceedToAddTemplate()"> Add
-                                            New</button>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-3" *ngFor="let item of filteredModalContentAll; let i = index">
-                                <div class="card-box" (click)="selectTemplate(item)"
-                                    [ngClass]="{'selected-box-shadow': selectedTemplateId == item.id}">
-                                    <div class="card-header-1"
-                                        [ngClass]="{'selected-box-header': selectedTemplateId == item.id}">
-                                        <span class="team-label">{{ item.subject }}</span>
-                                    </div>
-                                    <div class="card-body">
-                                        <div class="form-control DivId" id="messageText" rows="5"
-                                            [innerHTML]="GetHtml(item.message)"
-                                            style="height: 200px; background: transparent; border: none;">
-                                        </div>
-                                    </div>
-                                    <div class="card-footer">
-                                        <a [routerLink]="'/edit-campaign-post'"
-                                            [queryParams]="{id: item.id, type: smsPlatForm}" (click)="closeModal()">
-                                            <i class="fa fa-eye"> &nbsp; Preview </i> and
-                                            <i class="fa fa-edit"> &nbsp; Edit </i>
-                                        </a>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div *ngIf="currentStep === 3">
-
-                        <div class="d-flex flex-wrap">
-                            <div *ngFor="let campaign of selectedCampaignTypes" class="card text-center m-2"
-                                style="width: 8rem; border-radius: 10px;">
-                                <div class="card-body pointer border" (click)="ChangeType(campaign.id)"
-                                    [ngClass]="{'selected text-white': campaignForm.controls.type.value === campaign.id}">
-                                    <i [class]="campaign.icon + ' fa-2x'"></i>
-                                    <p class="mt-2">{{ campaign.name }}</p>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="row">
-                            <div class="col-md-12">
-                                <div class="card">
-                                    <div class="card-header d-flex aligin-item-center justify-content-between py-2">
-                                        <div class="title-table d-flex align-items-center">
-                                            <h5>Campaign Events</h5>
-                                        </div>
-
-                                    </div>
-                                    <div class="card-header d-flex aligin-item-center justify-content-between py-2">
-                                        <input type="text" class="form-control w-25" placeholder="Search..."
-                                            [(ngModel)]="searchTerm" (input)="onSearchChange()" />
-
-                                        <div class="d-flex align-items-center justify-content-center ">
-                                            <div class="mx-2">
-                                                <span class="text-primary">entries per page</span>
-                                            </div>
-                                            <div class="">
-                                                <select id="itemsPerPageSelect" class="form-control"
-                                                    [(ngModel)]="itemsPerPage"
-                                                    (change)="onItemsPerPageChange(itemsPerPage)">
-                                                    <option *ngFor="let option of itemsPerPageOptions" [value]="option">
-                                                        {{ option }}
-                                                    </option>
-                                                </select>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="card-body table-border-style pb-1">
-                                        <div class="table-responsive mt-4"
-                                            *ngIf="campaignForm.get('type')?.value !== 5 && campaignForm.get('type')?.value !== 6">
-
-                                            <table class="table">
-                                                <thead>
-                                                    <tr>
-                                                        <th scope="col" class="align-middle">
-                                                            <input type="checkbox" class="form-check-input pointer"
-                                                                [checked]="allSelected" (change)="selectAll($event)" />
-                                                        </th>
-                                                        <th scope="col">Contact Name</th>
-                                                        <th scope="col">Email</th>
-                                                        <th scope="col">Mobile</th>
-                                                        <th scope="col">WhatsApp</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    <tr
-                                                        *ngFor="let contact of filteredContacts | paginate: { itemsPerPage: itemsPerPage, currentPage: page, totalItems: total }">
-                                                        <td class="align-middle">
-                                                            <input class="form-check-input pointer" type="checkbox"
-                                                                [(ngModel)]="contact.selected"
-                                                                (change)="onIndividualCheckChange()"
-                                                                id="contact{{contact.id}}">
-                                                        </td>
-                                                        <td class="align-middle">
-                                                            <label class="form-check-label" for="contact{{contact.id}}">
-                                                                {{ contact.contactName }}
-                                                            </label>
-                                                        </td>
-                                                        <td class="align-middle">
-                                                            <label class="form-check-label" for="contact{{contact.id}}">
-                                                                {{ contact.contactEmail }}
-                                                            </label>
-                                                        </td>
-                                                        <td class="align-middle">
-                                                            <label class="form-check-label" for="contact{{contact.id}}">
-                                                                {{ contact.contactMobile }}
-                                                            </label>
-                                                        </td>
-                                                        <td class="align-middle">
-                                                            <label class="form-check-label" for="contact{{contact.id}}">
-                                                                {{ contact.contactWhatsApp }}
-                                                            </label>
-                                                        </td>
-                                                    </tr>
-                                                </tbody>
-                                            </table>
-                                            <div class="d-flex justify-content-end pt-2 mb-0">
-                                                <pagination-controls class="pagination"
-                                                    (pageChange)="pageChangeEvent($event)"></pagination-controls>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="card-body ">
-
-                            <div class="text-start">
-                                <label for="subject">Subject</label>
-                                <input class="form-control" id="subject" formControlName="subject" type="text" />
-                                @if(campaignForm.get('subject').invalid &&
-                                campaignForm.get('subject').touched){
-                                <div class="text-danger">
-                                    Subject is required.
-                                </div>}
-                            </div>
-
-                            <div class="d-flex my-3">
-                                <div class="w-100 text-start">
-                                    <label for="organisationName " style="float: inline-start; width: 100%;">Message
-                                        Template</label> @if(campaignForm.get('type').value==1 ){
-                                    <div class="row my-4 mx-auto p-5 " style="width: 100%;">
-                                    </div>}
-                                    @if(campaignForm.get('type').value==2||campaignForm.get('type').value==3){
-
-                                    <textarea class="form-control" [(ngModel)]="simpleText"
-                                        [ngModelOptions]="{standalone:true}" style="min-height: 30vh;"></textarea> }
-                                    @if(campaignForm.get('type').value==4||campaignForm.get('type').value==5||campaignForm.get('type').value==6)
-                                    {
-                                    @if(campaignForm.get('type').value==6){
-                                    <div class="video-upload-container">
-                                        <div class="input-group mb-3">
-
-                                            <div class="custom-file">
-                                                <input type="file" class="custom-file-input" id="inputGroupFile01"
-                                                    (change)="onVideoSelected($event)" accept="video/mp4" />
-                                                <label class="custom-file-label" for="inputGroupFile01">Choose
-                                                    file</label>
-                                            </div>
-                                        </div>
-                                        <div *ngIf="videoUrl">
-                                            <video [src]="videoUrl" controls width="400">
-                                                Your browser does not support the video tag.
-                                            </video>
-                                        </div>
-                                    </div>
-                                    }
-                                    <div class="row my-4 mx-auto " style="width: 100%;">
-                                        <quill-editor [ngStyle]="{width:'100%'} " [(ngModel)]="editorContent"
-                                            [ngModelOptions]="{standalone:true}" (onFocus)="focus($event)"
-                                            (onBlur)="blur($event)" (onEditorCreated)="created($event)">
-                                        </quill-editor>
-                                    </div>
-                                    }
-                                </div>
-                            </div>
-
-                            <div class="text-start mt-5 mb-2">
-                                <label for="organisationName">Organisation Name</label>
-                                <input class="form-control" id="organisationName" formControlName="organisationName"
-                                    type="text" />
-                                @if(campaignForm.get('organisationName').invalid &&
-                                campaignForm.get('organisationName').touched){
-                                <div class="text-danger">
-                                    Please enter a valid mobile number (digits only).
-                                </div>}
-                            </div>
-                            <div class="text-start">
-                                <label for="senderEmail">Sender Email</label>
-                                <input class="form-control" id="senderEmail" formControlName="senderEmail"
-                                    type="email" />
-                                @if(campaignForm.get('senderEmail').invalid &&
-                                campaignForm.get('senderEmail').touched){
-                                <div class="text-danger">
-                                    Please enter a valid email.
-                                </div>}
-                                <div class="text-start mt-3">
-                                    <label for="scheduledPostTime">Post Time</label>
-                                    <input type="time" id="scheduledPostTime" class="form-control"
-                                        formControlName="scheduledPostTime" />
-                                </div>
-                                <div *ngIf="campaignForm.get('scheduledPostTime')?.invalid && campaignForm.get('scheduledPostTime')?.touched"
-                                    class="text-danger">
-                                    Please select a valid date and time.
-                                </div>
-                            </div>
-
-                        </div>
-                    </div>
-                </form>
-                <div class="modal-footer p-0">
-
-                    <div class="d-flex justify-content-between mt-4">
-                        <button *ngIf="currentStep > 1" class="btn btn-secondary mr-3"
-                            (click)="goToPreviousStep()">Back</button>
-                        <button (click)="nextStep()" class="btn btn-primary">Next</button>
-                        <button *ngIf="currentStep === 3" class="btn btn-primary" (click)="saveCampaign()">Save</button>
-                    </div>
-
-                </div>
-            </div>
-        </div>
-    </div>
-</div> -->
 
 <div class="modal fade show d-block" tabindex="-1" role="dialog" *ngIf="isPreviewModalOpen"
     style="background: rgba(0,0,0,0.5); overflow-y: scroll;">
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Campaign Template Preview</h5>
-                <button type="button" class="btn btn-danger" aria-label="Close" (click)="isPreviewModalOpen = false">
-                    <span aria-hidden="true" class="text-white">&times;</span>
+            <div class="modal-header bg-gradient bg-secondary text-white px-4 py-3">
+                <h5 class="modal-title">Campaign Post Preview</h5>
+                <button type="button" class="btn btn-danger br-50" aria-label="Close"
+                    (click)="isPreviewModalOpen = false">
+                    <span aria-hidden="true" class="text-white">X</span>
                 </button>
             </div>
             <div class="card-body">
-             
-                <div class="card shadow rounded-4 overflow-hidden border-0">
-                    <div class="bg-gradient bg-secondary text-white px-4 py-3">
+                <div class=" overflow-hidden border-0 ">
+                    <!-- <div class="px-4 py-3">
                         <h5 class="mb-0 d-flex align-items-center gap-2">
-                            📋 <span>Campaign Details</span>
+                            📋 <span>Campaign</span>
                         </h5>
-                    </div>
-                    <div class="card-body px-5 py-4">
+                    </div> -->
+                    <div class="card-body px-5 py-2">
                         <div class="row gy-4">
                             <div class="col-md-6 text-start">
-                                <label class="form-label fw-semibold text-secondary">📛 Name</label>
-                                <div class="fs-5 fw-medium text-dark ms-4">{{ campaignData?.name }}</div>
+                                <label class="form-label fw-semibold text-secondary">📛Campaign Name</label>
+                                <div class="fs-6 fw-medium text-dark ms-4">
+                                    {{ campaignData?.name }}
+                                </div>
+                            </div>
+                            <div class="col-md-6 text-start">
+                                <label class="form-label fw-semibold text-secondary">📝 Description</label>
+                                <div class="fs-6 text-muted ms-4">
+                                    {{ campaignData?.description }}
+                                </div>
                             </div>
                             <div class="col-md-6 text-start">
                                 <label class="form-label fw-semibold text-secondary">⏱️ Start Date</label>
-                                <div class="fs-5 fw-medium text-dark ms-4">
+                                <div class="fs-6 fw-normal text-dark ms-4">
                                     {{ campaignData?.startDate | date:'medium' }}
                                 </div>
                             </div>
-
                             <div class="col-md-6 text-start">
                                 <label class="form-label fw-semibold text-secondary">📅 End Date</label>
-                                <div class="fs-5 fw-medium text-dark ms-4">
+                                <div class="fs-6 fw-normal text-dark ms-4">
                                     {{ campaignData?.endDate | date:'medium' }}
                                 </div>
-                            </div>
-
-                            <div class="col-md-6 text-start">
-                                <label class="form-label fw-semibold text-secondary">📝 Description</label>
-                                <div class="fs-6 text-muted ms-4">{{ campaignData?.description }}</div>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <div class="text-start">
+                <div class="text-start mt-3">
                     <label for="subject">Subject</label>
-                    <input class="form-control" id="subject" formControlName="subject" [value]="previewData?.subject"
-                        type="text" readonly />
+                    <input class="form-control" id="subject" [value]="previewData?.subject" type="text" readonly />
                 </div>
 
                 <div class="d-flex my-3">
                     <div class="w-100 text-start">
-                        <label for="organisationName" style="float: inline-start; width: 100%;">Message Template</label>
-
+                        <label for="organisationName">Message Template</label>
                         <div *ngIf="previewData?.type === 1">
-                            <!-- <email-editor [(ngModel)]="editorHtml"></email-editor> -->
-                            <!-- <email-editor #emailEditor (onLoad)="onEditorLoaded()"></email-editor> -->
-                            <email-editor #emailEditor (ready)="onEditorReady()"></email-editor>
-
-
-
+                            <div class="border p-2" style="min-height: 30vh;" [innerHTML]="emailHtmlContent"></div>
                         </div>
-
                         <div *ngIf="previewData?.type === 2 || previewData?.type === 3">
                             <textarea class="form-control" [(ngModel)]="simpleText" style="min-height: 30vh;"
                                 readonly></textarea>
                         </div>
                         <div *ngIf="previewData?.type === 4 || previewData?.type === 5 || previewData?.type === 6">
-                            <quill-editor [(ngModel)]="editorContent" [readOnly]="true"></quill-editor>
+                            <div class="border p-2" style="min-height: 30vh;" [innerHTML]="editorContent"></div>
                         </div>
-
                     </div>
                 </div>
 
-                <!-- <div class="text-start mb-2">
-                    <label for="organisationName">Organisation Name</label>
-                    <input class="form-control" id="organisationName" formControlName="organisationName"
-                        [value]="previewData?.organisationName" type="text" readonly />
-                </div> -->
-
-                <div class="text-start">
+                <div class="text-start mt-3" *ngIf="previewData?.type === 1">
                     <label for="senderEmail">Sender Email</label>
-                    <input class="form-control" id="senderEmail" formControlName="senderEmail"
-                        [value]="previewData?.senderEmail" type="email" readonly />
+                    <input class="form-control" id="senderEmail" [value]="previewData?.senderEmail" type="email"
+                        readonly />
                 </div>
 
                 <div class="text-start mt-3">
                     <label for="scheduledPostTime">Post Time</label>
-                    <input type="time" id="scheduledPostTime" class="form-control" formControlName="scheduledPostTime"
+                    <input type="time" id="scheduledPostTime" class="form-control"
                         [value]="previewData?.scheduledPostTime?.substring(11, 16)" readonly />
                 </div>
             </div>

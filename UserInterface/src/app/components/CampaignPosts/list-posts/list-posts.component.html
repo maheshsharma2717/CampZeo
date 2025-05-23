@@ -1,48 +1,62 @@
 <div class="pcoded-content">
-    <div class="page-header">
-        <div class="page-block">
-            <div class="row align-items-center">
-                <div class="col-md-12">
-                    <div class="page-header-title">
-                        <h5 class="m-b-10">Campaign Posts</h5>
-                    </div>
-                    <ul class="breadcrumb">
-                        <li class="breadcrumb-item"><a [routerLink]="'/dashboard'"><i class="feather icon-home"></i></a>
-                        </li>
-                        <li class="breadcrumb-item"><a [routerLink]="'/list-campaigns'">Campaign List</a></li>
-                        <li class="breadcrumb-item"><a [routerLink]="'/list-campaign-posts'">Campaign Posts</a></li>
-                    </ul>
-                </div>
-            </div>
-        </div>
+    <div class="page-header mb-0">
+        <h3 class="fw-bold mb-3">Campaign Posts</h3>
+        <ul class="breadcrumbs mb-3">
+            <li class="nav-item">
+                <a [routerLink]="'/dashboard'"><i class=" icon-home"></i></a>
+            </li>
+            <li class="separator">
+                <i class="icon-arrow-right"></i>
+            </li>
+            <li class="nav-item">
+                <a [routerLink]="'/list-campaigns'">Campaign List</a>
+            </li>
+            <li class="separator">
+                <i class="icon-arrow-right"></i>
+            </li>
+            <li class="nav-item">
+                <a [routerLink]="'/list-campaign-posts'">Campaign Posts</a>
+            </li>
+        </ul>
     </div>
     <div class="row ">
         <div class="col-md-12">
             <div class=" card shadow border-0 rounded-4">
-                <div class="card-header bg-primary text-white rounded-top-4">
+                <div class="card-header bg-gradient bg-secondary text-white px-4 py-3 rounded-top-4">
                     <h5 class="mb-0">📋 Campaign Details</h5>
                 </div>
                 <div class="card-body px-4 py-3">
                     <div class="row g-3">
-                        <div class="col-sm-6">
-                            <label class="form-label fw-bold text-muted">Name</label>
-                            <div class="text-dark fs-6">{{ Campaign.name }}</div>
+                        <div class="col-md-6 text-start">
+                            <label class="form-label fw-semibold text-secondary">📛Campaign Name</label>
+                            <div class="fs-6 fw-medium text-dark ms-4">
+                                {{ Campaign?.name }}
+                            </div>
                         </div>
-                        <div class="col-sm-6">
-                            <label class="form-label fw-semibold text-muted">Description</label>
-                            <div class="text-dark fs-6">{{ Campaign.description }}</div>
+                        <div class="col-md-6 text-start">
+                            <label class="form-label fw-semibold text-secondary">📝 Description</label>
+                            <div class="fs-6 text-muted ms-4">
+                                {{ Campaign?.description }}
+                            </div>
                         </div>
-                        <div class="col-sm-6">
-                            <label class="form-label fw-semibold text-muted">Start Date</label>
-                            <div class="text-dark fs-6">{{ Campaign.startDate | date:'medium' }}</div>
+                        <div class="col-md-6 text-start">
+                            <label class="form-label fw-semibold text-secondary">⏱️ Start Date</label>
+                            <div class="fs-6 fw-normal text-dark ms-4">
+                                {{ Campaign?.startDate | date:'medium' }}
+                            </div>
                         </div>
-                        <div class="col-sm-6">
-                            <label class="form-label fw-semibold text-muted">End Date</label>
-                            <div class="text-dark fs-6">{{ Campaign.endDate | date:'medium' }}</div>
+
+                        <div class="col-md-6 text-start">
+                            <label class="form-label fw-semibold text-secondary">⏳End Date</label>
+                            <div class="fs-6 fw-normal text-dark ms-4">
+                                {{ Campaign?.endDate | date:'medium' }}
+                            </div>
                         </div>
-                        <div class="col-sm-6">
-                            <label class="form-label fw-semibold text-muted">Created Date</label>
-                            <div class="text-dark fs-6">{{ Campaign.createdDate | date:'medium' }}</div>
+                        <div class="col-md-6 text-start">
+                            <label class="form-label fw-semibold text-secondary">📅Created Date</label>
+                            <div class="fs-6 fw-normal text-dark ms-4">
+                                {{ Campaign?.createdDate | date:'medium' }}
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -64,10 +78,10 @@
                         </a>
                     </div>
                 </div>
-                <div class="card-header d-flex aligin-item-center justify-content-between py-2">
+                <div class="card-header d-flex aligin-item-center justify-content-end py-2">
                     <input type="text" class="form-control w-25" placeholder="Search..." [(ngModel)]="searchTerm"
                         (input)="onSearchChange()" />
-                    <div class="d-flex align-items-center justify-content-center ">
+                    <!-- <div class="d-flex align-items-center justify-content-center ">
                         <div class="mx-2">
                             <span class="text-primary">entries per page</span>
                         </div>
@@ -78,28 +92,23 @@
                                 </option>
                             </select>
                         </div>
-                    </div>
+                    </div> -->
                 </div>
                 <div class="card-body table-border-style pb-1">
                     <div class="table-responsive">
-             
                         <ejs-grid [dataSource]='CampaignPosts' [rowHeight]="" #grid allowPaging="true"
                             [pageSettings]="pageSettings" [toolbar]="toolBarOptions"
                             [sortSettings]="{ columns: [{ field: 'id', direction: 'Descending' }] }" height='400px'
                             [enableHover]="false">
-
                             <ng-template #toolbarTemplate></ng-template>
-
                             <e-columns>
-                                <e-column field="id" headerText="#" width="80" textAlign="Left"></e-column>
                                 <e-column headerText="Subject" width="250" [template]="detailsTemplate"></e-column>
-                                <e-column headerText="Post/Message Scheduled Time" width="250" [template]="messageTemplate"></e-column>
+                                <e-column headerText="Post/Message Scheduled Time" width="250"
+                                    [template]="messageTemplate"></e-column>
                                 <e-column headerText="Type" width="250" [template]="typeTemplate"></e-column>
                                 <e-column headerText="Action" width="250" [template]="actionTemplate"></e-column>
                             </e-columns>
-
                         </ejs-grid>
-
                         <ng-template #detailsTemplate let-data>
                             <p class="m-0">
                                 {{data.subject}}
@@ -107,29 +116,107 @@
                         </ng-template>
                         <ng-template #messageTemplate let-data>
                             <p class="m-0 text-truncate" style="max-width: 230px;" [title]="data.message">
-                                {{data.scheduledPostTime |date :'dd/MM/yyyy HH:mm'}}
+                                {{data.scheduledPostTime |date :'dd/MMMM/yyyy HH:mm'}}
                             </p>
                         </ng-template>
                         <ng-template #typeTemplate let-data>
-                           <i class="fa-2x {{service.platformTypeMapping[data.type].class}}"></i>
+                            <i class="f-20 fa-1x {{service.platformTypeMapping[data.type].class}}"></i>
                         </ng-template>
                         <ng-template #actionTemplate let-data>
                             <a class="pointer mx-3" title="Manage Posts" [routerLink]="'/campaign-events'"
                                 [queryParams]="{ id: data.id }">
-                                <i class="far fa-edit"></i>
-                            </a> &nbsp; &nbsp;
-                            <a class="pointer mx-3" title="Manage Posts" [routerLink]="'/campaign-events'"
-                                [queryParams]="{ id: data.id }">
-                                <i class="fa fa-eye"></i>
+                                <i class="fas fs-20 fa-share-alt-square text-secondary " title="Share Post"></i>
+                            </a> &nbsp;
+                            <a class="pointer mx-3" title="Posts Preview" (click)="openPreviewPopup(data.id)">
+                                <i class="far f-20 fa-copy text-secondary"></i>
                             </a>
                         </ng-template>
-
-                        <div class="d-flex justify-content-end mb-0">
-                            <pagination-controls class="pagination"
-                                (pageChange)="pageChangeEvent($event)"></pagination-controls>
-                        </div>
                     </div>
                 </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- preview post model popup -->
+
+<div class="modal fade show d-block" tabindex="-1" role="dialog" *ngIf="isPreviewModalOpen"
+    style="background: rgba(0,0,0,0.5); overflow-y: scroll;">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header bg-gradient bg-secondary text-white px-4 py-3">
+                <h5 class="modal-title">Campaign Post Preview</h5>
+                <!-- <button type="button" class="btn btn-danger br-50" aria-label="Close"
+                    (click)="isPreviewModalOpen = false">
+                    <span aria-hidden="true" class="text-white">X</span>
+                </button> -->
+            </div>
+            <div class="card-body">
+                <div class="card-body px-5 py-2">
+                    <div class="row gy-4">
+                        <div class="col-md-6 text-start">
+                            <label class="form-label fw-semibold text-secondary">📛Campaign Name</label>
+                            <div class="fs-6 fw-medium text-dark ms-4">
+                                {{ Campaign?.name }}
+                            </div>
+                        </div>
+                        <div class="col-md-6 text-start">
+                            <label class="form-label fw-semibold text-secondary">📝 Description</label>
+                            <div class="fs-6 text-muted ms-4">
+                                {{ Campaign?.description }}
+                            </div>
+                        </div>
+                        <div class="col-md-6 text-start">
+                            <label class="form-label fw-semibold text-secondary">⏱️ Start Date</label>
+                            <div class="fs-6 fw-normal text-dark ms-4">
+                                {{ Campaign?.startDate | date:'medium' }}
+                            </div>
+                        </div>
+                        <div class="col-md-6 text-start">
+                            <label class="form-label fw-semibold text-secondary">📅 End Date</label>
+                            <div class="fs-6 fw-normal text-dark ms-4">
+                                {{ Campaign?.endDate | date:'medium' }}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="text-start mt-3">
+                        <label for="subject">Subject</label>
+                        <input class="form-control" id="subject" [value]="previewData?.subject" type="text" readonly />
+                    </div>
+
+                    <div class="d-flex my-3">
+                        <div class="w-100 text-start">
+                            <label for="organisationName">Message Template</label>
+                            <div *ngIf="previewData?.type === 1">
+                                <div class="border p-2" style="min-height: 30vh;" [innerHTML]="emailHtmlContent"></div>
+                            </div>
+                            <div *ngIf="previewData?.type === 2 || previewData?.type === 3">
+                                <textarea class="form-control" [(ngModel)]="simpleText" style="min-height: 30vh;"
+                                    readonly>
+                                </textarea>
+                            </div>
+                            <div *ngIf="previewData?.type === 4 || previewData?.type === 5 || previewData?.type === 6">
+                                <div class="border p-2" style="min-height: 30vh;" [innerHTML]="editorContent"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="text-start mt-3" *ngIf="previewData?.type === 1">
+                        <label for="senderEmail">Sender Email</label>
+                        <input class="form-control" id="senderEmail" [value]="previewData?.senderEmail" type="email"
+                            readonly />
+                    </div>
+
+                    <div class="text-start mt-3">
+                        <label for="scheduledPostTime">Post Time</label>
+                        <input type="time" id="scheduledPostTime" class="form-control"
+                            [value]="previewData?.scheduledPostTime?.substring(11, 16)" readonly />
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer justify-content-start ms-4">
+                <button type="button" class="btn btn-secondary" (click)="isPreviewModalOpen = false">Close</button>
             </div>
         </div>
     </div>
