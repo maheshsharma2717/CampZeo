@@ -1,6 +1,8 @@
 ﻿using MC.Basic.Application.Contracts.Infrasructure;
+using MC.Basic.Application.Contracts.Persistance;
 using MC.Basic.Application.Models.DataModel;
 using MC.Basic.Application.Models.Twilio;
+using MC.Basic.Domain;
 using RestSharp;
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
@@ -9,20 +11,21 @@ namespace MC.Basic.Infrastructure.Mail
 {
     public class MailgunEmailService : IMailgunEmailService
     {
-        private readonly string domain;
-        private readonly string apiKey;
-        private readonly string fromEmail;
-        private readonly string subject;
-        private readonly string textContent;
 
-        public MailgunEmailService()
+        private readonly IPlatformConfigurationRepository _platformConfiguration;
+        public MailgunEmailService(IPlatformConfigurationRepository platformConfiguration)
         {
             //The services key gose here
-           
+            _platformConfiguration = platformConfiguration;
+
         }
 
         public async Task<RestResponse> SendMessage(List<string> emails, string template)
         {
+            var domain = await _platformConfiguration.GetConfigurationValueByKey("Domain",PlatformType.Email);
+            var fromEmail = await _platformConfiguration.GetConfigurationValueByKey("FromEmail", PlatformType.Email);
+            var apiKey = await _platformConfiguration.GetConfigurationValueByKey("ApiKey", PlatformType.Email);
+
             RestClient client = new RestClient($"https://api.mailgun.net/v3/{domain}/messages");
             var request = new RestRequest();
 
@@ -33,9 +36,9 @@ namespace MC.Basic.Infrastructure.Mail
             // Email parameters
             request.AddParameter("from", fromEmail);
             request.AddParameter("to", string.Join(",", emails));
-            request.AddParameter("subject", subject);
+            request.AddParameter("subject", "");
             request.AddParameter("html", template);
-            request.AddParameter("text", textContent);
+            request.AddParameter("text", "");
             request.Method = Method.Post;
 
             // Execute the request and return response
@@ -44,6 +47,10 @@ namespace MC.Basic.Infrastructure.Mail
 
         public async Task<ApiResponse<object>> GetMailgunReports(string email, List<string> events)
         {
+            var domain = await _platformConfiguration.GetConfigurationValueByKey("Domain", PlatformType.Email);
+            var fromEmail = await _platformConfiguration.GetConfigurationValueByKey("FromEmail", PlatformType.Email);
+            var apiKey = await _platformConfiguration.GetConfigurationValueByKey("ApiKey", PlatformType.Email);
+
             using(var client = new HttpClient())
             {
                 client.DefaultRequestHeaders.Authorization =
@@ -69,6 +76,10 @@ namespace MC.Basic.Infrastructure.Mail
         }
         public async Task<RestResponse> SendBatchEmail(MailgunEmailParams emailParams)
         {
+            var domain = await _platformConfiguration.GetConfigurationValueByKey("Domain", PlatformType.Email);
+            var fromEmail = await _platformConfiguration.GetConfigurationValueByKey("FromEmail", PlatformType.Email);
+            var apiKey = await _platformConfiguration.GetConfigurationValueByKey("ApiKey", PlatformType.Email);
+         
             // Create the RestClient
             var client = new RestClient($"https://api.mailgun.net/v3/{domain}/messages");
             var request = new RestRequest();
@@ -98,6 +109,10 @@ namespace MC.Basic.Infrastructure.Mail
 
         public async Task<LogResponse> GetLogs()
         {
+            var domain = await _platformConfiguration.GetConfigurationValueByKey("Domain", PlatformType.Email);
+            var fromEmail = await _platformConfiguration.GetConfigurationValueByKey("FromEmail", PlatformType.Email);
+            var apiKey = await _platformConfiguration.GetConfigurationValueByKey("ApiKey", PlatformType.Email);
+
             var client = new RestClient("https://api.mailgun.net/v1/analytics/logs");
 
             var request = new RestRequest();

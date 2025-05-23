@@ -9,6 +9,7 @@ const ApiUrl = environment.API_BASE_URL
 })
 export class AppService {
 
+
   IsUserAuthenticated = false;
   toggle: boolean = true;
   Token: string = "";
@@ -16,13 +17,13 @@ export class AppService {
   showSpinner: boolean = false;
   promptData: string = '';
   isChatPopupOpen: boolean = false;
-  platformTypeMapping: { [key: number]: {name:string,class:string} } = {
-    1: {name:'Email', class:"fas fa-envelope-open"},
-    2: {name:'SMS', class:"fa fa-envelope text-warning"},
-    3: {name:'WhatsApp', class:"fab fa-whatsapp"},
-    4: {name:'RCS', class:"fa fa-globe"},
-    5: {name:'Facebook', class:"fab fa-facebook"},
-    6: {name:'Instagram', class:"fab fa-instagram"}
+  platformTypeMapping: { [key: number]: { name: string, class: string } } = {
+    1: { name: 'Email', class: "fas fa-envelope-open" },
+    2: { name: 'SMS', class: "fa fa-envelope text-warning" },
+    3: { name: 'WhatsApp', class: "fab fa-whatsapp" },
+    4: { name: 'RCS', class: "fa fa-globe" },
+    5: { name: 'Facebook', class: "fab fa-facebook" },
+    6: { name: 'Instagram', class: "fab fa-instagram" }
   };
 
   constructor(private http: HttpClient, private router: Router) { }
@@ -108,7 +109,7 @@ export class AppService {
   GetScheduledPosts(date: any, selectMode: string | undefined) {
     var request = {
       token: this.Token,
-      data:{date:date.toString(),mode:selectMode}
+      data: { date: date.toString(), mode: selectMode }
     }
     return this.http.post(ApiUrl + "Campaign/GetScheduledPosts", request);
   }
@@ -288,29 +289,36 @@ export class AppService {
   //   return this.http.post(ApiUrl + `CampaignPost/GetPostById`, requestBody);
   // }
 
-  GetTemplateById(templateId: number){
-  const token = this.Token;
+  GetTemplateById(templateId: number) {
+    const token = this.Token;
 
-  if (!token) {
-    console.error('Token is missing!');
-    throw new Error('Token is missing');
+    if (!token) {
+      console.error('Token is missing!');
+      throw new Error('Token is missing');
+    }
+
+    const requestBody = {
+      token: token,
+      data: templateId
+    };
+
+    console.log('Request Body:', requestBody);
+    return this.http.post(ApiUrl + `CampaignPost/GetPostById`, requestBody);
   }
 
-  const requestBody = {
-    token: token,
-    data: templateId  
-  };
+  //post
 
-  console.log('Request Body:', requestBody);
-  return this.http.post(ApiUrl + `CampaignPost/GetPostById`, requestBody);
-}
-
-//post
-
-SendCampPost(request: any) {
+  SendCampPost(request: any) {
     request.token = this.Token;
     return this.http.post(ApiUrl + "Campaign/send-campaign-post", request);
   }
-
+  UpdatePlatformConfiguration(request:any) {
+    request.token = this.Token;
+    return this.http.post(ApiUrl + "AdminPlatformConfiguration/UpdatePlatformConfiguration", request);
+  }
+  GetPlatformConfigurations(request:any) {
+    request.token = this.Token;
+    return this.http.post(ApiUrl + "AdminPlatformConfiguration/GetPlatformConfiguration", request);
+  }
 }
 

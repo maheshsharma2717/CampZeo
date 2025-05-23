@@ -14,79 +14,32 @@ using RestSharp;
 using System.Text.RegularExpressions;
 using System.Text;
 using System.Collections.Concurrent;
+using MC.Basic.Application.Contracts.Persistance;
+using MC.Basic.Domain;
 
 namespace MC.Basic.Infrastructure.Message 
 {
     public class TwilioService : ITwilioService
     {
         private readonly IConfiguration _configuration;
-        private readonly string _accountSid;
-        private readonly string _authToken;
-        private readonly string _twilioNumber;
-        private readonly string _twilioWhatsappNumber;
+        private readonly IPlatformConfigurationRepository _platformConfigurationRepository;
         private readonly string _apiUrl;
-        private readonly string _rcsApiUrl;
-        private readonly string _serviceSid;
 
-        public TwilioService(IConfiguration configuration)
+        public TwilioService(IConfiguration configuration, IPlatformConfigurationRepository platformConfigurationRepository)
         {
             _configuration = configuration;
-            _accountSid = _configuration.GetRequiredSection("TwilioSettings:accountSid").Value;
-            _authToken = _configuration.GetRequiredSection("TwilioSettings:authToken").Value;
-            _twilioNumber = _configuration.GetRequiredSection("TwilioSettings:twilioNumber").Value;
-            _twilioWhatsappNumber = _configuration.GetRequiredSection("TwilioSettings:twilioWhatsappNumber").Value;
+            _platformConfigurationRepository = platformConfigurationRepository;
             _apiUrl = _configuration.GetRequiredSection("TwilioSettings:apiUrl").Value;
-            _rcsApiUrl = _configuration.GetRequiredSection("TwilioSettings:rcsApiUrl").Value;
-            _serviceSid = _configuration.GetRequiredSection("TwilioSettings:serviceSid").Value;
+
         }
-        public async Task<RestResponse> SendMessage(List<string> phoneNumbers, string template)
-        {
-            var client = new RestClient(_apiUrl);
-            var request = new RestRequest($@"2010-04-01/Accounts/{_accountSid}/Messages.json", Method.Post);
-            var authToken = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{_accountSid}:{_authToken}"));
-            request.AddHeader("Authorization", $"Basic {authToken}");
-
-            foreach(var phoneNumber in phoneNumbers)
-            {
-                request.AddParameter("To", phoneNumber);
-                request.AddParameter("From", _twilioNumber);
-                request.AddParameter("Body", template);
-                var response = await client.ExecuteAsync(request);
-            }
-            return new RestResponse();
-        }
-
-        public async Task<ApiResponse<object>> GetSmsReports(string phoneNumber, List<string> events)
-        {
-            var client = new RestClient(_apiUrl);
-            var request = new RestRequest($"2010-04-01/Accounts/{_accountSid}/Messages.json?To={phoneNumber}", Method.Get);
-            var authToken = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{_accountSid}:{_authToken}"));
-            request.AddHeader("Authorization", $"Basic {authToken}");
-
-            var response = await client.ExecuteAsync(request);
-            return new ApiResponse<object> { Data = response.Content };
-        }
-        //public async Task<RestResponse> SendBatchSms(TwilioSmsParams smsParams)
-        //{
-        //    var client = new RestClient(_apiUrl);
-        //    var request = new RestRequest($@"2010-04-01/Accounts/{_accountSid}/Messages.json", Method.Post);
-        //    var authToken = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{_accountSid}:{_authToken}"));
-        //    request.AddHeader("Authorization", $"Basic {authToken}");
-
-        //    request.AddParameter("To", smsParams.PhoneNumber);
-        //    request.AddParameter("From", _twilioNumber);
-        //    request.AddParameter("Body", smsParams.Message);
-
-        //    var response = await client.ExecuteAsync(request);
-        //    return response;
-        //}
 
         public async Task<string> SendBatchSms(TwilioSmsParams smsParams)
         {
             try
             {
-                var accountSid = _accountSid;
-                var authToken = _authToken;
+                var accountSid = await _platformConfigurationRepository.GetConfigurationValueByKey("accountSid", PlatformType.SMS);
+                var authToken = await _platformConfigurationRepository.GetConfigurationValueByKey("authToken", PlatformType.SMS);
+                var twilioNumber = await _platformConfigurationRepository.GetConfigurationValueByKey("twilioNumber", PlatformType.SMS);
                 TwilioClient.Init(accountSid, authToken);
 
                 StringBuilder logs = new StringBuilder();
@@ -98,7 +51,7 @@ namespace MC.Basic.Infrastructure.Message
                     {
                         var message = await MessageResource.CreateAsync(
                             body: smsParams.Message,
-                            from: new PhoneNumber(_twilioNumber),
+                            from: new PhoneNumber(twilioNumber),
                             to: new PhoneNumber($@"{receiver}")
                         );
                         logs.AppendLine($@"To:{receiver}, Status:{message.Status}");
@@ -119,8 +72,10 @@ namespace MC.Basic.Infrastructure.Message
         {
             try
             {
-                var accountSid = _accountSid;
-                var authToken = _authToken;
+                var accountSid = await _platformConfigurationRepository.GetConfigurationValueByKey("accountSid", PlatformType.RCS);
+                var authToken = await _platformConfigurationRepository.GetConfigurationValueByKey("authToken", PlatformType.RCS);
+                var twilioWhatsappNumber = await _platformConfigurationRepository.GetConfigurationValueByKey("twilioWhatsappNumber", PlatformType.RCS);
+
                 TwilioClient.Init(accountSid, authToken);
 
                 var messageData = smsParams.Message;
@@ -178,7 +133,7 @@ namespace MC.Basic.Infrastructure.Message
 
                             //MediaUrl = new List<Uri> { new Uri(fileUrl) },
                             Body = textContent,
-                            From = new PhoneNumber(_twilioNumber),
+                            From = new PhoneNumber(twilioWhatsappNumber),
                             SendAsMms = true,
 
 
@@ -201,7 +156,11 @@ namespace MC.Basic.Infrastructure.Message
 
         public async Task<string> SendBatchWhatsappSms(Application.Models.DataModel.TwilioMessageParams smsParams)
         {
-            TwilioClient.Init(_accountSid, _authToken);
+            var accountSid = await _platformConfigurationRepository.GetConfigurationValueByKey("accountSid", PlatformType.WhatsApp);
+            var authToken = await _platformConfigurationRepository.GetConfigurationValueByKey("authToken", PlatformType.WhatsApp);
+            var twilioNumber = await _platformConfigurationRepository.GetConfigurationValueByKey("twilioNumber", PlatformType.WhatsApp);
+
+            TwilioClient.Init(accountSid, authToken);
 
             var logs = new ConcurrentBag<string>(); // Thread-safe
             var tasks = smsParams.Recipients.Select(async receiver =>
@@ -210,7 +169,7 @@ namespace MC.Basic.Infrastructure.Message
                 {
                     var message = await MessageResource.CreateAsync(
                         body: smsParams.Message,
-                        from: new PhoneNumber($"whatsapp:{_twilioWhatsappNumber}"),
+                        from: new PhoneNumber($"whatsapp:{twilioNumber}"),
                         to: new PhoneNumber($"whatsapp:{receiver}")
                     );
 
@@ -230,8 +189,11 @@ namespace MC.Basic.Infrastructure.Message
 
 
         // Get logs from Twilio
-        public async Task<List<LogResponse>> GetLogs()
+        public async Task<List<LogResponse>> GetLogs(PlatformType platform = PlatformType.SMS)
         {
+            var _accountSid = await _platformConfigurationRepository.GetConfigurationValueByKey("accountSid", platform);
+            var _authToken = await _platformConfigurationRepository.GetConfigurationValueByKey("authToken", platform);
+
             var client = new RestClient(_apiUrl);
             var request = new RestRequest($"2010-04-01/Accounts/{_accountSid}/Messages.json", Method.Get);
             var authToken = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{_accountSid}:{_authToken}"));

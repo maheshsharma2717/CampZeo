@@ -19,6 +19,7 @@ namespace MC.Basic.Persistance {
         public DbSet<PostTransaction> PostTransactions{ get; set; }
         public DbSet<PostInsight> PostInsights { get; set; }
         public DbSet<Contact> Contact { get; set; }
+        public DbSet<AdminPlatformConfiguration> AdminPlatformConfigurations { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder) {
             modelBuilder.ApplyConfigurationsFromAssembly(typeof(BasicDbContext).Assembly); 
