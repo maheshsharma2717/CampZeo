@@ -61,6 +61,7 @@ export class AuthInterceptor implements HttpInterceptor {
     if (error.status === 401) {
       this.toaster.error('User unauthorized');
     } else if (error.status === 400) {
+      debugger
       this.toaster.error(error.error || 'Bad request');
     } else {
       this.toaster.error('An error occurred');
