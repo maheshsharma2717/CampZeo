@@ -1,6 +1,6 @@
 <div class="pcoded-content pt-2">
     <div class="page-header mb-0">
-        <h3 class="fw-bold mb-3">Campaign Events</h3>
+        <h3 class="fw-bold mb-3">Share Campaign Post</h3>
         <ul class="breadcrumbs mb-3">
             <li class="nav-item">
                 <a [routerLink]="'/dashboard'"><i class=" icon-home"></i></a>
@@ -19,7 +19,134 @@
             </li>
         </ul>
     </div>
-    <div class="row">
+    <div class="card">
+        <div class="card-header bg-gradient bg-secondary rounded-top-3 text-white">
+            Share Campaign Post
+        </div>
+        <div class="row">
+            <div class="col">
+                <div class="h-100">
+                    <div class="card-header py-2">
+                        <h5>Post Preview</h5>
+                    </div>
+                    <div class="card-body pt-2">
+                        <div class="tab-content pt-2" id="myTabContent">
+                            <div class="tab-pane fade" [class.show]="activeTab === 'SMS'"
+                                [class.active]="activeTab === 'SMS'" id="SMS" role="tabpanel" aria-labelledby="SMS-tab">
+                                <div class="form-group">
+                                    <div class="form-control" id="messageText" rows="5"
+                                        [innerHTML]="GetHtml(Post?.message)" style="min-height: 3vh; border: none">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="tab-pane fade" [class.show]="activeTab === 'whatsApp'"
+                                [class.active]="activeTab === 'whatsApp'" id="whatsApp" role="tabpanel"
+                                aria-labelledby="whatsApp-tab">
+                                <div class="form-group">
+                                    <div class="form-control" id="messageText" rows="5"
+                                        [innerHTML]="GetHtml(Post?.message)" style="min-height: 3vh; border: none">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="tab-pane fade" [class.show]="activeTab === 'email'"
+                                [class.active]="activeTab === 'email'" id="email" role="tabpanel"
+                                aria-labelledby="email-tab">
+                                <div class="form-group">
+                                    <div class="form-control" id="messageText" rows="5"
+                                        [innerHTML]="GetHtml(Post?.message)" style="min-height: 3vh; border: none">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="tab-pane fade" [class.show]="activeTab === 'rcs'"
+                                [class.active]="activeTab === 'rcs'" id="rcs" role="tabpanel" aria-labelledby="rcs-tab">
+                                <div class="form-group">
+                                    <div class="form-control" id="messageText" rows="5"
+                                        [innerHTML]="GetHtml(Post?.message)" style="min-height: 3vh; border: none">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="tab-pane fade" [class.show]="activeTab === 'facebook'"
+                                [class.active]="activeTab === 'facebook'" id="facebook" role="tabpanel"
+                                aria-labelledby="facebook-tab">
+                                <div class="form-group">
+                                    <div class="card border-0">
+                                        <div class="card-header">
+                                            <div class="mb-3">
+                                                <label for="pageSelect" class="form-label">Select Page</label>
+                                                <select id="pageSelect" class="form-control" [(ngModel)]="selectedPage">
+                                                    <option value="" disabled selected>Select a page</option>
+                                                    <option *ngFor="let page of pages" [ngValue]="page">{{ page.name }}
+                                                    </option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="card-body custom-inner-html" [innerHTML]="GetHtml(Post?.message)">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="tab-pane fade" [class.show]="activeTab === 'instagram'"
+                                [class.active]="activeTab === 'instagram'" id="instagram" role="tabpanel"
+                                aria-labelledby="instagram-tab">
+                                <div class="form-group">
+                                    <div class="card border-0">
+                                        <div class="card-header">
+                                            <div class="mb-3">
+                                                <label for="pageSelect" class="form-label">Select Page</label>
+                                                <select id="pageSelect" class="form-control" [(ngModel)]="selectedPage"
+                                                    (change)="onPageSelect()">
+                                                    <option value="" disabled selected>Select a page</option>
+                                                    <option *ngFor="let page of pages" [ngValue]="page">{{ page.name }}
+                                                    </option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="card-body custom-inner-html" [innerHTML]="GetHtml(Post?.message)">
+                                        </div>
+                                        <video [src]="videoUrl" controls width="400">
+                                            Your browser does not support the video tag.
+                                        </video>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+            <div class="col-md-8" *ngIf="Post?.type != 5 && Post?.type != 6">
+                <div class="col-md-12">
+                    <div class=" mb-0">
+                        <div class="card-header d-flex align-items-center justify-content-between py-2">
+                            <h5>Select Contacts</h5>
+                        </div>
+                        <div class="card-body table-border-style p-0" *ngIf="Post?.type != 5 && Post?.type != 6">
+                            <ejs-grid #grid [dataSource]="filteredContacts" [allowPaging]="true" [allowSorting]="true"
+                                [pageSettings]="{ pageSize: itemsPerPage, pageSizes: [5, 10, 20, 50] }"
+                                [searchSettings]="{ fields: ['contactName', 'contactEmail', 'contactMobile', 'contactWhatsApp'], key: searchTerm }"
+                                [toolbar]="toolbar" height="400" (change)="onIndividualCheckChange()">
+                                <e-columns>
+                                    <e-column type="checkbox" width="50"></e-column>
+                                    <e-column field="contactName" headerText="Contact Name" width="150"></e-column>
+                                    <e-column field="contactEmail" headerText="Email" width="180"></e-column>
+                                    <e-column field="contactMobile" headerText="Mobile" width="120"></e-column>
+                                    <e-column field="contactWhatsApp" headerText="WhatsApp" width="120"></e-column>
+                                </e-columns>
+                            </ejs-grid>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="card-footer">
+            <button class="btn btn-secondary mt-3 ms-4 " (click)="sendMessage()">Share</button>
+        </div>
+    </div>
+
+</div>
+<!-- <div class="row">
         <div class="col-md-12">
             <div class="card">
                 <div class="card-header d-flex aligin-item-center justify-content-between py-2">
@@ -47,7 +174,6 @@
                 </div>
                 <div class="card-body table-border-style pb-1">
                     <div class="table-responsive" *ngIf="Post?.type!=5 && Post?.type!=6">
-
                         <table class="table">
                             <thead>
                                 <tr>
@@ -100,99 +226,4 @@
                 </div>
             </div>
         </div>
-    </div>
-    <div class="row">
-        <div class="col-sm-12">
-            <div class="card">
-                <div class="card-header py-2">
-                    <h5>Message Preview</h5>
-                </div>
-                <div class="card-body pt-2">
-                    <div class="tab-content pt-2" id="myTabContent">
-                        <div class="tab-pane fade" [class.show]="activeTab === 'SMS'"
-                            [class.active]="activeTab === 'SMS'" id="SMS" role="tabpanel" aria-labelledby="SMS-tab">
-                            <div class="form-group">
-                                <div class="form-control" id="messageText" rows="5" [innerHTML]="GetHtml(Post?.message)"
-                                    style="min-height: 3vh; border: none"></div>
-                            </div>
-                        </div>
-                        <div class="tab-pane fade" [class.show]="activeTab === 'whatsApp'"
-                            [class.active]="activeTab === 'whatsApp'" id="whatsApp" role="tabpanel"
-                            aria-labelledby="whatsApp-tab">
-                            <div class="form-group">
-                                <div class="form-control" id="messageText" rows="5" [innerHTML]="GetHtml(Post?.message)"
-                                    style="min-height: 3vh; border: none"></div>
-                            </div>
-                        </div>
-                        <div class="tab-pane fade" [class.show]="activeTab === 'email'"
-                            [class.active]="activeTab === 'email'" id="email" role="tabpanel"
-                            aria-labelledby="email-tab">
-                            <div class="form-group">
-                                <div class="form-control" id="messageText" rows="5" [innerHTML]="GetHtml(Post?.message)"
-                                    style="min-height: 3vh; border: none">
-                                </div>
-                            </div>
-                        </div>
-                        <div class="tab-pane fade" [class.show]="activeTab === 'rcs'"
-                            [class.active]="activeTab === 'rcs'" id="rcs" role="tabpanel" aria-labelledby="rcs-tab">
-                            <div class="form-group">
-                                <div class="form-control" id="messageText" rows="5" [innerHTML]="GetHtml(Post?.message)"
-                                    style="min-height: 3vh; border: none"></div>
-                            </div>
-                        </div>
-
-                        <div class="tab-pane fade" [class.show]="activeTab === 'facebook'"
-                            [class.active]="activeTab === 'facebook'" id="facebook" role="tabpanel"
-                            aria-labelledby="facebook-tab">
-                            <div class="form-group">
-                                <div class="card border-0">
-                                    <div class="card-header">
-                                        <div class="mb-3">
-                                            <label for="pageSelect" class="form-label">Select Page</label>
-                                            <select id="pageSelect" class="form-control" [(ngModel)]="selectedPage">
-                                                <option value="" disabled selected>Select a page</option>
-                                                <option *ngFor="let page of pages" [ngValue]="page">{{ page.name }}
-                                                </option>
-                                            </select>
-                                        </div>
-                                    </div>
-                                    <div class="card-body custom-inner-html" [innerHTML]="GetHtml(Post?.message)">
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="tab-pane fade" [class.show]="activeTab === 'instagram'"
-                            [class.active]="activeTab === 'instagram'" id="instagram" role="tabpanel"
-                            aria-labelledby="instagram-tab">
-                            <div class="form-group">
-                                <div class="card border-0">
-                                    <div class="card-header">
-                                        <div class="mb-3">
-                                            <label for="pageSelect" class="form-label">Select Page</label>
-                                            <select id="pageSelect" class="form-control" [(ngModel)]="selectedPage"
-                                                (change)="onPageSelect()">
-                                                <option value="" disabled selected>Select a page</option>
-                                                <option *ngFor="let page of pages" [ngValue]="page">{{ page.name }}
-                                                </option>
-                                            </select>
-                                        </div>
-                                    </div>
-                                    <div class="card-body custom-inner-html" [innerHTML]="GetHtml(Post?.message)">
-                                    </div>
-                                    <video [src]="videoUrl" controls width="400">
-                                        Your browser does not support the video tag.
-                                    </video>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="mt-2">
-                        <button class="btn btn-primary mt-3" (click)="sendMessage()">Share</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
+    </div> -->
