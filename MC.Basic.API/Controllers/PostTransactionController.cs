@@ -1,4 +1,6 @@
-﻿using MC.Basic.Application.Models.Post;
+﻿using MC.Basic.Application.Contracts.Persistance;
+using MC.Basic.Application.Models.Post;
+using MC.Basic.Domain;
 using MC.Basic.Domains.Entities;
 using MC.Basic.Persistance;
 using Microsoft.AspNetCore.Mvc;
@@ -8,6 +10,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System.Net.Http.Headers;
 using System.Text;
+using static System.Net.WebRequestMethods;
 
 namespace CampaignManagement.Controllers
 {
@@ -17,16 +20,13 @@ namespace CampaignManagement.Controllers
     public class SocialMediaController : ControllerBase
     {
         private readonly HttpClient _httpClient;
-        private readonly FacebookSettings _fbSettings;
-        private readonly InstaSettings _instaSettings;
         private readonly BasicDbContext _context;
-        public SocialMediaController(IHttpClientFactory httpClientFactory, BasicDbContext context,
-            IOptions<FacebookSettings> fbSettings, IOptions<InstaSettings> instaSettings)
+        private readonly IPlatformConfigurationRepository _platformConfigurationRepository;
+        public SocialMediaController(IHttpClientFactory httpClientFactory, BasicDbContext context,IPlatformConfigurationRepository platformConfigurationRepository)
         {
             _httpClient = httpClientFactory.CreateClient();
             _context = context;
-            _fbSettings = fbSettings.Value;
-            _instaSettings = instaSettings.Value;
+            _platformConfigurationRepository = platformConfigurationRepository;
         }
 
         [HttpPost("exchange-token")]
@@ -34,12 +34,15 @@ namespace CampaignManagement.Controllers
         {
             if (request.Platform?.ToLower() == "instagram")
             {
+                var InstaAppId = await _platformConfigurationRepository.GetConfigurationValueByKey("AppId",PlatformType.Instagram);
+                var InstaAppSecret = await _platformConfigurationRepository.GetConfigurationValueByKey("AppSecret", PlatformType.Instagram);
+
                 var requestUri = $"https://graph.facebook.com/v19.0/oauth/access_token";
                 var formData = new Dictionary<string, string>
                 {
-                 { "client_id", _fbSettings.AppId },
-                 { "client_secret", _fbSettings.AppSecret },
-                 { "redirect_uri", _fbSettings.RedirectUri },
+                 { "client_id", InstaAppId },
+                 { "client_secret", InstaAppSecret },
+                 { "redirect_uri", "http://localhost:4200/auth-callback" },
                  { "code", request.Code }
                 };
 
@@ -78,9 +81,11 @@ namespace CampaignManagement.Controllers
                 }
                 return BadRequest("Could not parse Instagram token");
             }
-
+            var appId = await _platformConfigurationRepository.GetConfigurationValueByKey("AppId", PlatformType.Facebook);
+            var AppSecret = await _platformConfigurationRepository.GetConfigurationValueByKey("AppSecret", PlatformType.Facebook);
+     
             var fbResponse = await _httpClient.GetAsync(
-            $"https://graph.facebook.com/v19.0/oauth/access_token?client_id={_fbSettings.AppId}&redirect_uri={_fbSettings.RedirectUri}&client_secret={_fbSettings.AppSecret}&code={request.Code}"
+            $"https://graph.facebook.com/v19.0/oauth/access_token?client_id={appId}&redirect_uri={"http://localhost:4200/auth-callback"}&client_secret={AppSecret}&code={request.Code}"
             );
 
             var fbContent = await fbResponse.Content.ReadAsStringAsync();

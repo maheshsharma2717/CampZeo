@@ -55,11 +55,15 @@ public class CampaignPostRepository:BaseRepository<CampaignPost>, ICampaignPostR
     public async Task<CampaignPost> CreateUpdateMessageTemplate(CampaignPost campaignPost)
     {
 
-        var campaign = await _campaignRepository.GetRecordWithIncludes(x=>x.CampaignPost,x=>x.Id==campaignPost.CampaignId);
-
+        var campaign = await _campaignRepository.GetRecordWithIncludes(x=>x.CampaignPost,x=>x.Id==campaignPost.CampaignId );
         if(campaign == null)
             throw new Exception("Campaign not found in your organisation");
 
+        if(campaignPost.ScheduledPostTime < campaign.StartDate || campaignPost.ScheduledPostTime > campaign.EndDate)
+            throw new Exception(
+                $"Scheduled post time ({campaignPost.ScheduledPostTime:yyyy-MM-dd HH:mm}) is outside the campaign period " +
+                $"({campaign.StartDate:yyyy-MM-dd HH:mm} to {campaign.EndDate:yyyy-MM-dd HH:mm})"
+            );
         var dbCampaignPost = campaign.CampaignPost.SingleOrDefault(p => p.Id == campaignPost.Id);
 
         if(dbCampaignPost == null)

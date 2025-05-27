@@ -4,7 +4,6 @@ using MC.Basic.Persistance;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
-using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -12,11 +11,9 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace MC.Basic.Persistance.Migrations
 {
     [DbContext(typeof(BasicDbContext))]
-    [Migration("20250515100513_init")]
-    partial class init
+    partial class BasicDbContextModelSnapshot : ModelSnapshot
     {
-        /// <inheritdoc />
-        protected override void BuildTargetModel(ModelBuilder modelBuilder)
+        protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -24,6 +21,40 @@ namespace MC.Basic.Persistance.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 64);
 
             MySqlModelBuilderExtensions.AutoIncrementColumns(modelBuilder);
+
+            modelBuilder.Entity("MC.Basic.Domains.Entities.AdminPlatformConfiguration", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<long>("Id"));
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("longtext");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<string>("Key")
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("LastModifiedBy")
+                        .HasColumnType("longtext");
+
+                    b.Property<DateTime>("LastModifiedDate")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<long>("Platform")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("Value")
+                        .HasColumnType("longtext");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("AdminPlatformConfigurations");
+                });
 
             modelBuilder.Entity("MC.Basic.Domains.Entities.Campaign", b =>
                 {
@@ -442,9 +473,11 @@ namespace MC.Basic.Persistance.Migrations
 
             modelBuilder.Entity("MC.Basic.Domains.Entities.CampaignPost", b =>
                 {
-                    b.HasOne("MC.Basic.Domains.Entities.Campaign", null)
+                    b.HasOne("MC.Basic.Domains.Entities.Campaign", "Campaign")
                         .WithMany("CampaignPost")
                         .HasForeignKey("CampaignId");
+
+                    b.Navigation("Campaign");
                 });
 
             modelBuilder.Entity("MC.Basic.Domains.Entities.Contact", b =>

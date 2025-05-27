@@ -3,3 +3,19 @@
   text-overflow: ellipsis;
   white-space: nowrap;
 }
+.fa-whatsapp {
+  color: #1ee000 !important;
+}
+.fa-facebook {
+  color: #316FF6 !important;
+}
+.fa-instagram {
+  color: transparent;
+  background: radial-gradient(circle at 30% 107%, #fdf497 0%, #fdf497 5%, #fd5949 45%, #d6249f 60%, #285AEB 90%) ;
+  background: -webkit-radial-gradient(circle at 30% 107%, #fdf497 0%, #fdf497 5%, #fd5949 45%, #d6249f 60%, #285AEB 90%);
+  background-clip: text;
+  -webkit-background-clip: text;
+}
+.fs-20{
+  font-size: 20px;
+}

@@ -89,12 +89,10 @@
           </ng-container>
 
           <ng-template #noPosts>
-            <i class="icon-plus fa-2x text-secondary" title="Add new post"></i>
+            <i class="icon-plus f-20 fa-2x text-secondary" title="Add new post"></i>
           </ng-template>
-
         </a>
       </ng-template>
-
 
       <ng-template #actionTemplate let-data>
         <a class="pointer mx-3" title="Edit Campaign" [routerLink]="'/edit-campaign'" [queryParams]="{ id: data.id }">

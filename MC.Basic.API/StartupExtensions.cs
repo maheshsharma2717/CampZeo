@@ -12,7 +12,7 @@ namespace MC.Basic.API
 {
     public static class StartupExtensions
     {
-        public static WebApplication ConfigureServices(this WebApplicationBuilder builder)
+        public  static WebApplication ConfigureServices(this WebApplicationBuilder builder)
         {
             // Add services to the container
             builder.Services.AddAuthentication(options =>
@@ -68,7 +68,7 @@ namespace MC.Basic.API
             builder.Services.AddApplicationServices();
             builder.Services.AddInfrastructureService(builder.Configuration);
             builder.Services.AddPersistanceServices(builder.Configuration);
-
+         
             builder.Services.AddControllers();
             builder.Services.AddHttpClient();
 
@@ -115,9 +115,9 @@ namespace MC.Basic.API
         public static WebApplication ConfigurePipeline(this WebApplication app)
         {
             app.UseHttpsRedirection();
-         //   app.UseCors("open");
+            //   app.UseCors("open");
             app.UseCors("CorsPolicy");
-            if (app.Environment.IsDevelopment())
+            if(app.Environment.IsDevelopment())
             {
                 app.UseSwagger();
                 app.UseSwaggerUI();
@@ -138,13 +138,13 @@ namespace MC.Basic.API
             try
             {
                 var context = scope.ServiceProvider.GetService<BasicDbContext>();
-                if (context != null)
+                if(context != null)
                 {
-                    await context.Database.EnsureCreatedAsync();
-                    await context.Database.MigrateAsync();
+                    await PlatformConfigurationSeeder.SeedAsync(context);
                 }
+
             }
-            catch (Exception ex)
+            catch(Exception ex)
             {
                 //logs here
             }
