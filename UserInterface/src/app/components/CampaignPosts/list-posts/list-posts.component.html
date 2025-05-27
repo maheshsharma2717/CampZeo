@@ -97,7 +97,7 @@
                 <div class="card-body table-border-style pb-1">
                     <div class="table-responsive">
 
-                        <ejs-grid [dataSource]='CampaignPosts' [rowHeight]="" #grid allowPaging="true"
+                        <ejs-grid [dataSource]='CampaignPosts' [rowHeight]="" #grid [allowPaging]="true"
                             [pageSettings]="pageSettings" [toolbar]="toolBarOptions"
                             [sortSettings]="{ columns: [{ field: 'id', direction: 'Descending' }] }" height='400px'
                             [enableHover]="false">

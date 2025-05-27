@@ -67,6 +67,7 @@ export class AppService {
     return this.http.post(ApiUrl + "Organisation/CreateOrganisation", request);
   }
   ApproveOrganisation(request: any) {
+    request.token = this.Token;
     return this.http.post(ApiUrl + "Organisation/ApproveOrganisation", request);
   }
   GetOrganisations(request: any) {

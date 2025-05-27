@@ -13,7 +13,7 @@ import { GridModule, PageService, SortService, ToolbarService } from '@syncfusio
 @Component({
   selector: 'app-list-campaign',
   standalone: true,
-  imports: [NgFor, RouterModule, CommonModule, FormsModule, NgxPaginationModule, CampaignPostsPopupComponent,  GridModule,],
+  imports: [RouterModule, CommonModule, FormsModule, NgxPaginationModule, CampaignPostsPopupComponent, GridModule],
   templateUrl: './list-campaign.component.html',
   styleUrl: './list-campaign.component.css',
   providers: [DatePipe, { provide: DATE_PIPE_DEFAULT_OPTIONS, useValue: "yyyy-MM-ddTHH:mm:ss" },    PageService,
