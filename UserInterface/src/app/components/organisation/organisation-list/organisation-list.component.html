@@ -130,8 +130,14 @@
                                             <td>{{ item.ownerName }}</td>
                                             <td *ngIf="this.service.User.role == 1">
                                                 <a class="pointer" (click)="approveItem(i)">
-                                                    <i class="fa fa-check-circle"
-                                                        [ngClass]="{'text-success': item.isApproved}"></i>
+                                                    <!-- <i class="fa fa-check-circle"
+                                                        [ngClass]="{'text-success': item.isApproved}"></i> -->
+                                                        <i  class="fa" 
+                                                             [ngClass]="{
+                                                                'fa-check-circle text-success': item.isApproved,
+                                                                'fa-times-circle text-danger': !item.isApproved
+                                                                }">
+                                                        </i>
                                                 </a>
                                             </td>
                                             <td *ngIf="this.service.User.role == 1" class="d-flex">

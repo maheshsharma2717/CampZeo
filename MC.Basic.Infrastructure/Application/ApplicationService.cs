@@ -1240,7 +1240,7 @@ public class ApplicationService : IApplicationService
     public async Task<ApiResponse<string>> UpdatePlatformConfiguration(ApiRequest<PlatformConfigurationDto> request)
     {
 
-        var platformConfiguration = await _platformConfigurationRepository.GetAsync(x => x.Key == request.Data.Key);
+        var platformConfiguration = await _platformConfigurationRepository.GetAsync(x => x.Id == request.Data.Id);
         if(platformConfiguration != null)
         {
             platformConfiguration.Value = request.Data.Value;
