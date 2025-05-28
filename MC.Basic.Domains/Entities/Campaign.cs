@@ -19,6 +19,7 @@ namespace MC.Basic.Domains.Entities
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }
         public long? OrganisationId { get; set; }
+        public bool IsDeleted { get; set; }
         public ICollection<CampaignPost> CampaignPost { get; set; }
     }
 }

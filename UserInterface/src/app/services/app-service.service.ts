@@ -85,6 +85,10 @@ export class AppService {
     request.token = this.Token;
     return this.http.post(ApiUrl + "Contact/CreateContact", request);
   }
+  deleteContact(req: any){
+    req.token = this.Token;
+    return this.http.post(ApiUrl + 'Contact/DeleteContactById', req);
+  }
   GetContactById(request: any) {
     return this.http.post(ApiUrl + "Contact/GetContact", request);
   }
@@ -122,6 +126,11 @@ export class AppService {
     request.token = this.Token;
     return this.http.post(ApiUrl + "Campaign/CreateCampaign", request);
   }
+  
+  deleteCampaignById(req: any){
+    req.token = this.Token;
+    return this.http.post<any>(ApiUrl + "Campaign/DeleteCampaign", req);
+  }
   GetCampaignPosts() {
     var request = {
       token: this.Token
@@ -135,6 +144,10 @@ export class AppService {
   AddCampaignPost(request: any) {
     request.token = this.Token;
     return this.http.post(ApiUrl + "CampaignPost/CreateCampaignPost", request);
+  }
+  deleteCampaignPostById(request: any){
+    request.token = this.Token;
+    return this.http.post<any>(ApiUrl + 'CampaignPost/DeleteCampaignPost', request);
   }
   GetCampaignPostById(request: any) {
     return this.http.post(ApiUrl + "CampaignPost/GetCampaignPostDetails", request);

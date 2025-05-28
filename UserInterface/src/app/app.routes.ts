@@ -31,6 +31,7 @@ export const routes: Routes = [
     { path: 'list-organisation', component: OrganisationListComponent },
     { path: 'profile', component: ProfileComponent },
     { path: 'add-contact', component: AddContactComponent },
+    { path: 'edit-contact', component: AddContactComponent },
     { path: 'import-contacts', component: ImportContactsComponent },
     { path: 'list-contacts', component: ListContactComponent , canActivate: [PasswordChangeGuard]},
     { path: 'update-contact', component: AddContactComponent },

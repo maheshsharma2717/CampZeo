@@ -1,5 +1,6 @@
 ﻿using MC.Basic.Application.Contracts.Infrasructure;
 using MC.Basic.Application.Contracts.Persistance;
+using MC.Basic.Application.Exceptions;
 using MC.Basic.Application.Models.Calender;
 using MC.Basic.Application.Models.Campaign;
 using MC.Basic.Application.Models.DataModel;
@@ -178,7 +179,7 @@ public class ApplicationService : IApplicationService
                 </div>
             </body>
             </html>";
-        if(dbOrganisation.IsDeleted) message = $@"
+        if (dbOrganisation.IsDeleted) message = $@"
 <!DOCTYPE html>
 <html>
 <head>
@@ -259,7 +260,7 @@ public class ApplicationService : IApplicationService
 
         Expression<Func<Organisation, bool>> filter = c => true;
 
-        if(request.Data.IsDeleted != null)
+        if (request.Data.IsDeleted != null)
             filter = c => c.IsDeleted == request.Data.IsDeleted;
 
         response.Data = await _organisationRepository.GetPagedRecords(
@@ -291,7 +292,7 @@ public class ApplicationService : IApplicationService
     {
         var OrganizationId = GetOrganisationIdFromToken(request.Token);
         ApiResponse<List<Contact>> response = new ApiResponse<List<Contact>>();
-        if(OrganizationId == 0)
+        if (OrganizationId == 0)
         {
             response.Data = new List<Contact>();
             response.IsSuccess = false;
@@ -325,6 +326,26 @@ public class ApplicationService : IApplicationService
     public async Task<ApiResponse<Contact>> GetContactById(ApiRequest<long> request)
     {
         return new ApiResponse<Contact> { Data = await _contactRepository.GetById(request.Data) };
+    }
+    public async Task<ApiResponse<Contact>> DeleteContactById(ApiRequest<long> request)
+    {
+        var contact = await _contactRepository.GetAsyncById(request.Data);
+        if (contact == null)
+        {
+            return new ApiResponse<Contact>
+            {
+                IsSuccess = false,
+                Message = "Contact not found.",
+                Data = null
+            };
+        }
+        await _contactRepository.DeleteAsync(request.Data);
+        return new ApiResponse<Contact>
+        {
+            IsSuccess = true,
+            Message = "Contact deleted successfully",
+            Data = contact
+        };
     }
 
     #endregion
@@ -404,26 +425,28 @@ public class ApplicationService : IApplicationService
         request.Data.SearchText,
         "id",
         true);
-        if(dbCapmaigns != null)
+        if (dbCapmaigns != null)
         {
-            response.Data = new ListResponse<List<CampaignListModel>>(dbCapmaigns.List.Select(campaign =>
+            var activeCampains = dbCapmaigns.List.Where(c => !c.IsDeleted).ToList();
+            var result = activeCampains.Select(campaign => new CampaignListModel
             {
-
-                return new CampaignListModel
+                Id = campaign.Id,
+                Name = campaign.Name,
+                StartDate = campaign.StartDate,
+                Description = campaign.Description,
+                EndDate = campaign.EndDate,
+                PostData = _campaignPostRepository.GetQuariable()
+                .Where(x => x.CampaignId == campaign.Id)
+                .GroupBy(x => x.Type)
+                .Select(g => new CampaignPostCount
                 {
-                    Id = campaign.Id,
-                    Name = campaign.Name,
-                    Description = campaign.Description,
-                    StartDate = campaign.StartDate,
-                    EndDate = campaign.EndDate,
-                    PostData = _campaignPostRepository.GetQuariable().Where(x => x.CampaignId == campaign.Id)
-                    .GroupBy(x => x.Type).Select(g => new CampaignPostCount
-                    {
-                        Type = g.Key,
-                        Count = g.Count()
-                    }).ToList()
-                };
-            }).ToList(), dbCapmaigns.TotalCount); ;
+                    Type = g.Key,
+                    Count = g.Count()
+                }).ToList()
+            }).ToList();
+
+            response.Data = new ListResponse<List<CampaignListModel>>(result, dbCapmaigns.TotalCount);
+
             response.IsSuccess = true;
             response.Message = "";
         }
@@ -455,7 +478,7 @@ public class ApplicationService : IApplicationService
 
         var postId = request.Data;
         var dbpost = await _campaignPostRepository.GetAsyncById(postId);
-        if(dbpost != null)
+        if (dbpost != null)
         {
             var org = _organisationRepository.GetQuariable().Include(x => x.Contacts).SingleOrDefault(x => x.Id == OrganizationId);
             var contacts = org.Contacts;
@@ -477,6 +500,16 @@ public class ApplicationService : IApplicationService
     {
         return new ApiResponse<Campaign> { Data = await _campaignRepository.GetById(request.Data) };
     }
+    public async Task<ApiResponse<Campaign>> DeleteCampaignById(ApiRequest<long> request)
+    {
+        ApiResponse<Campaign> response = new ApiResponse<Campaign>();
+        var campaign = await _campaignRepository.DeleteCampaignById(request.Data);
+        response.IsSuccess = true;
+        response.Message = "Campaign Updated Successfully";
+        response.Data = campaign;
+        return response;
+    }
+
     #endregion
     #region MessageTemplate
     public async Task<ApiResponse<CampaignPost>> CreateCampaignPost(ApiRequest<CampaignPost> request)
@@ -493,7 +526,7 @@ public class ApplicationService : IApplicationService
         var OrganizationId = GetOrganisationIdFromToken(request.Token);
 
         ApiResponse<CampaignPost> response = new ApiResponse<CampaignPost>();
-        if(campainId == request.Data.CampaignId)
+        if (campainId == request.Data.CampaignId)
         {
 
             response.Data = await _campaignPostRepository.CreateUpdateMessageTemplate(request.Data);
@@ -502,14 +535,14 @@ public class ApplicationService : IApplicationService
         else
         {
             var removePrevious = _campaignPostRepository.GetQuariable().Where(x => x.CampaignId == campainId && x.Type == request.Data.Type).FirstOrDefault();
-            if(removePrevious != null)
+            if (removePrevious != null)
             {
                 removePrevious.CampaignId = null;
                 removePrevious.IsAttachedToCampaign = false;
                 await _campaignPostRepository.UpdateAsync(removePrevious);
             }
 
-            if(request.Data.CampaignId == null)
+            if (request.Data.CampaignId == null)
             {
                 request.Data.CampaignId = campainId;
                 request.Data.IsAttachedToCampaign = true;
@@ -605,7 +638,7 @@ public class ApplicationService : IApplicationService
 
         var OrganizationId = GetOrganisationIdFromToken(request.Token);
         ApiResponse<List<CampaignPost>> response = new ApiResponse<List<CampaignPost>>();
-        if(OrganizationId == 0)
+        if (OrganizationId == 0)
         {
             response.Data = new List<CampaignPost>();
             response.IsSuccess = false;
@@ -625,7 +658,7 @@ public class ApplicationService : IApplicationService
 
         var campaignId = request.Data.ParentId;
         ApiResponse<ListResponse<List<CampaignPost>>> response = new ApiResponse<ListResponse<List<CampaignPost>>>();
-        if(campaignId == 0)
+        if (campaignId == 0)
         {
             response.Data = new ListResponse<List<CampaignPost>>(new List<CampaignPost>(), 0);
             response.IsSuccess = false;
@@ -646,6 +679,15 @@ public class ApplicationService : IApplicationService
     public async Task<ApiResponse<CampaignPost>> GetCampaignPostById(ApiRequest<long> request)
     {
         return new ApiResponse<CampaignPost> { Data = await _campaignPostRepository.GetById(request.Data) };
+    }
+    public async Task<ApiResponse<CampaignPost>> DeleteCampaignPostById(ApiRequest<long> request)
+    {
+        ApiResponse<CampaignPost> response = new ApiResponse<CampaignPost>();
+        var campaignPost = await _campaignPostRepository.DeleteCampaignPost(request.Data);
+        response.IsSuccess = true;
+        response.Message = "Post deleted successfully";
+        response.Data = campaignPost;
+        return response;
     }
 
     //public async Task<ApiResponse<CampaignTemplateResponseDto>> GetCampaignsMessageTemplate(ApiRequest<CampaignTemplateRequestDto> request)
@@ -791,7 +833,7 @@ public class ApplicationService : IApplicationService
         password.Append(lowerChars[random.Next(lowerChars.Length)]);
         password.Append(digits[random.Next(digits.Length)]);
         password.Append(specialChars[random.Next(specialChars.Length)]);
-        for(int i = 4; i < length; i++)
+        for (int i = 4; i < length; i++)
         {
             password.Append(allChars[random.Next(allChars.Length)]);
         }
@@ -802,7 +844,7 @@ public class ApplicationService : IApplicationService
     private static void ShuffleArray(char[] array)
     {
         Random random = new Random();
-        for(int i = array.Length - 1; i > 0; i--)
+        for (int i = array.Length - 1; i > 0; i--)
         {
             int j = random.Next(i + 1);
             // Swap
@@ -816,18 +858,18 @@ public class ApplicationService : IApplicationService
         byte[] iv = new byte[16];
         byte[] array;
 
-        using(Aes aes = Aes.Create())
+        using (Aes aes = Aes.Create())
         {
             aes.Key = Encoding.UTF8.GetBytes(key);
             aes.IV = iv;
 
             ICryptoTransform encryptor = aes.CreateEncryptor(aes.Key, aes.IV);
 
-            using(MemoryStream memoryStream = new MemoryStream())
+            using (MemoryStream memoryStream = new MemoryStream())
             {
-                using(CryptoStream cryptoStream = new CryptoStream((Stream)memoryStream, encryptor, CryptoStreamMode.Write))
+                using (CryptoStream cryptoStream = new CryptoStream((Stream)memoryStream, encryptor, CryptoStreamMode.Write))
                 {
-                    using(StreamWriter streamWriter = new StreamWriter((Stream)cryptoStream))
+                    using (StreamWriter streamWriter = new StreamWriter((Stream)cryptoStream))
                     {
                         streamWriter.Write(plainText);
                     }
@@ -841,11 +883,11 @@ public class ApplicationService : IApplicationService
     }
     private List<Contact> GetContactsFromCsv(IFormFile file)
     {
-        using(var stream = new StreamReader(file.OpenReadStream()))
+        using (var stream = new StreamReader(file.OpenReadStream()))
         {
             // You can use CsvHelper or similar to process the CSV file.
             var contacts = new List<Contact>();
-            using(var csv = new CsvHelper.CsvReader(stream, CultureInfo.InvariantCulture))
+            using (var csv = new CsvHelper.CsvReader(stream, CultureInfo.InvariantCulture))
             {
 
                 //skip headers
@@ -871,7 +913,7 @@ public class ApplicationService : IApplicationService
     }
     private long GetOrganisationIdFromToken(string token)
     {
-        if(string.IsNullOrEmpty(token))
+        if (string.IsNullOrEmpty(token))
         {
             return 0; // Return 0 if the token is invalid or empty
         }
@@ -881,7 +923,7 @@ public class ApplicationService : IApplicationService
             var tokenHandler = new JwtSecurityTokenHandler();
             var jwtToken = tokenHandler.ReadToken(token) as JwtSecurityToken;
 
-            if(jwtToken == null)
+            if (jwtToken == null)
             {
                 return 0; // Return 0 if token can't be read as JwtSecurityToken
             }
@@ -889,7 +931,7 @@ public class ApplicationService : IApplicationService
             // Extract the organisationId claim from the token
             var organisationIdClaim = jwtToken.Claims.FirstOrDefault(claim => claim.Type == "organisationId");
 
-            if(organisationIdClaim != null && long.TryParse(organisationIdClaim.Value, out var organisationId))
+            if (organisationIdClaim != null && long.TryParse(organisationIdClaim.Value, out var organisationId))
             {
                 return organisationId;
             }
@@ -936,7 +978,7 @@ public class ApplicationService : IApplicationService
     private async Task<string> SendWhatsapp(List<Contact> contacts, CampaignPost messageTemplate)
     {
         var recipients = contacts.Select(x => x.ContactWhatsApp).ToList();
-        if(messageTemplate != null && recipients.Any())
+        if (messageTemplate != null && recipients.Any())
         {
             var result = await _smsService.SendBatchWhatsappSms(new Application.Models.DataModel.TwilioMessageParams(recipients, messageTemplate.Message));
             return result;
@@ -949,7 +991,7 @@ public class ApplicationService : IApplicationService
     private async Task<string> SendSms(List<Contact> contacts, CampaignPost messageTemplate)
     {
         var recipients = contacts.Select(x => x.ContactMobile).ToList();
-        if(messageTemplate != null && recipients.Any())
+        if (messageTemplate != null && recipients.Any())
         {
             var result = await _smsService.SendBatchSms(new TwilioSmsParams(recipients, messageTemplate.Message));
             return result;
@@ -968,7 +1010,7 @@ public class ApplicationService : IApplicationService
             .Select(x => x.ContactMobile)
             .ToList();
 
-        if(!recipients.Any())
+        if (!recipients.Any())
         {
             return "No valid recipients found.";
         }
@@ -978,7 +1020,7 @@ public class ApplicationService : IApplicationService
             var result = await _infoBipSmsService.SendMediaMessageAsync(new Application.Models.DataModel.InfobipMessageParams(recipients, messageTemplate.Message));
             return $"RCS messages sent successfully. ";
         }
-        catch(Exception ex)
+        catch (Exception ex)
         {
             return $"Failed to send RCS messages: {ex.Message}";
         }
@@ -1001,9 +1043,9 @@ public class ApplicationService : IApplicationService
 
         var savedCampaign = await _campaignRepository.CreateUpdateCampaign(campaign, organisationId);
 
-        foreach(var templateDto in request.Data.CampaignMessageTemplates)
+        foreach (var templateDto in request.Data.CampaignMessageTemplates)
         {
-            if(templateDto.ScheduledPostTime < savedCampaign.StartDate || templateDto.ScheduledPostTime > savedCampaign.EndDate)
+            if (templateDto.ScheduledPostTime < savedCampaign.StartDate || templateDto.ScheduledPostTime > savedCampaign.EndDate)
             {
                 return new ApiResponse<Campaign>
                 {
@@ -1013,9 +1055,9 @@ public class ApplicationService : IApplicationService
             }
         }
         var campaignMessageTemplates = new CampaignPost();
-        foreach(var templateDto in request.Data.CampaignMessageTemplates)
+        foreach (var templateDto in request.Data.CampaignMessageTemplates)
         {
-            if(templateDto.ScheduledPostTime < savedCampaign.StartDate ||
+            if (templateDto.ScheduledPostTime < savedCampaign.StartDate ||
                 templateDto.ScheduledPostTime > savedCampaign.EndDate)
                 continue;
 
@@ -1054,26 +1096,26 @@ public class ApplicationService : IApplicationService
 
         DateTime startDate, endDate;
 
-        switch(mode.ToLower())
+        switch (mode.ToLower())
         {
             case "day":
-            startDate = date.Date;
-            endDate = date.Date.AddDays(1).AddTicks(-1);
-            break;
+                startDate = date.Date;
+                endDate = date.Date.AddDays(1).AddTicks(-1);
+                break;
 
             case "week":
-            int diff = (7 + (date.DayOfWeek - DayOfWeek.Monday)) % 7;
-            startDate = date.AddDays(-diff).Date;
-            endDate = startDate.AddDays(7).AddTicks(-1);
-            break;
+                int diff = (7 + (date.DayOfWeek - DayOfWeek.Monday)) % 7;
+                startDate = date.AddDays(-diff).Date;
+                endDate = startDate.AddDays(7).AddTicks(-1);
+                break;
 
             case "month":
-            startDate = new DateTime(date.Year, date.Month, 1);
-            endDate = startDate.AddMonths(1).AddTicks(-1);
-            break;
+                startDate = new DateTime(date.Year, date.Month, 1);
+                endDate = startDate.AddMonths(1).AddTicks(-1);
+                break;
 
             default:
-            throw new ArgumentException("Invalid mode. Must be 'day', 'week', or 'month'.");
+                throw new ArgumentException("Invalid mode. Must be 'day', 'week', or 'month'.");
         }
 
         var campaigns = await _campaignRepository.ToListWhereAsync(c => c.OrganisationId == organisationId);
@@ -1114,7 +1156,7 @@ public class ApplicationService : IApplicationService
 
         var post = await _campaignPostRepository.GetById(postId);
 
-        if(post == null)
+        if (post == null)
         {
             return new ApiResponse<CampaignPostDto>
             {
@@ -1143,7 +1185,7 @@ public class ApplicationService : IApplicationService
         var campaign = await _campaignRepository.GetQuariable()
             .FirstOrDefaultAsync(x => x.Id == request.Data.CampaignId);
 
-        if(campaign == null)
+        if (campaign == null)
         {
             return new ApiResponse<string>
             {
@@ -1152,7 +1194,7 @@ public class ApplicationService : IApplicationService
             };
         }
 
-        if(request.Data.Contacts == null || !request.Data.Contacts.Any())
+        if (request.Data.Contacts == null || !request.Data.Contacts.Any())
         {
             return new ApiResponse<string>
             {
@@ -1179,30 +1221,30 @@ public class ApplicationService : IApplicationService
 
         StringBuilder sb = new StringBuilder();
 
-        switch(request.Data.Type)
+        switch (request.Data.Type)
         {
             case PlatformType.Email:
-            sb.AppendLine(await SendMail(contacts, messageTemplate));
-            break;
+                sb.AppendLine(await SendMail(contacts, messageTemplate));
+                break;
 
             case PlatformType.SMS:
-            sb.AppendLine(await SendSms(contacts, messageTemplate));
-            break;
+                sb.AppendLine(await SendSms(contacts, messageTemplate));
+                break;
 
             case PlatformType.WhatsApp:
-            sb.AppendLine(await SendWhatsapp(contacts, messageTemplate));
-            break;
+                sb.AppendLine(await SendWhatsapp(contacts, messageTemplate));
+                break;
 
             case PlatformType.RCS:
-            sb.AppendLine(await SendRcs(contacts, messageTemplate));
-            break;
+                sb.AppendLine(await SendRcs(contacts, messageTemplate));
+                break;
 
             default:
-            return new ApiResponse<string>
-            {
-                IsSuccess = false,
-                Data = "Unsupported platform type."
-            };
+                return new ApiResponse<string>
+                {
+                    IsSuccess = false,
+                    Data = "Unsupported platform type."
+                };
         }
 
         return new ApiResponse<string>
@@ -1241,7 +1283,7 @@ public class ApplicationService : IApplicationService
     {
 
         var platformConfiguration = await _platformConfigurationRepository.GetAsync(x => x.Id == request.Data.Id);
-        if(platformConfiguration != null)
+        if (platformConfiguration != null)
         {
             platformConfiguration.Value = request.Data.Value;
             await _platformConfigurationRepository.UpdateAsync(platformConfiguration);

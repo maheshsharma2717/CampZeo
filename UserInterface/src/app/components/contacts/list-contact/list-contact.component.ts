@@ -31,6 +31,10 @@ export class ListContactComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    this.getContacts();
+  }
+
+  getContacts(){
     this.service.GetContacts().subscribe({
       next: (response: any) => {
         if (response.isSuccess) {
@@ -42,6 +46,19 @@ export class ListContactComponent implements OnInit {
       },
       error: () => this.toastr.error('Failed to load contacts')
     });
+  }
+
+  deleteContact(id: any){
+    let request = {
+      data: id
+    }
+    this.service.deleteContact(request).subscribe({
+      next: (res: any) =>{
+        this.toastr.info(res.message);
+        this.getContacts();
+      },
+      error: () => this.toastr.error('Failed to delete contact.')
+    })
   }
 
 }

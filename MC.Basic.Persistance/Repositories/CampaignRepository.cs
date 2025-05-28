@@ -98,4 +98,19 @@ public class CampaignRepository : BaseRepository<Campaign>, ICampaignRepository
             .ToListAsync();
     }
 
+    public async Task<Campaign> DeleteCampaignById(long Id)
+    {
+        var campaign = _dbContext.Campaigns.FirstOrDefault(x => x.Id == Id);
+        if (campaign != null)
+        {
+            campaign.IsDeleted = !campaign.IsDeleted;
+            await UpdateAsync(campaign);
+            return campaign;
+        }
+        else
+        {
+            throw new Exception("Invalid Campaign");
+        }
+    }
+
 }

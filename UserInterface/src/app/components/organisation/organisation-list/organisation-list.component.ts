@@ -32,11 +32,8 @@ export class OrganisationListComponent implements OnInit, OnDestroy {
   isSuspendedFilter: string = 'false';
   sortBy: string = 'createdDate';
   sortDesc: boolean = false;
-  pageSizeOptions: number[] = [5, 10, 20, 50]; // Page size options
+  pageSizeOptions: number[] = [5, 10, 20, 50];
   isRecovering: boolean = false;
-  //syncfusion grid
-  // PageSize = 10;
-  // pageSizeOptions = [5, 10, 20, 50];
   pageSettings = { pageSize: 10, pageSizes: [5, 10, 20, 50] };
   toolBarOptions = ['Custom'];
 

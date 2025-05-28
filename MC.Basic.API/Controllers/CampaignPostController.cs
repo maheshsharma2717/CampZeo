@@ -109,4 +109,18 @@ public class CampaignPostController  : ControllerBase
             return BadRequest(new ApiResponse<string> { IsSuccess = false, Message = ex.Message });
         }
     }
+
+    [HttpPost("DeleteCampaignPost")]
+    public async Task<IActionResult> DeleteCampaignPost(ApiRequest<long> request)
+    {
+        try
+        {
+            var response = await _applicationService.DeleteCampaignPostById(request);
+            return Ok(response);
+        }
+        catch(Exception ex)
+        {
+            return BadRequest(new ApiResponse<string> { IsSuccess = false, Message = ex.Message });
+        }
+    }
 }

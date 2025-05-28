@@ -36,8 +36,20 @@
             <e-column field="contactEmail" headerText="Email" width="180"></e-column>
             <e-column field="contactMobile" headerText="Mobile" width="120"></e-column>
             <e-column field="contactWhatsApp" headerText="WhatsApp" width="120"></e-column>
+            <e-column headerText="Action" [template]="actionTemplate" width="120"></e-column>
         </e-columns>
     </ejs-grid>
+
+    <ng-template #actionTemplate let-data>
+        <a class="pointer mx-3" title="Edit Contact" [routerLink]="'/edit-contact'" [queryParams]="{ contactId: data.id }">
+          <i class="far fa-edit"></i>
+        </a>
+        
+        <a class="pointer mx-3" title="Delete Contact" (click)="deleteContact(data.id)">
+          <i class="fas fa-trash"></i>
+        </a>
+    </ng-template>
+
 </div>
 
 <div class="page-header">

@@ -203,4 +203,18 @@ public class CampaignController : ControllerBase
         }
     }
 
+    [HttpPost("DeleteCampaign")]
+    [EnableCors("CorsPolicy")]
+    public async Task<IActionResult> DeleteCampaign(ApiRequest<long> Id)
+    {
+        try
+        {
+            var response = await _applicationService.DeleteCampaignById(Id);
+            return Ok(response);
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(ex);
+        }
+    }
 }

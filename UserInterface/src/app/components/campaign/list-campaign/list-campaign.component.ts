@@ -16,10 +16,10 @@ import { GridModule, PageService, SortService, ToolbarService } from '@syncfusio
   imports: [RouterModule, CommonModule, FormsModule, NgxPaginationModule, CampaignPostsPopupComponent, GridModule],
   templateUrl: './list-campaign.component.html',
   styleUrl: './list-campaign.component.css',
-  providers: [DatePipe, { provide: DATE_PIPE_DEFAULT_OPTIONS, useValue: "yyyy-MM-ddTHH:mm:ss" },    PageService,
+  providers: [DatePipe, { provide: DATE_PIPE_DEFAULT_OPTIONS, useValue: "yyyy-MM-ddTHH:mm:ss" }, PageService,
     SortService,
     ToolbarService,
-     ]
+  ]
 })
 export class ListCampaignComponent implements OnInit, OnDestroy {
 
@@ -42,9 +42,11 @@ export class ListCampaignComponent implements OnInit, OnDestroy {
   itemsPerPageOptions: number[] = [5, 20, 100, 200, 1000];
   page: number = 1;
   total: number = 0;
-  showPostsPopup:boolean=false;
+  showPostsPopup: boolean = false;
+  isRecovering: boolean =false;
+  deleteId: number | undefined;
   // syncfusion grid 
-  
+
   pageSettings = { pageSize: 10, pageSizes: [5, 10, 20, 50] };
   //pageSizes = [5, 10, 20, 50];
   toolbarOptions = ['Custom'];
@@ -62,11 +64,11 @@ export class ListCampaignComponent implements OnInit, OnDestroy {
   }
   @ViewChild('postsPopup') postsPopup!: CampaignPostsPopupComponent;
   @ViewChild('grid') grid: any;
-  showPosts(id:any) {
+  showPosts(id: any) {
     this.postsPopup.showPosts(id);
   }
-  Togglepopup(){
-    this.showPostsPopup=!this.showPostsPopup;
+  Togglepopup() {
+    this.showPostsPopup = !this.showPostsPopup;
   }
 
   GetRecords() {
@@ -93,6 +95,28 @@ export class ListCampaignComponent implements OnInit, OnDestroy {
       }
     });
   }
+
+  openDeleteModal(id: any){
+    this.deleteId = id;
+
+    const modalElement = document.getElementById('deleteCampaignModal');
+    if(modalElement){
+      const modalInstance = new bootstrap.Modal(modalElement);
+      modalInstance.show();
+      this.isRecovering = this.isRecovering;
+    }
+  }
+
+  closeCampaignModal(): void{
+    const modalElement = document.getElementById('deleteCampaignModal');
+    if(modalElement){
+      const modalInstance = bootstrap.Modal.getInstance(modalElement);
+      if(modalInstance){
+        modalInstance?.hide();
+      }
+    }
+  }
+
   openModal(platform: string, item: any): void {
     this.smsPlatForm = platform;
     this.campaignId = item.id;
@@ -168,6 +192,19 @@ export class ListCampaignComponent implements OnInit, OnDestroy {
     if (modalInstance) {
       modalInstance.hide();
     }
+  }
+
+  delete() {
+    let request = {
+      data: this.deleteId
+    }
+    this.service.deleteCampaignById(request).subscribe({
+      next: (res: any) => {
+        this.toastr.info(res.message);
+        this.GetRecords();
+        this.closeCampaignModal();
+      }
+    })
   }
 
   cleanupBackdrop(): void {
