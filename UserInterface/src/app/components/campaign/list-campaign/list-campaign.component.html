@@ -35,16 +35,16 @@
           </a>
         </div>
       </div>
-      <ejs-grid #grid [dataSource]="Campaigns" [allowPaging]="true" [pageSettings]="pageSettings"
-        [toolbar]="toolbarOptions" [sortSettings]="{ columns: [{ field: 'id', direction: 'Descending' }] }"
+      <ejs-grid #grid [dataSource]="Campaigns" [allowSorting]="true" [allowMultiSorting]="true" [allowPaging]="true" [pageSettings]="pageSettings"
+        [toolbar]="toolbarOptions" 
         height="400px" [enableHover]="false" [rowHeight]="60">
 
         <ng-template #toolbarTemplate></ng-template>
 
         <e-columns>
           <!-- <e-column field="id" headerText="#" width="80" textAlign="Left"></e-column> -->
-          <e-column headerText="Details" width="250" [template]="detailsTemplate"></e-column>
-          <e-column headerText="Dates" width="150" [template]="dateTemplate"></e-column>
+          <e-column headerText="Details" field="name" width="250" [template]="detailsTemplate"></e-column>
+          <e-column headerText="Dates" field="startDate" width="150" [template]="dateTemplate"></e-column>
           <e-column headerText="Posts" width="200" [template]="postsTemplate"></e-column>
           <e-column headerText="Actions" width="150" textAlign="Center" [template]="actionTemplate"></e-column>
         </e-columns>

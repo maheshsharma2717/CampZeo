@@ -4,6 +4,7 @@ import { CommonModule } from '@angular/common';
 import { AppService } from '../../../services/app-service.service';
 import { ToastrService } from 'ngx-toastr';
 import { Router, RouterModule, ActivatedRoute } from '@angular/router';
+import * as bootstrap from 'bootstrap';
 
 @Component({
   selector: 'app-list-contact',
@@ -17,24 +18,26 @@ import { Router, RouterModule, ActivatedRoute } from '@angular/router';
   templateUrl: './list-contact.component.html',
   styleUrl: './list-contact.component.css'
 })
+
 export class ListContactComponent implements OnInit {
   Contacts: any[] = [];
   pageSettings = { pageSize: 10, pageSizes: [5, 10, 20, 50] };
   toolbar = ['Search'];
   searchSettings = { fields: ['contactName', 'contactEmail', 'contactMobile'], operator: 'contains', ignoreCase: true };
+  deleteId: number | undefined;
 
   constructor(
     private service: AppService,
     private toastr: ToastrService,
     private router: Router,
     private activatedRoute: ActivatedRoute
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.getContacts();
   }
 
-  getContacts(){
+  getContacts() {
     this.service.GetContacts().subscribe({
       next: (response: any) => {
         if (response.isSuccess) {
@@ -48,14 +51,32 @@ export class ListContactComponent implements OnInit {
     });
   }
 
-  deleteContact(id: any){
+  openDeleteContactModal(id: any) {
+    this.deleteId = id;
+    const modal = document.getElementById('deleteContactModal');
+    if (modal) {
+      const modalInstance = new bootstrap.Modal(modal);
+      modalInstance.show();
+    }
+  }
+  closeCampaignModal(): void {
+    const modal = document.getElementById('deleteContactModal');
+    if (modal) {
+      const modalInstance = bootstrap.Modal.getInstance(modal);
+      if (modalInstance) {
+        modalInstance?.hide();
+      }
+    }
+  }
+  deleteContact() {
     let request = {
-      data: id
+      data: this.deleteId
     }
     this.service.deleteContact(request).subscribe({
-      next: (res: any) =>{
+      next: (res: any) => {
         this.toastr.info(res.message);
         this.getContacts();
+        this.closeCampaignModal();
       },
       error: () => this.toastr.error('Failed to delete contact.')
     })
