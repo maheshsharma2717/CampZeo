@@ -11,4 +11,5 @@ public interface ICampaignRepository: IAsyncRepository<Campaign>
    // Task<Campaign> GetCampaignsForMessageTemplate(long Id);
    //Task<CampaignMessageTemplates> GetCampaignsMessageTemplateWithIncludes(long Id);
     Task<List<Campaign>> GetCampaignsByIds(List<long?> campaignIds);
+    Task<Campaign> DeleteCampaignById(long Id);
 }

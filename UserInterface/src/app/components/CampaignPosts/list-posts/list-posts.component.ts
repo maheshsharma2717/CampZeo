@@ -6,6 +6,7 @@ import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { ToastrService } from 'ngx-toastr';
 import { GridModule, PageService, SortService, ToolbarService } from "@syncfusion/ej2-angular-grids";
+import * as bootstrap from 'bootstrap'
 
 @Component({
   selector: 'app-list-posts',
@@ -16,6 +17,7 @@ import { GridModule, PageService, SortService, ToolbarService } from "@syncfusio
   providers: [PageService, SortService, ToolbarService]
 })
 export class ListPostsComponent {
+  deleteId: any;
   CampaignPosts: any[] = [];
   filteredModalContentAll: any[] = [];
   searchTerm: string = '';
@@ -25,15 +27,16 @@ export class ListPostsComponent {
   total: number = 0;
   campaignId: any = 0;
   Campaign: any = {};
-  pageSettings = {pageSize: 10, pageSizes: [5, 10, 20, 50]};
+  pageSettings = { pageSize: 10, pageSizes: [5, 10, 20, 50] };
   toolBarOptions = ['Custom'];
   //Modal priview
-isPreviewModalOpen: boolean = false;
-previewData: any;
-editorContent: string = '';
-simpleText: string = '';
-emailHtmlContent: string = '';
-jsonValue: any = {};
+  isPreviewModalOpen: boolean = false;
+  previewData: any;
+  editorContent: string = '';
+  simpleText: string = '';
+  emailHtmlContent: string = '';
+  jsonValue: any = {};
+  isRecovering: boolean = false;
 
   constructor(private toastr: ToastrService, public service: AppService, private activatedRoutes: ActivatedRoute) {
     this.activatedRoutes.queryParams.subscribe(param => {
@@ -41,7 +44,7 @@ jsonValue: any = {};
     })
   }
 
-  
+
   ngOnInit(): void {
     this.GetCampaignDetails();
     this.GetCampaignPosts();
@@ -94,6 +97,39 @@ jsonValue: any = {};
     this.page = 1;
   }
 
+  delete() {
+    let req = {
+      data : this.deleteId
+    }
+    this.service.deleteCampaignPostById(req).subscribe({
+      next: (res: any) =>{
+        this.GetCampaignPosts();
+        this.toastr.info("Post deleted successfully.");
+        this.closePostDeleteModal();
+      }
+    })
+  }
+  openPostDeleteModal(id: any) {
+    this.deleteId = id;
+
+    const modalElement = document.getElementById('deletePostModal');
+    if (modalElement) {
+      const modalInstance = new bootstrap.Modal(modalElement);
+      modalInstance.show();
+      this.isRecovering = this.isRecovering;
+    }
+  }
+
+  closePostDeleteModal(): void {
+    const modalElement = document.getElementById('deletePostModal');
+    if (modalElement) {
+      const modalInstance = bootstrap.Modal.getInstance(modalElement);
+      if (modalInstance) {
+        modalInstance?.hide();
+      }
+    }
+  }
+
   onSearchChange(): void {
     const searchTerm = this.searchTerm.trim().toLowerCase();
 
@@ -125,42 +161,42 @@ jsonValue: any = {};
     this.page = event;
   }
   openPreviewPopup(templateId: number): void {
-  if (!templateId) {
-    this.toastr.error('Invalid template ID.');
-    return;
-  }
-
-  this.service.GetTemplateById(templateId).subscribe({
-    next: (response: any) => {
-      if (response.isSuccess) {
-        console.log(response.data)
-        this.previewData = response.data;
-        this.editorContent = this.previewData.message;
-        this.simpleText = this.previewData.message;
-
-        if (response.data.type === 1) {
-          const parts = this.previewData.message.split('[{(break)}]');
-          if (parts.length > 1) {
-            this.emailHtmlContent = parts[0];
-            try {
-              this.jsonValue = JSON.parse(parts[1]);
-            } catch (error) {
-              console.error('Error parsing design JSON:', error);
-            }
-          } else {
-            this.emailHtmlContent = this.previewData.message;
-          }
-        }
-
-        this.isPreviewModalOpen = true;
-      } else {
-        this.toastr.warning(response.message || 'Failed to load template.');
-      }
-    },
-    error: () => {
-      this.toastr.error('Failed to load template preview.');
+    if (!templateId) {
+      this.toastr.error('Invalid template ID.');
+      return;
     }
-  });
-}
+
+    this.service.GetTemplateById(templateId).subscribe({
+      next: (response: any) => {
+        if (response.isSuccess) {
+          console.log(response.data)
+          this.previewData = response.data;
+          this.editorContent = this.previewData.message;
+          this.simpleText = this.previewData.message;
+
+          if (response.data.type === 1) {
+            const parts = this.previewData.message.split('[{(break)}]');
+            if (parts.length > 1) {
+              this.emailHtmlContent = parts[0];
+              try {
+                this.jsonValue = JSON.parse(parts[1]);
+              } catch (error) {
+                console.error('Error parsing design JSON:', error);
+              }
+            } else {
+              this.emailHtmlContent = this.previewData.message;
+            }
+          }
+
+          this.isPreviewModalOpen = true;
+        } else {
+          this.toastr.warning(response.message || 'Failed to load template.');
+        }
+      },
+      error: () => {
+        this.toastr.error('Failed to load template preview.');
+      }
+    });
+  }
 
 }

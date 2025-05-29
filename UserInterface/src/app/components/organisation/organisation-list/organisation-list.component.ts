@@ -12,8 +12,8 @@ import { GridModule, PageService, SortService, FilterService, ToolbarService } f
 @Component({
   selector: 'app-organisation-list',
   standalone: true,
-  imports: [CommonModule, RouterModule, NgxPaginationModule,FormsModule,GridModule],
-   providers: [PageService, SortService, FilterService, ToolbarService],
+  imports: [CommonModule, RouterModule, NgxPaginationModule, FormsModule, GridModule],
+  providers: [PageService, SortService, FilterService, ToolbarService],
   templateUrl: './organisation-list.component.html',
   styleUrl: './organisation-list.component.css'
 })
@@ -30,14 +30,13 @@ export class OrganisationListComponent implements OnInit, OnDestroy {
   totalPages: any;
   pages: any
   isSuspendedFilter: string = 'false';
-  sortBy: string = 'createdDate'; 
-  sortDesc: boolean = false; 
-  pageSizeOptions: number[] = [5, 10, 20, 50]; // Page size options
+  sortBy: string = 'createdDate';
+  sortDesc: boolean = false;
+  pageSizeOptions: number[] = [5, 10, 20, 50];
   isRecovering: boolean = false;
-//syncfusion grid
-  // PageSize = 10;
-  // pageSizeOptions = [5, 10, 20, 50];
-  toolbarOptions = ['Search'];
+  pageSettings = { pageSize: 10, pageSizes: [5, 10, 20, 50] };
+  toolBarOptions = ['Custom'];
+
   constructor(public service: AppService, private toaster: ToastrService,
     private router: Router
   ) {
@@ -54,20 +53,20 @@ export class OrganisationListComponent implements OnInit, OnDestroy {
   }
   changeSort(column: string): void {
     if (this.sortBy === column) {
-      this.sortDesc = !this.sortDesc; 
+      this.sortDesc = !this.sortDesc;
     } else {
       this.sortBy = column;
       this.sortDesc = false;
     }
     this.loadOrganisations(); // Reload data with new sort
   }
-  
+
   onPageSizeChange(): void {
     this.currentPage = 1; // Reset to the first page
     this.loadOrganisations(); // Reload data with the new page size
   }
   loadOrganisations(): void {
-    var request:any = {
+    var request: any = {
       data: {
         pageNumber: this.currentPage,
         pageSize: this.PageSize,
@@ -76,65 +75,64 @@ export class OrganisationListComponent implements OnInit, OnDestroy {
         sortDesc: this.sortDesc
       }
     }
-    if(this.isSuspendedFilter != '') { request.data.isDeleted= this.isSuspendedFilter === '' ? null : this.isSuspendedFilter=== 'true';}
+    if (this.isSuspendedFilter != '') { request.data.isDeleted = this.isSuspendedFilter === '' ? null : this.isSuspendedFilter === 'true'; }
     this.service.GetOrganisations(request).subscribe({
-        next: (response: any) => {
-          if (response.isSuccess) {
-            this.Organisations = response.data.list;
-            this.TotalCount = response.data.totalCount;
-            this.calculatePagination();
-          }
+      next: (response: any) => {
+        if (response.isSuccess) {
+          this.Organisations = response.data.list;
+          this.TotalCount = response.data.totalCount;
+          this.calculatePagination();
         }
-      });
-    } 
-     calculatePagination(): void {
-      this.totalPages = Math.ceil(this.TotalCount / this.PageSize);
-      this.pages = Array.from({ length: this.totalPages }, (_, i) => i + 1);
-    }
-  
-    changePage(page: number): void {
-      if (page >= 1 && page <= this.totalPages) {
-        this.currentPage = page;
-        this.loadOrganisations();
       }
-    }
-    approveItem(index: number) {
-      var organisationId = this.Organisations[index].id;
-      var request = { data: organisationId }
-      this.service.ApproveOrganisation(request).subscribe({
-        next: (response: any) => {
-          if (response.isSuccess) {
-            this.Organisations[index] = response.data;
-            this.loadOrganisations()
-          }
-        }
-      })
-    }
+    });
+  }
+  calculatePagination(): void {
+    this.totalPages = Math.ceil(this.TotalCount / this.PageSize);
+    this.pages = Array.from({ length: this.totalPages }, (_, i) => i + 1);
+  }
 
-    onLogin(item: any) {
-      ;
-      this.service.LogInAsOrgenisation(item.id).subscribe({
-        next: (response: any) => {
-          if (response.isSuccess) {
-            this.service.SetToken(response.data.token, false);
-            this.service.User = response.data;
-            this.toaster.success('Login success');
-            if (response.data) {
-              this.router.navigate(['/profile'], { queryParams: { i: 'CompleteProfile' } });
-            }
-          } else {
-            this.toaster.error('Invalid Email or password');
-          }
-        }
-      })
+  changePage(page: number): void {
+    if (page >= 1 && page <= this.totalPages) {
+      this.currentPage = page;
+      this.loadOrganisations();
     }
+  }
+  approveItem(data: any) {
+    var organisationId = data.id;
+    var request = { data: organisationId }
+    this.service.ApproveOrganisation(request).subscribe({
+      next: (response: any) => {
+        if (response.isSuccess) {
+          data = response.data;
+          this.loadOrganisations()
+        }
+      }
+    })
+  }
 
-    SuspendOrRecover(): void {
-      if(this.organisationToDeleteId !== null) {
+  onLogin(item: any) {
+    this.service.LogInAsOrgenisation(item.id).subscribe({
+      next: (response: any) => {
+        if (response.isSuccess) {
+          this.service.SetToken(response.data.token, false);
+          this.service.User = response.data;
+          this.toaster.success('Login success');
+          if (response.data) {
+            this.router.navigate(['/profile'], { queryParams: { i: 'CompleteProfile' } });
+          }
+        } else {
+          this.toaster.error('Invalid Email or password');
+        }
+      }
+    })
+  }
+
+  SuspendOrRecover(): void {
+    if (this.organisationToDeleteId !== null) {
       this.service.SuspendOrRecoverOrganisation(this.organisationToDeleteId).subscribe({
         next: () => {
-           this.Organisations.find(org => org.id == this.organisationToDeleteId).isDeleted = !this.isRecovering;
-          this.toaster.show(!this.isRecovering?'Organisation suspended successfully':'Organisation recovered successfully');
+          this.Organisations.find(org => org.id == this.organisationToDeleteId).isDeleted = !this.isRecovering;
+          this.toaster.show(!this.isRecovering ? 'Organisation suspended successfully' : 'Organisation recovered successfully');
           this.closeModal();
         },
         error: () => {
@@ -145,14 +143,14 @@ export class OrganisationListComponent implements OnInit, OnDestroy {
     }
   }
 
-  openSuspendModal(id: number,isRecovering:boolean=false): void {
+  openSuspendModal(id: number, isRecovering: boolean = false): void {
     this.organisationToDeleteId = id;
 
     const modalElement = document.getElementById('deleteModal');
     if (modalElement) {
       const modalInstance = new bootstrap.Modal(modalElement);
       modalInstance.show();
-      this.isRecovering = isRecovering ;
+      this.isRecovering = isRecovering;
     }
   }
 
@@ -182,28 +180,28 @@ export class OrganisationListComponent implements OnInit, OnDestroy {
       this.routerSubscription.unsubscribe();
     }
   }
-    pageChangeEvent(event: number) {
+  pageChangeEvent(event: number) {
     this.currentPage = event;
   }
 
   //syncfusion 
   approveItemById(id: number) {
-  const index = this.Organisations.findIndex(org => org.id === id);
-  if (index !== -1) {
-    this.approveItem(index);
+    const index = this.Organisations.findIndex(org => org.id === id);
+    if (index !== -1) {
+      this.approveItem(index);
+    }
   }
-}
 
-onGridActionBegin(args: any) {
-  if (args.requestType === 'paging') {
-    this.currentPage = args.currentPage;
-    this.PageSize = args.pageSize;
-    this.loadOrganisations();
-  } else if (args.requestType === 'sorting') {
-    this.sortBy = args.columnName;
-    this.sortDesc = args.direction === 'Descending';
-    this.loadOrganisations();
+  onGridActionBegin(args: any) {
+    if (args.requestType === 'paging') {
+      this.currentPage = args.currentPage;
+      this.PageSize = args.pageSize;
+      this.loadOrganisations();
+    } else if (args.requestType === 'sorting') {
+      this.sortBy = args.columnName;
+      this.sortDesc = args.direction === 'Descending';
+      this.loadOrganisations();
+    }
   }
-}
 
 }

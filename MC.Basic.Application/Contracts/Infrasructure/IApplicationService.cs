@@ -54,5 +54,8 @@ namespace MC.Basic.Application.Contracts.Infrasructure
         Task<ApiResponse<string>> SendCampPost(ApiRequest<CampaignPostRequest> request);
         Task<ApiResponse<PlatformConfigurationViewModel>> GetPlatformConfiguration(ApiRequest<PlatformType> request);
         Task<ApiResponse<string>> UpdatePlatformConfiguration(ApiRequest<PlatformConfigurationDto> request);
+        Task<ApiResponse<Contact>> DeleteContactById(ApiRequest<long> request);
+        Task <ApiResponse<Campaign>>DeleteCampaignById(ApiRequest<long> id);
+        Task<ApiResponse<CampaignPost>> DeleteCampaignPostById(ApiRequest<long> id);
     }
 }

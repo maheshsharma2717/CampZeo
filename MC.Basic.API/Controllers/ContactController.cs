@@ -75,5 +75,19 @@ public class ContactController  : ControllerBase
             return BadRequest(ex.Message);
         }
     }
+    [HttpPost("DeleteContactById")]
+    [EnableCors("CorsPolicy")]
+    public async Task<IActionResult> DeleteContactById(ApiRequest<long> request)
+    {
+        try
+        {
+            var response = await _applicationService.DeleteContactById(request);
+            return Ok(response);
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(ex.Message);
+        }
+    }
 
 }

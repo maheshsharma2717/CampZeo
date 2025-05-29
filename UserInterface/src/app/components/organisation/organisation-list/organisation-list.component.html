@@ -1,25 +1,25 @@
-             <div class="page-header pb-0">
-                <h3 class="fw-bold mb-3">Organisations</h3>
-                <ul class="breadcrumbs mb-3">
-                    <li class="nav-item">
-                        <a [routerLink]="'/list-organisation'"><i class=" icon-home"></i></a>
-                    </li>
-                    <li class="separator">
-                        <i class="icon-arrow-right"></i>
-                    </li>
-                    <li class="nav-item">
-                       <a [routerLink]="'/list-organisation'">Organisations List</a>
-                    </li>
-                    <li class="separator">
-                        <i class="icon-arrow-right"></i>
-                    </li>
-                    <li class="nav-item">
-                        <a [routerLink]="'/create-organisation'">Create Organisations </a>
-                    </li>
-                </ul>
-            </div>
-           
-            <!-- <div class="card-header d-flex aligin-item-center justify-content-between py-2">
+<div class="page-header pb-0">
+    <h3 class="fw-bold mb-3">Organisations</h3>
+    <ul class="breadcrumbs mb-3">
+        <li class="nav-item">
+            <a [routerLink]="'/list-organisation'"><i class=" icon-home"></i></a>
+        </li>
+        <li class="separator">
+            <i class="icon-arrow-right"></i>
+        </li>
+        <li class="nav-item">
+            <a [routerLink]="'/list-organisation'">Organisations List</a>
+        </li>
+        <li class="separator">
+            <i class="icon-arrow-right"></i>
+        </li>
+        <li class="nav-item">
+            <a [routerLink]="'/create-organisation'">Create Organisations </a>
+        </li>
+    </ul>
+</div>
+
+<!-- <div class="card-header d-flex aligin-item-center justify-content-between py-2">
                 <div class="title-table d-flex align-items-center">
                     <h5>Organisations List</h5>
                 </div>
@@ -40,127 +40,183 @@
                                 </div>
                 </div>
             </div> -->
-            <!-- [ breadcrumb ] start -->
+<!-- [ breadcrumb ] start -->
 
-            <div class="row">
-                <div class="col-md-12">
-                    <div class="card">
-                        <div class="card-header d-flex aligin-item-center justify-content-between py-2">
-                            <div class="title-table d-flex align-items-center">
-                                <h5>Organisation</h5>
-                            </div>
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header d-flex aligin-item-center justify-content-between py-2">
+                <div class="title-table d-flex align-items-center">
+                    <h5>Organisation</h5>
+                </div>
 
-                            <div class="d-flex">
-                                <div class="d-flex mx-2">
-                                    <label class="m-3">Filter Suspended :</label>
-                                    <select [(ngModel)]="isSuspendedFilter" [ngModelOptions]="{standalone:true}"
-                                        class="form-control w-auto py-0 mb-2" (change)="loadOrganisations();currentPage = 1">
-                                        <option value="">All</option>
-                                        <option value="true">Suspended</option>
-                                        <option value="false">Active</option>
-                                    </select>
-                                </div>
-                                <div *ngIf="this.service.User.role == 1">
-                                    <a [routerLink]="'/create-organisation'"><button type="button"
-                                            class="btn  btn-outline-primary">Add New</button>
+                <div class="d-flex">
+                    <div class="d-flex mx-2">
+                        <label class="m-3">Filter Suspended :</label>
+                        <select [(ngModel)]="isSuspendedFilter" [ngModelOptions]="{standalone:true}"
+                            class="form-control w-auto py-0 mb-2" (change)="loadOrganisations();currentPage = 1">
+                            <option value="">All</option>
+                            <option value="true">Suspended</option>
+                            <option value="false">Active</option>
+                        </select>
+                    </div>
+                    <div *ngIf="this.service.User.role == 1">
+                        <a [routerLink]="'/create-organisation'"><button type="button"
+                                class="btn  btn-outline-primary">Add New</button>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="card-header d-flex aligin-item-center justify-content-between py-2">
+                <input type="text" class="form-control w-25" placeholder="Search..." [(ngModel)]="SearchText"
+                    (input)="loadOrganisations()" />
+                <div class="d-flex align-items-center justify-content-center ">
+                    <div class="mx-2">
+                        <span class="text-primary">entries per page</span>
+                    </div>
+                    <div class="">
+                        <select class="form-control" id="itemsPerPageSelect" [(ngModel)]="PageSize"
+                            (change)="changePage(PageSize)">
+                            <option *ngFor="let option of pageSizeOptions" [value]="option">{{ option }}
+                            </option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body table-border-style pb-1">
+
+                <!-- Table -->
+                <div class="table-responsive">
+                    <!-- <table class="table">
+                        <thead>
+                            <tr>
+                                <th>S/N</th>
+                                <th (click)="changeSort('name')">
+                                    Name
+                                    <i class="fa"
+                                        [ngClass]="{'fa-sort-up': sortBy === 'name' && !sortDesc, 'fa-sort-down': sortBy === 'name' && sortDesc}"></i>
+                                </th>
+                                <th (click)="changeSort('phone')">
+                                    Phone
+                                    <i class="fa"
+                                        [ngClass]="{'fa-sort-up': sortBy === 'phone' && !sortDesc, 'fa-sort-down': sortBy === 'phone' && sortDesc}"></i>
+                                </th>
+                                <th (click)="changeSort('email')">
+                                    Email
+                                    <i class="fa"
+                                        [ngClass]="{'fa-sort-up': sortBy === 'email' && !sortDesc, 'fa-sort-down': sortBy === 'email' && sortDesc}"></i>
+                                </th>
+                                <th (click)="changeSort('address')">
+                                    Address
+                                    <i class="fa"
+                                        [ngClass]="{'fa-sort-up': sortBy === 'address' && !sortDesc, 'fa-sort-down': sortBy === 'address' && sortDesc}"></i>
+                                </th>
+                                <th (click)="changeSort('ownerName')">
+                                    Owner Name
+                                    <i class="fa"
+                                        [ngClass]="{'fa-sort-up': sortBy === 'ownerName' && !sortDesc, 'fa-sort-down': sortBy === 'ownerName' && sortDesc}"></i>
+                                </th>
+                                <th *ngIf="this.service.User.role == 1">Approve</th>
+                                <th *ngIf="this.service.User.role == 1">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let item of Organisations; let i = index">
+                                <td>{{ (currentPage - 1) * PageSize + i + 1 }}</td>
+                                <td>{{ item.name }}</td>
+                                <td>{{ item.phone }}</td>
+                                <td>{{ item.email }}</td>
+                                <td>{{ item.address }}</td>
+                                <td>{{ item.ownerName }}</td>
+                                <td *ngIf="this.service.User.role == 1">
+                                    <a class="pointer" (click)="approveItem(i)">
+                                        <i class="fa fa-check-circle" [ngClass]="{'text-success': item.isApproved}"></i>
                                     </a>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="card-header d-flex aligin-item-center justify-content-between py-2">
-                            <input type="text" class="form-control w-25" placeholder="Search..."
-                                [(ngModel)]="SearchText" (input)="loadOrganisations()" />
-                            <div class="d-flex align-items-center justify-content-center ">
-                                <div class="mx-2">
-                                    <span class="text-primary">entries per page</span>
-                                </div>
-                                <div class="">
-                                    <select class="form-control" id="itemsPerPageSelect" [(ngModel)]="PageSize"
-                                        (change)="changePage(PageSize)">
-                                        <option *ngFor="let option of pageSizeOptions" [value]="option">{{ option }}
-                                        </option>
-                                    </select>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="card-body table-border-style pb-1">
+                                </td>
+                                <td *ngIf="this.service.User.role == 1" class="d-flex">
+                                    <button class="btn mx-2 py-1" [ngClass]="item.isDeleted ? 'border' : 'btn-danger'"
+                                        (click)="item.isDeleted ?openSuspendModal(item.id,true) : openSuspendModal(item.id )">
+                                        {{ item.isDeleted ? 'Recover' : 'Suspend' }}
+                                    </button>
+                                    <button (click)="onLogin(item)" class="btn btn-primary py-1">
+                                        Login
+                                    </button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table> -->
 
-                            <!-- Table -->
-                            <div class="table-responsive">
-                                <table class="table">
-                                    <thead>
-                                        <tr>
-                                            <th>S/N</th>
-                                            <th (click)="changeSort('name')">
-                                                Name
-                                                <i class="fa"
-                                                    [ngClass]="{'fa-sort-up': sortBy === 'name' && !sortDesc, 'fa-sort-down': sortBy === 'name' && sortDesc}"></i>
-                                            </th>
-                                            <th (click)="changeSort('phone')">
-                                                Phone
-                                                <i class="fa"
-                                                    [ngClass]="{'fa-sort-up': sortBy === 'phone' && !sortDesc, 'fa-sort-down': sortBy === 'phone' && sortDesc}"></i>
-                                            </th>
-                                            <th (click)="changeSort('email')">
-                                                Email
-                                                <i class="fa"
-                                                    [ngClass]="{'fa-sort-up': sortBy === 'email' && !sortDesc, 'fa-sort-down': sortBy === 'email' && sortDesc}"></i>
-                                            </th>
-                                            <th (click)="changeSort('address')">
-                                                Address
-                                                <i class="fa"
-                                                    [ngClass]="{'fa-sort-up': sortBy === 'address' && !sortDesc, 'fa-sort-down': sortBy === 'address' && sortDesc}"></i>
-                                            </th>
-                                            <th (click)="changeSort('ownerName')">
-                                                Owner Name
-                                                <i class="fa"
-                                                    [ngClass]="{'fa-sort-up': sortBy === 'ownerName' && !sortDesc, 'fa-sort-down': sortBy === 'ownerName' && sortDesc}"></i>
-                                            </th>
-                                            <th *ngIf="this.service.User.role == 1">Approve</th>
-                                            <th *ngIf="this.service.User.role == 1">Action</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr *ngFor="let item of Organisations; let i = index">
-                                            <td>{{ (currentPage - 1) * PageSize + i + 1 }}</td>
-                                            <td>{{ item.name }}</td>
-                                            <td>{{ item.phone }}</td>
-                                            <td>{{ item.email }}</td>
-                                            <td>{{ item.address }}</td>
-                                            <td>{{ item.ownerName }}</td>
-                                            <td *ngIf="this.service.User.role == 1">
-                                                <a class="pointer" (click)="approveItem(i)">
-                                                    <!-- <i class="fa fa-check-circle"
-                                                        [ngClass]="{'text-success': item.isApproved}"></i> -->
-                                                        <i  class="fa" 
-                                                             [ngClass]="{
-                                                                'fa-check-circle text-success': item.isApproved,
-                                                                'fa-times-circle text-danger': !item.isApproved
-                                                                }">
-                                                        </i>
-                                                </a>
-                                            </td>
-                                            <td *ngIf="this.service.User.role == 1" class="d-flex">
-                                                <button class="btn mx-2 py-1"
-                                                    [ngClass]="item.isDeleted ? 'border' : 'btn-danger'"
-                                                    (click)="item.isDeleted ?openSuspendModal(item.id,true) : openSuspendModal(item.id )">
-                                                    {{ item.isDeleted ? 'Recover' : 'Suspend' }}
-                                                </button>
-                                                <button (click)="onLogin(item)" class="btn btn-primary py-1">
-                                                    Login
-                                                </button>
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                                <div class="d-flex justify-content-end mb-0">
-                                    <pagination-controls class="pagination"
-                                        (pageChange)="pageChangeEvent($event)"></pagination-controls>
-                                </div>
-                            </div>
+                    <ejs-grid [dataSource]="Organisations" [rowHeight]="60" height="400px" #grid [allowPaging]="true"
+                        [pageSettings]="pageSettings" [toolbar]="toolBarOptions"
+                        [sortSettings]="{ columns: [{ field: 'id', direction: 'Descending' }] }" height="400px"
+                        enableHover="false">
 
-                            <!-- Pagination -->
-                            <!-- <div class="d-flex justify-content-between align-items-center mt-3">
+                        <ng-template #toolbarTemplate></ng-template>
+
+                        <e-columns>
+                            <e-column headerText="#" width="50" field="id" textAlign="Left"></e-column>
+                            <e-column headerText="Name" width="100" [template]="nameTemplate"></e-column>
+                            <e-column headerText="Phone" width="100" [template]="phoneTemplate"></e-column>
+                            <e-column headerText="Email" width="100" [template]="emailTemplate"></e-column>
+                            <e-column headerText="Address" width="100" [template]="ownerTemplate"></e-column>
+                            <e-column headerText="Approve" width="50" [template]="approvalTemplate"></e-column>
+                            <e-column headerText="Action" width="100" [template]="actionTemplate"></e-column>
+                        </e-columns>
+
+                    </ejs-grid>
+
+                    <ng-template let-data>
+                        <p class="fw-semibold m-0">{{ data.id }}</p>
+                    </ng-template>
+
+                    <ng-template #nameTemplate let-data>
+                        <p class="fw-semibold m-0">{{ data.name }}</p>
+                    </ng-template>
+
+                    <ng-template #phoneTemplate let-data>
+                        <p class="fw-semibold m-0">{{ data.phone }}</p>
+                    </ng-template>
+
+                    <ng-template #emailTemplate let-data>
+                        <p class="fw-semibold m-0">{{ data.email }}</p>
+                    </ng-template>
+
+                    <ng-template #addressTemplate let-data>
+                        <p class="fw-semibold m-0">{{ data.address }}</p>
+                    </ng-template>
+
+                    <ng-template #ownerTemplate let-data>
+                        <p class="fw-semibold m-0">{{ data.ownerName }}</p>
+                    </ng-template>
+
+                    <ng-template #approvalTemplate let-data>
+                        <div *ngIf="this.service.User.role == 1">
+                            <a class="pointer" (click)="approveItem(data)">
+                                <i class="fa fa-check-circle" [ngClass]="{'text-success': data.isApproved}"></i>
+                            </a>
+                        </div>
+                    </ng-template>
+
+                    <ng-template #actionTemplate let-data>
+                        <div *ngIf="this.service.User.role == 1">
+                            <button class="btn mx-2 py-1" [ngClass]="data.isDeleted ? 'border' : 'btn-danger'"
+                                (click)="data.isDeleted ?openSuspendModal(data.id) : openSuspendModal(data.id)">
+                                {{ data.isDeleted ? 'Recover' : 'Suspend' }}
+                            </button>
+                            <button (click)="onLogin(data)" class="btn btn-primary py-1">
+                                Login
+                            </button>
+                        </div>
+                    </ng-template>
+
+                    <!-- <div class="d-flex justify-content-end mb-0">
+                        <pagination-controls class="pagination"
+                            (pageChange)="pageChangeEvent($event)"></pagination-controls>
+                    </div> -->
+                </div>
+
+                <!-- Pagination -->
+                <!-- <div class="d-flex justify-content-between align-items-center mt-3">
                         
                         <div class="d-flex align-items-center">
                             <label for="pageSize" class="me-2">Page Size:</label>
@@ -193,35 +249,34 @@
                             </ul>
                         </nav>
                     </div> -->
-                        </div>
-                    </div>
-                </div>
-            </div>
-        
-
-        <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true"
-            data-bs-backdrop="static" data-bs-keyboard="false">
-            <div class="modal-dialog modal-dialog-centered">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title " [ngClass]="!isRecovering?'text-danger':'text-primary'"
-                            id="deleteModalLabel">
-                            Suspention Confirmation
-                        </h5>
-                        <button type="button" class="btn ms-auto px-3 text-white"
-                            [ngClass]="!isRecovering?'btn-danger':'btn-primary'" data-bs-dismiss="modal"
-                            aria-label="Close">x</button>
-                    </div>
-                    <div class="modal-body">
-                        Are you sure you want to @if(!isRecovering){Suspend}@else{Recover} this organisation?
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                        <button type="button" class="btn" [ngClass]="!isRecovering?'btn-danger':'btn-primary'"
-                            (click)="SuspendOrRecover()">
-                            Yes, @if(!isRecovering){Suspend}@else{Recover} this !
-                        </button>
-                    </div>
-                </div>
             </div>
         </div>
+    </div>
+</div>
+
+
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true"
+    data-bs-backdrop="static" data-bs-keyboard="false">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title " [ngClass]="!isRecovering?'text-danger':'text-primary'" id="deleteModalLabel">
+                    Suspention Confirmation
+                </h5>
+                <button type="button" class="btn ms-auto px-3 text-white"
+                    [ngClass]="!isRecovering?'btn-danger':'btn-primary'" data-bs-dismiss="modal"
+                    aria-label="Close">x</button>
+            </div>
+            <div class="modal-body">
+                Are you sure you want to @if(!isRecovering){Suspend}@else{Recover} this organisation?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn" [ngClass]="!isRecovering?'btn-danger':'btn-primary'"
+                    (click)="SuspendOrRecover()">
+                    Yes, @if(!isRecovering){Suspend}@else{Recover} this !
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

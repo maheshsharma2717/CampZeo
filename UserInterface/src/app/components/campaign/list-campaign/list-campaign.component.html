@@ -77,15 +77,15 @@
         </a>
       </ng-template> -->
       <ng-template #postsTemplate let-data>
-        <a class="pointer d-flex w-100 gap-2 mx-3" title="Manage Posts"
-          [routerLink]="'/list-campaign-posts'" [queryParams]="{ campaignId: data.id }">
+        <a class="pointer d-flex w-100 gap-2 mx-3" title="Manage Posts" [routerLink]="'/list-campaign-posts'"
+          [queryParams]="{ campaignId: data.id }">
 
           <ng-container *ngIf="data.postData?.length > 0; else noPosts">
-             @for(post of data.postData;track $index) {
-          <i class="{{service.platformTypeMapping[post.type].class}} f-20 fa-1x"></i>
-          <span class="count-badge ">
-            {{ post.count }}
-          </span>}
+            @for(post of data.postData;track $index) {
+            <i class="{{service.platformTypeMapping[post.type].class}} f-20 fa-1x"></i>
+            <span class="count-badge ">
+              {{ post.count }}
+            </span>}
           </ng-container>
 
           <ng-template #noPosts>
@@ -97,6 +97,10 @@
       <ng-template #actionTemplate let-data>
         <a class="pointer mx-3" title="Edit Campaign" [routerLink]="'/edit-campaign'" [queryParams]="{ id: data.id }">
           <i class="far fa-edit"></i>
+        </a>
+
+        <a class="pointer mx-3" title="Delete Campaign" (click)="openDeleteModal(data.id)">
+          <i class="fas fa-trash"></i>
         </a>
       </ng-template>
       <!-- <div class="card">
@@ -180,6 +184,30 @@
           </div>
         </div>
       </div> -->
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="deleteCampaignModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true"
+  data-bs-backdrop="static" data-bs-keyboard="false">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title " [ngClass]="!isRecovering?'text-danger':'text-primary'" id="deleteModalLabel">
+          Suspention Confirmation
+        </h5>
+        <button type="button" class="btn ms-auto px-3 text-white" [ngClass]="!isRecovering?'btn-danger':'btn-primary'"
+          data-bs-dismiss="modal" aria-label="Close">x</button>
+      </div>
+      <div class="modal-body">
+        Are you sure you want to @if(!isRecovering){Suspend}@else{Recover} this campaign?
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button type="button" class="btn" [ngClass]="!isRecovering?'btn-danger':'btn-primary'" (click)="delete()">
+          Yes, @if(!isRecovering){Suspend}@else{Recover} this !
+        </button>
+      </div>
     </div>
   </div>
 </div>

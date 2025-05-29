@@ -109,6 +109,15 @@ public class CampaignPostRepository:BaseRepository<CampaignPost>, ICampaignPostR
             .OrderByDescending(p => p.Id)
             .ToList();
     }
-
+    public async Task<CampaignPost> DeleteCampaignPost(long id)
+    {
+        var campaignPost = dbcontext.CampaignPosts.FirstOrDefault(x => x.Id == id);
+        if (campaignPost != null)
+        {
+            dbcontext.CampaignPosts.Remove(campaignPost);
+            await dbcontext.SaveChangesAsync();
+        }
+        return campaignPost;
+    }
 
 }
