@@ -108,7 +108,7 @@ namespace MC.Basic.API.Controllers
             {
                 var user = await _authenticationService.CreateAdminUser(firstName, lastName, email, password);
 
-                if (user == null || user.Id == 0)
+                if(user == null || user.Id == 0)
                     return Conflict("Admin user already exists.");
 
                 var result = new AdminUserResponseDto

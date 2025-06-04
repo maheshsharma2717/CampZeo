@@ -29,40 +29,92 @@ export class LoginComponent {
     });
   }
 
-  onSubmit() {
-    debugger
-    if (this.loginForm.valid) {
-      const loginData = this.loginForm.value;
-      this.service.LoginUser(loginData).subscribe({
-        next: (response: any) => {
-          if (response.isSuccess) {
-            this.service.SetToken(response.data.token,this.loginForm.value.rememberMe);
-            this.service.User = response.data;
-           localStorage.setItem('IsFirstLogin', response.data.isFirstLogin);
-            localStorage.setItem('UserRole', response.data.role);
-            this.toastr.success('Login success');
-            if (response.data.isFirstLogin === true && this.service.User.role !== 1) {
+  // onSubmit() {
+  //   debugger
+  //   if (this.loginForm.valid) {
+  //     const loginData = this.loginForm.value;
+  //     this.service.LoginUser(loginData).subscribe({
+  //       next: (response: any) => {
+  //         if (response.isSuccess) {
+  //           this.service.SetToken(response.data.token,this.loginForm.value.rememberMe);
+  //           this.service.User = response.data;
+  //          localStorage.setItem('IsFirstLogin', response.data.isFirstLogin);
+  //           localStorage.setItem('UserRole', response.data.role);
+  //           this.toastr.success('Login success');
+  //           if (response.data.isFirstLogin === true && this.service.User.role !== 1) {
          
-              sessionStorage.setItem('FirstLoginDialogShown', 'true');
-              this.router.navigate(['/profile']);
-            } else if (!response.data.firstName) {
-              this.router.navigate(['/profile'], { queryParams: { i: 'CompleteProfile' } });
-            } else {
-              if (this.service.User.role == 1) {
-                this.router.navigate(['/list-organisation']);
-              } else {
-                this.router.navigate(['/dashboard']);
-              }
-            }
+  //             sessionStorage.setItem('FirstLoginDialogShown', 'true');
+  //             this.router.navigate(['/profile']);
+  //           } else if (!response.data.firstName) {
+  //             this.router.navigate(['/profile'], { queryParams: { i: 'CompleteProfile' } });
+  //           } else {
+  //             if (this.service.User.role == 1) {
+  //               this.router.navigate(['/list-organisation']);
+  //             } else {
+  //               this.router.navigate(['/dashboard']);
+  //             }
+  //           }
+  //         } else {
+  //           this.toastr.error('Invalid Email or password');
+  //         }
+  //       }
+  //     })
+  //   } else {
+  //     this.toastr.error('Form is invalid');
+  //   }
+  // }
+
+  onSubmit() {
+  debugger;
+  if (this.loginForm.valid) {
+    const loginData = this.loginForm.value;
+
+    this.service.LoginUser(loginData).subscribe({
+      next: (response: any) => {
+        if (response.isSuccess) {
+          // Set current token
+          this.service.SetToken(response.data.token, this.loginForm.value.rememberMe);
+
+          // Determine if this is an admin logging in
+          if (response.data.role == 1) {
+            // Save admin token for later use
+            localStorage.setItem('admin_token', response.data.token);
           } else {
-            this.toastr.error('Invalid Email or password');
+            // Save impersonated user token
+            localStorage.setItem('user_token', response.data.token);
           }
+
+          // Save user info
+          this.service.User = response.data;
+          localStorage.setItem('IsFirstLogin', response.data.isFirstLogin);
+          localStorage.setItem('UserRole', response.data.role);
+
+          this.toastr.success('Login success');
+
+          // Routing logic
+          if (response.data.isFirstLogin === true && this.service.User.role !== 1) {
+            sessionStorage.setItem('FirstLoginDialogShown', 'true');
+            this.router.navigate(['/profile']);
+          } else if (!response.data.firstName) {
+            this.router.navigate(['/profile'], { queryParams: { i: 'CompleteProfile' } });
+          } else {
+            if (this.service.User.role == 1) {
+              this.router.navigate(['/list-organisation']);
+            } else {
+              this.router.navigate(['/dashboard']);
+            }
+          }
+
+        } else {
+          this.toastr.error('Invalid Email or password');
         }
-      })
-    } else {
-      this.toastr.error('Form is invalid');
-    }
+      }
+    });
+  } else {
+    this.toastr.error('Form is invalid');
   }
+}
+
   togglePassword() {
     this.showPassword = !this.showPassword;
   }
