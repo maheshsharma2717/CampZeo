@@ -11,8 +11,10 @@ using MC.Basic.Application.Models.Twilio;
 using MC.Basic.Domain;
 using MC.Basic.Domains.Entities;
 using MC.Basic.Infrastructure.Message;
+using MC.Basic.Persistance;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
+using SendGrid.Helpers.Mail;
 using System.Globalization;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq.Expressions;
@@ -35,6 +37,7 @@ public class ApplicationService : IApplicationService
     private readonly IInfobipSmsService _infoBipSmsService;
     private readonly IGeminiService _aIService;
     private readonly IPlatformConfigurationRepository _platformConfigurationRepository;
+    private readonly BasicDbContext _context;
     #region Constructor
     public ApplicationService(IOrganisationRepository organisationRepository,
         IUserRepository userRepository,
@@ -90,6 +93,99 @@ public class ApplicationService : IApplicationService
         };
 
         return response;
+    }
+
+    public async Task<ApiResponse<OrganisationEditDto>> EditOrganisation(ApiRequest<long> request)
+    {
+        //var organisation = await _organisationRepository.GetByIdAsync(request.Data);
+        var organisation = await _organisationRepository.GetAsyncById(request.Data);
+
+
+        if (request == null || request.Data <= 0)
+        {
+            return new ApiResponse<OrganisationEditDto>
+            {
+                IsSuccess = false,
+                Message = "Invalid organisation ID"
+            };
+        }
+
+
+        // Map entity to DTO
+        var organisationDto = new OrganisationEditDto
+        {
+            Id = organisation.Id,
+            Name = organisation.Name,
+            Phone = organisation.Phone,
+            Email = organisation.Email,
+            Address = organisation.Address,
+            OwnerName = organisation.OwnerName
+        };
+
+        return new ApiResponse<OrganisationEditDto>
+        {
+            IsSuccess = true,
+            Data = organisationDto
+        };
+    }
+
+
+    public async Task<ApiResponse<Organisation>> UpdateOrganisation(OrganisationUpdateDto request)
+    {
+        if (request == null || request.Id <= 0)
+        {
+            return new ApiResponse<Organisation>
+            {
+                IsSuccess = false,
+                Message = "Invalid update request data.",
+                Data = null
+            };
+        }
+
+        var org = await _context.Organizations.FindAsync(request.Id);
+        if (org == null)
+        {
+            return new ApiResponse<Organisation>
+            {
+                IsSuccess = false,
+                Message = "Organisation not found.",
+                Data = null
+            };
+        }
+
+        org.Name = request.Name ?? org.Name;
+        org.Email = request.Email ?? org.Email;
+        org.Phone = request.Phone ?? org.Phone;
+        org.OwnerName = request.OwnerName ?? org.OwnerName;
+        org.Address = request.Address ?? org.Address;
+
+
+        try
+        {
+            await _context.SaveChangesAsync();
+
+            return new ApiResponse<Organisation>
+            {
+                IsSuccess = true,
+                Message = "Organisation updated successfully.",
+                Data = org
+            };
+        }
+        catch (Exception ex)
+        {
+            var errorMsg = ex.Message;
+            if (ex.InnerException != null)
+                errorMsg += " | Inner Exception: " + ex.InnerException.Message;
+
+            // Ideally log errorMsg here
+
+            return new ApiResponse<Organisation>
+            {
+                IsSuccess = false,
+                Message = $"Error updating organisation: {errorMsg}",
+                Data = null
+            };
+        }
     }
 
     public async Task<ApiResponse<Organisation>> ApproveOrganisation(ApiRequest<long> request)
@@ -305,6 +401,16 @@ public class ApplicationService : IApplicationService
             response.Message = "";
         }
 
+        return response;
+    }
+
+    public async Task<ApiResponse<Organisation>> GetOrganisationByOrganisationId(ApiRequest<long> request)
+    {
+        var organisation = await _organisationRepository.GetOrganisationByOrganisationId(request.Data);
+        ApiResponse<Organisation> response = new ApiResponse<Organisation>();
+        response.Data = organisation;
+        response.IsSuccess = true;
+        response.Message = "Organisation Fetched Successfully";
         return response;
     }
 
@@ -806,7 +912,7 @@ public class ApplicationService : IApplicationService
     }
 
 
-    #endregion  
+    #endregion
     #region AI Intigration
     public async Task<ApiResponse<string>> GetAnswerForQuestion(ApiRequest<string> request)
     {

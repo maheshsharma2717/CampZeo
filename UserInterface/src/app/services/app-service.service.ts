@@ -75,6 +75,16 @@ export class AppService {
     request.token = this.Token;
     return this.http.post(ApiUrl + "Organisation/GetOrganisation", request);
   }
+ EditOrganisation(request: any) {
+  return this.http.post(ApiUrl + "Organisation/EditOrganisation/", request);
+  }
+  UpdateOrganisation(id: number,request: any) {
+    return this.http.put(ApiUrl + `Organisation/UpdateOrganisation/${id}`, request)
+  }  
+  getOrganisationByorgId(req: any){
+    req.token = this.Token;
+    return this.http.post<any>(ApiUrl + 'Organisation/GetOrganisationByOrganisationId',req)
+  }
   UpdateUser(request: any) {
     return this.http.post(ApiUrl + "Account/UpdateUser", request);
   }

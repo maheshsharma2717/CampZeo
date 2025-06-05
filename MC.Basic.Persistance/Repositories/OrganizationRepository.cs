@@ -94,5 +94,22 @@ namespace MC.Basic.Persistance.Repositories
                 throw;
             }
         }
+
+        public async Task<Organisation> GetOrganisationByOrganisationId(long orgId)
+        {
+            try
+            {
+                var dbOrganisation = await GetQuariable().SingleOrDefaultAsync(org => org.Id == orgId && !org.IsDeleted);
+                if (dbOrganisation == null)
+                {
+                    throw new Exception("Invalid Organisation");
+                }
+                return dbOrganisation;
+            }
+            catch(Exception ex)
+            {
+                throw;
+            }
+        }
     }
 }

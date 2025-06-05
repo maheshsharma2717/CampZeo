@@ -3,6 +3,7 @@ using MC.Basic.Application.Contracts.Infrasructure;
 using MC.Basic.Application.Models.DataModel;
 using MC.Basic.Application.Models.Organisation;
 using MC.Basic.Domains.Entities;
+using MC.Basic.Persistance;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 
@@ -13,9 +14,11 @@ public class OrganisationController : ControllerBase
 {
     private readonly IApplicationService _applicationService;
     private readonly IAuthenticationService _authenticationService;
-    public OrganisationController(IApplicationService applicationService)
+    private readonly BasicDbContext _context;
+    public OrganisationController(IApplicationService applicationService, BasicDbContext context)
     {
         _applicationService = applicationService;
+        _context = context;
     }
     [HttpPost("CreateOrganisation")]
     [EnableCors("CorsPolicy")]
@@ -30,6 +33,28 @@ public class OrganisationController : ControllerBase
         {
             return BadRequest(ex.Message);
         }
+    }
+
+
+    [HttpPut("UpdateOrganisation/{id}")]
+    public IActionResult UpdateOrganisation(long id, [FromBody] OrganisationUpdateDto request)
+    {
+        if (request == null)
+            return BadRequest("Organisation data is null.");
+
+        var organisation = _context.Organizations.Find(id);
+        if (organisation == null)
+            return NotFound("Organisation not found.");
+
+        organisation.Name = request.Name;
+        organisation.OwnerName = request.OwnerName;
+        organisation.Phone = request.Phone;
+        organisation.Email = request.Email;
+        organisation.Address = request.Address;
+
+        _context.SaveChanges();
+
+        return Ok(organisation);
     }
 
     [HttpPost("ApproveOrganisation")]
@@ -112,4 +137,19 @@ public class OrganisationController : ControllerBase
         }
     }
 
+    [HttpPost("GetOrganisationByOrganisationId")]
+    [Authorize]
+    [EnableCors("CorsPolicy")]
+    public async Task<IActionResult> GetOrganisationByOrganisationId([FromBody] ApiRequest<long> request)
+    {
+        try
+        {
+            var response = await _applicationService.GetOrganisationByOrganisationId(request);
+            return Ok(response);
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(ex);
+        }
+    }
 }
