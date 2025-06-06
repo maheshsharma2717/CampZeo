@@ -6,7 +6,7 @@ import { CommonModule } from '@angular/common';
 import { ToastrService } from 'ngx-toastr';
 import { MatDialog } from '@angular/material/dialog';
 import { ChangePasswordDialogComponent } from '../../change-password-dialog/change-password-dialog.component';
-
+import { AuthService } from '../../services/auth.service';
 @Component({
   selector: 'app-login',
   standalone: true,
@@ -20,7 +20,7 @@ export class LoginComponent {
   loginForm: FormGroup;
   showPassword: boolean = false;
 
-  constructor(private toastr: ToastrService, private service: AppService,private router:Router,
+  constructor(private toastr: ToastrService, private service: AppService,private router:Router, private authService: AuthService,
     private dialog: MatDialog) {
       this.loginForm = new FormGroup({
       email: new FormControl('', [Validators.required, Validators.email]),
@@ -74,6 +74,7 @@ export class LoginComponent {
         if (response.isSuccess) {
           // Set current token
           this.service.SetToken(response.data.token, this.loginForm.value.rememberMe);
+          this.authService.setCurrentUser(response.data);
 
           // Determine if this is an admin logging in
           if (response.data.role == 1) {

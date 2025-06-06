@@ -4,6 +4,7 @@ import { RouterModule } from '@angular/router';
 import { Router } from '@angular/router';
 import { SidebarComponent } from '../sidebar/sidebar.component';
 import { CommonModule } from '@angular/common';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-topbar',
@@ -13,18 +14,25 @@ import { CommonModule } from '@angular/common';
   styleUrl: './topbar.component.css'
 })
 export class TopbarComponent {
-  constructor(public service:AppService,private router: Router)
+  actualUser: any = null;
+ 
+  constructor(public service:AppService,private router: Router,private authService: AuthService)
   {
   }
   @Input() collapsed = false;
  @Output() toggleSidebar = new EventEmitter<boolean>();
+ ngOnInit(): void {
+  this.actualUser = this.authService.getCurrentUser();
+}
 
 onToggleSidebar() {
   this.toggleSidebar.emit();
 }
 LogoutUser() {
-this.service.ClearToken()
+  this.service.ClearToken();         
+  localStorage.removeItem('token');   
 }
+
 // toggleSidebar(){
 //   this.service.toggle=!this.service.toggle;
 // }

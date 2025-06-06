@@ -68,6 +68,7 @@ export class OrganisationListComponent implements OnInit, OnDestroy {
     this.loadOrganisations(); // Reload data with the new page size
   }
   loadOrganisations(): void {
+    debugger;
     var request: any = {
       data: {
         pageNumber: this.currentPage,

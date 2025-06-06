@@ -270,17 +270,19 @@
                       <h4>{{ service.User.firstName ?? "" }}</h4>
                       <p class="text-muted">{{ service.User.email ?? "" }}</p><a [routerLink]="'/profile'"
                         class="btn btn-xs btn-secondary btn-sm mx-1 ">View Profile</a>
-                      <button class="btn btn-xs btn-secondary btn-sm mx-1" (click)="onAdminClick()">Admin</button>
+                        <button 
+                        *ngIf="actualUser?.role === 1 && service?.User?.role !== 1" 
+                        class="btn btn-xs btn-secondary btn-sm mx-1" 
+                        (click)="onAdminClick()">
+                        Admin
+                      </button>                 
+          
                     </div>
                   </div>
                 </li>
                 <li>
                   <div class="dropdown-divider"></div>
-                  <a class="dropdown-item" [routerLink]="'/profile'">My Profile</a>
-                  <!-- <a class="dropdown-item" href="#">My Balance</a>
-                  <a class="dropdown-item" href="#">Inbox</a>
-                  <div class="dropdown-divider"></div>
-                  <a class="dropdown-item" href="#">Account Setting</a> -->
+                  <a class="dropdown-item" [routerLink]="'/profile'">My Profile</a>              
                   <div class="dropdown-divider"></div>
                   <a class="dropdown-item" (click)="LogoutUser()">Logout</a>
                 </li>
