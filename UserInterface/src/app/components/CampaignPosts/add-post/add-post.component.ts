@@ -209,6 +209,11 @@ debugger
             message: this.editorContent
           });
           resolve();
+        } else if (this.CampaignPostForm.controls.type.value == 7) {
+          this.CampaignPostForm.patchValue({
+            message: this.editorContent
+          });
+          resolve();
         }
         else {
           this.CampaignPostForm.patchValue({

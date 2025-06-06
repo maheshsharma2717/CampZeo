@@ -46,6 +46,18 @@
                                     </div>
                                     <p *ngIf="isInstagramConnected" class="text-success text-center">Connected</p>
                                 </div>
+                                <div class="d-flex flex-column">
+                                    <div class="card text-center selected-instagram-hover mb-2"
+                                        style="width: 8rem; border-radius: 10px;">
+                                        <div class="card-body rounded pt-4 bg-white pointer border"
+                                            (click)="connectToLinkedIn()"
+                                            [ngClass]="{'selected-linkedIn': selectedPlatform === 'linkedIn'}">
+                                            <i class="fab fa-linkedin-in fa-2x"></i>
+                                            <p class="card-text mt-2">LinkedIn</p>
+                                        </div>
+                                    </div>
+                                    <p *ngIf="isLinkedInConnected" class="text-success text-center">Connected</p>
+                                </div>
                             </div>
                         </div>
                     </div>

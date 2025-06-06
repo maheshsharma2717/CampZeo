@@ -65,6 +65,13 @@
                     <p class="card-text mt-2">Instagram</p>
                 </div>
             </div>
+            <div class="card  text-center mb-1 selected-rcs-hover " style="width: 8rem; border-radius: 10px;">
+                <div class="card-body pt-3 rounded bg-white pointer border" (click)="ChangeType(7)"
+                    [ngClass]="{'selected-linkedin':type==7}">
+                    <i class="{{service.platformTypeMapping[7].class}} fa-2x"></i>
+                    <p class="card-text mt-2">Linkedin</p>
+                </div>
+            </div>
         </div>
 
 

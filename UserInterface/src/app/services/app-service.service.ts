@@ -23,7 +23,8 @@ export class AppService {
     3: { name: 'WhatsApp', class: "fab fa-whatsapp" },
     4: { name: 'RCS', class: "fa fa-globe" },
     5: { name: 'Facebook', class: "fab fa-facebook" },
-    6: { name: 'Instagram', class: "fab fa-instagram" }
+    6: { name: 'Instagram', class: "fab fa-instagram" },
+    7: { name: 'Linkedin', class: "fab fa-linkedin-in" }
   };
 
   constructor(private http: HttpClient, private router: Router) { }
@@ -219,8 +220,8 @@ export class AppService {
     return this.http.get<any>(`${ApiUrl}socialmedia/pages?accessToken=${accessToken}`);
   }
 
-  getFacebookTokenByUser(userId: number) {
-    return this.http.get<any>(`${ApiUrl}socialmedia/user-facebook-token/${userId}`);
+  getSocialMediaTokenByUser(userId: number) {
+    return this.http.get<any>(`${ApiUrl}socialmedia/user-social-media-tokens/${userId}`);
   }
 
   // postToFacebook(pageId: string, pageAccessToken: string, message: string) {

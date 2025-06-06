@@ -7,6 +7,7 @@ public enum PlatformType : long
     WhatsApp = 3,
     RCS = 4,
     Facebook=5,
-    Instagram=6
+    Instagram=6,
+    LinkedIn=7
 }
 

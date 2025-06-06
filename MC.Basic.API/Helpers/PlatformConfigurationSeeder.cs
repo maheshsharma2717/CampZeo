@@ -41,7 +41,11 @@ namespace MC.Basic.API.Helpers
 
             // Instagram
             new() { Key = "AppId", Value = "", Platform = PlatformType.Instagram },
-            new() { Key = "AppSecret", Value = "", Platform = PlatformType.Instagram } 
+            new() { Key = "AppSecret", Value = "", Platform = PlatformType.Instagram },
+            
+            // Linkedin
+            new() { Key = "ClientId", Value = "", Platform = PlatformType.LinkedIn },
+            new() { Key = "ClientSecret", Value = "", Platform = PlatformType.LinkedIn } 
             };
 
             foreach(var config in configsToAdd)

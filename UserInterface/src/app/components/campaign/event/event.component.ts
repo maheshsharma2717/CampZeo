@@ -94,6 +94,9 @@ export class EventComponent implements OnInit {
     else if (this.Post.type == 6) {
       this.activeTab = 'instagram';
     }
+    else if (this.Post.type == 7) {
+      this.activeTab = 'linkedIn';
+    }
   }
   onTabClick(tab: string): void {
     this.activeTab = tab;
