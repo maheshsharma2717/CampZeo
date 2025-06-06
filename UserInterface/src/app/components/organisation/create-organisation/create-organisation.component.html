@@ -89,6 +89,45 @@
                                 </span>}
                             </div>
                         </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="city">City <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="city" rows="3" formControlName="city">
+                                @if(form.get('city')?.invalid && form.get('city')?.touched){
+                                    <span class="text-danger">City is required</span>
+                                }
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="state">State <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="state" rows="3" formControlName="state">
+                                @if(form.get('state')?.invalid && form.get('state')?.touched){
+                                    <span class="text-danger">State is required</span>
+                                }
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="country">Country <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="country" rows="3" formControlName="country">
+                                @if(form.get('country')?.invalid && form.get('country')?.touched){
+                                    <span class="text-danger">Country is required</span>
+                                }
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="postalCode">PostalCode <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="postalCode" rows="3" formControlName="postalCode">
+                                @if(form.get('postalCode')?.invalid && form.get('postalCode')?.touched){
+                                    <span class="text-danger">PostalCode is required</span>
+                                }
+                            </div>
+                        </div>
                     </div>
                     <div class="mt-3 ">
                         <button type="submit" class="btn btn-primary mx-3" [disabled]="form.invalid">Submit</button>

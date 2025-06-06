@@ -13,6 +13,10 @@ namespace MC.Basic.Application.Models.Organisation
         public string Email { get; set; }
         public string Address { get; set; }
         public string OwnerName { get; set; }
+        public string City { get; set; }
+        public string State { get; set; }
+        public string Country { get; set; }
+        public string PostalCode { get; set; }
     }
     public class AdminUserResponseDto
     {
@@ -23,5 +27,31 @@ namespace MC.Basic.Application.Models.Organisation
 
         public string FirstName { get; set; }
         public string LastName { get; set; }
+    }
+
+    public class OrganisationUpdateDto
+    {
+        public long Id { get; set; }
+        public string? Name { get; set; }
+        public string? OwnerName { get; set; }
+        public string? Phone { get; set; }
+        public string? Email { get; set; }
+        public string? Address { get; set; }
+        public string? City { get; set; }
+        public string? State { get; set; }
+        public string? Country { get; set; }
+        public string? PostalCode { get; set; }
+        // Add any other fields you want to update
+    }
+
+    public class OrganisationEditDto
+    {
+        public long Id { get; set; }
+        public string Name { get; set; }
+        public string OwnerName { get; set; }
+        public string Phone { get; set; }
+        public string Email { get; set; }
+        public string Address { get; set; }
+        // add other properties if needed
     }
 }
