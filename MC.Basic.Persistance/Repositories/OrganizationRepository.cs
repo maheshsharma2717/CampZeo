@@ -31,6 +31,10 @@ namespace MC.Basic.Persistance.Repositories
                 dbOrganisation.Email = organisation.Email;
                 dbOrganisation.Address = organisation.Address;
                 dbOrganisation.IsApproved = organisation.IsApproved;
+                dbOrganisation.City = organisation.City;
+                dbOrganisation.State = organisation.State;
+                dbOrganisation.Country = organisation.Country;
+                dbOrganisation.PostalCode = organisation.PostalCode;
                 dbOrganisation = await UpdateAsync(dbOrganisation);
             }
             return dbOrganisation;

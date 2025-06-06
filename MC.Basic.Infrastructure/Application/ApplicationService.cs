@@ -78,6 +78,10 @@ public class ApplicationService : IApplicationService
             Email = request.Data.Email,
             Address = request.Data.Address,
             OwnerName = request.Data.OwnerName,
+            PostalCode = request.Data.PostalCode,
+            City = request.Data.City,
+            State = request.Data.State,
+            Country = request.Data.Country,
             Users = new List<User>(),
             Campaigns = new List<Campaign>(),
             Contacts = new List<Contact>()

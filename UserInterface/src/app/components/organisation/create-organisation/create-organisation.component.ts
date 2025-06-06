@@ -29,7 +29,11 @@ export class CreateOrganisationComponent implements OnInit {
     ownerName: new FormControl('', Validators.required),
     phone: new FormControl('', Validators.required),
     email: new FormControl('', [Validators.required, Validators.email]),
-    address: new FormControl('', Validators.required)
+    address: new FormControl('', Validators.required),
+    city: new FormControl('', Validators.required),
+    state: new FormControl('', Validators.required),
+    country: new FormControl('', Validators.required),
+    postalCode: new FormControl('', Validators.required),
   });
 
   ngOnInit(): void {
@@ -38,13 +42,15 @@ export class CreateOrganisationComponent implements OnInit {
         this.organisationId = param['id'];
       }
     })
-    var req = { data: parseInt(this.organisationId ?? "0") }
+    if (this.organisationId > 0 && this.organisationId != null) {
+      var req = { data: parseInt(this.organisationId ?? "0") }
 
-    this.service.getOrganisationByorgId(req).subscribe({
-      next: (res: any) =>{
-        this.form.patchValue(res.data)
-      }
-    })
+      this.service.getOrganisationByorgId(req).subscribe({
+        next: (res: any) => {
+          this.form.patchValue(res.data)
+        }
+      })
+    }
   }
 
   onSubmit() {

@@ -51,6 +51,10 @@ public class OrganisationController : ControllerBase
         organisation.Phone = request.Phone;
         organisation.Email = request.Email;
         organisation.Address = request.Address;
+        organisation.City = request.City;
+        organisation.State = request.State;
+        organisation.Country = request.Country;
+        organisation.PostalCode = request.PostalCode;
 
         _context.SaveChanges();
 
