@@ -1,48 +1,69 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { AppService } from '../../services/app-service.service';
-import { Router, RouterModule } from '@angular/router';
+import { ActivatedRoute, Router, RouterModule, TitleStrategy } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { ToastrService } from 'ngx-toastr';
 import { MatDialog } from '@angular/material/dialog';
 import { ChangePasswordDialogComponent } from '../../change-password-dialog/change-password-dialog.component';
+import { ForgotPasswordComponent } from '../forgot-password/forgot-password.component';
+import { ResetPasswordComponent } from '../reset-password/reset-password.component';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [ReactiveFormsModule,CommonModule,RouterModule],
+  imports: [ForgotPasswordComponent, ResetPasswordComponent, ReactiveFormsModule, CommonModule, RouterModule,],
   templateUrl: './login.component.html',
-  styleUrls: ['./login.component.css'
-
-  ]
+  styleUrls: ['./login.component.css']
 })
-export class LoginComponent {
+export class LoginComponent implements OnInit{
   loginForm: FormGroup;
   showPassword: boolean = false;
+  navigateForgotPassword: boolean = false;  
+  showResetScreen = false;
+  token: any;
 
-  constructor(private toastr: ToastrService, private service: AppService,private router:Router,
+  constructor(private activatedRoute: ActivatedRoute, private toastr: ToastrService, private service: AppService, private router: Router,
     private dialog: MatDialog) {
-      this.loginForm = new FormGroup({
+    this.loginForm = new FormGroup({
       email: new FormControl('', [Validators.required, Validators.email]),
       password: new FormControl('', [Validators.required]),
       rememberMe: new FormControl(false)
     });
   }
 
+  ngOnInit(): void {
+    this.navigateForgotPassword = false;
+    this.showResetScreen = false
+    this.activatedRoute.queryParamMap.subscribe(param => {
+      this.token = param.get('token');
+      if (this.token){
+        this.showResetScreen = true;
+      }else{
+        this.navigateForgotPassword = false;
+        this.showResetScreen = false;
+      }
+    })
+  }
+
+  forgot() {
+    this.router.navigate(['/forgot-password']);
+    this.navigateForgotPassword = true;
+  }
+
   onSubmit() {
-    debugger
     if (this.loginForm.valid) {
       const loginData = this.loginForm.value;
       this.service.LoginUser(loginData).subscribe({
         next: (response: any) => {
           if (response.isSuccess) {
-            this.service.SetToken(response.data.token,this.loginForm.value.rememberMe);
+            this.service.SetToken(response.data.token, this.loginForm.value.rememberMe);
             this.service.User = response.data;
-           localStorage.setItem('IsFirstLogin', response.data.isFirstLogin);
+            localStorage.setItem('IsFirstLogin', response.data.isFirstLogin);
             localStorage.setItem('UserRole', response.data.role);
             this.toastr.success('Login success');
             if (response.data.isFirstLogin === true && this.service.User.role !== 1) {
-         
+
               sessionStorage.setItem('FirstLoginDialogShown', 'true');
               this.router.navigate(['/profile']);
             } else if (!response.data.firstName) {
