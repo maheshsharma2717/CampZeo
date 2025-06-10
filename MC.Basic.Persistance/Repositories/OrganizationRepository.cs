@@ -31,6 +31,10 @@ namespace MC.Basic.Persistance.Repositories
                 dbOrganisation.Email = organisation.Email;
                 dbOrganisation.Address = organisation.Address;
                 dbOrganisation.IsApproved = organisation.IsApproved;
+                dbOrganisation.City = organisation.City;
+                dbOrganisation.State = organisation.State;
+                dbOrganisation.Country = organisation.Country;
+                dbOrganisation.PostalCode = organisation.PostalCode;
                 dbOrganisation = await UpdateAsync(dbOrganisation);
             }
             return dbOrganisation;
@@ -91,6 +95,23 @@ namespace MC.Basic.Persistance.Repositories
             catch(Exception)
             {
 
+                throw;
+            }
+        }
+
+        public async Task<Organisation> GetOrganisationByOrganisationId(long orgId)
+        {
+            try
+            {
+                var dbOrganisation = await GetQuariable().SingleOrDefaultAsync(org => org.Id == orgId && !org.IsDeleted);
+                if (dbOrganisation == null)
+                {
+                    throw new Exception("Invalid Organisation");
+                }
+                return dbOrganisation;
+            }
+            catch(Exception ex)
+            {
                 throw;
             }
         }

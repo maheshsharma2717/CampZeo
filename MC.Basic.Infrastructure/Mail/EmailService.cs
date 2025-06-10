@@ -101,7 +101,7 @@ namespace MC.Basic.Infrastructure.Mail
             message.Subject = "Your Account Details";
 
             // Build the email body with website URL and password
-            message.Body = new TextPart("plain")
+            message.Body = new TextPart("html")
             {
                 Text = messageText
             };

@@ -199,6 +199,13 @@
 
                     <ng-template #actionTemplate let-data>
                         <div *ngIf="this.service.User.role == 1">
+                            <a class="pointer mx-3" title="Edit Organisation" [routerLink]="'/create-organisation'"
+                                [queryParams]="{ id: data.id }">
+                                <i class="far fa-edit"></i>
+                            </a>
+                            <button (click)="onLogin(data)" class="btn btn-primary py-1">
+                                Login
+                            </button>
                             <button class="btn mx-2 py-1" [ngClass]="data.isDeleted ? 'border' : 'btn-danger'"
                                 (click)="data.isDeleted ?openSuspendModal(data.id) : openSuspendModal(data.id)">
                                 {{ data.isDeleted ? 'Recover' : 'Suspend' }}
@@ -206,10 +213,6 @@
                             <button (click)="onLogin(data)" class="btn btn-primary py-1">
                                 Login
                             </button>
-                            <button (click)="onLogin(data)" class="btn btn-success btn-sm rounded py-1">
-                                Edit
-                              </button>
-                              
                         </div>
                     </ng-template>
 

@@ -1,3 +1,6 @@
+@if(showResetScreen){
+<app-reset-password></app-reset-password>
+}@else if (!navigateForgotPassword) {
 <div class="auth-wrapper">
   <div class="container p-0">
     <!-- Left Side -->
@@ -42,7 +45,8 @@
             <label class="custom-control-label" for="customCheck1">Save credentials.</label>
           </div>
           <div class="custom-control custom-checkbox text-left mb-4 mt-2 p-0">
-            <p class="custom-control-p" for="customCheck1">Forgot password ? <a [routerLink]=""> click here . </a></p>
+            <p class="custom-control-p" for="customCheck1">Forgot password ? <a [routerLink]="" (click)="forgot()">
+                click here . </a></p>
           </div>
 
           <!-- Submit Button -->
@@ -52,3 +56,6 @@
     </div>
   </div>
 </div>
+}@else{
+<app-forgot-password></app-forgot-password>
+}
