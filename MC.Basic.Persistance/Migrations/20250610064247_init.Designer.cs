@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace MC.Basic.Persistance.Migrations
 {
     [DbContext(typeof(BasicDbContext))]
-    [Migration("20250606063850_organisationColumns")]
-    partial class organisationColumns
+    [Migration("20250610064247_init")]
+    partial class init
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -461,6 +461,12 @@ namespace MC.Basic.Persistance.Migrations
                     b.Property<string>("LastName")
                         .HasColumnType("longtext");
 
+                    b.Property<string>("LinkedInAccessToken")
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("LinkedInAuthUrn")
+                        .HasColumnType("longtext");
+
                     b.Property<string>("Mobile")
                         .HasColumnType("longtext");
 
@@ -468,6 +474,9 @@ namespace MC.Basic.Persistance.Migrations
                         .HasColumnType("bigint");
 
                     b.Property<string>("Password")
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("ResetToken")
                         .HasColumnType("longtext");
 
                     b.Property<long>("Role")
