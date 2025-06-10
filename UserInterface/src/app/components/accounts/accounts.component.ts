@@ -107,7 +107,7 @@ export class AccountsComponent {
 
   connectToLinkedIn() {
     const redirectUri = this.redirectUri; // This must match LinkedIn app settings
-    const scope = 'w_member_social';
+    const scope = 'w_member_social profile openid';
     const state = 'linkedIn';
 
     const authUrl = `https://www.linkedin.com/oauth/v2/authorization` +

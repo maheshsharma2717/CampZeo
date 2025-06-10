@@ -136,13 +136,13 @@
 
                 </div>
             </div>
-            <div class="col-md-8" *ngIf="Post?.type != 5 && Post?.type != 6">
+            <div class="col-md-8" *ngIf="Post?.type != 5 && Post?.type != 6&& Post?.type != 7">
                 <div class="col-md-12">
                     <div class=" mb-0">
                         <div class="card-header d-flex align-items-center justify-content-between py-2">
                             <h5>Select Contacts</h5>
                         </div>
-                        <div class="card-body table-border-style p-0" *ngIf="Post?.type != 5 && Post?.type != 6">
+                        <div class="card-body table-border-style p-0" *ngIf="Post?.type != 5 && Post?.type != 6&& Post?.type != 7">
                             <ejs-grid #grid [dataSource]="filteredContacts" [allowPaging]="true" [allowSorting]="true"
                                 [pageSettings]="{ pageSize: itemsPerPage, pageSizes: [5, 10, 20, 50] }"
                                 [searchSettings]="{ fields: ['contactName', 'contactEmail', 'contactMobile', 'contactWhatsApp'], key: searchTerm }"

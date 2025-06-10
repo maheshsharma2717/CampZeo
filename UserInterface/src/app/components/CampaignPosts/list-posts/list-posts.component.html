@@ -97,15 +97,17 @@
                 <div class="card-body table-border-style pb-1">
                     <div class="table-responsive">
 
-                        <ejs-grid [dataSource]='CampaignPosts' [allowSorting]="true" [rowHeight]="" #grid [allowPaging]="true"
-                            [pageSettings]="pageSettings" [toolbar]="toolBarOptions"
-                             height='400px'
+                        <ejs-grid [dataSource]='CampaignPosts' [allowSorting]="true" [rowHeight]="" #grid
+                            [allowPaging]="true" [pageSettings]="pageSettings" [toolbar]="toolBarOptions" height='400px'
                             [enableHover]="false">
                             <ng-template #toolbarTemplate></ng-template>
                             <e-columns>
-                                <e-column headerText="Subject" field="subject" width="250" [template]="detailsTemplate"></e-column>
-                                <e-column headerText="Post/Message Scheduled Time" type="date" format="yMd" field="message" width="250" [template]="messageTemplate"></e-column>
-                                <e-column headerText="Type" width="250" field="type" [template]="typeTemplate"></e-column>
+                                <e-column headerText="Subject" field="subject" width="250"
+                                    [template]="detailsTemplate"></e-column>
+                                <e-column headerText="Post/Message Scheduled Time" type="date" format="yMd"
+                                    field="message" width="250" [template]="messageTemplate"></e-column>
+                                <e-column headerText="Type" width="250" field="type"
+                                    [template]="typeTemplate"></e-column>
                                 <e-column headerText="Action" width="250" [template]="actionTemplate"></e-column>
                             </e-columns>
                         </ejs-grid>
@@ -193,6 +195,13 @@
                     <div class="d-flex my-3">
                         <div class="w-100 text-start">
                             <label for="organisationName">Message Template</label>
+                            <div *ngIf="previewData?.type === 6 || previewData?.type === 7">
+                                <video *ngIf="previewData?.videoUrl" style="width:100%; height:auto;" controls
+                                    poster="path/to/thumbnail.jpg">
+                                    <source [src]="previewData.videoUrl" type="video/mp4" />
+                                    Your browser does not support the video tag.
+                                </video>
+                            </div>
                             <div *ngIf="previewData?.type === 1">
                                 <div class="border p-2" style="min-height: 30vh;" [innerHTML]="emailHtmlContent"></div>
                             </div>
@@ -201,7 +210,8 @@
                                     readonly>
                                 </textarea>
                             </div>
-                            <div *ngIf="previewData?.type === 4 || previewData?.type === 5 || previewData?.type === 6">
+                            <div
+                                *ngIf="previewData?.type === 4 || previewData?.type === 5 || previewData?.type === 6|| previewData?.type === 7">
                                 <div class="border p-2" style="min-height: 30vh;" [innerHTML]="editorContent"></div>
                             </div>
                         </div>

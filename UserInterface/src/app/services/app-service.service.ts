@@ -60,6 +60,8 @@ export class AppService {
     sessionStorage.removeItem('FirstLoginDialogShown');
     localStorage.removeItem('UserRole');
     localStorage.removeItem('IsFirstLogin');
+    localStorage.clear();
+    sessionStorage.clear();
     this.router.navigate(['/'])
   }
   LoginUser(request: any) {
@@ -256,6 +258,10 @@ export class AppService {
   }) {
     return this.http.post(`${ApiUrl}socialmedia/post-instagram`, payload);
   }
+  postToLinkedIn(payload: any): Observable<any> {
+    var req ={ token: this.Token, data: payload }
+  return this.http.post(`${ApiUrl}socialmedia/post-linkedin`, req);
+}
 
   uploadMedia(base64Data: string): Observable<string> {
     return this.http.post<{ fileUrl: string }>(`${ApiUrl}socialmedia/upload-media-file`, {

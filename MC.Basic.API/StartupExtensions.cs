@@ -4,6 +4,7 @@ using MC.Basic.Infrastructure;
 using MC.Basic.Persistance;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.FileProviders;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Serilog;
@@ -126,7 +127,14 @@ namespace MC.Basic.API
             app.UseAuthentication();
             app.UseMiddleware<JwtMiddleware>();
             app.UseAuthorization();
+            app.UseStaticFiles(); // For wwwroot by default
 
+            app.UseStaticFiles(new StaticFileOptions
+            {
+                FileProvider = new PhysicalFileProvider(
+                    Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/uploads")),
+                RequestPath = "/uploads"
+            });
             app.MapControllers();
             return app;
         }

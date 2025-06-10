@@ -24,11 +24,13 @@ namespace MC.Basic.API.Controllers
         private readonly HttpClient _httpClient;
         private readonly BasicDbContext _context;
         private readonly IPlatformConfigurationRepository _platformConfigurationRepository;
-        public SocialMediaController(IHttpClientFactory httpClientFactory, BasicDbContext context, IPlatformConfigurationRepository platformConfigurationRepository)
+        private readonly IUserRepository _userRepository;
+        public SocialMediaController(IHttpClientFactory httpClientFactory, BasicDbContext context, IPlatformConfigurationRepository platformConfigurationRepository, IUserRepository userRepository)
         {
             _httpClient = httpClientFactory.CreateClient();
             _context = context;
             _platformConfigurationRepository = platformConfigurationRepository;
+            _userRepository = userRepository;
         }
 
         [HttpPost("exchange-token")]
@@ -137,15 +139,15 @@ namespace MC.Basic.API.Controllers
                     var token = JsonConvert.DeserializeObject<LinkedInTokenResponse>(tokenJson);
 
                     // Step 2: Get user profile (for author URN)
-                    //httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token.AccessToken);
-                    //var profileResponse = await httpClient.GetAsync("https://api.linkedin.com/v2/me");
+                    httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token.AccessToken);
+                    var profileResponse = await httpClient.GetAsync("https://api.linkedin.com/v2/userinfo");
 
-                    //if(!profileResponse.IsSuccessStatusCode)
-                    //    return StatusCode((int)profileResponse.StatusCode, await profileResponse.Content.ReadAsStringAsync());
+                    if(!profileResponse.IsSuccessStatusCode)
+                        return StatusCode((int)profileResponse.StatusCode, await profileResponse.Content.ReadAsStringAsync());
 
-                    //var profileJson = await profileResponse.Content.ReadAsStringAsync();
-                    //dynamic profile = JsonConvert.DeserializeObject(profileJson);
-                    string authorUrn = "urn:li:person:{profile.id}";
+                    var profileJson = await profileResponse.Content.ReadAsStringAsync();
+                    dynamic profile = JsonConvert.DeserializeObject(profileJson);
+                    string authorUrn = $"urn:li:person:{profile.sub}";
                     if(token != null)
                     {
                         var user = _context.Users.FirstOrDefault(x => x.Id == request.UserId);
@@ -303,12 +305,12 @@ namespace MC.Basic.API.Controllers
             }
             return Ok(new
             {
-                linkedInClientId=await _platformConfigurationRepository.GetConfigurationValueByKey("ClientId",PlatformType.LinkedIn),
-                linkedInAccessToken=user.LinkedInAccessToken,
+                linkedInClientId = await _platformConfigurationRepository.GetConfigurationValueByKey("ClientId", PlatformType.LinkedIn),
+                linkedInAccessToken = user.LinkedInAccessToken,
                 accessToken = user.FacebookAccessToken,
                 tokenType = user.FacebookTokenType,
                 expiresIn = user.FacebookTokenExpiresIn,
-                expiresAt = user.FacebookTokenCreatedAt.Value.AddSeconds(user.FacebookTokenExpiresIn.Value)
+                //expiresAt = user.FacebookTokenCreatedAt.Value.AddSeconds(user.FacebookTokenExpiresIn.Value)
             });
         }
 
@@ -565,6 +567,129 @@ namespace MC.Basic.API.Controllers
         {
             var posts = await _context.PostTransactions.ToListAsync();
             return Ok(posts);
+        }
+        [HttpPost("post-linkedin")]
+        public async Task<IActionResult> PostToLinkedIn(ApiRequest<LinkedInPostRequest> apiReq)
+        {
+            try
+            {
+                var user =await _userRepository.GetAsync(x => x.Token == apiReq.Token);
+                // Step 1: Register the upload (if it's an image or video)
+                var post = apiReq.Data;
+                if(user == null || string.IsNullOrEmpty(user.LinkedInAccessToken))
+                    return BadRequest("User not found or LinkedIn access token is missing.");
+                string uploadedMediaUrn = null;
+                if(!string.IsNullOrEmpty(post.ImageUrl))
+                {
+                    var registerUploadUrl = "https://api.linkedin.com/v2/assets?action=registerUpload";
+                    var registerPayload = new
+                    {
+                        registerUploadRequest = new
+                        {
+                            owner = user.LinkedInAuthUrn,
+                            recipes = new[] { "urn:li:digitalmediaRecipe:feedshare-image" },
+                            serviceRelationships = new[]
+                            {
+                        new {
+                            identifier = "urn:li:userGeneratedContent",
+                            relationshipType = "OWNER"
+                        }
+                    }
+                        }
+                    };
+                    _httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", user.LinkedInAccessToken);
+
+                    var registerResponse = await _httpClient.PostAsJsonAsync(registerUploadUrl, registerPayload, new System.Text.Json.JsonSerializerOptions
+                    {
+                        PropertyNamingPolicy = System.Text.Json.JsonNamingPolicy.CamelCase
+                    });
+
+                    var registerResult = await registerResponse.Content.ReadAsStringAsync();
+                    if(!registerResponse.IsSuccessStatusCode)
+                        return BadRequest(new { error = "Register upload failed", response = registerResult });
+
+                    var registerObj = JObject.Parse(registerResult);
+                    var uploadUrl = registerObj["value"]?["uploadMechanism"]?["com.linkedin.digitalmedia.uploading.MediaUploadHttpRequest"]?["uploadUrl"]?.ToString();
+                    uploadedMediaUrn = registerObj["value"]?["asset"]?.ToString();
+
+                    if(!string.IsNullOrEmpty(uploadUrl))
+                    {
+                        using var imageResponse = await _httpClient.PutAsync(uploadUrl, new StreamContent(await _httpClient.GetStreamAsync(post.ImageUrl)));
+                        if(!imageResponse.IsSuccessStatusCode)
+                            return BadRequest("Image upload to LinkedIn failed.");
+                    }
+                }
+
+                // Step 2: Post the UGC post
+                var postUrl = "https://api.linkedin.com/v2/ugcPosts";
+                var postBody = new Dictionary<string, object>
+                {
+                    ["author"] =user.LinkedInAuthUrn,
+                    ["lifecycleState"] = "PUBLISHED",
+                    ["specificContent"] = new Dictionary<string, object>
+                    {
+                        ["com.linkedin.ugc.ShareContent"] = new Dictionary<string, object>
+                        {
+                            ["shareCommentary"] = new Dictionary<string, object>
+                            {
+                                ["text"] = post.Caption ?? ""
+                            },
+                            ["shareMediaCategory"] = string.IsNullOrEmpty(uploadedMediaUrn) ? "NONE" : "IMAGE",
+                            ["media"] = string.IsNullOrEmpty(uploadedMediaUrn) ? null : new[]
+              {
+                new Dictionary<string, object>
+                {
+                    ["status"] = "READY",
+                    ["description"] = new { text = post.Caption ?? "" },
+                    ["media"] = uploadedMediaUrn,
+                    ["title"] = new { text = "Post Image" }
+                }
+            }
+                        }
+                    },
+                    ["visibility"] = new Dictionary<string, object>
+                    {
+                        ["com.linkedin.ugc.MemberNetworkVisibility"] = "PUBLIC"
+                    }
+                };
+
+                var request = new HttpRequestMessage(HttpMethod.Post, postUrl)
+                {
+                    Content = new StringContent(JsonConvert.SerializeObject(postBody), Encoding.UTF8, "application/json")
+                };
+                request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", user.LinkedInAccessToken);
+
+                var publishResponse = await _httpClient.SendAsync(request);
+                var publishResult = await publishResponse.Content.ReadAsStringAsync();
+
+                    if(!publishResponse.IsSuccessStatusCode)
+                    return BadRequest(new { error = "Post publish failed", response = publishResult });
+
+                // Save Post to DB
+                var newPost = new PostTransaction
+                {
+                    Platform = "LinkedIn",
+                    PostId = JObject.Parse(publishResult)["id"]?.ToString(),
+                    AccountId = user.LinkedInAuthUrn,
+                    Message = post.Caption,
+                    MediaUrls = JsonConvert.SerializeObject(string.IsNullOrEmpty(post.ImageUrl) ? new List<string>() : new List<string> { post.ImageUrl }),
+                    PostType = string.IsNullOrEmpty(post.ImageUrl) ? "text" : "image",
+                    CreatedAt = DateTime.UtcNow,
+                    AccessToken = user.LinkedInAccessToken,
+                    IsScheduled = false,
+                    Published = true,
+                    PublishedAt = DateTime.UtcNow
+                };
+
+                _context.PostTransactions.Add(newPost);
+                await _context.SaveChangesAsync();
+
+                return Ok(JsonConvert.DeserializeObject(publishResult));
+            }
+            catch(Exception ex)
+            {
+                return StatusCode(500, new { error = ex.Message });
+            }
         }
 
     }
