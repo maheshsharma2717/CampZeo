@@ -111,18 +111,38 @@
                                     </div>
                                 </div>
                             </div>
+                             <div class="tab-pane fade" [class.show]="activeTab === 'linkedIn'"
+                                [class.active]="activeTab === 'linkedIn'" id="linkedIn" role="tabpanel"
+                                aria-labelledby="facebook-tab">
+                                <div class="form-group">
+                                    <div class="card border-0">
+                                        <div class="card-header">
+                                            <!-- <div class="mb-3">
+                                                <label for="pageSelect" class="form-label">Select Page</label>
+                                                <select id="pageSelect" class="form-control" [(ngModel)]="selectedPage">
+                                                    <option value="" disabled selected>Select a page</option>
+                                                    <option *ngFor="let page of pages" [ngValue]="page">{{ page.name }}
+                                                    </option>
+                                                </select>
+                                            </div> -->
+                                        </div>
+                                        <div class="card-body custom-inner-html" [innerHTML]="GetHtml(Post?.message)">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
 
                 </div>
             </div>
-            <div class="col-md-8" *ngIf="Post?.type != 5 && Post?.type != 6">
+            <div class="col-md-8" *ngIf="Post?.type != 5 && Post?.type != 6&& Post?.type != 7">
                 <div class="col-md-12">
                     <div class=" mb-0">
                         <div class="card-header d-flex align-items-center justify-content-between py-2">
                             <h5>Select Contacts</h5>
                         </div>
-                        <div class="card-body table-border-style p-0" *ngIf="Post?.type != 5 && Post?.type != 6">
+                        <div class="card-body table-border-style p-0" *ngIf="Post?.type != 5 && Post?.type != 6&& Post?.type != 7">
                             <ejs-grid #grid [dataSource]="filteredContacts" [allowPaging]="true" [allowSorting]="true"
                                 [pageSettings]="{ pageSize: itemsPerPage, pageSizes: [5, 10, 20, 50] }"
                                 [searchSettings]="{ fields: ['contactName', 'contactEmail', 'contactMobile', 'contactWhatsApp'], key: searchTerm }"

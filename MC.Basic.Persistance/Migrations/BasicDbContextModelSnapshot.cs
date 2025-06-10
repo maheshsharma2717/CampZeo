@@ -458,6 +458,12 @@ namespace MC.Basic.Persistance.Migrations
                     b.Property<string>("LastName")
                         .HasColumnType("longtext");
 
+                    b.Property<string>("LinkedInAccessToken")
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("LinkedInAuthUrn")
+                        .HasColumnType("longtext");
+
                     b.Property<string>("Mobile")
                         .HasColumnType("longtext");
 

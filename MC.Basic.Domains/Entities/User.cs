@@ -39,5 +39,9 @@ namespace MC.Basic.Domains.Entities
         public DateTime? InstagramTokenCreatedAt { get; set; }
         public int? InstagramTokenExpiresIn { get; set; }
 
+// LinkedIn fields
+
+        public string? LinkedInAccessToken { get; set; } 
+        public string? LinkedInAuthUrn { get; set; } 
     }
 }

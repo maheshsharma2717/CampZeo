@@ -55,6 +55,14 @@ namespace MC.Basic.Persistance.Migrations
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     OwnerName = table.Column<string>(type: "longtext", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
+                    City = table.Column<string>(type: "longtext", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    State = table.Column<string>(type: "longtext", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    Country = table.Column<string>(type: "longtext", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    PostalCode = table.Column<string>(type: "longtext", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
                     IsApproved = table.Column<bool>(type: "tinyint(1)", nullable: false),
                     IsDeleted = table.Column<bool>(type: "tinyint(1)", nullable: false),
                     CreatedBy = table.Column<string>(type: "longtext", nullable: true)
@@ -151,6 +159,7 @@ namespace MC.Basic.Persistance.Migrations
                     StartDate = table.Column<DateTime>(type: "datetime(6)", nullable: false),
                     EndDate = table.Column<DateTime>(type: "datetime(6)", nullable: false),
                     OrganisationId = table.Column<long>(type: "bigint", nullable: true),
+                    IsDeleted = table.Column<bool>(type: "tinyint(1)", nullable: false),
                     CreatedBy = table.Column<string>(type: "longtext", nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     CreatedDate = table.Column<DateTime>(type: "datetime(6)", nullable: false),
@@ -225,6 +234,8 @@ namespace MC.Basic.Persistance.Migrations
                     IsApproved = table.Column<bool>(type: "tinyint(1)", nullable: false),
                     IsFirstLogin = table.Column<bool>(type: "tinyint(1)", nullable: false),
                     Role = table.Column<long>(type: "bigint", nullable: false),
+                    ResetToken = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
                     OrganisationId = table.Column<long>(type: "bigint", nullable: true),
                     FacebookAccessToken = table.Column<string>(type: "longtext", nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4"),
@@ -244,6 +255,10 @@ namespace MC.Basic.Persistance.Migrations
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     InstagramTokenCreatedAt = table.Column<DateTime>(type: "datetime(6)", nullable: true),
                     InstagramTokenExpiresIn = table.Column<int>(type: "int", nullable: true),
+                    LinkedInAccessToken = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    LinkedInAuthUrn = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
                     CreatedBy = table.Column<string>(type: "longtext", nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     CreatedDate = table.Column<DateTime>(type: "datetime(6)", nullable: false),

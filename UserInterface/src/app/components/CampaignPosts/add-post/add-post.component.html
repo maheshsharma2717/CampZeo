@@ -19,7 +19,7 @@
             </div>
         </div>
     </div> -->
-      <div class="page-header mb-0">
+    <div class="page-header mb-0">
         <h3 class="fw-bold mb-3">@if(editMode){Update}@else{Create} Campaign Post</h3>
         <ul class="breadcrumbs mb-3">
             <li class="nav-item">
@@ -34,7 +34,7 @@
             <li class="separator">
                 <i class="icon-arrow-right"></i>
             </li>
-            
+
             <li class="nav-item">
                 <a [routerLink]="'/add-post'">@if(editMode){Update}@else{Create} Campaign Post</a>
             </li>
@@ -103,6 +103,15 @@
                                     <p class="card-text mt-2">Instagram</p>
                                 </div>
                             </div>
+                            <div *ngIf="smsPlatform === 'LinkedIn' || !smsPlatform"
+                                class="card text-center selected-instagram-hover m-2"
+                                style="width: 8rem; border-radius: 10px;">
+                                <div class="card-body pt-3 rounded bg-white pointer border" (click)="ChangeType(7)"
+                                    [ngClass]="{'selected-facebook': CampaignPostForm.controls.type.value == 7 || smsPlatform === 'LinkedIn'}">
+                                    <i class="fab fa-linkedin-in fa-2x"></i>
+                                    <p class="card-text mt-2">LinkedIn</p>
+                                </div>
+                            </div>
                         </div>
                     </div>
                     <div>
@@ -126,9 +135,9 @@
 
                             <textarea class="form-control" [(ngModel)]="simpleText" [ngModelOptions]="{standalone:true}"
                                 style="min-height: 30vh;"></textarea> }
-                            @if(CampaignPostForm.get('type').value==4||CampaignPostForm.get('type').value==5||CampaignPostForm.get('type').value==6)
+                            @if(CampaignPostForm.get('type').value==4||CampaignPostForm.get('type').value==5||CampaignPostForm.get('type').value==6||CampaignPostForm.get('type').value==7)
                             {
-                            @if(CampaignPostForm.get('type').value==6){
+                            @if(CampaignPostForm.get('type').value==6||CampaignPostForm.get('type').value==7){
                             <div class="video-upload-container">
                                 <div class="input-group mb-3">
                                     <div class="custom-file">

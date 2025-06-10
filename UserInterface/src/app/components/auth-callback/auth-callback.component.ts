@@ -35,11 +35,14 @@ export class AuthCallbackComponent implements OnInit {
         if (platform === 'instagram') {
           localStorage.setItem('insta_access_token', res.accessToken);
           localStorage.setItem('insta_connected', 'true');
-        } else {
+        } else if(platform === 'facebook') {
           localStorage.setItem('access_token', res.accessToken);
           localStorage.setItem('fb_connected', 'true');
+        
+        } else if(platform === 'linkedIn') {
+          localStorage.setItem('linkedIn_access_token', res.accessToken);
+          localStorage.setItem('linkedIn_connected', 'true');
         }
-  
         this.router.navigate(['/accounts']);
       },
       error: (err: any) => {

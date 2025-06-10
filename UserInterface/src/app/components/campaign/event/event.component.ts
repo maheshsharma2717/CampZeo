@@ -94,143 +94,200 @@ export class EventComponent implements OnInit {
     else if (this.Post.type == 6) {
       this.activeTab = 'instagram';
     }
+    else if (this.Post.type == 7) {
+      this.activeTab = 'linkedIn';
+    }
   }
   onTabClick(tab: string): void {
     this.activeTab = tab;
   }
 
   sendMessage() {
-    debugger
-    // const campaignId = 0;
-    // if (!campaignId) return;
+    debugger;
     const campaignId = this.Post?.campaignId;
     if (!campaignId) {
       this.toaster.error('Campaign ID is missing.');
       return;
     }
-    const facebookRaw = this.Post?.message || '';
-    const instagramRaw = this.Post?.message || '';
-    const fbContent = this.extractContent(facebookRaw);
-    const igContent = this.extractContent(instagramRaw);
+
+    const rawMessage = this.Post?.message || '';
+    const content = this.extractContent(rawMessage);
+
     const pageId = this.selectedPage?.id;
     const pageAccessToken = this.selectedPage?.access_token;
-    if (this.activeTab === 'facebook' && pageId && pageAccessToken) {
-      this.service.postToFacebook({
-        pageId,
-        pageAccessToken,
-        message: fbContent.text,
-        images: fbContent.images,
-        videos: fbContent.videos
-      }).subscribe({
-        next: () => {
-          this.toaster.success('Posted to Facebook successfully!');
-          this.router.navigate(['list-campaigns']);
-        },
-        error: err => {
-          console.error('Facebook post failed:', err);
-          this.toaster.error('Failed to post to Facebook.');
-        }
-      });
 
-    } else if (this.activeTab === 'instagram' && this.instagramUserId && pageAccessToken) {
-      const igContent = this.extractContent(instagramRaw);
-
-      if (this.videoUrl) {
-        const payload: any = {
-          instagramUserId: this.instagramUserId,
-          accessToken: pageAccessToken,
-          caption: igContent.text,
-          videos: [this.videoUrl]
-        };
-
-        this.service.postToInstagram(payload).subscribe({
-          next: () => {
-            this.toaster.success('Posted video to Instagram successfully!');
-            this.router.navigate(['list-campaigns']);
-          },
-          error: err => {
-            console.error('Instagram post failed:', err);
-            this.toaster.error('Failed to post to Instagram.');
-          }
-        });
-
-      } else {
-        let base64Image = igContent.images[0];
-
-        if (!base64Image) {
-          this.toaster.warning('Instagram requires an image or video. Please add one.');
-          return;
-        }
-
-        this.service.uploadMedia(base64Image).subscribe({
-          next: (uploadedImageUrl) => {
-            const payload: any = {
-              instagramUserId: this.instagramUserId,
-              accessToken: pageAccessToken,
-              caption: igContent.text,
-              imageUrl: uploadedImageUrl
-            };
-
-            this.service.postToInstagram(payload).subscribe({
-              next: () => {
-                this.toaster.success('Posted image to Instagram successfully!');
-                this.router.navigate(['list-campaigns']);
-              },
-              error: err => {
-                console.error('Instagram post failed:', err);
-                this.toaster.error('Failed to post to Instagram.');
-              }
-            });
-          },
-          error: err => {
-            console.error('Image upload failed:', err);
-            this.toaster.error('Failed to upload image.');
-          }
-        });
+    if (this.activeTab === 'facebook') {
+      if (!pageId || !pageAccessToken) {
+        this.toaster.error('Facebook Page ID or Access Token is missing.');
+        return;
       }
+      this.postToFacebook(content, pageId, pageAccessToken);
+    }
+    else if (this.activeTab === 'instagram') {
+      if (!this.instagramUserId || !pageAccessToken) {
+        this.toaster.error('Instagram User ID or Access Token is missing.');
+        return;
+      }
+      this.postToInstagram(content, pageAccessToken);
+    }
+    else if (this.activeTab === 'linkedIn') {
+      this.postToLinkedIn(content);
     }
     else {
-      const selectedContacts = this.grid.getSelectedRecords();
-      if (!selectedContacts || selectedContacts.length === 0) {
-        this.toaster.warning('Please select at least one contact.', 'Warning');
-        return;
+      this.postToOtherChannels(campaignId, rawMessage);
+    }
+  }
+
+  private postToFacebook(content: any, pageId: string, accessToken: string) {
+    this.service.postToFacebook({
+      pageId,
+      pageAccessToken: accessToken,
+      message: content.text,
+      images: content.images,
+      videos: content.videos
+    }).subscribe({
+      next: () => {
+        this.toaster.success('Posted to Facebook successfully!');
+        this.router.navigate(['list-campaigns']);
+      },
+      error: err => {
+        console.error('Facebook post failed:', err);
+        this.toaster.error('Failed to post to Facebook.');
       }
-      const platformTypeMap: any = {
-        email: 1,
-        SMS: 2,
-        whatsApp: 3,
-        RCS: 4
+    });
+  }
+
+  private postToInstagram(content: any, accessToken: string) {
+    if (this.videoUrl) {
+      const payload: any = {
+        instagramUserId: this.instagramUserId,
+        accessToken: accessToken,
+        caption: content.text,
+        imageUrl: content.images[0] || null,
+        videoUrl: this.videoUrl
       };
-      const platformType = platformTypeMap[this.activeTab];
-      if (platformType === undefined) {
-        this.toaster.error('Invalid platform type selected.');
-        return;
-      }
-      const request = {
-        data: {
-          campaignId: campaignId,
-          type: platformType,
-          message: this.Post?.message || '',
-          contacts: selectedContacts.map((c: any) => ({
-            contactName: c.contactName,
-            contactEmail: c.contactEmail,
-            contactMobile: c.contactMobile,
-            contactWhatsApp: c.contactWhatsApp
-          }))
-        }
-      };
-      this.service.SendCampPost(request).subscribe({
-        next: (response: any) => {
-          this.toaster.success(response.data);
+
+      this.service.postToInstagram(payload).subscribe({
+        next: () => {
+          this.toaster.success('Posted video to Instagram successfully!');
           this.router.navigate(['list-campaigns']);
         },
         error: err => {
-          console.error('Campaign post failed:', err);
-          this.toaster.error('Failed to send message.');
+          console.error('Instagram post failed:', err);
+          this.toaster.error('Failed to post to Instagram.');
+        }
+      });
+    }
+    else {
+      const base64Image = content.images[0];
+      if (!base64Image) {
+        this.toaster.warning('Instagram requires an image or video. Please add one.');
+        return;
+      }
+
+      this.service.uploadMedia(base64Image).subscribe({
+        next: (uploadedImageUrl) => {
+          const payload = {
+            instagramUserId: this.instagramUserId,
+            accessToken,
+            caption: content.text,
+            imageUrl: uploadedImageUrl
+          };
+
+          this.service.postToInstagram(payload).subscribe({
+            next: () => {
+              this.toaster.success('Posted image to Instagram successfully!');
+              this.router.navigate(['list-campaigns']);
+            },
+            error: err => {
+              console.error('Instagram post failed:', err);
+              this.toaster.error('Failed to post to Instagram.');
+            }
+          });
+        },
+        error: err => {
+          console.error('Image upload failed:', err);
+          this.toaster.error('Failed to upload image.');
         }
       });
     }
   }
+
+  private postToLinkedIn(content: any) {
+
+    const base64Image = content.images[0];
+    if (!base64Image) {
+      this.toaster.warning('LinkedIn requires an image or video. Please add one.');
+      return;
+    }
+
+    this.service.uploadMedia(base64Image).subscribe({
+      next: (uploadedImageUrl) => {
+        const payload: any = {
+          caption: content.text,
+          imageUrl: uploadedImageUrl // Handle image upload separately if required
+        };
+
+        this.service.postToLinkedIn(payload).subscribe({
+          next: () => {
+            this.toaster.success('Posted to LinkedIn successfully!');
+            this.router.navigate(['list-campaigns']);
+          },
+          error: (err: any) => {
+            console.error('LinkedIn post failed:', err);
+            this.toaster.error('Failed to post to LinkedIn.');
+          }
+        });
+      }
+    });
+  }
+
+  private postToOtherChannels(campaignId: number, message: string) {
+    const selectedContacts = this.grid.getSelectedRecords();
+    if (!selectedContacts || selectedContacts.length === 0) {
+      this.toaster.warning('Please select at least one contact.', 'Warning');
+      return;
+    }
+
+    const platformTypeMap: any = {
+      email: 1,
+      SMS: 2,
+      whatsApp: 3,
+      RCS: 4
+    };
+
+    const platformType = platformTypeMap[this.activeTab];
+    if (platformType === undefined) {
+      this.toaster.error('Invalid platform type selected.');
+      return;
+    }
+
+    const request = {
+      data: {
+        campaignId,
+        type: platformType,
+        message,
+        contacts: selectedContacts.map((c: any) => ({
+          contactName: c.contactName,
+          contactEmail: c.contactEmail,
+          contactMobile: c.contactMobile,
+          contactWhatsApp: c.contactWhatsApp
+        }))
+      }
+    };
+
+    this.service.SendCampPost(request).subscribe({
+      next: (response: any) => {
+        this.toaster.success(response.data);
+        this.router.navigate(['list-campaigns']);
+      },
+      error: err => {
+        console.error('Campaign post failed:', err);
+        this.toaster.error('Failed to send message.');
+      }
+    });
+  }
+
 
   checkChange(i: number) {
     if (this.contacts[i].selected == true) {
