@@ -132,29 +132,29 @@ export class OrganisationListComponent implements OnInit, OnDestroy {
   // }
 
 
- onLogin(item: any) {
-  debugger;
-  this.service.LogInAsOrgenisation(item.id).subscribe({
-    next: (response: any) => {
-      if (response.isSuccess) {
-        // Set current active token
-        this.service.SetToken(response.data.token, false);
+  onLogin(item: any) {
+    debugger;
+    this.service.LogInAsOrgenisation(item.id).subscribe({
+      next: (response: any) => {
+        if (response.isSuccess) {
+          // Set current active token
+          this.service.SetToken(response.data.token, false);
 
-        // Save impersonated user token separately
-        localStorage.setItem('user_token', response.data.token);
+          // Save impersonated user token separately
+          localStorage.setItem('user_token', response.data.token);
 
-        this.service.User = response.data;
-        this.toaster.success('Login success');
+          this.service.User = response.data;
+          // this.toaster.success('Login success');
 
-        if (response.data) {
-          this.router.navigate(['/profile'], { queryParams: { i: 'CompleteProfile' } });
+          if (response.data) {
+            this.router.navigate(['/profile'], { queryParams: { i: 'CompleteProfile' } });
+          }
+        } else {
+          this.toaster.error('Invalid Email or password');
         }
-      } else {
-        this.toaster.error('Invalid Email or password');
       }
-    }
-  });
-}
+    });
+  }
 
 
 
