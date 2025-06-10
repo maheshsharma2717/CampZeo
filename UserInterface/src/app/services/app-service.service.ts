@@ -34,6 +34,8 @@ export class AppService {
     this.Token = token;
     this.IsUserAuthenticated = true;
   }
+
+  
   ValidateToken(token: any) {
     var form = new FormData();
     form.append('token', token);

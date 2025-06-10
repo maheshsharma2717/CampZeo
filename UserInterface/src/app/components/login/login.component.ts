@@ -9,6 +9,7 @@ import { ChangePasswordDialogComponent } from '../../change-password-dialog/chan
 import { ForgotPasswordComponent } from '../forgot-password/forgot-password.component';
 import { ResetPasswordComponent } from '../reset-password/reset-password.component';
 
+import { AuthService } from '../../services/auth.service';
 @Component({
   selector: 'app-login',
   standalone: true,
@@ -23,9 +24,9 @@ export class LoginComponent implements OnInit{
   showResetScreen = false;
   token: any;
 
-  constructor(private activatedRoute: ActivatedRoute, private toastr: ToastrService, private service: AppService, private router: Router,
+    constructor(private activatedRoute: ActivatedRoute, private toastr: ToastrService, private service: AppService,private router:Router, private authService: AuthService,
     private dialog: MatDialog) {
-    this.loginForm = new FormGroup({
+      this.loginForm = new FormGroup({
       email: new FormControl('', [Validators.required, Validators.email]),
       password: new FormControl('', [Validators.required]),
       rememberMe: new FormControl(false)
@@ -52,38 +53,51 @@ export class LoginComponent implements OnInit{
   }
 
   onSubmit() {
-    if (this.loginForm.valid) {
-      const loginData = this.loginForm.value;
-      this.service.LoginUser(loginData).subscribe({
-        next: (response: any) => {
-          if (response.isSuccess) {
-            this.service.SetToken(response.data.token, this.loginForm.value.rememberMe);
-            this.service.User = response.data;
-            localStorage.setItem('IsFirstLogin', response.data.isFirstLogin);
-            localStorage.setItem('UserRole', response.data.role);
-            this.toastr.success('Login success');
-            if (response.data.isFirstLogin === true && this.service.User.role !== 1) {
+  debugger;
+  if (this.loginForm.valid) {
+    const loginData = this.loginForm.value;
 
-              sessionStorage.setItem('FirstLoginDialogShown', 'true');
-              this.router.navigate(['/profile']);
-            } else if (!response.data.firstName) {
-              this.router.navigate(['/profile'], { queryParams: { i: 'CompleteProfile' } });
-            } else {
-              if (this.service.User.role == 1) {
-                this.router.navigate(['/list-organisation']);
-              } else {
-                this.router.navigate(['/dashboard']);
-              }
-            }
+    this.service.LoginUser(loginData).subscribe({
+      next: (response: any) => {
+        if (response.isSuccess) {
+          this.service.SetToken(response.data.token, this.loginForm.value.rememberMe);
+          this.authService.setCurrentUser(response.data);
+
+          if (response.data.role == 1) {
+            localStorage.setItem('admin_token', response.data.token);
           } else {
-            this.toastr.error('Invalid Email or password');
+            localStorage.setItem('user_token', response.data.token);
           }
+
+          this.service.User = response.data;
+          localStorage.setItem('IsFirstLogin', response.data.isFirstLogin);
+          localStorage.setItem('UserRole', response.data.role);
+
+          this.toastr.success('Login success');
+
+          if (response.data.isFirstLogin === true && this.service.User.role !== 1) {
+            sessionStorage.setItem('FirstLoginDialogShown', 'true');
+            this.router.navigate(['/profile']);
+          } else if (!response.data.firstName) {
+            this.router.navigate(['/profile'], { queryParams: { i: 'CompleteProfile' } });
+          } else {
+            if (this.service.User.role == 1) {
+              this.router.navigate(['/list-organisation']);
+            } else {
+              this.router.navigate(['/dashboard']);
+            }
+          }
+
+        } else {
+          this.toastr.error('Invalid Email or password');
         }
-      })
-    } else {
-      this.toastr.error('Form is invalid');
-    }
+      }
+    });
+  } else {
+    this.toastr.error('Form is invalid');
   }
+}
+
   togglePassword() {
     this.showPassword = !this.showPassword;
   }

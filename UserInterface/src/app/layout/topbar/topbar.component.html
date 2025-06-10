@@ -1,4 +1,3 @@
-
 <div [ngClass]="collapsed ? 'main-panel-topbar-collapsed' : 'main-panel-topbar'">
 
   <div [ngClass]="collapsed ? 'main-header-collapsed' : 'main-header'">
@@ -9,7 +8,7 @@
         <a href="index.html" class="logo">
           <img src="assets/img/kaiadmin/logo_light.svg" alt="navbar brand" class="navbar-brand" height="20">
         </a>
-        <div class="nav-toggle"(click)="onToggleSidebar()">
+        <div class="nav-toggle" (click)="onToggleSidebar()">
           <button class="btn btn-toggle toggle-sidebar">
             <i class="gg-menu-right"></i>
           </button>
@@ -25,7 +24,8 @@
       <!-- End Logo Header -->
     </div>
     <!-- Navbar Header -->
-    <nav [ngClass]="collapsed ? 'navbar-header-collapsed' : 'navbar-header'" class="navbar navbar-header-transparent navbar-expand-lg border-bottom">
+    <nav [ngClass]="collapsed ? 'navbar-header-collapsed' : 'navbar-header'"
+      class="navbar navbar-header-transparent navbar-expand-lg border-bottom">
 
       <div class="container-fluid">
         <nav class="navbar navbar-header-left navbar-expand-lg navbar-form nav-search p-0 d-none d-lg-flex">
@@ -256,7 +256,8 @@
                 <img src="assets/img/profile.jpg" alt="..." class="avatar-img rounded-circle">
               </div>
               <span class="profile-username">
-                <span class="op-7">Hi,</span>   <span class="fw-bold">{{ service.User.firstName ?? "" }} {{ service.User.lastName ?? "" }}</span>
+                <span class="op-7">Hi,</span> <span class="fw-bold">{{ service.User.firstName ?? "" }} {{
+                  service.User.lastName ?? "" }}</span>
               </span>
             </a>
             <ul class="dropdown-menu dropdown-user animated fadeIn">
@@ -268,17 +269,20 @@
                     <div class="u-text">
                       <h4>{{ service.User.firstName ?? "" }}</h4>
                       <p class="text-muted">{{ service.User.email ?? "" }}</p><a [routerLink]="'/profile'"
-                        class="btn btn-xs btn-secondary btn-sm">View Profile</a>
+                        class="btn btn-xs btn-secondary btn-sm mx-1 ">View Profile</a>
+                        <button 
+                        *ngIf="actualUser?.role === 1 && service?.User?.role !== 1" 
+                        class="btn btn-xs btn-secondary btn-sm mx-1" 
+                        (click)="onAdminClick()">
+                        Admin
+                      </button>                 
+          
                     </div>
                   </div>
                 </li>
                 <li>
                   <div class="dropdown-divider"></div>
-                  <a class="dropdown-item" [routerLink]="'/profile'">My Profile</a>
-                  <!-- <a class="dropdown-item" href="#">My Balance</a>
-                  <a class="dropdown-item" href="#">Inbox</a>
-                  <div class="dropdown-divider"></div>
-                  <a class="dropdown-item" href="#">Account Setting</a> -->
+                  <a class="dropdown-item" [routerLink]="'/profile'">My Profile</a>              
                   <div class="dropdown-divider"></div>
                   <a class="dropdown-item" (click)="LogoutUser()">Logout</a>
                 </li>

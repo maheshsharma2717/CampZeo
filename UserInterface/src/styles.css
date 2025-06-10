@@ -106,3 +106,7 @@ html {
 .f-20{
   font-size: 17px;
 }
+
+btn btn-xs btn-secondary btn-sm {
+  margin-right: 10px;
+}

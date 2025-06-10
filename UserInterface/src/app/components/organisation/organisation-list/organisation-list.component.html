@@ -210,6 +210,9 @@
                                 (click)="data.isDeleted ?openSuspendModal(data.id) : openSuspendModal(data.id)">
                                 {{ data.isDeleted ? 'Recover' : 'Suspend' }}
                             </button>
+                            <button (click)="onLogin(data)" class="btn btn-primary py-1">
+                                Login
+                            </button>
                         </div>
                     </ng-template>
 
