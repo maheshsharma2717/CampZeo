@@ -8,5 +8,6 @@ namespace MC.Basic.Application.Contracts.Persistance
         Task<User> CreateOrganisationUser(Organisation dbOrganisation, string password);
         Task<Organisation> CreateOrUpdate(Organisation organisation);
         Task<Organisation> SuspendOrRecoverOrganisation(long id);
+        Task<Organisation> GetOrganisationByOrganisationId(long id);
     }
 }

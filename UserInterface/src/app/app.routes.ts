@@ -23,6 +23,8 @@ import { CalendarComponent } from './components/calendar/calendar.component';
 import { ListPostsComponent } from './components/CampaignPosts/list-posts/list-posts.component';
 import { AddPostComponent } from './components/CampaignPosts/add-post/add-post.component';
 import { PlatformConfigurationComponent } from './components/PlatformConfiguration/platform-configuration.component';
+import { ForgotPasswordComponent } from './components/forgot-password/forgot-password.component';
+import { ResetPasswordComponent } from './components/reset-password/reset-password.component';
 export const routes: Routes = [
     { path: 'dashboard', component: DashboardComponent , canActivate: [PasswordChangeGuard]},
     { path: 'login', component: LoginComponent },
@@ -49,4 +51,6 @@ export const routes: Routes = [
     { path: 'post-insights', component: PostInsightsComponent },
     { path: 'calendar', component: CalendarComponent },
     { path: 'platform-configurations', component: PlatformConfigurationComponent },
+    { path: 'forgot-password', component: ForgotPasswordComponent },
+    { path: 'reset-password', component: ResetPasswordComponent },
 ];

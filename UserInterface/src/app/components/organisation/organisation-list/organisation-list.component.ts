@@ -36,6 +36,8 @@ export class OrganisationListComponent implements OnInit, OnDestroy {
   isRecovering: boolean = false;
   pageSettings = { pageSize: 10, pageSizes: [5, 10, 20, 50] };
   toolBarOptions = ['Custom'];
+  token: string | null = null;
+
 
   constructor(public service: AppService, private toaster: ToastrService,
     private router: Router
@@ -66,6 +68,7 @@ export class OrganisationListComponent implements OnInit, OnDestroy {
     this.loadOrganisations(); // Reload data with the new page size
   }
   loadOrganisations(): void {
+    debugger;
     var request: any = {
       data: {
         pageNumber: this.currentPage,
@@ -110,22 +113,50 @@ export class OrganisationListComponent implements OnInit, OnDestroy {
     })
   }
 
-  onLogin(item: any) {
-    this.service.LogInAsOrgenisation(item.id).subscribe({
-      next: (response: any) => {
-        if (response.isSuccess) {
-          this.service.SetToken(response.data.token, false);
-          this.service.User = response.data;
-          this.toaster.success('Login success');
-          if (response.data) {
-            this.router.navigate(['/profile'], { queryParams: { i: 'CompleteProfile' } });
-          }
-        } else {
-          this.toaster.error('Invalid Email or password');
+  // onLogin(item: any) {
+  //   debugger;
+  //   this.service.LogInAsOrgenisation(item.id).subscribe({
+  //     next: (response: any) => {
+  //       if (response.isSuccess) {
+  //         this.service.SetToken(response.data.token, false);
+  //         this.service.User = response.data;
+  //         this.toaster.success('Login success');
+  //         if (response.data) {
+  //           this.router.navigate(['/profile'], { queryParams: { i: 'CompleteProfile' } });
+  //         }
+  //       } else {
+  //         this.toaster.error('Invalid Email or password');
+  //       }
+  //     }
+  //   })
+  // }
+
+
+ onLogin(item: any) {
+  debugger;
+  this.service.LogInAsOrgenisation(item.id).subscribe({
+    next: (response: any) => {
+      if (response.isSuccess) {
+        // Set current active token
+        this.service.SetToken(response.data.token, false);
+
+        // Save impersonated user token separately
+        localStorage.setItem('user_token', response.data.token);
+
+        this.service.User = response.data;
+        this.toaster.success('Login success');
+
+        if (response.data) {
+          this.router.navigate(['/profile'], { queryParams: { i: 'CompleteProfile' } });
         }
+      } else {
+        this.toaster.error('Invalid Email or password');
       }
-    })
-  }
+    }
+  });
+}
+
+
 
   SuspendOrRecover(): void {
     if (this.organisationToDeleteId !== null) {

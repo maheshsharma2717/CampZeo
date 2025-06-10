@@ -52,6 +52,35 @@ namespace MC.Basic.API.Controllers
 
         }
 
+        [HttpPost("SendMailToResetPassword/{email}")]
+        [EnableCors("CorsPolicy")]
+        public async Task<IActionResult> SendMailToResetPassword(string email)
+        {
+            try
+            {
+                var response = await _authenticationService.SendResetTokenToUser(email);
+                return Ok(response);
+            }
+            catch(Exception ex)
+            {
+                return BadRequest(ex);
+            }
+        }
+
+        [HttpPost("ResetPassword")]
+        [EnableCors]
+        public async Task<IActionResult> ResetPassword(ResetPasswordDto request)
+        {
+            try
+            {
+                var response = await _authenticationService.ResetUserPassword(request);
+                return Ok(response);
+            }
+            catch(Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
 
         [HttpPost("ValidateToken")]
         [EnableCors("CorsPolicy")]
@@ -108,7 +137,7 @@ namespace MC.Basic.API.Controllers
             {
                 var user = await _authenticationService.CreateAdminUser(firstName, lastName, email, password);
 
-                if (user == null || user.Id == 0)
+                if(user == null || user.Id == 0)
                     return Conflict("Admin user already exists.");
 
                 var result = new AdminUserResponseDto

@@ -21,6 +21,7 @@ namespace MC.Basic.Domains.Entities
         public bool IsApproved { get; set; } = false;
         public bool IsFirstLogin { get; set; } = true;
         public UserRole Role { get; set; } = UserRole.OrganisationUser;
+        public string? ResetToken { get; set; }
 
         public long? OrganisationId { get; set; }
         [JsonIgnore]

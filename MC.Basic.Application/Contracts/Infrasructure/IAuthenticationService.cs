@@ -19,6 +19,8 @@ namespace MC.Basic.Application.Contracts.Infrasructure
         Task<ApiResponse<User>> UpdateUserPassword(ApiRequest<UpdatePasswordRequest> request);
         Task<ApiResponse<User>> ForgotUserPassword(ApiRequest<ForgetPasswordRequest> request);
         Task<ApiResponse<User>> LogInAsOrgenisation(int Id);
+        Task<ApiResponse<string>> SendResetTokenToUser(string email);
+        Task<ApiResponse<User>> ResetUserPassword(ResetPasswordDto request);
         //Task ForgotUserPassword(ApiRequest<ForgotPasswordRequest> request);
         // TODO
         //Task <string> updateJwtToken(ApiRequest<long> request);

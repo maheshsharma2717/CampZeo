@@ -1,5 +1,5 @@
 // import { HttpClient } from '@angular/common/http';
-// import { Injectable } from '@angular/core';
+ import { Injectable } from '@angular/core';
 // import { Router } from '@angular/router';
 
 // // @Injectable({
@@ -25,3 +25,30 @@
 //     });
 //   }
 // }
+
+
+@Injectable({ providedIn: 'root' })
+export class AuthService {
+  private currentUser: any = null;
+
+  setCurrentUser(user: any) {
+    this.currentUser = user;
+    localStorage.setItem('actual_user', JSON.stringify(user));
+  }
+
+  getCurrentUser(): any {
+    if (!this.currentUser) {
+      const stored = localStorage.getItem('actual_user');
+      if (stored) {
+        this.currentUser = JSON.parse(stored);
+      }
+    }
+    return this.currentUser;
+  }
+
+  clearCurrentUser() {
+    this.currentUser = null;
+    localStorage.removeItem('actual_user');
+  }
+}
+
