@@ -110,3 +110,7 @@ html {
 btn btn-xs btn-secondary btn-sm {
   margin-right: 10px;
 }
+
+.html-content-div img {
+    max-width: 100%;
+}
