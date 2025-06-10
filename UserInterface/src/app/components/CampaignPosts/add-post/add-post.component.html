@@ -1,0 +1,192 @@
+<div class="pcoded-content">
+    <!-- <div class="page-header">
+        <div class="page-block">
+            <div class="row align-items-center">
+                <div class="col-md-12">
+                    <div class="page-header-title">
+                        <h5 class="m-b-10">@if(editMode){Update}@else{Create} Campaign Post</h5>
+                    </div>
+                    <ul class="breadcrumb">
+                        <li class="breadcrumb-item"><a [routerLink]="'/dashboard'"><i class="feather icon-home"></i></a>
+                        </li>
+                        <li class="breadcrumb-item"><a [routerLink]="'/list-message-templates'">Campaign Posts</a>
+                        </li>
+                        <li class="breadcrumb-item"><a
+                                [routerLink]="'/add-campaign-post'">@if(editMode){Update}@else{Create} Campaign Post</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div> -->
+    <div class="page-header mb-0">
+        <h3 class="fw-bold mb-3">@if(editMode){Update}@else{Create} Campaign Post</h3>
+        <ul class="breadcrumbs mb-3">
+            <li class="nav-item">
+                <a [routerLink]="'/dashboard'"><i class=" icon-home"></i></a>
+            </li>
+            <li class="separator">
+                <i class="icon-arrow-right"></i>
+            </li>
+            <li class="nav-item">
+                <a [routerLink]="'/list-campaign-posts'">Campaign Posts</a>
+            </li>
+            <li class="separator">
+                <i class="icon-arrow-right"></i>
+            </li>
+
+            <li class="nav-item">
+                <a [routerLink]="'/add-post'">@if(editMode){Update}@else{Create} Campaign Post</a>
+            </li>
+        </ul>
+    </div>
+    <div class="row">
+        <div class="card-body ">
+            <form [formGroup]="CampaignPostForm" (ngSubmit)="onSubmit()" class="">
+                <div class="card card-body">
+                    <div class="mb-3">
+                        <div class="d-flex ">
+                            <div *ngIf="smsPlatform === 'Email' || !smsPlatform"
+                                class="card text-center selected-email-hover m-2"
+                                style="width: 8rem; border-radius: 10px;">
+                                <div class="card-body pt-3 rounded bg-white pointer border" (click)="ChangeType(1)"
+                                    [ngClass]="{'selected-email': CampaignPostForm.controls.type.value == 1 || smsPlatform === 'Email'}">
+                                    <i class="fas fa-envelope-open fa-2x"></i>
+                                    <p class="card-text mt-2">Email</p>
+                                </div>
+                            </div>
+
+                            <div *ngIf="smsPlatform === 'SMS' || !smsPlatform"
+                                class="card text-center selected-sms-hover m-2"
+                                style="width: 8rem; border-radius: 10px;">
+                                <div class="card-body pt-3 rounded bg-white pointer border" (click)="ChangeType(2)"
+                                    [ngClass]="{'selected-sms': CampaignPostForm.controls.type.value == 2 || smsPlatform === 'SMS'}">
+                                    <i class="fa fa-envelope text-warning fa-2x"></i>
+                                    <p class="card-text mt-2">SMS</p>
+                                </div>
+                            </div>
+
+                            <div *ngIf="smsPlatform === 'WhatsApp' || !smsPlatform"
+                                class="card text-center selected-whatsapp-hover m-2"
+                                style="width: 8rem; border-radius: 10px;">
+                                <div class="card-body pt-3 rounded bg-white pointer border" (click)="ChangeType(3)"
+                                    [ngClass]="{'selected-whatsapp': CampaignPostForm.controls.type.value == 3 || smsPlatform === 'WhatsApp'}">
+                                    <i class="fab fa-whatsapp fa-2x"></i>
+                                    <p class="card-text mt-2">WhatsApp</p>
+                                </div>
+                            </div>
+
+                            <div *ngIf="smsPlatform === 'RCS' || !smsPlatform"
+                                class="card text-center selected-rcs-hover m-2"
+                                style="width: 8rem; border-radius: 10px;">
+                                <div class="card-body pt-3 rounded bg-white pointer border" (click)="ChangeType(4)"
+                                    [ngClass]="{'selected-rcs': CampaignPostForm.controls.type.value == 4 || smsPlatform === 'RCS'}">
+                                    <i class="fa fa-globe fa-2x"></i>
+                                    <p class="card-text mt-2">RCS</p>
+                                </div>
+                            </div>
+                            <div *ngIf="smsPlatform === 'Facebook' || !smsPlatform"
+                                class="card text-center selected-facebook-hover m-2"
+                                style="width: 8rem; border-radius: 10px;">
+                                <div class="card-body pt-3 rounded bg-white pointer border" (click)="ChangeType(5)"
+                                    [ngClass]="{'selected-facebook': CampaignPostForm.controls.type.value == 5 || smsPlatform === 'Facebook'}">
+                                    <i class="fab fa-facebook fa-2x"></i>
+                                    <p class="card-text mt-2">FaceBook</p>
+                                </div>
+                            </div>
+                            <div *ngIf="smsPlatform === 'Instagram' || !smsPlatform"
+                                class="card text-center selected-instagram-hover m-2"
+                                style="width: 8rem; border-radius: 10px;">
+                                <div class="card-body pt-3 rounded bg-white pointer border" (click)="ChangeType(6)"
+                                    [ngClass]="{'selected-instagram': CampaignPostForm.controls.type.value == 6 || smsPlatform === 'Instagram'}">
+                                    <i class="fab fa-instagram fa-2x"></i>
+                                    <p class="card-text mt-2">Instagram</p>
+                                </div>
+                            </div>
+                            <div *ngIf="smsPlatform === 'LinkedIn' || !smsPlatform"
+                                class="card text-center selected-instagram-hover m-2"
+                                style="width: 8rem; border-radius: 10px;">
+                                <div class="card-body pt-3 rounded bg-white pointer border" (click)="ChangeType(7)"
+                                    [ngClass]="{'selected-facebook': CampaignPostForm.controls.type.value == 7 || smsPlatform === 'LinkedIn'}">
+                                    <i class="fab fa-linkedin-in fa-2x"></i>
+                                    <p class="card-text mt-2">LinkedIn</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                        <label for="subject">Subject</label>
+                        <input class="form-control" id="subject" formControlName="subject" type="text" />
+                        @if(CampaignPostForm.get('subject').invalid &&
+                        CampaignPostForm.get('subject').touched){
+                        <div class="text-danger">
+                            Subject is required.
+                        </div>}
+                    </div>
+                    <div class="d-flex my-3">
+                        <div class="w-100 ">
+                            <label for="organisationName " style="float: inline-start; width: 100%;">Campaign Post
+                                Content</label> @if(CampaignPostForm.get('type').value==1 ){
+                            <div class="row my-4 mx-auto p-5 " style="width: 100%;">
+                                <email-editor (loaded)="editorLoaded($event)"
+                                    (ready)="editorReady($event)"></email-editor>
+                            </div>}
+                            @if(CampaignPostForm.get('type').value==2||CampaignPostForm.get('type').value==3){
+
+                            <textarea class="form-control" [(ngModel)]="simpleText" [ngModelOptions]="{standalone:true}"
+                                style="min-height: 30vh;"></textarea> }
+                            @if(CampaignPostForm.get('type').value==4||CampaignPostForm.get('type').value==5||CampaignPostForm.get('type').value==6||CampaignPostForm.get('type').value==7)
+                            {
+                            @if(CampaignPostForm.get('type').value==6||CampaignPostForm.get('type').value==7){
+                            <div class="video-upload-container">
+                                <div class="input-group mb-3">
+                                    <div class="custom-file">
+                                        <input type="file" class="custom-file-input" id="inputGroupFile01"
+                                            (change)="onVideoSelected($event)" accept="video/mp4" />
+                                        <label class="custom-file-label" for="inputGroupFile01">Choose file</label>
+                                    </div>
+                                </div>
+                                <div *ngIf="videoUrl">
+                                    <video [src]="videoUrl" controls width="400">
+                                        Your browser does not support the video tag.
+                                    </video>
+                                </div>
+                            </div>
+                            }
+                            <div class="row my-4 mx-auto mb-5" style="width: 100%;">
+                                <quill-editor [ngStyle]="{width:'100%'} " [(ngModel)]="editorContent"
+                                    [ngModelOptions]="{standalone:true}" (onFocus)="focus($event)"
+                                    (onBlur)="blur($event)" (onEditorCreated)="created($event)"
+                                    class="mb-4"></quill-editor>
+                            </div>
+                            }
+                        </div>
+                    </div>
+
+                    <div>
+                        <label for="senderEmail">Sender Email</label>
+                        <input class="form-control" id="senderEmail" formControlName="senderEmail" type="email" />
+                        @if(CampaignPostForm.get('senderEmail').invalid &&
+                        CampaignPostForm.get('senderEmail').touched){
+                        <div class="text-danger">
+                            Please enter a valid email.
+                        </div>}
+                    </div>
+                    <div class="text-start mt-3">
+                        <label for="scheduledPostTime">Post Time</label>
+                        <input type="datetime-local" id="scheduledPostTime" class="form-control"
+                            formControlName="scheduledPostTime" />
+                    </div>
+                    <div *ngIf="CampaignPostForm.get('scheduledPostTime')?.invalid && CampaignPostForm.get('scheduledPostTime')?.touched"
+                        class="text-danger">
+                        Please select a valid date and time.
+                    </div>
+
+                    <br>
+                </div>
+                <button type="submit" class="btn btn-primary"
+                    [disabled]="CampaignPostForm.invalid">@if(editMode){Update}@else{Create} Campaign Post</button>
+            </form>
+        </div>
+    </div>
+</div>

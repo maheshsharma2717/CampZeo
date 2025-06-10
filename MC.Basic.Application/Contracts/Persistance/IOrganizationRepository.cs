@@ -1,14 +1,13 @@
 ﻿using MC.Basic.Domains.Entities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace MC.Basic.Application.Contracts.Persistance 
 {
-    public interface IOrganizationRepository: IAsyncRepository<Organisation> 
+    public interface IOrganisationRepository : IAsyncRepository<Organisation>
     {
-        Task<bool> IsOrganizationNameUnique(string? name);
+        Task<Organisation> ApproveOrganisation(long id);
+        Task<User> CreateOrganisationUser(Organisation dbOrganisation, string password);
+        Task<Organisation> CreateOrUpdate(Organisation organisation);
+        Task<Organisation> SuspendOrRecoverOrganisation(long id);
+        Task<Organisation> GetOrganisationByOrganisationId(long id);
     }
 }

@@ -1,0 +1,126 @@
+<div class="pcoded-content">
+  <div class="page-header mb-0">
+    <h3 class="fw-bold mb-3">Create Campaigns</h3>
+    <ul class="breadcrumbs mb-3">
+      <li class="nav-item">
+        <a [routerLink]="'/dashboard'"><i class=" icon-home"></i></a>
+      </li>
+      <li class="separator">
+        <i class="icon-arrow-right"></i>
+      </li>
+      <li class="nav-item">
+        <a [routerLink]="'/list-campaigns'">Campaign List</a>
+      </li>
+      <li class="separator">
+        <i class="icon-arrow-right"></i>
+      </li>
+      <li class="nav-item">
+        <a [routerLink]="'/add-campaign'">Create campaigns</a>
+      </li>
+    </ul>
+  </div>
+  <div class="row">
+    <div class="col-sm-12">
+      <div class="card">
+        <div class="card-header">
+          <h5>@if(editMode){Update}@else{Create} Campaign</h5>
+        </div>
+        <div class="card-body">
+          <div>
+            <label for="name" class="form-label fw-bold ms-1">
+              <h5>Select Campaigns @if(campaignForm.errors?.atLeastOneRequired){
+                <span class="text-danger ">*</span>
+                }
+              </h5>
+            </label>
+          </div>
+          <form [formGroup]="campaignForm" (ngSubmit)="onSubmit()">
+            <div class="row">
+
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label class="floating-label" for="name">Name
+                    <span class="text-danger"
+                      *ngIf="campaignForm.get('name')?.invalid && campaignForm.get('name')?.value === ''">*</span>
+                  </label>
+                  <input type="text" class="form-control" id="name" placeholder="Enter  Name" formControlName="name">
+
+                  <div *ngIf="campaignForm.get('name')?.hasError('required') && campaignForm.get('name')?.touched"
+                    class="text-danger">
+                    Name is required
+                  </div>
+                  <div *ngIf="campaignForm.get('name')?.hasError('minlength') && campaignForm.get('name')?.touched"
+                    class="text-danger">
+                    Name must be at least 3 characters
+                  </div>
+                  <div *ngIf="campaignForm.get('name')?.hasError('pattern') && campaignForm.get('name')?.touched"
+                    class="text-danger">
+                    Name must only contain letters
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label for="startDate" class="floating-label">Start Date <span class="text-danger">*</span></label>
+                  <input type="datetime-local" id="startDate" formControlName="startDate" class="form-control p-2"
+                    [value]="campaignForm.controls.startDate.value | date:'yyyy-MM-ddTHH:mm'">
+                  <div *ngIf="campaignForm.controls.startDate.invalid && campaignForm.controls.startDate.touched"
+                    class="text-danger">
+                    Start Date is required
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label for="endDate" class="floating-label">End Date <span class="text-danger">*</span></label>
+                  <input type="datetime-local" id="endDate" formControlName="endDate" class="form-control p-2"
+                    [value]="campaignForm.controls.endDate.value | date:'yyyy-MM-ddTHH:mm'">
+                </div>
+              </div>
+
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label for="description">Description</label>
+                  <textarea class="form-control" id="description" rows="1" formControlName="description"></textarea>
+                </div>
+              </div>
+            </div>
+            <!-- <div class="form-check mb-2 d-none">
+              <input class="form-check-input" type="checkbox" #isEmailCampaign formControlName="isEmailCampaign">
+              <label class="form-check-label" for="isEmailCampaign">Is Email Campaign</label>
+            </div>
+
+            <div class="form-check mb-2 d-none">
+              <input class="form-check-input" type="checkbox" #isWhatsAppCampaign formControlName="isWhatsAppCampaign">
+              <label class="form-check-label" for="isWhatsAppCampaign">Is WhatsApp Campaign</label>
+            </div>
+
+            <div class="form-check mb-2 d-none">
+              <input class="form-check-input" type="checkbox" #isSmsCampaign formControlName="isSmsCampaign">
+              <label class="form-check-label" for="isSmsCampaign">Is SMS Campaign</label>
+            </div>
+            <div class="form-check mb-2 d-none">
+              <input class="form-check-input" type="checkbox" #isRCSCampaign formControlName="isRCSCampaign">
+              <label class="form-check-label" for="isRCSCampaign">is RCSCampaign</label>
+            </div>
+            <div class="form-check mb-2 d-none">
+              <input class="form-check-input" type="checkbox" #isFacebookCampaign formControlName="isFacebookCampaign">
+              <label class="form-check-label" for="isFacebookCampaign">is Facebook Campaign</label>
+            </div>
+            <div class="form-check mb-2 d-none">
+              <input class="form-check-input" type="checkbox" #isInstagramCampaign
+                formControlName="isInstagramCampaign">
+              <label class="form-check-label" for="isInstagramCampaign">is Instagram Campaign</label>
+            </div> -->
+            <div class="d-flex gap-3 mt-1">
+              <button type="submit" class="btn btn-primary"
+                [disabled]="campaignForm.invalid">@if(!editMode){Create}@else{Update} Campaign</button>
+              <button type="button" class="btn btn-secondary" [routerLink]="'/list-campaigns'">Back to the list</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

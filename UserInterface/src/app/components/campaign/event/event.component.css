@@ -1,0 +1,27 @@
+.form-check-input {
+  position: relative;
+  margin-top: 0;
+  margin-left: 0;
+}
+
+.pointer {
+  cursor: pointer !important;
+}
+
+::ng-deep .pagination .current {
+  background-color: #1abc9c !important;
+  padding: .1875rem .625rem;
+  color: #fefefe;
+  cursor: default;
+}
+
+
+::ng-deep .custom-inner-html img {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.h-100 {
+  height: 100%;
+}

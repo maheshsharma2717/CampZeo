@@ -1,0 +1,398 @@
+<div class="pcoded-content">
+    <div class="page-header">
+        <div class="page-block">
+            <div class="row align-items-center">
+                <div class="page-header mb-0">
+                    <h3 class="fw-bold mb-3">Profile</h3>
+                    <ul class="breadcrumbs mb-3">
+                        <li class="nav-item">
+                            <a [routerLink]="'/dashboard'"><i class=" icon-home"></i></a>
+                        </li>
+                        <li class="separator">
+                            <i class="icon-arrow-right"></i>
+                        </li>
+                        <li class="nav-item">
+                            <a [routerLink]="'/profile'">Profile</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="card">
+        <div class="row">
+            <div class="col-xl-4 d-flex align-items-center justify-content-center">
+                <div class="">
+                    <div class="card-body text-center">
+                        <img src="assets/images/user/avatar-2.jpg" alt="Profile" class="rounded-circle max-150">
+                        <h6 class="mt-3">{{(service.User.firstName??"")+" "+(service.User.lastName??"")}}</h6>
+                        <h6> {{service.User.role==1?"Admin User":"Organisation User"}}</h6>
+
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl-8">
+                <div class="">
+                   
+                    <div class="card-body">
+                        <ul class="nav nav-tabs nav-line nav-color-secondary mb-3" id="profile-tab" role="tablist">
+                            <li class="nav-item">
+                                <a class="nav-link active text-uppercase" id="overview-tab" data-bs-toggle="pill"
+                                    href="#overview" role="tab" aria-controls="overview"
+                                    aria-selected="true">Overview</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-uppercase" id="edit-profile-tab" data-bs-toggle="pill"
+                                    href="#profile" role="tab" aria-controls="profile" aria-selected="false">Edit
+                                    Profile</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-uppercase" id="change-password-tab" data-bs-toggle="pill"
+                                    href="#Change" role="tab" aria-controls="Change" aria-selected="false">Change
+                                    Password</a>
+                            </li>
+                        </ul>
+
+                        <div class="tab-content mt-3 mb-3" id="profile-tabContent">
+
+                            <!-- Overview Tab -->
+                            <div class="tab-pane fade show active" id="overview" role="tabpanel"
+                                aria-labelledby="overview-tab">
+                                <h5>Profile Details</h5>
+                                <div class="row p-2">
+                                    <div class="col-lg-3 col-md-4 label">Full Name</div>
+                                    <div class="col-lg-9 col-md-8">{{(service.User.firstName??"")+"
+                                        "+(service.User.lastName??"")}}
+                                    </div>
+                                </div>
+                                <div class="row p-2">
+                                    <div class="col-lg-3 col-md-4 label">Role</div>
+                                    <div class="col-lg-9 col-md-8">
+                                        {{service.User.role==1?"Admin User":"Organisation User"}}
+                                    </div>
+                                </div>
+                                <div class="row p-2">
+                                    <div class="col-lg-3 col-md-4 label">Phone</div>
+                                    <div class="col-lg-9 col-md-8">{{(service.User.mobile??"")}}</div>
+                                </div>
+                                <div class="row p-2">
+                                    <div class="col-lg-3 col-md-4 label">Email</div>
+                                    <div class="col-lg-9 col-md-8">{{(service.User.email??"")}}</div>
+                                </div>
+                            </div>
+
+                            <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="edit-profile-tab">
+                                <form [formGroup]="editProfileForm" (ngSubmit)="onSubmit()">
+                                    <div class="row mb-3">
+                                        <label class="col-md-4 col-lg-3 col-form-label">First Name</label>
+                                        <div class="col-md-8 col-lg-9">
+                                            <input type="text" formControlName="firstName" class="form-control" />
+                                            <div *ngIf="editProfileForm.get('firstName')?.touched && editProfileForm.get('firstName')?.invalid"
+                                                class="text-danger">
+                                                <div *ngIf="editProfileForm.get('firstName')?.errors?.['required']">
+                                                    First Name is required.</div>
+                                                <div *ngIf="editProfileForm.get('firstName')?.errors?.['pattern']">Only
+                                                    letters and spaces allowed.</div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="row mb-3">
+                                        <label class="col-md-4 col-lg-3 col-form-label">Last Name</label>
+                                        <div class="col-md-8 col-lg-9">
+                                            <input type="text" formControlName="lastName" class="form-control" />
+                                            <div *ngIf="editProfileForm.get('lastName')?.touched && editProfileForm.get('lastName')?.invalid"
+                                                class="text-danger">
+                                                <div *ngIf="editProfileForm.get('lastName')?.errors?.['required']">Last
+                                                    Name is required.</div>
+                                                <div *ngIf="editProfileForm.get('lastName')?.errors?.['pattern']">Only
+                                                    letters and spaces allowed.</div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="row mb-3">
+                                        <label class="col-md-4 col-lg-3 col-form-label">Phone</label>
+                                        <div class="col-md-8 col-lg-9">
+                                            <input type="text" formControlName="mobile" class="form-control" />
+                                            <div *ngIf="editProfileForm.get('mobile')?.touched && editProfileForm.get('mobile')?.invalid"
+                                                class="text-danger">
+                                                <div *ngIf="editProfileForm.get('mobile')?.errors?.['required']">Phone
+                                                    is required.</div>
+                                                <div *ngIf="editProfileForm.get('mobile')?.errors?.['pattern']">
+                                                    Only numbers and symbols (+, -, (, ), space) are allowed.
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="row mb-3">
+                                        <label class="col-md-4 col-lg-3 col-form-label"></label>
+                                        <div class="col-md-8 col-lg-9">
+                                            <button type="submit" class="btn btn-primary"
+                                                [disabled]="editProfileForm.invalid">Save
+                                                Changes</button>
+                                        </div>
+                                    </div>
+                                </form>
+
+                            </div>
+
+                            <div class="tab-pane fade" id="Change" role="tabpanel"
+                                aria-labelledby="change-password-tab">
+                                <form [formGroup]="pwForm" (ngSubmit)="UpdatePassword()">
+                                    <div class="row mb-3">
+                                        <label for="currentPassword" class="col-md-4 col-lg-3 col-form-label">Current
+                                            Password</label>
+                                        <div class="col-md-8 col-lg-9 position-relative">
+                                            <input [type]="showCurrent ? 'text' : 'password'"
+                                                formControlName="currentPassword" class="form-control"
+                                                id="currentPassword" />
+                                            <i class="fa" [ngClass]="showCurrent ? 'fa-eye-slash' : 'fa-eye'"
+                                                (click)="showCurrent = !showCurrent"
+                                                style="position: absolute; top: 50%; right: 25px; transform: translateY(-50%); cursor: pointer;"></i>
+                                            <small class="text-danger"
+                                                *ngIf="pwForm.get('currentPassword')?.touched && pwForm.get('currentPassword')?.errors?.['required']">
+                                                Current password is required.
+                                            </small>
+                                        </div>
+                                    </div>
+
+                                    <div class="row mb-3">
+                                        <label for="newPassword" class="col-md-4 col-lg-3 col-form-label">New
+                                            Password</label>
+                                        <div class="col-md-8 col-lg-9 position-relative">
+                                            <input [type]="showNew ? 'text' : 'password'" formControlName="newPassword"
+                                                class="form-control" id="newPassword" />
+                                            <i class="fa" [ngClass]="showNew ? 'fa-eye-slash' : 'fa-eye'"
+                                                (click)="showNew = !showNew"
+                                                style="position: absolute; top: 50%; right: 25px; transform: translateY(-50%); cursor: pointer;">
+                                            </i>
+                                            <small class="text-danger"
+                                                *ngIf="pwForm.get('newPassword')?.touched && pwForm.get('newPassword')?.errors?.['required']">
+                                                New password is required.
+                                            </small>
+                                            <small class="text-danger"
+                                                *ngIf="pwForm.get('newPassword')?.errors?.['minlength']">
+                                                Minimum 6 characters required.
+                                            </small>
+                                            <small class="text-danger"
+                                                *ngIf="pwForm.get('newPassword')?.errors?.['pattern']">
+                                                Must include 1 uppercase and 1 special character.
+                                            </small>
+                                        </div>
+                                    </div>
+
+                                    <div class="row mb-3">
+                                        <label for="renewPassword" class="col-md-4 col-lg-3 col-form-label">Re-enter New
+                                            Password</label>
+                                        <div class="col-md-8 col-lg-9 position-relative">
+                                            <input [type]="showConfirm ? 'text' : 'password'"
+                                                formControlName="renewPassword" class="form-control"
+                                                id="renewPassword" />
+                                            <i class="fa" [ngClass]="showConfirm ? 'fa-eye-slash' : 'fa-eye'"
+                                                (click)="showConfirm = !showConfirm"
+                                                style="position: absolute; top: 49%; right: 25px; transform: translateY(-50%); cursor: pointer;"></i>
+                                            <small class="text-danger"
+                                                *ngIf="pwForm.get('renewPassword')?.touched && pwForm.get('renewPassword')?.errors?.['required']">
+                                                Confirmation is required.
+                                            </small>
+                                            <small class="text-danger"
+                                                *ngIf="pwForm.get('renewPassword')?.touched && pwForm.value.newPassword !== pwForm.value.renewPassword">
+                                                Passwords do not match.
+                                            </small>
+                                        </div>
+                                    </div>
+
+                                    <div class="row mb-3">
+                                        <label class="col-md-4 col-lg-3 col-form-label"></label>
+                                        <div class="col-md-8 col-lg-9">
+                                            <button type="submit" class="btn btn-primary">Change Password</button>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- <div class="col-xl-8">
+                <div class="">
+                    <div class="card-body">
+                        <ul class="nav nav-tabs mb-3" id="myTab" role="tablist">
+                            <li class="nav-item">
+                                <a class="nav-link active text-uppercase" id="overview-tab" data-toggle="tab"
+                                    href="#overview" role="tab" aria-controls="overview"
+                                    aria-selected="true">Overview</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-uppercase" id="profile-tab" data-toggle="tab" href="#profile"
+                                    role="tab" aria-controls="profile" aria-selected="false">Edit Profile</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-uppercase" id="Change-tab" data-toggle="tab" href="#Change"
+                                    role="tab" aria-controls="Change" aria-selected="false">Change Password</a>
+                            </li>
+                        </ul>
+                        <div class="tab-content" id="myTabContent">
+                            <div class="tab-pane fade show active" id="overview" role="tabpanel"
+                                aria-labelledby="overview-tab">
+                                <h5>Profile Details</h5>
+                                <div class="row p-2">
+                                    <div class="col-lg-3 col-md-4 label ">Full Name</div>
+                                    <div class="col-lg-9 col-md-8">{{(service.User.firstName??"")+"
+                                        "+(service.User.lastName??"")}}</div>
+                                </div>
+
+                                <div class="row p-2">
+                                    <div class="col-lg-3 col-md-4 label">Role</div>
+                                    <div class="col-lg-9 col-md-8"> {{service.User.role==1?"Admin User":"Organisation User"}}</div>
+                                </div>
+
+                                <div class="row p-2">
+                                    <div class="col-lg-3 col-md-4 label">Phone</div>
+                                    <div class="col-lg-9 col-md-8">{{(service.User.mobile??"")}}</div>
+                                </div>
+
+                                <div class="row p-2">
+                                    <div class="col-lg-3 col-md-4 label">Email</div>
+                                    <div class="col-lg-9 col-md-8"> {{(service.User.email??"")}}</div>
+                                </div>
+                            </div>
+                            <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
+                                <form [formGroup]="editProfileForm" (ngSubmit)="onSubmit()">
+                                    <div class="row mb-3">
+                                        <label class="col-md-4 col-lg-3 col-form-label">First Name</label>
+                                        <div class="col-md-8 col-lg-9">
+                                            <input type="text" formControlName="firstName" class="form-control" />
+                                            <div *ngIf="editProfileForm.get('firstName')?.touched && editProfileForm.get('firstName')?.invalid"
+                                                class="text-danger">
+                                                <div *ngIf="editProfileForm.get('firstName')?.errors?.['required']">
+                                                    First Name is required.</div>
+                                                <div *ngIf="editProfileForm.get('firstName')?.errors?.['pattern']">Only
+                                                    letters and spaces allowed.</div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="row mb-3">
+                                        <label class="col-md-4 col-lg-3 col-form-label">Last Name</label>
+                                        <div class="col-md-8 col-lg-9">
+                                            <input type="text" formControlName="lastName" class="form-control" />
+                                            <div *ngIf="editProfileForm.get('lastName')?.touched && editProfileForm.get('lastName')?.invalid"
+                                                class="text-danger">
+                                                <div *ngIf="editProfileForm.get('lastName')?.errors?.['required']">Last
+                                                    Name is required.</div>
+                                                <div *ngIf="editProfileForm.get('lastName')?.errors?.['pattern']">Only
+                                                    letters and spaces allowed.</div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="row mb-3">
+                                        <label class="col-md-4 col-lg-3 col-form-label">Phone</label>
+                                        <div class="col-md-8 col-lg-9">
+                                            <input type="text" formControlName="mobile" class="form-control" />
+                                            <div *ngIf="editProfileForm.get('mobile')?.touched && editProfileForm.get('mobile')?.invalid"
+                                                class="text-danger">
+                                                <div *ngIf="editProfileForm.get('mobile')?.errors?.['required']">Phone
+                                                    is required.</div>
+                                                <div *ngIf="editProfileForm.get('mobile')?.errors?.['pattern']">
+                                                    Only numbers and symbols (+, -, (, ), space) are allowed.
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="row mb-3">
+                                        <label class="col-md-4 col-lg-3 col-form-label"></label>
+                                        <div class="col-md-8 col-lg-9">
+                                            <button type="submit" class="btn btn-primary"
+                                                [disabled]="editProfileForm.invalid">Save Changes</button>
+                                        </div>
+                                    </div>
+                                </form>
+
+                            </div>
+                            <div class="tab-pane fade" id="Change" role="tabpanel" aria-labelledby="Change-tab">
+                                <form [formGroup]="pwForm" (ngSubmit)="UpdatePassword()">
+                                    <div class="row mb-3">
+                                        <label for="currentPassword" class="col-md-4 col-lg-3 col-form-label">Current
+                                            Password</label>
+                                        <div class="col-md-8 col-lg-9 position-relative">
+                                            <input [type]="showCurrent ? 'text' : 'password'"
+                                                formControlName="currentPassword" class="form-control"
+                                                id="currentPassword" />
+                                            <i class="fa" [ngClass]="showCurrent ? 'fa-eye-slash' : 'fa-eye'"
+                                                (click)="showCurrent = !showCurrent"
+                                                style="position: absolute; top: 50%; right: 25px; transform: translateY(-50%); cursor: pointer;"></i>
+                                            <small class="text-danger"
+                                                *ngIf="pwForm.get('currentPassword')?.touched && pwForm.get('currentPassword')?.errors?.['required']">
+                                                Current password is required.
+                                            </small>
+                                        </div>
+                                    </div>
+
+                                    <div class="row mb-3">
+                                        <label for="newPassword" class="col-md-4 col-lg-3 col-form-label">New
+                                            Password</label>
+                                        <div class="col-md-8 col-lg-9 position-relative">
+                                            <input [type]="showNew ? 'text' : 'password'" formControlName="newPassword"
+                                                class="form-control" id="newPassword" />
+                                            <i class="fa" [ngClass]="showNew ? 'fa-eye-slash' : 'fa-eye'"
+                                                (click)="showNew = !showNew"
+                                                style="position: absolute; top: 50%; right: 25px; transform: translateY(-50%); cursor: pointer;">
+                                            </i>
+                                            <small class="text-danger"
+                                                *ngIf="pwForm.get('newPassword')?.touched && pwForm.get('newPassword')?.errors?.['required']">
+                                                New password is required.
+                                            </small>
+                                            <small class="text-danger"
+                                                *ngIf="pwForm.get('newPassword')?.errors?.['minlength']">
+                                                Minimum 6 characters required.
+                                            </small>
+                                            <small class="text-danger"
+                                                *ngIf="pwForm.get('newPassword')?.errors?.['pattern']">
+                                                Must include 1 uppercase and 1 special character.
+                                            </small>
+                                        </div>
+                                    </div>
+
+                                    <div class="row mb-3">
+                                        <label for="renewPassword" class="col-md-4 col-lg-3 col-form-label">Re-enter New
+                                            Password</label>
+                                        <div class="col-md-8 col-lg-9 position-relative">
+                                            <input [type]="showConfirm ? 'text' : 'password'"
+                                                formControlName="renewPassword" class="form-control"
+                                                id="renewPassword" />
+                                            <i class="fa" [ngClass]="showConfirm ? 'fa-eye-slash' : 'fa-eye'"
+                                                (click)="showConfirm = !showConfirm"
+                                                style="position: absolute; top: 49%; right: 25px; transform: translateY(-50%); cursor: pointer;"></i>
+                                            <small class="text-danger"
+                                                *ngIf="pwForm.get('renewPassword')?.touched && pwForm.get('renewPassword')?.errors?.['required']">
+                                                Confirmation is required.
+                                            </small>
+                                            <small class="text-danger"
+                                                *ngIf="pwForm.get('renewPassword')?.touched && pwForm.value.newPassword !== pwForm.value.renewPassword">
+                                                Passwords do not match.
+                                            </small>
+                                        </div>
+                                    </div>
+
+                                    <div class="row mb-3">
+                                        <label class="col-md-4 col-lg-3 col-form-label"></label>
+                                        <div class="col-md-8 col-lg-9">
+                                            <button type="submit" class="btn btn-primary">Change Password</button>
+                                        </div>
+                                    </div>
+                                </form>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div> -->
+        </div>
+    </div>
+</div>

@@ -1,0 +1,49 @@
+@if(!service.IsUserAuthenticated){
+<app-login></app-login>
+}@else{
+
+<div class="" [ngClass]="{'expanded': !service.toggle, 'collapsed': service.toggle,'toggle-sidebar':!service.toggle}">
+   <div class="">
+      <app-sidebar [collapsed]="isSidebarCollapsed" [collapsed]="isCollapsed" (togglebar)="isCollapsed = $event" [isMobileNavOpen]="isMobileNavOpen"></app-sidebar>
+      <div>
+         <div class="">
+            <nav class="">
+               <!-- <app-topbar (toggleSidebar)="toggleSidebar()" class=""></app-topbar> -->
+               <app-topbar (toggleSidebar)="isCollapsed = $event" [collapsed]="isCollapsed"></app-topbar>
+            </nav>
+         </div>
+         <div class="">
+            <div class="">
+               <div [ngClass]=" service.showSpinner?'showSpinner':'hideSpinner'">
+                  <div id="loader-wrapper">
+                     <div id="loader">
+                        <div id="spinner">
+                           <div id="inner-circle"></div>
+                           <div id="middle-circle"></div>
+                           <div id="outer-circle"></div>
+                        </div>
+                        <img src="/assets/img/logo.png" alt="Logo" id="loader-logo" />
+                     </div>
+                  </div>
+               </div>
+               <!-- <section
+              class="pcoded-main-container"
+               [class.main-collapsed]="isSidebarCollapsed && !isMobileNavOpen">
+               <router-outlet class=""></router-outlet>
+               </section> -->
+               <section>
+                  <div [ngClass]="{'sidebar_minimize' : isCollapsed, 'uncollapsed-width': isCollapsed}" class="main-panel">
+
+                     <div class="container">
+                        <div class="page-inner" [ngClass]="{'inner-width' : !isCollapsed}">
+                           <router-outlet></router-outlet>
+                        </div>
+                     </div>
+                  </div>
+               </section>
+            </div>
+         </div>
+      </div>
+   </div>
+</div>
+}

@@ -1,0 +1,213 @@
+<div class="popup" [ngClass]="{'d-none':!showPostsPopup}">
+  <app-campaign-posts-popup (togglePopup)="Togglepopup()" #postsPopup></app-campaign-posts-popup>
+
+</div>
+
+<div class="pcoded-content">
+  <div class="page-header mb-0">
+    <h3 class="fw-bold mb-3">Campaign</h3>
+    <ul class="breadcrumbs mb-3">
+      <li class="nav-item">
+        <a [routerLink]="'/dashboard'"><i class=" icon-home"></i></a>
+      </li>
+      <li class="separator">
+        <i class="icon-arrow-right"></i>
+      </li>
+      <li class="nav-item">
+        <a [routerLink]="'/list-campaigns'">Campaign List</a>
+      </li>
+    </ul>
+  </div>
+  <div class="row">
+    <div class="col-md-12">
+      <div class="d-flex justify-content-between align-items-center py-2 px-3 bg-white">
+        <div class="title-table">
+          <h5 class="m-0">Campaign List</h5>
+        </div>
+
+        <div class="d-flex justify-content-end bg-white">
+          <input id="gridSearch" type="text" placeholder="Search..." (input)="onSearch($event)" class="form-control"
+            style="width:500px" />
+        </div>
+        <div>
+          <a [routerLink]="'/add-campaign'">
+            <button type="button" class="btn btn-outline-primary">Add New</button>
+          </a>
+        </div>
+      </div>
+      <ejs-grid #grid [dataSource]="Campaigns" [allowSorting]="true" [allowMultiSorting]="true" [allowPaging]="true" [pageSettings]="pageSettings"
+        [toolbar]="toolbarOptions" 
+        height="400px" [enableHover]="false" [rowHeight]="60">
+
+        <ng-template #toolbarTemplate></ng-template>
+
+        <e-columns>
+          <!-- <e-column field="id" headerText="#" width="80" textAlign="Left"></e-column> -->
+          <e-column headerText="Details" field="name" width="250" [template]="detailsTemplate"></e-column>
+          <e-column headerText="Dates" field="startDate" width="150" [template]="dateTemplate"></e-column>
+          <e-column headerText="Posts" width="200" [template]="postsTemplate"></e-column>
+          <e-column headerText="Actions" width="150" textAlign="Center" [template]="actionTemplate"></e-column>
+        </e-columns>
+      </ejs-grid>
+
+      <ng-template #detailsTemplate let-data>
+        <p class="fw-semibold m-0">{{ data.name }}</p>
+        <p class="text-muted m-0">{{ data.description }}</p>
+      </ng-template>
+
+      <ng-template #dateTemplate let-data>
+        <p class="m-0">
+          <ng-container *ngIf="data.startDate !== data.endDate; else sameDate">
+            {{ data.startDate | date:'d MMMM y' }} – {{ data.endDate | date:'d MMMM y' }}
+          </ng-container>
+          <ng-template #sameDate>
+            {{ data.startDate | date:'d MMMM y' }}
+          </ng-template>
+        </p>
+      </ng-template>
+
+      <!-- <ng-template #postsTemplate let-data>
+        <a class="pointer d-flex w-100 gap-2 mx-3" title="Manage Posts" [routerLink]="'/list-campaign-posts'"
+          [queryParams]="{ campaignId: data.id }">
+          @for(post of data.postData;track $index) {
+          <i class="{{service.platformTypeMapping[post.type].class}} f-20 fa-1x"></i>
+          <span class="count-badge ">
+            {{ post.count }}
+          </span>}
+        </a>
+      </ng-template> -->
+      <ng-template #postsTemplate let-data>
+        <a class="pointer d-flex w-100 gap-2 mx-3" title="Manage Posts" [routerLink]="'/list-campaign-posts'"
+          [queryParams]="{ campaignId: data.id }">
+
+          <ng-container *ngIf="data.postData?.length > 0; else noPosts">
+            @for(post of data.postData;track $index) {
+            <i class="{{service.platformTypeMapping[post.type].class}} f-20 fa-1x"></i>
+            <span class="count-badge ">
+              {{ post.count }}
+            </span>}
+          </ng-container>
+
+          <ng-template #noPosts>
+            <i class="icon-plus f-20 fa-2x text-secondary" title="Add new post"></i>
+          </ng-template>
+        </a>
+      </ng-template>
+
+      <ng-template #actionTemplate let-data>
+        <a class="pointer mx-3" title="Edit Campaign" [routerLink]="'/edit-campaign'" [queryParams]="{ id: data.id }">
+          <i class="far fa-edit"></i>
+        </a>
+
+        <a class="pointer mx-3" title="Delete Campaign" (click)="openDeleteModal(data.id)">
+          <i class="fas fa-trash"></i>
+        </a>
+      </ng-template>
+      <!-- <div class="card">
+        <div class="card-header d-flex aligin-item-center justify-content-between py-2">
+          <div class="title-table d-flex align-items-center">
+            <h5>Campaign List</h5>
+          </div>
+          <div class="">
+            <a [routerLink]="'/add-campaign'"><button type="button" class="btn  btn-outline-primary">Add
+                New</button>
+            </a>
+          </div>
+        </div>
+        <div class="card-header d-flex aligin-item-center justify-content-between py-2">
+          <input type="text" class="form-control w-25" placeholder="Search..." [(ngModel)]="searchTerm"
+            (input)="onSearchChange()" />
+          <div class="d-flex align-items-center justify-content-center ">
+            <div class="mx-2">
+              <span class="text-primary">entries per page</span>
+            </div>
+            <div class="">
+              <select class="form-control" id="itemsPerPageSelect" [(ngModel)]="itemsPerPage"
+                (change)="onItemsPerPageChange(itemsPerPage)">
+                <option *ngFor="let option of itemsPerPageOptions" [value]="option">{{ option }}
+                </option>
+              </select>
+            </div>
+          </div>
+        </div>
+        <div class="card-body table-border-style pb-1">
+          <div class="table-responsive">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th scope="col">#</th>
+                  <th scope="col">Details</th>
+                  <th scope="col">Dates</th>
+                  <th scope="col">Posts</th>
+                  <th scope="col" class="text-center">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr
+                  *ngFor="let item of Campaigns | paginate: { itemsPerPage: itemsPerPage, currentPage: page, totalItems: total }; let i = index">
+                  <td>{{ (page - 1) * itemsPerPage + (i + 1) }}</td>
+                  <td class="align-middle">
+                    <p class="fw-semibold m-0">{{ item.name }}</p>
+                    <p class="text-muted m-0">{{ item.description }}</p>
+                  </td>
+                  <td class="align-middle">
+                    <p class="m-0">
+                      @if(item.startDate != item.endDate) {
+                      From {{ item.startDate | date:'dd-MM-yyyy' }} to {{ item.endDate |
+                      date:'dd-MM-yyyy' }}
+                      } @else {
+                      On {{ item.startDate | date:'dd-MM-yyyy' }}
+                      }
+                    </p>
+                  </td>
+                  <td class="align-middle">
+             
+                    <span>
+                      <a class="pointer mx-3" title="Edit Campaign" [routerLink]="'/list-campaign-posts'"
+                        [queryParams]="{campaignId: item.id}">
+                        <i class="far fa-calendar"></i></a>
+                    </span>
+                  </td>
+                  <td class="align-middle text-center">
+                    <a class="pointer mx-3" title="Edit Campaign" [routerLink]="'/edit-campaign'"
+                      [queryParams]="{id: item.id}">
+                      <i class="far fa-edit"></i>
+                    </a>
+
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+            <div class="d-flex justify-content-end mb-0">
+              <pagination-controls class="pagination" (pageChange)="pageChangeEvent($event)"></pagination-controls>
+            </div>
+          </div>
+        </div>
+      </div> -->
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="deleteCampaignModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true"
+  data-bs-backdrop="static" data-bs-keyboard="false">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title " [ngClass]="!isRecovering?'text-danger':'text-primary'" id="deleteModalLabel">
+          Suspention Confirmation
+        </h5>
+        <button type="button" class="btn ms-auto px-3 text-white" [ngClass]="!isRecovering?'btn-danger':'btn-primary'"
+          data-bs-dismiss="modal" aria-label="Close">x</button>
+      </div>
+      <div class="modal-body">
+        Are you sure you want to @if(!isRecovering){Suspend}@else{Recover} this campaign?
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button type="button" class="btn" [ngClass]="!isRecovering?'btn-danger':'btn-primary'" (click)="delete()">
+          Yes, @if(!isRecovering){Suspend}@else{Recover} this !
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,17 @@
+ /* .user-menu-wrapper {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.7s ease, opacity 0.7s ease;
+    opacity: 0;
+  }
+  .user-menu-wrapper.open {
+    max-height: 500px;
+    opacity: 1;
+  }
+   */
+   .wrapper {
+    min-height: auto;
+    position: relative;
+    top: 0;
+    height: auto;
+}

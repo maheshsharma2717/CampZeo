@@ -1,0 +1,85 @@
+<div [ngClass]="{ 'wrapper': true, 'sidebar_minimize': isSidebarMinimized }">
+    <div class="sidebar " data-background-color="dark">
+        <div class="sidebar-logo">
+            <!-- Logo Header -->
+            <div class="logo-header" data-background-color="dark">
+
+                <a href="index.html" class="logo">
+                    <img src="assets/img/logo2.png" alt="navbar brand" class="navbar-brand" height="50">
+                </a>
+                <div class="nav-toggle" (click)="toggleSidebar()">
+                    <button class="btn btn-toggle toggle-sidebar">
+                        <i class="gg-menu-right"></i>
+                    </button>
+                    <button class="btn btn-toggle sidenav-toggler">
+                        <i class="gg-menu-left"></i>
+                    </button>
+                </div>
+                <button class="topbar-toggler more">
+                    <i class="gg-more-vertical-alt"></i>
+                </button>
+
+            </div>
+            <!-- End Logo Header -->
+        </div>
+        <div class="sidebar-wrapper scrollbar scrollbar-inner">
+            <div class="sidebar-content">
+                <ul class="nav nav-secondary">
+                    <li class="nav-item" [ngClass]="{'active':router.url.includes('list-organisation')}"
+                        *ngIf="!service.User.organisationId && service.User.role == 1"
+                        [ngClass]="{'active':router.url.includes('list-organisation')}">
+                        <a [routerLink]="'list-organisation'" class="">
+                            <i class="fas fa-layer-group"></i>
+                            <p class="pcoded-mtext">Organisation</p>
+                        </a>
+                    </li>
+                    <li class="nav-item" [ngClass]="{'active':router.url.includes('platform-configurations')}"
+                        *ngIf="!service.User.organisationId && service.User.role == 1"
+                        [ngClass]="{'active':router.url.includes('platform-configurations')|| router.url.includes('platform-configurations')}">
+                        <a [routerLink]="'platform-configurations'" class="">
+                            <i class="fas fa-layer-group"></i>
+                            <p class="pcoded-mtext">Platform configurations</p>
+                        </a>
+                    </li>
+                    <li class="nav-item" [ngClass]="{'active':router.url.includes('dashboard')}"
+                        *ngIf="service.User.role > 1">
+                        <a [routerLink]="'dashboard'" class=""><i class="fas fa-home"></i>
+                            <p class="">Dashboard</p>
+                        </a>
+                    </li>
+                    <li class="nav-item" [ngClass]="{'active':router.url.includes('list-contacts')|| 
+                     router.url.includes('add-contact')|| router.url.includes('import-contacts')}"
+                        *ngIf="service.User.role > 1">
+                        <a [routerLink]="'list-contacts'" class="nav-link "><i class="fas fa-envelope"></i>
+                            <p class="">Contacts</p>
+                        </a>
+                    </li>
+                    <li class="nav-item" [ngClass]="{'active': router.url.includes('list-campaigns') ||
+                         router.url.includes('add-campaign')|| 
+                         router.url.includes('campaign-events')}" *ngIf="service.User.role > 1">
+                        <a [routerLink]="'/list-campaigns'" class="">
+                            <i class="feather icon-map"></i>
+                            <p class="">Campaigns</p>
+                        </a>
+                    </li>
+     
+                    <li class="nav-item" [ngClass]="{'active':router.url.includes('event-logs')}"
+                        *ngIf="service.User.role > 1">
+                        <a [routerLink]="'/event-logs'" class="">
+                            <i class="fas fa-book"></i>
+                            <p class="pcoded-mtext">Logs</p>
+                        </a>
+                    </li>
+                    <li class="nav-item" [ngClass]="{'active':router.url.includes('accounts')}"
+                        *ngIf="service.User.role > 1">
+                        <a [routerLink]="'/accounts'" class=" ">
+                            <i class="fas fa-atlas"></i>
+                            <p class="pcoded-mtext">Accounts</p>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+
+        </div>
+    </div>
+</div>

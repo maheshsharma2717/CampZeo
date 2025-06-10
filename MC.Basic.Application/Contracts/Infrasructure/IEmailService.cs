@@ -6,8 +6,9 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace MC.Basic.Application.Contracts.Infrasructure {
-    public interface IEmailService 
+    public interface IEmailService
     {
-        Task<bool> SendEmail(Email email);
+        Task SendPasswordToUserEmail(string userEmail, string password);
+        Task SendEmailMessage(string userEmail, string message);
     }
 }

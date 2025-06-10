@@ -1,0 +1,132 @@
+
+
+/* Full-screen loader wrapper */
+#loader-wrapper {
+   position: fixed;
+   top: 0;
+   left: 0;
+   width: 100%;
+   height: 100%;
+   background-color: rgba(255, 255, 255, 0.8);
+   /* Optional: Background overlay */
+   z-index: 1000;
+   display: flex;
+   justify-content: center;
+   align-items: center;
+   transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+/* Main loader container */
+#loader {
+   position: relative;
+   width: 10vw;
+   height: 10vw;
+}
+
+/* Logo styling to keep it centered and stationary */
+#loader-logo {
+   position: absolute;
+   top: 50%;
+   left: 50%;
+   width: 80px;
+   /* Adjust logo size as needed */
+   height: auto;
+   transform: translate(-50%, -50%);
+   z-index: 1600;
+}
+
+/* Spinner container styling */
+#spinner {
+   position: absolute;
+   top: 50%;
+   left: 50%;
+   transform: translate(-50%, -50%);
+   width: 100%;
+   height: 100%;
+}
+
+/* Circles inside the spinner with animations */
+#inner-circle,
+#middle-circle,
+#outer-circle {
+   position: absolute;
+   border-radius: 50%;
+   border: 3px solid transparent;
+   border-top-color: #3498db;
+   animation: spin linear infinite;
+}
+
+/* Circle sizes and animations */
+#inner-circle {
+   width: 90%;
+   margin: 5%;
+   height: 90%;
+   animation-duration: 2s;
+   border-top-width: 1vh;
+}
+
+#middle-circle {
+   width: 72%;
+   height: 72%;
+   margin: 13%;
+   animation-duration: 3s;
+   border-top-width: 0.8vh;
+}
+
+#outer-circle {
+   width: 100%;
+   height: 100%;
+   animation-duration: 1.5s;
+   border-top-width: 0.3vh;
+}
+
+/* Keyframes for rotation */
+@keyframes spin {
+   0% {
+      transform: rotate(0deg);
+   }
+
+   100% {
+      transform: rotate(360deg);
+   }
+}
+
+/* Show/hide spinner with transitions */
+.showSpinner {
+   visibility: visible;
+   opacity: 1;
+}
+
+.hideSpinner {
+   visibility: hidden;
+   opacity: 0;
+}
+
+.narrow-content .content {
+   width: 93%;
+   height: 90vh;
+   margin-top: 1%;
+   margin-left: 5%;
+   margin-right: auto;
+   padding-top: 5%;
+}
+
+.wider-content .content {
+   width: 98%;
+   height: 95vh;
+   margin: auto;
+   margin-top: 5% !important;
+}
+
+
+.main-collapsed {
+   margin-left: 70px !important;
+}
+
+/* .inner-width {
+   width: calc(100vw - 25%);
+} */
+
+.uncollapsed-width{
+   width: calc(100% - 75px);
+}

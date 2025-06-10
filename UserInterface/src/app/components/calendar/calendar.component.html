@@ -1,0 +1,127 @@
+<div class="pcoded-content">
+    <div class="page-header">
+        <div class="page-block w-100">
+            <div class="container">
+                <div class="content">
+                    <div class="buttons d-inline-block">
+                        <button class="btn btn-secondary btn-calendar" (click)="viewDay()"
+                            [class.selected]="configNavigator.selectMode == 'Day'">Day</button>
+
+                        <button class="btn btn-secondary btn-calendar" (click)="viewWeek()"
+                            [class.selected]="configNavigator.selectMode == 'Week'">Week</button>
+
+                        <button class="btn btn-secondary btn-calendar" (click)="viewMonth()"
+                            [class.selected]="configNavigator.selectMode == 'Month'">Month</button>
+                    </div>
+
+                    <div class="position-relative d-inline-block float-end">
+                        <button class="btn btn-secondary py-2" (click)="toggleNavigator()">
+                            Select Date
+                        </button>
+
+                        <div class="navigator-popup" [class.visible]="showNavigator">
+                            <daypilot-navigator [config]="configNavigator" [events]="events" [(date)]="date"
+                                (dateChange)="onNavigatorDateChange($event)" #navigator>
+                            </daypilot-navigator>
+                        </div>
+                    </div>
+
+                    <daypilot-calendar [config]="configDay" [events]="events" #day></daypilot-calendar>
+                    <daypilot-calendar [config]="configWeek" [events]="events" #week></daypilot-calendar>
+                    <daypilot-month [config]="configMonth" [events]="events" #month></daypilot-month>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<div class="modal fade show d-block" tabindex="-1" role="dialog" *ngIf="isPreviewModalOpen"
+    style="background: rgba(0,0,0,0.5); overflow-y: scroll;">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header bg-gradient bg-secondary text-white px-4 py-3">
+                <h5 class="modal-title">Campaign Post Preview</h5>
+                <button type="button" class="btn btn-danger br-50" aria-label="Close"
+                    (click)="isPreviewModalOpen = false">
+                    <span aria-hidden="true" class="text-white">X</span>
+                </button>
+            </div>
+            <div class="card-body">
+                <div class=" overflow-hidden border-0 ">
+                    <!-- <div class="px-4 py-3">
+                        <h5 class="mb-0 d-flex align-items-center gap-2">
+                            📋 <span>Campaign</span>
+                        </h5>
+                    </div> -->
+                    <div class="card-body px-5 py-2">
+                        <div class="row gy-4">
+                            <div class="col-md-6 text-start">
+                                <label class="form-label fw-semibold text-secondary">📛Campaign Name</label>
+                                <div class="fs-6 fw-medium text-dark ms-4">
+                                    {{ campaignData?.name }}
+                                </div>
+                            </div>
+                            <div class="col-md-6 text-start">
+                                <label class="form-label fw-semibold text-secondary">📝 Description</label>
+                                <div class="fs-6 text-muted ms-4">
+                                    {{ campaignData?.description }}
+                                </div>
+                            </div>
+                            <div class="col-md-6 text-start">
+                                <label class="form-label fw-semibold text-secondary">⏱️ Start Date</label>
+                                <div class="fs-6 fw-normal text-dark ms-4">
+                                    {{ campaignData?.startDate | date:'medium' }}
+                                </div>
+                            </div>
+                            <div class="col-md-6 text-start">
+                                <label class="form-label fw-semibold text-secondary">📅 End Date</label>
+                                <div class="fs-6 fw-normal text-dark ms-4">
+                                    {{ campaignData?.endDate | date:'medium' }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="text-start mt-3">
+                    <label for="subject">Subject</label>
+                    <input class="form-control" id="subject" [value]="previewData?.subject" type="text" readonly />
+                </div>
+
+                <div class="d-flex my-3">
+                    <div class="w-100 text-start">
+                        <label for="organisationName">Message Template</label>
+                        <div *ngIf="previewData?.type === 1">
+                            <div class="border p-2" style="min-height: 30vh;" [innerHTML]="emailHtmlContent"></div>
+                        </div>
+                        <div *ngIf="previewData?.type === 2 || previewData?.type === 3">
+                            <textarea class="form-control" [(ngModel)]="simpleText" style="min-height: 30vh;"
+                                readonly></textarea>
+                        </div>
+                        <div *ngIf="previewData?.type === 4 || previewData?.type === 5 || previewData?.type === 6|| previewData?.type === 7">
+                            <div class="border p-2 html-content-div" style="min-height: 30vh;" [innerHTML]="editorContent"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="text-start mt-3" *ngIf="previewData?.type === 1">
+                    <label for="senderEmail">Sender Email</label>
+                    <input class="form-control" id="senderEmail" [value]="previewData?.senderEmail" type="email"
+                        readonly />
+                </div>
+
+                <div class="text-start mt-3">
+                    <label for="scheduledPostTime">Post Time</label>
+                    <input type="time" id="scheduledPostTime" class="form-control"
+                        [value]="previewData?.scheduledPostTime?.substring(11, 16)" readonly />
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" (click)="isPreviewModalOpen = false">Close</button>
+            </div>
+        </div>
+    </div>
+</div>

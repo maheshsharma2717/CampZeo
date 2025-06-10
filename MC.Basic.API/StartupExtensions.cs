@@ -1,9 +1,10 @@
-﻿using Icms.Helpers;
+﻿using MC.Basic.API.Helpers;
 using MC.Basic.Application;
 using MC.Basic.Infrastructure;
 using MC.Basic.Persistance;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.FileProviders;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Serilog;
@@ -12,7 +13,7 @@ namespace MC.Basic.API
 {
     public static class StartupExtensions
     {
-        public static WebApplication ConfigureServices(this WebApplicationBuilder builder)
+        public  static WebApplication ConfigureServices(this WebApplicationBuilder builder)
         {
             // Add services to the container
             builder.Services.AddAuthentication(options =>
@@ -33,7 +34,7 @@ namespace MC.Basic.API
                     IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(builder.Configuration["JwtSettings:Secret"]))
                 };
             });
-            
+
             builder.Services.AddAuthorization();
             builder.Services.AddSwaggerGen(c =>
             {
@@ -68,15 +69,32 @@ namespace MC.Basic.API
             builder.Services.AddApplicationServices();
             builder.Services.AddInfrastructureService(builder.Configuration);
             builder.Services.AddPersistanceServices(builder.Configuration);
-
+         
             builder.Services.AddControllers();
+            builder.Services.AddHttpClient();
 
-            builder.Services.AddCors(options => options.AddPolicy("open", policy => policy.WithOrigins([builder.Configuration["ApiUrl"] ?? "https://localhost:7020",
-                builder.Configuration["ClientUrl"] ?? "https://Localhost:4200"])
-            .AllowAnyMethod()
-            .SetIsOriginAllowed(pol => true)
-            .AllowAnyHeader()
-            .AllowCredentials()));
+            //builder.Services.AddCors(options => options.AddPolicy("open", policy => policy
+            //.WithOrigins([builder.Configuration["ApiUrl"] ?? "https://localhost:7020",
+            //    builder.Configuration["ClientUrl"] ?? "https://Localhost:4200"])
+            //.AllowAnyMethod()
+            //.SetIsOriginAllowed(pol => true)
+            //.AllowAnyHeader()
+            //.AllowCredentials()));
+            builder.Services.AddCors(options =>
+            {
+                options.AddPolicy("CorsPolicy", builder =>
+                {
+                    builder.WithOrigins("https://campzeo.com", "http://localhost:4200", "http://campzeo.com")
+                           .AllowAnyMethod()
+                           .AllowAnyHeader()
+                           .AllowCredentials();
+                });
+            });
+            builder.Services.AddControllers()
+    .AddNewtonsoftJson(options =>
+    {
+        options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
+    });
 
 
             Log.Logger = new LoggerConfiguration()
@@ -94,22 +112,30 @@ namespace MC.Basic.API
             return builder.Build();
         }
 
+
         public static WebApplication ConfigurePipeline(this WebApplication app)
         {
-            app.UseHttpsRedirection();         
-            app.UseCors("open");               
-
+            app.UseHttpsRedirection();
+            //   app.UseCors("open");
+            app.UseCors("CorsPolicy");
             if(app.Environment.IsDevelopment())
             {
-                app.UseSwagger();              
+                app.UseSwagger();
                 app.UseSwaggerUI();
             }
 
-            app.UseAuthentication();           
+            app.UseAuthentication();
             app.UseMiddleware<JwtMiddleware>();
-            app.UseAuthorization();            
+            app.UseAuthorization();
+            app.UseStaticFiles(); // For wwwroot by default
 
-            app.MapControllers();              
+            app.UseStaticFiles(new StaticFileOptions
+            {
+                FileProvider = new PhysicalFileProvider(
+                    Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/uploads")),
+                RequestPath = "/uploads"
+            });
+            app.MapControllers();
             return app;
         }
 
@@ -122,9 +148,9 @@ namespace MC.Basic.API
                 var context = scope.ServiceProvider.GetService<BasicDbContext>();
                 if(context != null)
                 {
-                    await context.Database.EnsureCreatedAsync();
-                    await context.Database.MigrateAsync();
+                    await PlatformConfigurationSeeder.SeedAsync(context);
                 }
+
             }
             catch(Exception ex)
             {

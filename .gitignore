@@ -361,3 +361,6 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+/MC.Basic.API/appsettings.json
+/UserInterface/package-lock.json
+/MC.Basic.API/wwwroot/uploads

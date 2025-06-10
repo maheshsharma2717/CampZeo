@@ -1,0 +1,154 @@
+<div class="page-header">
+    <h3 class="fw-bold mb-3">Report Logs</h3>
+    <ul class="breadcrumbs mb-3">
+        <li class="nav-home">
+            <a [routerLink]="'/dashboard'">
+                <i class="icon-home"></i>
+            </a>
+        </li>
+        <li class="separator">
+            <i class="icon-arrow-right"></i>
+        </li>
+        <li class="nav-item">
+            <a [routerLink]="'/event-logs'">Report Logs</a>
+        </li>
+
+    </ul>
+</div>
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header d-flex aligin-item-center justify-content-between py-2">
+                <div class="title-table d-flex align-items-center">
+                    <h5>Report Logs</h5>
+                </div>
+                <div class="d-flex align-items-center justify-content-center ">
+                    <div class="mx-2">
+                        <span class="text-primary">entries per page</span>
+                    </div>
+                    <div class="">
+                        <select class="form-control" id="itemsPerPageSelect" [(ngModel)]="itemsPerPage"
+                            (change)="onItemsPerPageChange(itemsPerPage)">
+                            <option *ngFor="let option of itemsPerPageOptions" [value]="option">{{
+                                option }}
+                            </option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="d-flex justify-content-around w-50 mt-2 ">
+                <div class="card  text-center mb-1 selected-email-hover" style="width: 8rem; border-radius: 10px;">
+                    <div class="card-body pt-3 rounded bg-white pointer border" (click)="ChangeType('email')"
+                        [ngClass]="{'selected-email':type =='email'}">
+                        <i class="fas fa-envelope-open fa-2x"></i>
+                        <p class="card-text mt-2">Email</p>
+                    </div>
+                </div>
+
+                <div class="card  text-center mb-1 selected-sms-hover" style="width: 8rem; border-radius: 10px;">
+                    <div class="card-body pt-3 rounded bg-white pointer border" (click)="ChangeType('SMS')"
+                        [ngClass]="{'selected-sms':type =='SMS'}">
+                        <i class="fas fa-sms fa-2x"></i>
+                        <p class="card-text mt-2">SMS</p>
+                    </div>
+                </div>
+
+                <div class="card  text-center mb-1 selected-whatsapp-hover" style="width: 8rem; border-radius: 10px;">
+                    <div class="card-body pt-3 rounded bg-white pointer border" (click)="ChangeType('WhatsApp')"
+                        [ngClass]="{'selected-whatsapp':type=='WhatsApp'}">
+                        <i class="fab fa-whatsapp fa-2x"></i>
+                        <p class="card-text mt-2">WhatsApp</p>
+                    </div>
+                </div>
+                <div class="card  text-center mb-1 selected-rcs-hover " style="width: 8rem; border-radius: 10px;">
+                    <div class="card-body pt-3 rounded bg-white pointer border" (click)="ChangeType('RCS')"
+                        [ngClass]="{'selected-rcs':type=='RCS'}">
+                        <i class="fa fa-globe fa-2x"></i>
+                        <p class="card-text mt-2">RCS</p>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body table-border-style pb-1">
+                <div class="table-responsive">
+                    <!-- <table class="table">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Event</th>
+                                <th>Recipient</th>
+                                <th>Timestamp</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @for(log of logs ;track $index){ <tr>
+                                <td>{{$index+1}}</td>
+                                <td>{{ log.event }}</td>
+                                <td>{{ log.recipient }}</td>
+                                @if (type=="email"){
+
+                                <td>{{ convertToDate(log.timestamp)|date:"dd-MM-yyyy HH:mm" }}</td>
+                                }
+                                @else{<td>{{ log.timestamp }}</td> }
+                            </tr> }
+                        </tbody>
+                    </table> -->
+
+                    <ejs-grid [dataSource]='logs' #grid allowPaging="true" [pageSettings]="pageSettings"
+                        [toolbar]="toolBarOptions"
+                        [sortSettings]="{ columns: [{ field: 'id', direction: 'Descending' }] }" height='400px'
+                        [enableHover]="false">
+
+                        <ng-template #toolbarTemplate></ng-template>
+
+                        <e-columns>
+                            <e-column field="id" headerText="#" width="80" textAlign="Left"></e-column>
+                            <e-column headerText="Event" width="250" [template]="eventTemplate"></e-column>
+                            <e-column headerText="Recipient" width="250" [template]="recipientTemplate"></e-column>
+                            <e-column headerText="Timestamp" width="250" [template]="timeTemplate"></e-column>
+                            <!-- <e-column headerText="Action" width="250" [template]="actionTemplate"></e-column> -->
+                        </e-columns>
+
+                    </ejs-grid>
+
+                    <ng-template #eventTemplate let-data>
+                        <p class="m-0">{{data.event}}</p>
+                    </ng-template>
+                    <ng-template #recipientTemplate let-data>
+                        <p class="m-0">
+                            {{data.recipient}}
+                        </p>
+                    </ng-template>
+                    <ng-template #timeTemplate let-data>
+                        <p class="m-0">
+                            {{data.timestamp}}
+                        </p>
+                    </ng-template>
+                    <!-- <ng-template #actionTemplate let-data>
+                        <a class="pointer mx-3" title="Edit Log" [routerLink]="'/'"
+                            [queryParams]="{ id: data.id }">
+                            <i class="far fa-edit"></i>
+                        </a>
+                    </ng-template> -->
+
+
+                    <div class="d-flex justify-content-end mb-0">
+                        <pagination-controls class="pagination"
+                            (pageChange)="pageChangeEvent($event)"></pagination-controls>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="chat-popup " [ngClass]="{
+        'popup-visible':service.isChatPopupOpen, 
+        'description-visible':logs.length>0
+    }">
+    @if(service.isChatPopupOpen){<app-chat-component></app-chat-component>}
+    @else {
+    <div class="collapse-popup m-2 p-1 card d-flex pointer " (click)="service.isChatPopupOpen=!service.isChatPopupOpen">
+        @if(logs.length>0){<span class="p-1 w-auto pointer">Ask any questions your {{type}}s <i
+                class="fa fa-message fs-xxl"></i>
+        </span> } </div>
+    }
+</div>
