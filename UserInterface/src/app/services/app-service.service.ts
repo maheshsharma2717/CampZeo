@@ -67,6 +67,12 @@ export class AppService {
   CreateOrganisation(request: any) {
     return this.http.post(ApiUrl + "Organisation/CreateOrganisation", request);
   }
+  ResetPassword(req: any) {
+    return this.http.post(ApiUrl + `Account/SendMailToResetPassword/${req}`, req);
+  }
+  resetUserPassword(req: any){
+    return this.http.post(ApiUrl+ 'Account/ResetPassword', req);
+  }
   ApproveOrganisation(request: any) {
     request.token = this.Token;
     return this.http.post(ApiUrl + "Organisation/ApproveOrganisation", request);
@@ -75,15 +81,15 @@ export class AppService {
     request.token = this.Token;
     return this.http.post(ApiUrl + "Organisation/GetOrganisation", request);
   }
- EditOrganisation(request: any) {
-  return this.http.post(ApiUrl + "Organisation/EditOrganisation/", request);
+  EditOrganisation(request: any) {
+    return this.http.post(ApiUrl + "Organisation/EditOrganisation/", request);
   }
-  UpdateOrganisation(id: number,request: any) {
+  UpdateOrganisation(id: number, request: any) {
     return this.http.put(ApiUrl + `Organisation/UpdateOrganisation/${id}`, request)
-  }  
-  getOrganisationByorgId(req: any){
+  }
+  getOrganisationByorgId(req: any) {
     req.token = this.Token;
-    return this.http.post<any>(ApiUrl + 'Organisation/GetOrganisationByOrganisationId',req)
+    return this.http.post<any>(ApiUrl + 'Organisation/GetOrganisationByOrganisationId', req)
   }
   UpdateUser(request: any) {
     return this.http.post(ApiUrl + "Account/UpdateUser", request);
@@ -95,7 +101,7 @@ export class AppService {
     request.token = this.Token;
     return this.http.post(ApiUrl + "Contact/CreateContact", request);
   }
-  deleteContact(req: any){
+  deleteContact(req: any) {
     req.token = this.Token;
     return this.http.post(ApiUrl + 'Contact/DeleteContactById', req);
   }
@@ -136,8 +142,8 @@ export class AppService {
     request.token = this.Token;
     return this.http.post(ApiUrl + "Campaign/CreateCampaign", request);
   }
-  
-  deleteCampaignById(req: any){
+
+  deleteCampaignById(req: any) {
     req.token = this.Token;
     return this.http.post<any>(ApiUrl + "Campaign/DeleteCampaign", req);
   }
@@ -155,7 +161,7 @@ export class AppService {
     request.token = this.Token;
     return this.http.post(ApiUrl + "CampaignPost/CreateCampaignPost", request);
   }
-  deleteCampaignPostById(request: any){
+  deleteCampaignPostById(request: any) {
     request.token = this.Token;
     return this.http.post<any>(ApiUrl + 'CampaignPost/DeleteCampaignPost', request);
   }
@@ -336,11 +342,11 @@ export class AppService {
     request.token = this.Token;
     return this.http.post(ApiUrl + "Campaign/send-campaign-post", request);
   }
-  UpdatePlatformConfiguration(request:any) {
+  UpdatePlatformConfiguration(request: any) {
     request.token = this.Token;
     return this.http.post(ApiUrl + "AdminPlatformConfiguration/UpdatePlatformConfiguration", request);
   }
-  GetPlatformConfigurations(request:any) {
+  GetPlatformConfigurations(request: any) {
     request.token = this.Token;
     return this.http.post(ApiUrl + "AdminPlatformConfiguration/GetPlatformConfiguration", request);
   }
