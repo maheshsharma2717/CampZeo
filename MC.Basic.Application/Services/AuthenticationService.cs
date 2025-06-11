@@ -2,7 +2,7 @@
 using MC.Basic.Application.Contracts.Persistance;
 using MC.Basic.Application.Models.Authentication;
 using MC.Basic.Application.Models.DataModel;
-using MC.Basic.Domain;
+using MC.Basic.Domains;
 using MC.Basic.Domains.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage.Json;
@@ -74,7 +74,7 @@ namespace MC.Basic.Application.Services
             //var password = EncryptString(passwordKey, Password);
             //var dbUser = await _repository.GetRecordWithIncludes(x => x.Organisation,x => x.Organisation.Id == Id);
             //if(dbUser != null)
-            var dbUser = await _repository.GetQuariable().Include(x => x.Organisation).SingleOrDefaultAsync(x => x.Organisation.Id == Id);
+            var dbUser = await _repository.GetQuariable().Include(x => x.Organisation).SingleOrDefaultAsync(x => x.OrganisationId == Id);
             if (dbUser != null)
             {
                 var token = generateJwtToken(dbUser);

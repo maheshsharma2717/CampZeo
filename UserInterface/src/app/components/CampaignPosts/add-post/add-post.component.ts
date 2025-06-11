@@ -22,7 +22,7 @@ export class AddPostComponent {
     message: new FormControl(''),
     senderEmail: new FormControl('', [Validators.required, Validators.email]),
     scheduledPostTime: new FormControl('', Validators.required),
-    type: new FormControl(1),
+    type: new FormControl(0),
     html: new FormControl('')
   });
   campaigns: any[] = [];
@@ -43,7 +43,7 @@ export class AddPostComponent {
   campaignInputValue = '';
   showCampaignDropdown = false;
 
-  constructor(private service: AppService, private toaster: ToastrService, private activatedRoute: ActivatedRoute, private route: Router) {
+  constructor(public service: AppService, private toaster: ToastrService, private activatedRoute: ActivatedRoute, private route: Router) {
     this.activatedRoute.queryParams.subscribe(param => {
       this.id = param['id']
       this.CampaignPostForm.patchValue({

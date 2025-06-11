@@ -1,4 +1,4 @@
-﻿namespace MC.Basic.Domain;
+﻿namespace MC.Basic.Domains;
 
 public enum PlatformType : long
 {

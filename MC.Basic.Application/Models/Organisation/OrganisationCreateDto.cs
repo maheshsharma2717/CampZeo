@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MC.Basic.Application.Models.DataModel;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,15 +9,17 @@ namespace MC.Basic.Application.Models.Organisation
 {
     public class OrganisationCreateDto
     {
-        public string Name { get; set; }
-        public string Phone { get; set; }
-        public string Email { get; set; }
-        public string Address { get; set; }
-        public string OwnerName { get; set; }
-        public string City { get; set; }
-        public string State { get; set; }
-        public string Country { get; set; }
-        public string PostalCode { get; set; }
+        public long Id { get; set; }=0;
+        public string? Name { get; set; }
+        public string? OwnerName { get; set; }
+         public string? Phone { get; set; }
+         public string? Email { get; set; }
+         public string? Address { get; set; }
+         public string? City { get; set; }
+         public string? State { get; set; }
+         public string? Country { get; set; }
+         public string? PostalCode { get; set; }
+         public List<OrganisationPlatformRequest>? OrganisationPlatform { get; set; }
     }
     public class AdminUserResponseDto
     {
@@ -29,20 +32,20 @@ namespace MC.Basic.Application.Models.Organisation
         public string LastName { get; set; }
     }
 
-    public class OrganisationUpdateDto
-    {
-        public long Id { get; set; }
-        public string? Name { get; set; }
-        public string? OwnerName { get; set; }
-        public string? Phone { get; set; }
-        public string? Email { get; set; }
-        public string? Address { get; set; }
-        public string? City { get; set; }
-        public string? State { get; set; }
-        public string? Country { get; set; }
-        public string? PostalCode { get; set; }
-        // Add any other fields you want to update
-    }
+    //public class OrganisationUpdateDto
+    //{
+    //    public long Id { get; set; }
+    //    public string? Name { get; set; }
+    //    public string? OwnerName { get; set; }
+    //    public string? Phone { get; set; }
+    //    public string? Email { get; set; }
+    //    public string? Address { get; set; }
+    //    public string? City { get; set; }
+    //    public string? State { get; set; }
+    //    public string? Country { get; set; }
+    //    public string? PostalCode { get; set; }
+    //    public List<OrganisationPlatformRequest>? OrganisationPlatform { get; set; }
+    //}
 
     public class OrganisationEditDto
     {
