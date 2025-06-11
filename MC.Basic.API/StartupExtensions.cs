@@ -68,18 +68,9 @@ namespace MC.Basic.API
 
             builder.Services.AddApplicationServices();
             builder.Services.AddInfrastructureService(builder.Configuration);
-            builder.Services.AddPersistanceServices(builder.Configuration);
-         
+            builder.Services.AddPersistanceServices(builder.Configuration);         
             builder.Services.AddControllers();
             builder.Services.AddHttpClient();
-
-            //builder.Services.AddCors(options => options.AddPolicy("open", policy => policy
-            //.WithOrigins([builder.Configuration["ApiUrl"] ?? "https://localhost:7020",
-            //    builder.Configuration["ClientUrl"] ?? "https://Localhost:4200"])
-            //.AllowAnyMethod()
-            //.SetIsOriginAllowed(pol => true)
-            //.AllowAnyHeader()
-            //.AllowCredentials()));
             builder.Services.AddCors(options =>
             {
                 options.AddPolicy("CorsPolicy", builder =>
@@ -112,13 +103,14 @@ namespace MC.Basic.API
             return builder.Build();
         }
 
-
         public static WebApplication ConfigurePipeline(this WebApplication app)
         {
             app.UseHttpsRedirection();
-            //   app.UseCors("open");
+
+            // app.UseCors("open");
             app.UseCors("CorsPolicy");
-            if(app.Environment.IsDevelopment())
+
+            if (app.Environment.IsDevelopment())
             {
                 app.UseSwagger();
                 app.UseSwaggerUI();
@@ -127,13 +119,20 @@ namespace MC.Basic.API
             app.UseAuthentication();
             app.UseMiddleware<JwtMiddleware>();
             app.UseAuthorization();
-            app.UseStaticFiles(); // For wwwroot by default
+
+            // Ensure uploads directory exists
+            var uploadPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads");
+            if (!Directory.Exists(uploadPath))
+            {
+                Directory.CreateDirectory(uploadPath);
+            }
+
+            app.UseStaticFiles(); // For default wwwroot
 
             if (!Path.Exists("wwwroot/uploads")) Directory.CreateDirectory("wwwroot/uploads");
             app.UseStaticFiles(new StaticFileOptions
             {
-                FileProvider = new PhysicalFileProvider(
-                    Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/uploads")),
+                FileProvider = new PhysicalFileProvider(uploadPath),
                 RequestPath = "/uploads"
             });
 
