@@ -131,7 +131,6 @@ export class OrganisationListComponent implements OnInit, OnDestroy {
   //   })
   // }
 
-
  onLogin(item: any) {
   debugger;
   this.service.LogInAsOrgenisation(item.id).subscribe({
