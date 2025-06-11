@@ -48,7 +48,7 @@ onAdminClick() {
     this.service.SetToken(adminToken, false);   
 
    // this.toaster.success('Switched back to Admin!');
-   this.router.navigate(['/list-organisation']); 
+   //this.router.navigate(['/list-organisation']); 
     location.reload();
   } else {
     //this.toaster.error('Admin token not found.');

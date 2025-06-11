@@ -1,4 +1,4 @@
-﻿using MC.Basic.Domain;
+﻿using MC.Basic.Domains;
 using MC.Basic.Domains.Entities;
 using MC.Basic.Persistance;
 using Microsoft.EntityFrameworkCore;

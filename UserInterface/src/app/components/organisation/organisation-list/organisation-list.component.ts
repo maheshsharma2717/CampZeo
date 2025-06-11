@@ -101,12 +101,17 @@ export class OrganisationListComponent implements OnInit, OnDestroy {
     }
   }
   approveItem(data: any) {
+      if (data.isApproved) {
+    this.toaster.warning('This organisation is already approved.');
+    return;
+  }
     var organisationId = data.id;
     var request = { data: organisationId }
     this.service.ApproveOrganisation(request).subscribe({
       next: (response: any) => {
         if (response.isSuccess) {
           data = response.data;
+           this.toaster.success('Organisation approved successfully.');
           this.loadOrganisations()
         }
       }
@@ -132,25 +137,25 @@ export class OrganisationListComponent implements OnInit, OnDestroy {
   // }
 
 
- onLogin(item: any) {
-  debugger;
-  this.service.LogInAsOrgenisation(item.id).subscribe({
-    next: (response: any) => {
-      if (response.isSuccess) {
-        // Set current active token
-        this.service.SetToken(response.data.token, false);
+  onLogin(item: any) {
+    debugger;
+    this.service.LogInAsOrgenisation(item.id).subscribe({
+      next: (response: any) => {
+        if (response.isSuccess) {
+          // Set current active token
+          this.service.SetToken(response.data.token, false);
 
-        // Save impersonated user token separately
-        localStorage.setItem('user_token', response.data.token);
+          // Save impersonated user token separately
+          localStorage.setItem('user_token', response.data.token);
 
-        this.service.User = response.data;
-        this.toaster.success('Login success');
+          this.service.User = response.data;
+          // this.toaster.success('Login success');
 
         if (response.data) {
           this.router.navigate(['/profile'], { queryParams: { i: 'CompleteProfile' } });
         }
       } else {
-        this.toaster.error('Invalid Email or password');
+        this.toaster.warning('Organistion is not approved yet');
       }
     }
   });
