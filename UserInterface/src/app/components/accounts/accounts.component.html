@@ -22,7 +22,7 @@
                     <div class="card">
                         <div class="my-4">
                             <div class="d-flex g-3">
-                                <div class="d-flex flex-column" *ngIf="service.checkVisblePlatform(5)">
+                                <div class="d-flex flex-column">
                                     <div class="card text-center selected-facebook-hover mx-3 mb-2"
                                         style="width: 8rem; border-radius: 10px;">
                                         <div class="card-body rounded pt-4 bg-white pointer border"
@@ -34,7 +34,7 @@
                                     </div>
                                     <p *ngIf="isFacebookConnected" class="text-success text-center">Connected</p>
                                 </div>
-                                <div class="d-flex flex-column"  *ngIf="service.checkVisblePlatform(6)">
+                                <div class="d-flex flex-column">
                                     <div class="card text-center selected-instagram-hover mb-2"
                                         style="width: 8rem; border-radius: 10px;">
                                         <div class="card-body rounded pt-4 bg-white pointer border"
@@ -46,7 +46,7 @@
                                     </div>
                                     <p *ngIf="isInstagramConnected" class="text-success text-center">Connected</p>
                                 </div>
-                                <div class="d-flex flex-column p-2"  *ngIf="service.checkVisblePlatform(7)">
+                                <div class="d-flex flex-column">
                                     <div class="card text-center selected-instagram-hover mb-2"
                                         style="width: 8rem; border-radius: 10px;">
                                         <div class="card-body rounded pt-4 bg-white pointer border"

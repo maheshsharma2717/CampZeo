@@ -266,27 +266,6 @@ namespace MC.Basic.Persistance.Migrations
                     b.ToTable("Organizations");
                 });
 
-            modelBuilder.Entity("MC.Basic.Domains.Entities.OrganisationPlatform", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<long>("Id"));
-
-                    b.Property<long>("OrganisationId")
-                        .HasColumnType("bigint");
-
-                    b.Property<long>("Platform")
-                        .HasColumnType("bigint");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("OrganisationId");
-
-                    b.ToTable("OrganisationPlatform");
-                });
-
             modelBuilder.Entity("MC.Basic.Domains.Entities.PostInsight", b =>
                 {
                     b.Property<long>("Id")
@@ -534,17 +513,6 @@ namespace MC.Basic.Persistance.Migrations
                         .HasForeignKey("OrganisationId");
                 });
 
-            modelBuilder.Entity("MC.Basic.Domains.Entities.OrganisationPlatform", b =>
-                {
-                    b.HasOne("MC.Basic.Domains.Entities.Organisation", "Organisation")
-                        .WithMany("OrganisationPlatform")
-                        .HasForeignKey("OrganisationId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Organisation");
-                });
-
             modelBuilder.Entity("MC.Basic.Domains.Entities.User", b =>
                 {
                     b.HasOne("MC.Basic.Domains.Entities.Organisation", "Organisation")
@@ -564,8 +532,6 @@ namespace MC.Basic.Persistance.Migrations
                     b.Navigation("Campaigns");
 
                     b.Navigation("Contacts");
-
-                    b.Navigation("OrganisationPlatform");
 
                     b.Navigation("Users");
                 });

@@ -26,10 +26,10 @@ export class ForgotPasswordComponent {
     this.service.ResetPassword(email).subscribe({
       next: (res: any) => {
         console.log(res);
-        if (res.isSuccess == false) {
+        if(res.isSuccess == false){
           this.toaster.error(res.message);
           this.isSubmitted = false;
-        } else {
+        }else{
           this.toaster.success("Success");
           this.isSubmitted = true;
         }

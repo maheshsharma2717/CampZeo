@@ -1,4 +1,4 @@
-﻿using MC.Basic.Domains;
+﻿using MC.Basic.Domain;
 using System;
 using System.Collections.Generic;
 using System.Linq;

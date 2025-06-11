@@ -14,7 +14,7 @@ namespace MC.Basic.Persistance.Repositories
         public OrganizationRepository(BasicDbContext dbContext) : base(dbContext) { }
         public async Task<Organisation> CreateOrUpdate(Organisation organisation)
         {
-            var dbOrganisation = await GetRecordWithIncludes(org => org.OrganisationPlatform ,org => org.Id == organisation.Id);
+            var dbOrganisation = await GetQuariable().SingleOrDefaultAsync(org => org.Id == organisation.Id);
             if(dbOrganisation == null)
             {
                 dbOrganisation = await CreateAsync(organisation);
@@ -30,37 +30,11 @@ namespace MC.Basic.Persistance.Repositories
                 dbOrganisation.Phone = organisation.Phone;
                 dbOrganisation.Email = organisation.Email;
                 dbOrganisation.Address = organisation.Address;
+                dbOrganisation.IsApproved = organisation.IsApproved;
                 dbOrganisation.City = organisation.City;
                 dbOrganisation.State = organisation.State;
                 dbOrganisation.Country = organisation.Country;
                 dbOrganisation.PostalCode = organisation.PostalCode;
-                if(dbOrganisation.OrganisationPlatform != null && organisation.OrganisationPlatform != null)
-                {
-                    foreach(var platform in organisation.OrganisationPlatform)
-                    {
-                        var existingPlatform = dbOrganisation.OrganisationPlatform
-                            .FirstOrDefault(p => p.Platform == platform.Platform);
-
-                        if(existingPlatform == null)
-                        {
-                            dbOrganisation.OrganisationPlatform.Add(platform);
-                        }
-                        else
-                        {
-                            existingPlatform.Platform = platform.Platform;
-                        }
-                    }
-
-                    var platformsToRemove = dbOrganisation.OrganisationPlatform
-                        .Where(p => !organisation.OrganisationPlatform.Any(op => op.Platform == p.Platform))
-                        .ToList();
-
-                    foreach(var platformToRemove in platformsToRemove)
-                    {
-                        dbOrganisation.OrganisationPlatform.Remove(platformToRemove);
-                    }
-                }
-
                 dbOrganisation = await UpdateAsync(dbOrganisation);
             }
             return dbOrganisation;
@@ -129,7 +103,7 @@ namespace MC.Basic.Persistance.Repositories
         {
             try
             {
-                var dbOrganisation = await GetRecordWithIncludes(org => org.OrganisationPlatform, org => org.Id == orgId && !org.IsDeleted);
+                var dbOrganisation = await GetQuariable().SingleOrDefaultAsync(org => org.Id == orgId && !org.IsDeleted);
                 if (dbOrganisation == null)
                 {
                     throw new Exception("Invalid Organisation");

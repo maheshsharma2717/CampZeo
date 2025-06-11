@@ -8,7 +8,7 @@ using MC.Basic.Application.Models.Organisation;
 using MC.Basic.Application.Models.PlatformConfiguration;
 using MC.Basic.Application.Models.Post;
 using MC.Basic.Application.Models.Twilio;
-using MC.Basic.Domains;
+using MC.Basic.Domain;
 using MC.Basic.Domains.Entities;
 using MC.Basic.Infrastructure.Message;
 using MC.Basic.Persistance;
@@ -73,7 +73,6 @@ public class ApplicationService : IApplicationService
         // Map DTO to entity
         var organisation = new Organisation
         {
-            Id=request.Data.Id,
             Name = request.Data.Name,
             Phone = request.Data.Phone,
             Email = request.Data.Email,
@@ -83,15 +82,11 @@ public class ApplicationService : IApplicationService
             City = request.Data.City,
             State = request.Data.State,
             Country = request.Data.Country,
-            
+            Users = new List<User>(),
+            Campaigns = new List<Campaign>(),
+            Contacts = new List<Contact>()
         };
-        if(request.Data.OrganisationPlatform != null)
-        {
-            organisation.OrganisationPlatform = request.Data.OrganisationPlatform.Select(op => new OrganisationPlatform
-            {
-                Platform = op.Platform,
-            }).ToList();
-        }
+
         var savedOrganisation = await _organisationRepository.CreateOrUpdate(organisation);
 
         // Build response
@@ -110,7 +105,7 @@ public class ApplicationService : IApplicationService
         var organisation = await _organisationRepository.GetAsyncById(request.Data);
 
 
-        if(request == null || request.Data <= 0)
+        if (request == null || request.Data <= 0)
         {
             return new ApiResponse<OrganisationEditDto>
             {
@@ -139,9 +134,9 @@ public class ApplicationService : IApplicationService
     }
 
 
-    public async Task<ApiResponse<Organisation>> UpdateOrganisation(OrganisationCreateDto request)
+    public async Task<ApiResponse<Organisation>> UpdateOrganisation(OrganisationUpdateDto request)
     {
-        if(request == null || request.Id <= 0)
+        if (request == null || request.Id <= 0)
         {
             return new ApiResponse<Organisation>
             {
@@ -152,7 +147,7 @@ public class ApplicationService : IApplicationService
         }
 
         var org = await _context.Organizations.FindAsync(request.Id);
-        if(org == null)
+        if (org == null)
         {
             return new ApiResponse<Organisation>
             {
@@ -180,10 +175,10 @@ public class ApplicationService : IApplicationService
                 Data = org
             };
         }
-        catch(Exception ex)
+        catch (Exception ex)
         {
             var errorMsg = ex.Message;
-            if(ex.InnerException != null)
+            if (ex.InnerException != null)
                 errorMsg += " | Inner Exception: " + ex.InnerException.Message;
 
             // Ideally log errorMsg here
@@ -284,7 +279,7 @@ public class ApplicationService : IApplicationService
                 </div>
             </body>
             </html>";
-        if(dbOrganisation.IsDeleted) message = $@"
+        if (dbOrganisation.IsDeleted) message = $@"
 <!DOCTYPE html>
 <html>
 <head>
@@ -365,7 +360,7 @@ public class ApplicationService : IApplicationService
 
         Expression<Func<Organisation, bool>> filter = c => true;
 
-        if(request.Data.IsDeleted != null)
+        if (request.Data.IsDeleted != null)
             filter = c => c.IsDeleted == request.Data.IsDeleted;
 
         response.Data = await _organisationRepository.GetPagedRecords(
@@ -397,7 +392,7 @@ public class ApplicationService : IApplicationService
     {
         var OrganizationId = GetOrganisationIdFromToken(request.Token);
         ApiResponse<List<Contact>> response = new ApiResponse<List<Contact>>();
-        if(OrganizationId == 0)
+        if (OrganizationId == 0)
         {
             response.Data = new List<Contact>();
             response.IsSuccess = false;
@@ -445,7 +440,7 @@ public class ApplicationService : IApplicationService
     public async Task<ApiResponse<Contact>> DeleteContactById(ApiRequest<long> request)
     {
         var contact = await _contactRepository.GetAsyncById(request.Data);
-        if(contact == null)
+        if (contact == null)
         {
             return new ApiResponse<Contact>
             {
@@ -540,7 +535,7 @@ public class ApplicationService : IApplicationService
         request.Data.SearchText,
         "id",
         true);
-        if(dbCapmaigns != null)
+        if (dbCapmaigns != null)
         {
             var activeCampains = dbCapmaigns.List.Where(c => !c.IsDeleted).ToList();
             var result = activeCampains.Select(campaign => new CampaignListModel
@@ -593,7 +588,7 @@ public class ApplicationService : IApplicationService
 
         var postId = request.Data;
         var dbpost = await _campaignPostRepository.GetAsyncById(postId);
-        if(dbpost != null)
+        if (dbpost != null)
         {
             var org = _organisationRepository.GetQuariable().Include(x => x.Contacts).SingleOrDefault(x => x.Id == OrganizationId);
             var contacts = org.Contacts;
@@ -641,7 +636,7 @@ public class ApplicationService : IApplicationService
         var OrganizationId = GetOrganisationIdFromToken(request.Token);
 
         ApiResponse<CampaignPost> response = new ApiResponse<CampaignPost>();
-        if(campainId == request.Data.CampaignId)
+        if (campainId == request.Data.CampaignId)
         {
 
             response.Data = await _campaignPostRepository.CreateUpdateMessageTemplate(request.Data);
@@ -650,14 +645,14 @@ public class ApplicationService : IApplicationService
         else
         {
             var removePrevious = _campaignPostRepository.GetQuariable().Where(x => x.CampaignId == campainId && x.Type == request.Data.Type).FirstOrDefault();
-            if(removePrevious != null)
+            if (removePrevious != null)
             {
                 removePrevious.CampaignId = null;
                 removePrevious.IsAttachedToCampaign = false;
                 await _campaignPostRepository.UpdateAsync(removePrevious);
             }
 
-            if(request.Data.CampaignId == null)
+            if (request.Data.CampaignId == null)
             {
                 request.Data.CampaignId = campainId;
                 request.Data.IsAttachedToCampaign = true;
@@ -753,7 +748,7 @@ public class ApplicationService : IApplicationService
 
         var OrganizationId = GetOrganisationIdFromToken(request.Token);
         ApiResponse<List<CampaignPost>> response = new ApiResponse<List<CampaignPost>>();
-        if(OrganizationId == 0)
+        if (OrganizationId == 0)
         {
             response.Data = new List<CampaignPost>();
             response.IsSuccess = false;
@@ -773,7 +768,7 @@ public class ApplicationService : IApplicationService
 
         var campaignId = request.Data.ParentId;
         ApiResponse<ListResponse<List<CampaignPost>>> response = new ApiResponse<ListResponse<List<CampaignPost>>>();
-        if(campaignId == 0)
+        if (campaignId == 0)
         {
             response.Data = new ListResponse<List<CampaignPost>>(new List<CampaignPost>(), 0);
             response.IsSuccess = false;
@@ -948,7 +943,7 @@ public class ApplicationService : IApplicationService
         password.Append(lowerChars[random.Next(lowerChars.Length)]);
         password.Append(digits[random.Next(digits.Length)]);
         password.Append(specialChars[random.Next(specialChars.Length)]);
-        for(int i = 4; i < length; i++)
+        for (int i = 4; i < length; i++)
         {
             password.Append(allChars[random.Next(allChars.Length)]);
         }
@@ -959,7 +954,7 @@ public class ApplicationService : IApplicationService
     private static void ShuffleArray(char[] array)
     {
         Random random = new Random();
-        for(int i = array.Length - 1; i > 0; i--)
+        for (int i = array.Length - 1; i > 0; i--)
         {
             int j = random.Next(i + 1);
             // Swap
@@ -973,18 +968,18 @@ public class ApplicationService : IApplicationService
         byte[] iv = new byte[16];
         byte[] array;
 
-        using(Aes aes = Aes.Create())
+        using (Aes aes = Aes.Create())
         {
             aes.Key = Encoding.UTF8.GetBytes(key);
             aes.IV = iv;
 
             ICryptoTransform encryptor = aes.CreateEncryptor(aes.Key, aes.IV);
 
-            using(MemoryStream memoryStream = new MemoryStream())
+            using (MemoryStream memoryStream = new MemoryStream())
             {
-                using(CryptoStream cryptoStream = new CryptoStream((Stream)memoryStream, encryptor, CryptoStreamMode.Write))
+                using (CryptoStream cryptoStream = new CryptoStream((Stream)memoryStream, encryptor, CryptoStreamMode.Write))
                 {
-                    using(StreamWriter streamWriter = new StreamWriter((Stream)cryptoStream))
+                    using (StreamWriter streamWriter = new StreamWriter((Stream)cryptoStream))
                     {
                         streamWriter.Write(plainText);
                     }
@@ -998,11 +993,11 @@ public class ApplicationService : IApplicationService
     }
     private List<Contact> GetContactsFromCsv(IFormFile file)
     {
-        using(var stream = new StreamReader(file.OpenReadStream()))
+        using (var stream = new StreamReader(file.OpenReadStream()))
         {
             // You can use CsvHelper or similar to process the CSV file.
             var contacts = new List<Contact>();
-            using(var csv = new CsvHelper.CsvReader(stream, CultureInfo.InvariantCulture))
+            using (var csv = new CsvHelper.CsvReader(stream, CultureInfo.InvariantCulture))
             {
 
                 //skip headers
@@ -1028,7 +1023,7 @@ public class ApplicationService : IApplicationService
     }
     private long GetOrganisationIdFromToken(string token)
     {
-        if(string.IsNullOrEmpty(token))
+        if (string.IsNullOrEmpty(token))
         {
             return 0; // Return 0 if the token is invalid or empty
         }
@@ -1038,7 +1033,7 @@ public class ApplicationService : IApplicationService
             var tokenHandler = new JwtSecurityTokenHandler();
             var jwtToken = tokenHandler.ReadToken(token) as JwtSecurityToken;
 
-            if(jwtToken == null)
+            if (jwtToken == null)
             {
                 return 0; // Return 0 if token can't be read as JwtSecurityToken
             }
@@ -1046,7 +1041,7 @@ public class ApplicationService : IApplicationService
             // Extract the organisationId claim from the token
             var organisationIdClaim = jwtToken.Claims.FirstOrDefault(claim => claim.Type == "organisationId");
 
-            if(organisationIdClaim != null && long.TryParse(organisationIdClaim.Value, out var organisationId))
+            if (organisationIdClaim != null && long.TryParse(organisationIdClaim.Value, out var organisationId))
             {
                 return organisationId;
             }
@@ -1093,7 +1088,7 @@ public class ApplicationService : IApplicationService
     private async Task<string> SendWhatsapp(List<Contact> contacts, CampaignPost messageTemplate)
     {
         var recipients = contacts.Select(x => x.ContactWhatsApp).ToList();
-        if(messageTemplate != null && recipients.Any())
+        if (messageTemplate != null && recipients.Any())
         {
             var result = await _smsService.SendBatchWhatsappSms(new Application.Models.DataModel.TwilioMessageParams(recipients, messageTemplate.Message));
             return result;
@@ -1106,7 +1101,7 @@ public class ApplicationService : IApplicationService
     private async Task<string> SendSms(List<Contact> contacts, CampaignPost messageTemplate)
     {
         var recipients = contacts.Select(x => x.ContactMobile).ToList();
-        if(messageTemplate != null && recipients.Any())
+        if (messageTemplate != null && recipients.Any())
         {
             var result = await _smsService.SendBatchSms(new TwilioSmsParams(recipients, messageTemplate.Message));
             return result;
@@ -1125,7 +1120,7 @@ public class ApplicationService : IApplicationService
             .Select(x => x.ContactMobile)
             .ToList();
 
-        if(!recipients.Any())
+        if (!recipients.Any())
         {
             return "No valid recipients found.";
         }
@@ -1135,7 +1130,7 @@ public class ApplicationService : IApplicationService
             var result = await _infoBipSmsService.SendMediaMessageAsync(new Application.Models.DataModel.InfobipMessageParams(recipients, messageTemplate.Message));
             return $"RCS messages sent successfully. ";
         }
-        catch(Exception ex)
+        catch (Exception ex)
         {
             return $"Failed to send RCS messages: {ex.Message}";
         }
@@ -1158,9 +1153,9 @@ public class ApplicationService : IApplicationService
 
         var savedCampaign = await _campaignRepository.CreateUpdateCampaign(campaign, organisationId);
 
-        foreach(var templateDto in request.Data.CampaignMessageTemplates)
+        foreach (var templateDto in request.Data.CampaignMessageTemplates)
         {
-            if(templateDto.ScheduledPostTime < savedCampaign.StartDate || templateDto.ScheduledPostTime > savedCampaign.EndDate)
+            if (templateDto.ScheduledPostTime < savedCampaign.StartDate || templateDto.ScheduledPostTime > savedCampaign.EndDate)
             {
                 return new ApiResponse<Campaign>
                 {
@@ -1170,9 +1165,9 @@ public class ApplicationService : IApplicationService
             }
         }
         var campaignMessageTemplates = new CampaignPost();
-        foreach(var templateDto in request.Data.CampaignMessageTemplates)
+        foreach (var templateDto in request.Data.CampaignMessageTemplates)
         {
-            if(templateDto.ScheduledPostTime < savedCampaign.StartDate ||
+            if (templateDto.ScheduledPostTime < savedCampaign.StartDate ||
                 templateDto.ScheduledPostTime > savedCampaign.EndDate)
                 continue;
 
@@ -1211,26 +1206,26 @@ public class ApplicationService : IApplicationService
 
         DateTime startDate, endDate;
 
-        switch(mode.ToLower())
+        switch (mode.ToLower())
         {
             case "day":
-            startDate = date.Date;
-            endDate = date.Date.AddDays(1).AddTicks(-1);
-            break;
+                startDate = date.Date;
+                endDate = date.Date.AddDays(1).AddTicks(-1);
+                break;
 
             case "week":
-            int diff = (7 + (date.DayOfWeek - DayOfWeek.Monday)) % 7;
-            startDate = date.AddDays(-diff).Date;
-            endDate = startDate.AddDays(7).AddTicks(-1);
-            break;
+                int diff = (7 + (date.DayOfWeek - DayOfWeek.Monday)) % 7;
+                startDate = date.AddDays(-diff).Date;
+                endDate = startDate.AddDays(7).AddTicks(-1);
+                break;
 
             case "month":
-            startDate = new DateTime(date.Year, date.Month, 1);
-            endDate = startDate.AddMonths(1).AddTicks(-1);
-            break;
+                startDate = new DateTime(date.Year, date.Month, 1);
+                endDate = startDate.AddMonths(1).AddTicks(-1);
+                break;
 
             default:
-            throw new ArgumentException("Invalid mode. Must be 'day', 'week', or 'month'.");
+                throw new ArgumentException("Invalid mode. Must be 'day', 'week', or 'month'.");
         }
 
         var campaigns = await _campaignRepository.ToListWhereAsync(c => c.OrganisationId == organisationId);
@@ -1271,7 +1266,7 @@ public class ApplicationService : IApplicationService
 
         var post = await _campaignPostRepository.GetById(postId);
 
-        if(post == null)
+        if (post == null)
         {
             return new ApiResponse<CampaignPostDto>
             {
@@ -1300,7 +1295,7 @@ public class ApplicationService : IApplicationService
         var campaign = await _campaignRepository.GetQuariable()
             .FirstOrDefaultAsync(x => x.Id == request.Data.CampaignId);
 
-        if(campaign == null)
+        if (campaign == null)
         {
             return new ApiResponse<string>
             {
@@ -1309,7 +1304,7 @@ public class ApplicationService : IApplicationService
             };
         }
 
-        if(request.Data.Contacts == null || !request.Data.Contacts.Any())
+        if (request.Data.Contacts == null || !request.Data.Contacts.Any())
         {
             return new ApiResponse<string>
             {
@@ -1336,30 +1331,30 @@ public class ApplicationService : IApplicationService
 
         StringBuilder sb = new StringBuilder();
 
-        switch(request.Data.Type)
+        switch (request.Data.Type)
         {
             case PlatformType.Email:
-            sb.AppendLine(await SendMail(contacts, messageTemplate));
-            break;
+                sb.AppendLine(await SendMail(contacts, messageTemplate));
+                break;
 
             case PlatformType.SMS:
-            sb.AppendLine(await SendSms(contacts, messageTemplate));
-            break;
+                sb.AppendLine(await SendSms(contacts, messageTemplate));
+                break;
 
             case PlatformType.WhatsApp:
-            sb.AppendLine(await SendWhatsapp(contacts, messageTemplate));
-            break;
+                sb.AppendLine(await SendWhatsapp(contacts, messageTemplate));
+                break;
 
             case PlatformType.RCS:
-            sb.AppendLine(await SendRcs(contacts, messageTemplate));
-            break;
+                sb.AppendLine(await SendRcs(contacts, messageTemplate));
+                break;
 
             default:
-            return new ApiResponse<string>
-            {
-                IsSuccess = false,
-                Data = "Unsupported platform type."
-            };
+                return new ApiResponse<string>
+                {
+                    IsSuccess = false,
+                    Data = "Unsupported platform type."
+                };
         }
 
         return new ApiResponse<string>
@@ -1398,7 +1393,7 @@ public class ApplicationService : IApplicationService
     {
 
         var platformConfiguration = await _platformConfigurationRepository.GetAsync(x => x.Id == request.Data.Id);
-        if(platformConfiguration != null)
+        if (platformConfiguration != null)
         {
             platformConfiguration.Value = request.Data.Value;
             await _platformConfigurationRepository.UpdateAsync(platformConfiguration);
@@ -1416,56 +1411,6 @@ public class ApplicationService : IApplicationService
                 Data = "Platform configuration not found."
             };
         }
-    }
-    public async Task<ApiResponse<List<PlatformDto>>> GetPlatforms(ApiRequest<long> request)
-    {
-        // get all platform form Enum
-        var platforms = Enum.GetValues(typeof(PlatformType)).Cast<PlatformType>().ToList();
-        return new ApiResponse<List<PlatformDto>>
-        {
-            IsSuccess = true,
-            Data = platforms.Select(p => new PlatformDto(p)).ToList()
-        };
-    }
-    public async Task<ApiResponse<List<PlatformDto>>> GetPlatformsForOrganisation(ApiRequest<long> request)
-    {
-        var response = new ApiResponse<List<PlatformDto>>
-        {
-            Data = new List<PlatformDto>()
-        };
-        var user = await _userRepository.GetAsync(x => x.Token == request.Token);
-        if(user != null)
-        {
-            var organisation = await _organisationRepository.GetRecordWithIncludes(x => x.OrganisationPlatform, x => x.Id == user.OrganisationId);
-   if(organisation!=null){         response.Data = organisation.OrganisationPlatform
-                     .Select(op => new PlatformDto(op.Platform))
-                     .ToList();
-                response.IsSuccess = true;
-            }
-            return response;
-        }
-        return response;
-    }
-    public async Task<ApiResponse<string>> AssginPlatformForOrganisation(ApiRequest<OrganisationPlatformRequest> request)
-    {
-        var response = new ApiResponse<string>
-        {
-            Data = string.Empty
-        };
-        var user = await _userRepository.GetAsync(x => x.Token == request.Token);
-        if(user != null)
-        {
-            var dbOrganisation = await _organisationRepository.GetRecordWithIncludes(x => x.OrganisationPlatform, x => x.Id == user.OrganisationId);
-            dbOrganisation.OrganisationPlatform.Add(new OrganisationPlatform
-            {
-                OrganisationId = dbOrganisation.Id,
-                Platform = request.Data.Platform
-            });
-            await _organisationRepository.UpdateAsync(dbOrganisation);
-            response.IsSuccess = true;
-            return response;
-        }
-        return response;
     }
 
 }

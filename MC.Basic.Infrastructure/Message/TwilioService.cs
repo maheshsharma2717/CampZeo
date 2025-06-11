@@ -15,7 +15,7 @@ using System.Text.RegularExpressions;
 using System.Text;
 using System.Collections.Concurrent;
 using MC.Basic.Application.Contracts.Persistance;
-using MC.Basic.Domains;
+using MC.Basic.Domain;
 
 namespace MC.Basic.Infrastructure.Message 
 {

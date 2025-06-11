@@ -1,7 +1,7 @@
 ﻿using MC.Basic.Application.Contracts.Persistance;
 using MC.Basic.Application.Models.DataModel;
 using MC.Basic.Application.Models.Post;
-using MC.Basic.Domains;
+using MC.Basic.Domain;
 using MC.Basic.Domains.Entities;
 using MC.Basic.Persistance;
 using Microsoft.AspNetCore.Mvc;

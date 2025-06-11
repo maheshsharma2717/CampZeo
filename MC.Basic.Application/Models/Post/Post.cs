@@ -1,4 +1,4 @@
-﻿using MC.Basic.Domains;
+﻿using MC.Basic.Domain;
 using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;
 using System;

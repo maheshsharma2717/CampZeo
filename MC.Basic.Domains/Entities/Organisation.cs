@@ -13,7 +13,6 @@ namespace MC.Basic.Domains.Entities {
             Users = new List<User>();
             Campaigns = new List<Campaign>();
              Contacts= new List<Contact>();
-            OrganisationPlatform = new List<OrganisationPlatform>();
         }
         public string Name { get; set; }
         public string Phone { get; set; }
@@ -27,7 +26,6 @@ namespace MC.Basic.Domains.Entities {
         public bool IsApproved { get; set; } = false;
         public bool IsDeleted { get; set; } = false;
         public ICollection<User> Users { get; set; }
-        public ICollection<OrganisationPlatform> OrganisationPlatform { get; set; }
         public ICollection<Campaign> Campaigns { get; set; }
         public ICollection<Contact> Contacts { get; set; }
     }

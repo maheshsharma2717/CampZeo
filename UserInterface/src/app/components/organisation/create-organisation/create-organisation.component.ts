@@ -3,12 +3,11 @@ import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } 
 import { AppService } from '../../../services/app-service.service';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
-import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-create-organisation',
   standalone: true,
-  imports: [FormsModule, ReactiveFormsModule, RouterModule, CommonModule],
+  imports: [FormsModule, ReactiveFormsModule, RouterModule],
   templateUrl: './create-organisation.component.html',
   styleUrl: './create-organisation.component.css'
 })
@@ -16,8 +15,7 @@ export class CreateOrganisationComponent implements OnInit {
   organisationId: any;
   editMode: boolean = false;
   organisationDeatails: any;
-
-  constructor(public service: AppService, private toaster: ToastrService, private router: Router, private activatedRoutes: ActivatedRoute) {
+  constructor(private service: AppService, private toaster: ToastrService, private router: Router, private activatedRoutes: ActivatedRoute) {
     activatedRoutes.queryParams.subscribe(param => {
       this.organisationId = param['id'];
       if (this.organisationId) {
@@ -36,60 +34,58 @@ export class CreateOrganisationComponent implements OnInit {
     state: new FormControl('', Validators.required),
     country: new FormControl('', Validators.required),
     postalCode: new FormControl('', Validators.required),
-    organisationPlatform: new FormControl([[]]),
   });
-  SelectedPlatforms: any[] = []
 
   ngOnInit(): void {
     this.activatedRoutes.queryParams.subscribe({
       next: (param: any) => {
         this.organisationId = param['id'];
-
-        if (this.organisationId > 0 && this.organisationId != null) {
-          var req = { data: parseInt(this.organisationId ?? "0") }
-
-          this.service.getOrganisationByorgId(req).subscribe({
-            next: (res: any) => {
-              this.form.patchValue(res.data);
-              this.SelectedPlatforms = res.data.organisationPlatform || [];
-            }
-          })
-        }
       }
     })
-  }
-  selectType(platform: any) {
-    if (this.checkSelected(platform)) {
-      this.SelectedPlatforms = this.SelectedPlatforms.filter((p: any) => p.platform !== platform);
-      return;
+    if (this.organisationId > 0 && this.organisationId != null) {
+      var req = { data: parseInt(this.organisationId ?? "0") }
+
+      this.service.getOrganisationByorgId(req).subscribe({
+        next: (res: any) => {
+          this.form.patchValue(res.data)
+        }
+      })
     }
-    this.SelectedPlatforms.push({
-      platform: platform
-    });
   }
-  checkSelected(platform: any) {
-    return this.SelectedPlatforms.find((p: any) => p.platform == platform) !== undefined;
-  }
+
   onSubmit() {
-    var payload = this.form.value;
-    payload.organisationPlatform = this.SelectedPlatforms;
-    var request = { data: this.form.value };
+    const payload = this.form.value;
+    if (this.organisationId) {
+      const numericId = Number(this.organisationId);
 
-    if (parseInt(this.organisationId) > 0) {
-      request.data.id = this.organisationId
-    } else {
-      request.data.id = 0;
-    }
-
-    this.service.CreateOrganisation(request).subscribe({
-      next: (response: any) => {
-        if (response.isSuccess) {
-          this.toaster.success("Organisation Created Successfuly")
-          this.router.navigate(['/list-organisation'])
+      this.service.UpdateOrganisation(numericId, payload).subscribe({
+        next: (response: any) => {
+          this.toaster.success("Organisation Updated Successfully");
+          this.router.navigate(['/list-organisation']);
+        },
+        error: (err) => {
+          this.toaster.error("Failed to update organisation");
+          console.error('Update failed:', err);
         }
-      }
-    })
+      });
+    } else {
+      var request = { data: this.form.value };
 
+      if (parseInt(this.organisationId) > 0) {
+        request.data.id = this.organisationId
+      } else {
+        request.data.id = 0;
+      }
+
+      this.service.CreateOrganisation(request).subscribe({
+        next: (response: any) => {
+          if (response.isSuccess) {
+            this.toaster.success("Organisation Created Successfuly")
+            this.router.navigate(['/list-organisation'])
+          }
+        }
+      })
+    }
   }
   redirectToInstagram() {
     const instagramAuthUrl = 'https://api.instagram.com/oauth/authorize' +

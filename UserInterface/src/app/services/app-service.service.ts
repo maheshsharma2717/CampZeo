@@ -26,7 +26,6 @@ export class AppService {
     6: { name: 'Instagram', class: "fab fa-instagram" },
     7: { name: 'Linkedin', class: "fab fa-linkedin-in" }
   };
-  Platforms: any[] = [];
 
   constructor(private http: HttpClient, private router: Router) { }
 
@@ -37,7 +36,7 @@ export class AppService {
     this.IsUserAuthenticated = true;
   }
 
-
+  
   ValidateToken(token: any) {
     var form = new FormData();
     form.append('token', token);
@@ -47,24 +46,14 @@ export class AppService {
           this.SetToken(response.data.token, false);
           this.User = response.data;
           this.IsUserAuthenticated = true;
-          this.GetPlatformsForOrganisation({}).subscribe({
-            next: (res: any) => {
-              var platforms = res.data;
-              this.Platforms =platforms
-              if (!response.data.firstName) {
-                this.router.navigate(['/profile'], { queryParams: { i: 'CompleteProfile' } });
-              }
-            }
-          });
+          if (!response.data.firstName) {
+            this.router.navigate(['/profile'], { queryParams: { i: 'CompleteProfile' } });
+          }
         } else {
           this.ClearToken()
         }
       }
     })
-  }
-  checkVisblePlatform(platform:any):boolean {
-    var result=this.Platforms.find((p: any) => p.id == platform) != null;
-    return result;
   }
   ClearToken() {
     localStorage.removeItem('token');
@@ -86,8 +75,8 @@ export class AppService {
   ResetPassword(req: any) {
     return this.http.post(ApiUrl + `Account/SendMailToResetPassword/${req}`, req);
   }
-  resetUserPassword(req: any) {
-    return this.http.post(ApiUrl + 'Account/ResetPassword', req);
+  resetUserPassword(req: any){
+    return this.http.post(ApiUrl+ 'Account/ResetPassword', req);
   }
   ApproveOrganisation(request: any) {
     request.token = this.Token;
@@ -288,9 +277,9 @@ export class AppService {
     return this.http.post(`${ApiUrl}socialmedia/post-instagram`, payload);
   }
   postToLinkedIn(payload: any): Observable<any> {
-    var req = { token: this.Token, data: payload }
-    return this.http.post(`${ApiUrl}socialmedia/post-linkedin`, req);
-  }
+    var req ={ token: this.Token, data: payload }
+  return this.http.post(`${ApiUrl}socialmedia/post-linkedin`, req);
+}
 
   uploadMedia(base64Data: string): Observable<string> {
     return this.http.post<{ fileUrl: string }>(`${ApiUrl}socialmedia/upload-media-file`, {
@@ -369,14 +358,6 @@ export class AppService {
   GetPlatformConfigurations(request: any) {
     request.token = this.Token;
     return this.http.post(ApiUrl + "AdminPlatformConfiguration/GetPlatformConfiguration", request);
-  }
-  GetPlatformsForOrganisation(request: any) {
-    request.token = this.Token;
-    return this.http.post(ApiUrl + "Organisation/GetPlatformForOrganisation", request);
-  }
-  AssginPlatformForOrganisation(request: any) {
-    request.token = this.Token;
-    return this.http.post(ApiUrl + "Organisation/AssginPlatformForOrganisation", request);
   }
 }
 

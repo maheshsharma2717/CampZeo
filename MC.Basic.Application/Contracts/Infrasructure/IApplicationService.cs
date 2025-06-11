@@ -5,7 +5,7 @@ using MC.Basic.Application.Models.DataModel;
 using MC.Basic.Application.Models.Organisation;
 using MC.Basic.Application.Models.PlatformConfiguration;
 using MC.Basic.Application.Models.Post;
-using MC.Basic.Domains;
+using MC.Basic.Domain;
 using MC.Basic.Domains.Entities;
 using Microsoft.AspNetCore.Http;
 
@@ -58,8 +58,5 @@ namespace MC.Basic.Application.Contracts.Infrasructure
         Task <ApiResponse<Campaign>>DeleteCampaignById(ApiRequest<long> id);
         Task<ApiResponse<CampaignPost>> DeleteCampaignPostById(ApiRequest<long> id);
         Task<ApiResponse<Organisation>> GetOrganisationByOrganisationId(ApiRequest<long> request);
-        Task<ApiResponse<List<PlatformDto>>> GetPlatforms(ApiRequest<long> request);
-        Task<ApiResponse<List<PlatformDto>>> GetPlatformsForOrganisation(ApiRequest<long> request);
-        Task<ApiResponse<string>> AssginPlatformForOrganisation(ApiRequest<OrganisationPlatformRequest> request);
     }
 }

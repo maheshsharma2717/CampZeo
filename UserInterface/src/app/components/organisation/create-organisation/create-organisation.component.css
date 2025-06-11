@@ -1,9 +1,0 @@
-.selected{
-    opacity: 1 !important;
-}
-.selected-hover div{
-    opacity: 0.5;
-}
-.selected-hover div:hover{
-    opacity: 1;
-}
