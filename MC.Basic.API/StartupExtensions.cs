@@ -129,12 +129,14 @@ namespace MC.Basic.API
             app.UseAuthorization();
             app.UseStaticFiles(); // For wwwroot by default
 
+            if (!Path.Exists("wwwroot/uploads")) Directory.CreateDirectory("wwwroot/uploads");
             app.UseStaticFiles(new StaticFileOptions
             {
                 FileProvider = new PhysicalFileProvider(
                     Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/uploads")),
                 RequestPath = "/uploads"
             });
+
             app.MapControllers();
             return app;
         }
