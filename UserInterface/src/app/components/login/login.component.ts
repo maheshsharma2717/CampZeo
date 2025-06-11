@@ -73,7 +73,7 @@ export class LoginComponent implements OnInit{
           localStorage.setItem('IsFirstLogin', response.data.isFirstLogin);
           localStorage.setItem('UserRole', response.data.role);
 
-          this.toastr.success('Login success');
+          // this.toastr.success('Login success');
 
           if (response.data.isFirstLogin === true && this.service.User.role !== 1) {
             sessionStorage.setItem('FirstLoginDialogShown', 'true');

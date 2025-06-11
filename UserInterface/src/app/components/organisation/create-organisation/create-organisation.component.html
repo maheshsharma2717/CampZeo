@@ -1,5 +1,5 @@
 <div class="page-header pb-0">
-    <h3 class="fw-bold mb-3">Create Organisations</h3>
+    <h3 class="fw-bold mb-3">{{editMode ? 'Update Organisation':'Create Organisations'}}</h3>
     <ul class="breadcrumbs mb-3">
         <li class="nav-item">
             <a [routerLink]="'/list-organisation'"><i class=" icon-home"></i></a>
@@ -14,7 +14,7 @@
             <i class="icon-arrow-right"></i>
         </li>
         <li class="nav-item">
-            <a [routerLink]="'/create-organisation'">CreateOrganisations </a>
+            <a [routerLink]="'/create-organisation'">{{editMode ? 'Update Organisation':'Create Organisations'}} </a>
         </li>
     </ul>
 </div>
@@ -22,7 +22,7 @@
     <div class="col-sm-12">
         <div class="card">
             <div class="card-header">
-                <h5>Add Organisation</h5>
+                <h5>{{editMode ? 'Edit Organisation':'Add Organisations'}}</h5>
             </div>
             <div class="card-body">
                 <form [formGroup]="form" (ngSubmit)="onSubmit()">
