@@ -101,12 +101,17 @@ export class OrganisationListComponent implements OnInit, OnDestroy {
     }
   }
   approveItem(data: any) {
+      if (data.isApproved) {
+    this.toaster.warning('This organisation is already approved.');
+    return;
+  }
     var organisationId = data.id;
     var request = { data: organisationId }
     this.service.ApproveOrganisation(request).subscribe({
       next: (response: any) => {
         if (response.isSuccess) {
           data = response.data;
+           this.toaster.success('Organisation approved successfully.');
           this.loadOrganisations()
         }
       }
@@ -150,7 +155,7 @@ export class OrganisationListComponent implements OnInit, OnDestroy {
           this.router.navigate(['/profile'], { queryParams: { i: 'CompleteProfile' } });
         }
       } else {
-        this.toaster.error('Invalid Email or password');
+        this.toaster.warning('Organistion is not approved yet');
       }
     }
   });
