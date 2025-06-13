@@ -1,6 +1,5 @@
-<div class="page-header pb-0">
-    <h3 class="fw-bold mb-3">Create Contact</h3>
-    <ul class="breadcrumbs mb-3">
+<div class="page-header pb-0 flex-column align-items-start">
+    <ul class="breadcrumbs mb-3" style="margin-left: 0; padding-left: 0; border: none;">
         <li class="nav-item">
             <a [routerLink]="'/dashboard'"><i class=" icon-home"></i></a>
         </li>
@@ -14,9 +13,10 @@
             <i class="icon-arrow-right"></i>
         </li>
         <li class="nav-item">
-            <a [routerLink]="'/add-contact'">Create Contact </a>
+            <a [routerLink]="'/add-contact'">{{ editMode ? 'Update Contact':'Create Contact'}} </a>
         </li>
     </ul>
+    <h3 class="fw-bold mb-3">{{ editMode ? 'Update Contact':'Create Contact'}}</h3>
 </div>
 <div class="row">
     <div class="col-sm-12">
