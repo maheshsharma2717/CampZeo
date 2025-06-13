@@ -172,25 +172,22 @@ namespace MC.Basic.Application.Services
         public async Task<ApiResponse<User>> ResetUserPassword(ResetPasswordDto request)
         {
             ApiResponse<User> response = new ApiResponse<User>();
-            var user = await _repository.GetAsync(u => u.Email == request.Email);
+            var user = await _repository.GetAsync(u => u.ResetToken == request.Token);
             if (user == null)
             {
-                response.Message = "User not found. Please enter a valid Email and try again.";
+                response.Message = "The link to reset your password is expired.";
                 response.IsSuccess = false;
                 response.Data = null;
                 return response;
             }
-            if(user.ResetToken == request.Token)
+            else
             {
                 user.Password = EncryptString(passwordKey, request.Password);
                 user.IsFirstLogin = false;
+                user.ResetToken = string.Empty;
                 response.Data = await _repository.UpdateAsync(user);
                 response.IsSuccess = true;
                 response.Message = "Password reset Successful";
-            }
-            else
-            {
-                throw new Exception("Invalid Password");
             }
             return response;
         }
