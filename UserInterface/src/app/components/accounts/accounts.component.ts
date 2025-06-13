@@ -21,18 +21,16 @@ export class AccountsComponent {
   isFacebookConnected: boolean = false;
   isInstagramConnected: boolean = false;
   isLinkedInConnected: boolean = false;
-
   private fbAppId = '1308015943977582';
   private redirectUri = window.location.origin + '/auth-callback';
   linkedinClientId: any = "";
   constructor(private route: ActivatedRoute, private router: Router, private http: HttpClient,
     public service: AppService, private toaster: ToastrService) { }
+
   ngOnInit(): void {
-
     const userId = this.service.User.id;
-
+    localStorage.removeItem('fbRedirect')
     this.service.getSocialMediaTokenByUser(userId).subscribe({
-
       next: (res: any) => {
         const now = new Date();
         const expiry = new Date(res.expiresAt);
@@ -45,11 +43,6 @@ export class AccountsComponent {
           this.selectedPlatform = 'instagram';
           this.getPages(res.accessToken);
         }
-        // if (expiry > now) {
-        //   this.isFacebookConnected = true;
-        //   this.selectedPlatform = 'facebook';
-        //   this.getPages(res.accessToken);
-        // } 
         else {
           this.isFacebookConnected = false;
         }
@@ -58,12 +51,9 @@ export class AccountsComponent {
         }
       },
       error: () => {
-        // this.isFacebookConnected = false;
 
       }
     });
-
-
   }
 
   getPages(token: string): void {
@@ -73,31 +63,17 @@ export class AccountsComponent {
     });
   }
 
-  // loginWithFacebook(): void {
-  //   const scope = 'pages_show_list,pages_manage_posts,pages_read_engagement,pages_manage_metadata,instagram_basic,instagram_content_publish';
-  //   const fbLoginUrl = `https://www.facebook.com/v19.0/dialog/oauth?client_id=${this.fbAppId}&redirect_uri=${this.redirectUri}&scope=${scope}&response_type=code`;
-  //   window.location.href = fbLoginUrl;
-  // }
   loginWithFacebook(): void {
-
     const scope = 'public_profile,pages_show_list,pages_manage_posts,pages_read_engagement,pages_manage_metadata,instagram_basic,instagram_content_publish,business_management';
-
     const redirectUri = encodeURIComponent(this.redirectUri);
     const state = 'facebook';
-
     const fbLoginUrl = `https://www.facebook.com/v19.0/dialog/oauth?client_id=${this.fbAppId}&redirect_uri=${redirectUri}&scope=${scope}&response_type=code&state=${state}`;
     window.location.href = fbLoginUrl;
+    localStorage.setItem('fbRedirect', 'true');
   }
 
-  // postMessage(pageId: string, pageAccessToken: string, message: string) {
-  //   this.service.postToFacebook(pageId, pageAccessToken, message).subscribe(() => {
-  //     alert('Posted successfully!');
-  //   });
-  // }
   loginWithInstagram(): void {
-
     const scope = 'instagram_basic,instagram_content_publish,pages_show_list,pages_read_engagement';
-
     const redirectUri = encodeURIComponent(this.redirectUri);
     const state = 'instagram';
     const igLoginUrl = `https://www.facebook.com/v16.0/dialog/oauth?client_id=${this.fbAppId}&redirect_uri=${redirectUri}&scope=${scope}&response_type=code&state=${state}`;
@@ -106,10 +82,9 @@ export class AccountsComponent {
   }
 
   connectToLinkedIn() {
-    const redirectUri = this.redirectUri; // This must match LinkedIn app settings
+    const redirectUri = this.redirectUri;
     const scope = 'w_member_social profile openid';
     const state = 'linkedIn';
-
     const authUrl = `https://www.linkedin.com/oauth/v2/authorization` +
       `?response_type=code` +
       `&client_id=${this.linkedinClientId}` +
@@ -118,5 +93,4 @@ export class AccountsComponent {
 
     window.location.href = authUrl;
   }
-
 }

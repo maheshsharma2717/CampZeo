@@ -1,7 +1,7 @@
 ﻿using MC.Basic.Application.Models.DataModel;
 using MC.Basic.Application.Models.Mail;
 using MC.Basic.Application.Models.Twilio;
-using MC.Basic.Domain;
+using MC.Basic.Domains;
 using RestSharp;
 
 namespace MC.Basic.Application.Contracts.Infrasructure

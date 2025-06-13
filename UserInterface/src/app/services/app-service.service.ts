@@ -3,13 +3,12 @@ import { Injectable } from '@angular/core';
 import { environment } from '../../environments/environments';
 import { Router } from '@angular/router';
 import { BehaviorSubject, map, Observable } from 'rxjs';
+import { AuthService } from './auth.service';
 const ApiUrl = environment.API_BASE_URL
 @Injectable({
   providedIn: 'root'
 })
 export class AppService {
-
-
   IsUserAuthenticated = false;
   toggle: boolean = true;
   Token: string = "";
@@ -26,8 +25,9 @@ export class AppService {
     6: { name: 'Instagram', class: "fab fa-instagram" },
     7: { name: 'Linkedin', class: "fab fa-linkedin-in" }
   };
+  Platforms: any[] = [];
 
-  constructor(private http: HttpClient, private router: Router) { }
+  constructor(private http: HttpClient, private router: Router, private authService: AuthService) { }
 
   SetToken(token: any, rememberMe: boolean) {
     if (rememberMe) { localStorage.setItem('token', token); }
@@ -36,24 +36,44 @@ export class AppService {
     this.IsUserAuthenticated = true;
   }
 
-  
+
   ValidateToken(token: any) {
-    var form = new FormData();
+    const fbRedirect = localStorage.getItem('fbRedirect');
+
+    const form = new FormData();
     form.append('token', token);
+
     this.http.post(ApiUrl + "Account/ValidateToken", form).subscribe({
       next: (response: any) => {
         if (response.isSuccess) {
           this.SetToken(response.data.token, false);
           this.User = response.data;
           this.IsUserAuthenticated = true;
-          if (!response.data.firstName) {
-            this.router.navigate(['/profile'], { queryParams: { i: 'CompleteProfile' } });
+          this.GetPlatformsForOrganisation({}).subscribe({
+            next: (res: any) => {
+              var platforms = res.data;
+              this.Platforms =platforms
+              this.authService.setCurrentUser(response.data);
+
+          if (fbRedirect) {
+            this.router.navigate(['/accounts']);
+            return;
           }
+              if (!response.data.firstName) {
+                this.router.navigate(['/profile'], { queryParams: { i: 'CompleteProfile' } });
+              }
+            }
+          });
         } else {
-          this.ClearToken()
+          this.ClearToken();
+          this.authService.clearCurrentUser(); // optional cleanup
         }
       }
-    })
+    });
+  }
+  checkVisblePlatform(platform:any):boolean {
+    var result=this.Platforms.find((p: any) => p.id == platform) != null;
+    return result;
   }
   ClearToken() {
     localStorage.removeItem('token');
@@ -75,8 +95,8 @@ export class AppService {
   ResetPassword(req: any) {
     return this.http.post(ApiUrl + `Account/SendMailToResetPassword/${req}`, req);
   }
-  resetUserPassword(req: any){
-    return this.http.post(ApiUrl+ 'Account/ResetPassword', req);
+  resetUserPassword(req: any) {
+    return this.http.post(ApiUrl + 'Account/ResetPassword', req);
   }
   ApproveOrganisation(request: any) {
     request.token = this.Token;
@@ -244,11 +264,6 @@ export class AppService {
     return this.http.get<any>(`${ApiUrl}socialmedia/user-social-media-tokens/${userId}`);
   }
 
-  // postToFacebook(pageId: string, pageAccessToken: string, message: string) {
-  //   const payload = { pageId, pageAccessToken, message };
-  //   return this.http.post(`${ApiUrl}socialmedia/post-facebook`, payload);
-  // }
-
   postToFacebook(payload: {
     pageId: string;
     pageAccessToken: string;
@@ -263,10 +278,6 @@ export class AppService {
     return this.http.get(`${ApiUrl}socialmedia/instagram-business-account?pageId=${pageId}&accessToken=${token}`);
   }
 
-  // postToInstagram(instagramUserId: string, accessToken: string, caption: string, imageUrl: string) {
-  //   const payload = { instagramUserId, accessToken, caption ,imageUrl};
-  //   return this.http.post(`${ApiUrl}socialmedia/post-instagram`, payload);
-  // }
   postToInstagram(payload: {
     instagramUserId: string;
     accessToken: string;
@@ -277,9 +288,9 @@ export class AppService {
     return this.http.post(`${ApiUrl}socialmedia/post-instagram`, payload);
   }
   postToLinkedIn(payload: any): Observable<any> {
-    var req ={ token: this.Token, data: payload }
-  return this.http.post(`${ApiUrl}socialmedia/post-linkedin`, req);
-}
+    var req = { token: this.Token, data: payload }
+    return this.http.post(`${ApiUrl}socialmedia/post-linkedin`, req);
+  }
 
   uploadMedia(base64Data: string): Observable<string> {
     return this.http.post<{ fileUrl: string }>(`${ApiUrl}socialmedia/upload-media-file`, {
@@ -358,6 +369,14 @@ export class AppService {
   GetPlatformConfigurations(request: any) {
     request.token = this.Token;
     return this.http.post(ApiUrl + "AdminPlatformConfiguration/GetPlatformConfiguration", request);
+  }
+  GetPlatformsForOrganisation(request: any) {
+    request.token = this.Token;
+    return this.http.post(ApiUrl + "Organisation/GetPlatformForOrganisation", request);
+  }
+  AssginPlatformForOrganisation(request: any) {
+    request.token = this.Token;
+    return this.http.post(ApiUrl + "Organisation/AssginPlatformForOrganisation", request);
   }
 }
 

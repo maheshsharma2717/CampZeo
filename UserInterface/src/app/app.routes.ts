@@ -25,8 +25,11 @@ import { AddPostComponent } from './components/CampaignPosts/add-post/add-post.c
 import { PlatformConfigurationComponent } from './components/PlatformConfiguration/platform-configuration.component';
 import { ForgotPasswordComponent } from './components/forgot-password/forgot-password.component';
 import { ResetPasswordComponent } from './components/reset-password/reset-password.component';
+
 export const routes: Routes = [
-    { path: 'dashboard', component: DashboardComponent , canActivate: [PasswordChangeGuard]},
+    // { path: 'auth-callback',component: AuthCallbackComponent },
+    { path: 'auth-callback', loadComponent: () => import('./components/auth-callback/auth-callback.component').then(m => m.AuthCallbackComponent) },
+    { path: 'dashboard', component: DashboardComponent, canActivate: [PasswordChangeGuard] },
     { path: 'login', component: LoginComponent },
     { path: 'signup', component: SignUpComponent },
     { path: 'create-organisation', component: CreateOrganisationComponent },
@@ -35,19 +38,19 @@ export const routes: Routes = [
     { path: 'add-contact', component: AddContactComponent },
     { path: 'edit-contact', component: AddContactComponent },
     { path: 'import-contacts', component: ImportContactsComponent },
-    { path: 'list-contacts', component: ListContactComponent , canActivate: [PasswordChangeGuard]},
+    { path: 'list-contacts', component: ListContactComponent, canActivate: [PasswordChangeGuard] },
     { path: 'update-contact', component: AddContactComponent },
     { path: 'add-campaign', component: AddCampaignComponent },
     { path: 'edit-campaign', component: AddCampaignComponent },
-    { path: 'list-campaigns', component: ListCampaignComponent , canActivate: [PasswordChangeGuard]},
-    { path: 'list-campaign-posts', component: ListPostsComponent , canActivate: [PasswordChangeGuard]},
+    { path: 'list-campaigns', component: ListCampaignComponent, canActivate: [PasswordChangeGuard] },
+    { path: 'list-campaign-posts', component: ListPostsComponent, canActivate: [PasswordChangeGuard] },
     { path: 'add-post', component: AddPostComponent },
     { path: 'edit-post', component: AddPostComponent },
     { path: 'campaign-events', component: EventComponent },
-    { path: 'event-logs', component: EventLogsComponent, canActivate: [PasswordChangeGuard]},
+    { path: 'event-logs', component: EventLogsComponent, canActivate: [PasswordChangeGuard] },
     { path: 'chat', component: ChatComponentComponent },
-    {path:'auth-callback',component:AuthCallbackComponent},
-    {path:'accounts',component:AccountsComponent},
+    { path: 'auth-callback', component: AuthCallbackComponent },
+    { path: 'accounts', component: AccountsComponent },
     { path: 'post-insights', component: PostInsightsComponent },
     { path: 'calendar', component: CalendarComponent },
     { path: 'platform-configurations', component: PlatformConfigurationComponent },

@@ -94,17 +94,17 @@
                                 <label for="city">City <span class="text-danger">*</span></label>
                                 <input type="text" class="form-control" id="city" rows="3" formControlName="city">
                                 @if(form.get('city')?.invalid && form.get('city')?.touched){
-                                    <span class="text-danger">City is required</span>
+                                <span class="text-danger">City is required</span>
                                 }
                             </div>
                         </div>
-                        
+
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label for="state">State <span class="text-danger">*</span></label>
                                 <input type="text" class="form-control" id="state" rows="3" formControlName="state">
                                 @if(form.get('state')?.invalid && form.get('state')?.touched){
-                                    <span class="text-danger">State is required</span>
+                                <span class="text-danger">State is required</span>
                                 }
                             </div>
                         </div>
@@ -114,7 +114,7 @@
                                 <label for="country">Country <span class="text-danger">*</span></label>
                                 <input type="text" class="form-control" id="country" rows="3" formControlName="country">
                                 @if(form.get('country')?.invalid && form.get('country')?.touched){
-                                    <span class="text-danger">Country is required</span>
+                                <span class="text-danger">Country is required</span>
                                 }
                             </div>
                         </div>
@@ -122,9 +122,10 @@
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label for="postalCode">PostalCode <span class="text-danger">*</span></label>
-                                <input type="text" class="form-control" id="postalCode" rows="3" formControlName="postalCode">
+                                <input type="text" class="form-control" id="postalCode" rows="3"
+                                    formControlName="postalCode">
                                 @if(form.get('postalCode')?.invalid && form.get('postalCode')?.touched){
-                                    <span class="text-danger">PostalCode is required</span>
+                                <span class="text-danger">PostalCode is required</span>
                                 }
                             </div>
                         </div>
@@ -133,6 +134,64 @@
                         <button type="submit" class="btn btn-primary mx-3" [disabled]="form.invalid">Submit</button>
                     </div>
                 </form>
+
+                <div class="title-table d-flex align-items-center">
+                    <h5>Choose your Platforms</h5>
+                </div>
+                <div class="d-flex justify-content-around w-50 mt-2 ">
+                    <div class="card  text-center mb-1 selected-hover" style="width: 8rem; border-radius: 10px;">
+                        <div class="card-body pt-3 rounded bg-white pointer border" (click)="selectType(1)"
+                            [ngClass]="{'selected':checkSelected(1)}">
+                            <i class="fas fa-envelope-open fa-2x"></i>
+                            <p class="card-text mt-2">Email</p>
+                        </div>
+                    </div>
+
+                    <div class="card  text-center mb-1 selected-hover" style="width: 8rem; border-radius: 10px;">
+                        <div class="card-body pt-3 rounded bg-white pointer border" (click)="selectType(2)"
+                            [ngClass]="{'selected':checkSelected(2)}">
+                            <i class="{{service.platformTypeMapping[2].class}} fa-2x"></i>
+                            <p class="card-text mt-2">SMS</p>
+                        </div>
+                    </div>
+
+                    <div class="card  text-center mb-1 selected-hover"
+                        style="width: 8rem; border-radius: 10px;">
+                        <div class="card-body pt-3 rounded bg-white pointer border" (click)="selectType(3)"
+                            [ngClass]="{'selected':checkSelected(3)}">
+                            <i class="fab fa-whatsapp fa-2x"></i>
+                            <p class="card-text mt-2">WhatsApp</p>
+                        </div>
+                    </div>
+                    <div class="card  text-center mb-1 selected-hover " style="width: 8rem; border-radius: 10px;">
+                        <div class="card-body pt-3 rounded bg-white pointer border" (click)="selectType(4)"
+                            [ngClass]="{'selected':checkSelected(4)}">
+                            <i class="fa fa-globe fa-2x"></i>
+                            <p class="card-text mt-2">RCS</p>
+                        </div>
+                    </div>
+                    <div class="card  text-center mb-1 selected-hover " style="width: 8rem; border-radius: 10px;">
+                        <div class="card-body pt-3 rounded bg-white pointer border" (click)="selectType(5)"
+                            [ngClass]="{'selected':checkSelected(5)}">
+                            <i class="{{service.platformTypeMapping[5].class}} fa-2x"></i>
+                            <p class="card-text mt-2">Facebook</p>
+                        </div>
+                    </div>
+                    <div class="card  text-center mb-1 selected-hover " style="width: 8rem; border-radius: 10px;">
+                        <div class="card-body pt-3 rounded bg-white pointer border" (click)="selectType(6)"
+                            [ngClass]="{'selected':checkSelected(6)}">
+                            <i class="{{service.platformTypeMapping[6].class}} fa-2x"></i>
+                            <p class="card-text mt-2">Instagram</p>
+                        </div>
+                    </div>
+                    <div class="card  text-center mb-1 selected-hover " style="width: 8rem; border-radius: 10px;">
+                        <div class="card-body pt-3 rounded bg-white pointer border" (click)="selectType(7)"
+                            [ngClass]="{'selected':checkSelected(7)}">
+                            <i class="{{service.platformTypeMapping[7].class}} fa-2x"></i>
+                            <p class="card-text mt-2">Linkedin</p>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

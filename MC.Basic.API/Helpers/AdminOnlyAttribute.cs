@@ -1,7 +1,7 @@
 ﻿using MC.Basic.Domains.Entities;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.AspNetCore.Mvc;
-using MC.Basic.Domain;
+using MC.Basic.Domains;
 
 namespace MC.Basic.API.Helpers;
 [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method)]

@@ -36,30 +36,29 @@ public class OrganisationController : ControllerBase
     }
 
 
-    [HttpPut("UpdateOrganisation/{id}")]
-    public IActionResult UpdateOrganisation(long id, [FromBody] OrganisationUpdateDto request)
-    {
-        if (request == null)
-            return BadRequest("Organisation data is null.");
+    //[HttpPut("UpdateOrganisation/{id}")]
+    //public IActionResult UpdateOrganisation(long id, [FromBody] OrganisationUpdateDto request)
+    //{
+    //    if (request == null)
+    //        return BadRequest("Organisation data is null.");
 
-        var organisation = _context.Organizations.Find(id);
-        if (organisation == null)
-            return NotFound("Organisation not found.");
+    //    var organisation = _context.Organizations.Find(id);
+    //    if (organisation == null)
+    //        return NotFound("Organisation not found.");
 
-        organisation.Name = request.Name;
-        organisation.OwnerName = request.OwnerName;
-        organisation.Phone = request.Phone;
-        organisation.Email = request.Email;
-        organisation.Address = request.Address;
-        organisation.City = request.City;
-        organisation.State = request.State;
-        organisation.Country = request.Country;
-        organisation.PostalCode = request.PostalCode;
+    //    organisation.Name = request.Name;
+    //    organisation.OwnerName = request.OwnerName;
+    //    organisation.Phone = request.Phone;
+    //    organisation.Email = request.Email;
+    //    organisation.Address = request.Address;
+    //    organisation.City = request.City;
+    //    organisation.State = request.State;
+    //    organisation.Country = request.Country;
+    //    organisation.PostalCode = request.PostalCode;
+    //    _context.SaveChanges();
 
-        _context.SaveChanges();
-
-        return Ok(organisation);
-    }
+    //    return Ok(organisation);
+    //}
 
     [HttpPost("ApproveOrganisation")]
     [Authorize]
@@ -156,4 +155,51 @@ public class OrganisationController : ControllerBase
             return BadRequest(ex);
         }
     }
+    [HttpPost("GetPlatforms")]
+    [Authorize]
+    [EnableCors("CorsPolicy")]
+    public async Task<IActionResult> GetPlatforms([FromBody] ApiRequest<long> request)
+    {
+        try
+        {
+            var response = await _applicationService.GetPlatforms(request);
+            return Ok(response);
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(ex);
+        }
+    }
+        [HttpPost("GetPlatformForOrganisation")]
+    [Authorize]
+    [EnableCors("CorsPolicy")]
+    public async Task<IActionResult> GetPlatformForOrganisation([FromBody] ApiRequest<long> request)
+    {
+        try
+        {
+            var response = await _applicationService.GetPlatformsForOrganisation(request);
+            return Ok(response);
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(ex);
+        }
+    }  
+    
+    [HttpPost("AssginPlatformForOrganisation")]
+    [Authorize]
+    [EnableCors("CorsPolicy")]
+    public async Task<IActionResult> AssginPlatformForOrganisation([FromBody] ApiRequest<OrganisationPlatformRequest> request)
+    {
+        try
+        {
+            var response = await _applicationService.AssginPlatformForOrganisation(request);
+            return Ok(response);
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(ex);
+        }
+    }
+    
 }
