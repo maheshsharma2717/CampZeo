@@ -46,14 +46,13 @@ export class AppService {
     this.http.post(ApiUrl + "Account/ValidateToken", form).subscribe({
       next: (response: any) => {
         if (response.isSuccess) {
-          this.SetToken(response.data.token, false);
+          this.SetToken(response.data.token, true);
           this.User = response.data;
           this.IsUserAuthenticated = true;
           this.GetPlatformsForOrganisation({}).subscribe({
             next: (res: any) => {
               var platforms = res.data;
               this.Platforms =platforms
-              this.authService.setCurrentUser(response.data);
 
           if (fbRedirect) {
             this.router.navigate(['/accounts']);
@@ -66,7 +65,6 @@ export class AppService {
           });
         } else {
           this.ClearToken();
-          this.authService.clearCurrentUser(); // optional cleanup
         }
       }
     });

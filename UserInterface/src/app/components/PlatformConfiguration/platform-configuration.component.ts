@@ -19,6 +19,7 @@ export class PlatformConfigurationComponent {
   type: number = 0;
   data: any = {};
   ChangeType(selectedType: number = 1) {
+    debugger;
     var req = {
       data: selectedType
     }
@@ -31,6 +32,7 @@ export class PlatformConfigurationComponent {
   }
 
   updateRecord(item: any) {
+    debugger;
     var req = {
       data: item
     }

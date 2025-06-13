@@ -146,6 +146,10 @@ export class OrganisationListComponent implements OnInit, OnDestroy {
 
   onLogin(item: any) {
 
+    // if (!item.isApproved){
+    //    this.toaster.warning('Organisation is not approved yet');
+    //    return;
+    // }
 
     var adminToken = localStorage.getItem('token') ? localStorage.getItem('token') : sessionStorage.getItem('token')
     localStorage.setItem('admin_token', adminToken || "");
@@ -153,10 +157,9 @@ export class OrganisationListComponent implements OnInit, OnDestroy {
     this.service.LogInAsOrgenisation(item.id).subscribe({
       next: (response: any) => {
         if (response.isSuccess) {
-          this.service.SetToken(response.data.token, false);
-
-          this.service.User = response.data;
-
+          sessionStorage.removeItem('token')
+          localStorage.removeItem('token')
+          this.service.ValidateToken(response.data.token)
           this.router.navigate(['/profile'], { queryParams: { i: 'CompleteProfile' } });
         } else {
           this.toaster.warning('Organisation is not approved yet');
@@ -164,7 +167,6 @@ export class OrganisationListComponent implements OnInit, OnDestroy {
       }
     });
   }
-
 
   SuspendOrRecover(): void {
     if (this.organisationToDeleteId !== null) {
@@ -203,7 +205,7 @@ export class OrganisationListComponent implements OnInit, OnDestroy {
       }
     }
   }
-  //New function to clean up the modal backdrop
+
   cleanupBackdrop(): void {
     const modalBackdrop = document.querySelector('.modal-backdrop');
     if (modalBackdrop) {
@@ -223,7 +225,6 @@ export class OrganisationListComponent implements OnInit, OnDestroy {
     this.currentPage = event;
   }
 
-  //syncfusion 
   approveItemById(id: number) {
     const index = this.Organisations.findIndex(org => org.id === id);
     if (index !== -1) {

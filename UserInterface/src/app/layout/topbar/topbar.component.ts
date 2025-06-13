@@ -42,14 +42,10 @@ export class TopbarComponent {
 
     if (adminToken) {
       // Set token
-      sessionStorage.setItem('token', adminToken);
-      localStorage.setItem('token', adminToken);
-      this.service.SetToken(adminToken, false);
+      this.service.ValidateToken(adminToken);
       this.toaster.success('Switched back to Admin!');
-      this.router.navigateByUrl('/list-organisation').then(() => {
-     localStorage.removeItem("admin_token")
-        location.reload();
-      });
+      localStorage.removeItem("admin_token")
+      this.router.navigateByUrl('/list-organisation')
     } else {
       this.toaster.error('Admin token not found.');
     }

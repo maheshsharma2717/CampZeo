@@ -71,6 +71,7 @@ export class CreateOrganisationComponent implements OnInit {
     return this.SelectedPlatforms.find((p: any) => p.platform == platform) !== undefined;
   }
   onSubmit() {
+    debugger;
     var payload = this.form.value;
     payload.organisationPlatform = this.SelectedPlatforms;
     var request = { data: this.form.value };

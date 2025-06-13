@@ -24,6 +24,7 @@ export class ProfileComponent implements OnInit {
     private fb: FormBuilder,
     private toastr: ToastrService,
     private route: ActivatedRoute, private dialog: MatDialog) { }
+    
   ngOnInit(): void {
     if (!this.service.User.firstName) {
       this.IsEditing = true;
@@ -56,12 +57,12 @@ export class ProfileComponent implements OnInit {
       newPassword: ['', [Validators.required, Validators.minLength(6), Validators.pattern(/^(?=.*[A-Z])(?=.*\W).+$/)]],
       renewPassword: ['', Validators.required]
     });
-   
+
     const isFirstLogin = localStorage.getItem('IsFirstLogin') === 'true';
     const isDialogShown = sessionStorage.getItem('FirstLoginDialogShown') === 'true';
     const userRole = Number(localStorage.getItem('UserRole'));
 
-    if (isFirstLogin  && userRole !== 1) {
+    if (isFirstLogin && userRole !== 1) {
       this.dialog.open(ChangePasswordDialogComponent, {
         disableClose: true,
         width: '400px',
