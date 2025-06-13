@@ -25,6 +25,7 @@ export class AppService {
     6: { name: 'Instagram', class: "fab fa-instagram" },
     7: { name: 'Linkedin', class: "fab fa-linkedin-in" }
   };
+  Platforms: any[] = [];
 
   constructor(private http: HttpClient, private router: Router, private authService: AuthService) { }
 
@@ -48,18 +49,21 @@ export class AppService {
           this.SetToken(response.data.token, false);
           this.User = response.data;
           this.IsUserAuthenticated = true;
-
-          // ✅ Set actual_user
-          this.authService.setCurrentUser(response.data);
+          this.GetPlatformsForOrganisation({}).subscribe({
+            next: (res: any) => {
+              var platforms = res.data;
+              this.Platforms =platforms
+              this.authService.setCurrentUser(response.data);
 
           if (fbRedirect) {
             this.router.navigate(['/accounts']);
             return;
           }
-
-          if (!response.data.firstName) {
-            this.router.navigate(['/profile'], { queryParams: { i: 'CompleteProfile' } });
-          }
+              if (!response.data.firstName) {
+                this.router.navigate(['/profile'], { queryParams: { i: 'CompleteProfile' } });
+              }
+            }
+          });
         } else {
           this.ClearToken();
           this.authService.clearCurrentUser(); // optional cleanup
@@ -67,8 +71,10 @@ export class AppService {
       }
     });
   }
-
-
+  checkVisblePlatform(platform:any):boolean {
+    var result=this.Platforms.find((p: any) => p.id == platform) != null;
+    return result;
+  }
   ClearToken() {
     localStorage.removeItem('token');
     sessionStorage.removeItem('token');
@@ -363,6 +369,14 @@ export class AppService {
   GetPlatformConfigurations(request: any) {
     request.token = this.Token;
     return this.http.post(ApiUrl + "AdminPlatformConfiguration/GetPlatformConfiguration", request);
+  }
+  GetPlatformsForOrganisation(request: any) {
+    request.token = this.Token;
+    return this.http.post(ApiUrl + "Organisation/GetPlatformForOrganisation", request);
+  }
+  AssginPlatformForOrganisation(request: any) {
+    request.token = this.Token;
+    return this.http.post(ApiUrl + "Organisation/AssginPlatformForOrganisation", request);
   }
 }
 

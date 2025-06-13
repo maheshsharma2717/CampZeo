@@ -21,7 +21,6 @@ export class AccountsComponent {
   isFacebookConnected: boolean = false;
   isInstagramConnected: boolean = false;
   isLinkedInConnected: boolean = false;
-
   private fbAppId = '1308015943977582';
   private redirectUri = window.location.origin + '/auth-callback';
   linkedinClientId: any = "";

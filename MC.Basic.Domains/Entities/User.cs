@@ -1,4 +1,4 @@
-﻿using MC.Basic.Domain;
+﻿using MC.Basic.Domains;
 using MC.Basic.Domains.Common;
 using System;
 using System.Collections.Generic;
@@ -42,6 +42,6 @@ namespace MC.Basic.Domains.Entities
 // LinkedIn fields
 
         public string? LinkedInAccessToken { get; set; } 
-        public string? LinkedInAuthUrn { get; set; } 
+        public string? LinkedInAuthUrn { get; set; }
     }
 }
