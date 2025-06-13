@@ -21,7 +21,7 @@ import * as bootstrap from 'bootstrap';
 
 export class ListContactComponent implements OnInit {
   Contacts: any[] = [];
-  pageSettings = { pageSize: 10, pageSizes: [5, 10, 20, 50] };
+  pageSettings = { pageSize: 10, pageSizes: [5, 10, 20, 50, 100] };
   toolbar = ['Search'];
   searchSettings = { fields: ['contactName', 'contactEmail', 'contactMobile'], operator: 'contains', ignoreCase: true };
   deleteId: number | undefined;
