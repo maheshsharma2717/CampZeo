@@ -95,6 +95,7 @@ export class EventLogsComponent implements OnInit {
         };
         this.service.getLogs(request1, 'CheckMessageLogs').subscribe({
           next: (response: any) => {
+            debugger;
             var logs = response.data; // Assuming API returns an array of logs
             this.logs = logs.filter((x: any) =>
               x.recipient.toLowerCase().startsWith('whatsapp:')

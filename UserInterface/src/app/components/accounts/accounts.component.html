@@ -1,6 +1,7 @@
 
-            <div class="page-header flex-column align-items-start">
-                <ul class="breadcrumbs mb-3" style="margin-left: 0; padding-left: 0; border: none;">
+            <div class="page-header">
+                <h3 class="fw-bold mb-3">Accounts</h3>
+                <ul class="breadcrumbs mb-3">
                     <li class="nav-home">
                         <a [routerLink]="'/dashboard'">
                             <i class="icon-home"></i>
@@ -15,7 +16,6 @@
                     </li>
 
                 </ul>
-                <h3 class="fw-bold mb-3">Accounts</h3>
             </div>
             <div class="row">
                 <div class="col-sm-12">
@@ -35,7 +35,7 @@
                                     <p *ngIf="isFacebookConnected" class="text-success text-center">Connected</p>
                                 </div>
                                 <div class="d-flex flex-column"  *ngIf="service.checkVisblePlatform(6)">
-                                    <div class="card text-center selected-instagram-hover mx-3 mb-2"
+                                    <div class="card text-center selected-instagram-hover mb-2"
                                         style="width: 8rem; border-radius: 10px;">
                                         <div class="card-body rounded pt-4 bg-white pointer border"
                                             (click)="loginWithInstagram()"
@@ -47,7 +47,7 @@
                                     <p *ngIf="isInstagramConnected" class="text-success text-center">Connected</p>
                                 </div>
                                 <div class="d-flex flex-column p-2"  *ngIf="service.checkVisblePlatform(7)">
-                                    <div class="card text-center selected-instagram-hover mx-3 mb-2"
+                                    <div class="card text-center selected-instagram-hover mb-2"
                                         style="width: 8rem; border-radius: 10px;">
                                         <div class="card-body rounded pt-4 bg-white pointer border"
                                             (click)="connectToLinkedIn()"

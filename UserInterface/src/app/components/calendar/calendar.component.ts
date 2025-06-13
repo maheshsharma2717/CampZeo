@@ -265,6 +265,7 @@ export class CalendarComponent implements OnInit {
   }
 
   async onEventClick(args: any) {
+    debugger;
     const data = args.e.data;
     const [templateId, type] = data.id.split('-');
     const templateType = this.mapStringToTemplateType(type);

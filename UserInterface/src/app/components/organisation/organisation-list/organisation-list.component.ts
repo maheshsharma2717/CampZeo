@@ -8,7 +8,6 @@ import { ToastrService } from 'ngx-toastr';
 import { NgxPaginationModule } from 'ngx-pagination';
 import { dataBinding } from '@syncfusion/ej2-angular-schedule';
 import { FormsModule } from '@angular/forms';
-import { AuthService } from '../../../services/auth.service';
 import { GridModule, PageService, SortService, FilterService, ToolbarService } from '@syncfusion/ej2-angular-grids';
 @Component({
   selector: 'app-organisation-list',
@@ -41,11 +40,10 @@ export class OrganisationListComponent implements OnInit, OnDestroy {
 
 
   constructor(public service: AppService, private toaster: ToastrService,
-    private router: Router, private authService: AuthService
+    private router: Router
   ) {
 
   }
-
   ngOnInit(): void {
     this.loadOrganisations()
     this.routerSubscription = this.router.events.subscribe((event) => {
@@ -55,7 +53,6 @@ export class OrganisationListComponent implements OnInit, OnDestroy {
       }
     });
   }
-
   changeSort(column: string): void {
     if (this.sortBy === column) {
       this.sortDesc = !this.sortDesc;
@@ -70,8 +67,8 @@ export class OrganisationListComponent implements OnInit, OnDestroy {
     this.currentPage = 1; // Reset to the first page
     this.loadOrganisations(); // Reload data with the new page size
   }
-
   loadOrganisations(): void {
+    debugger;
     var request: any = {
       data: {
         pageNumber: this.currentPage,
@@ -104,17 +101,17 @@ export class OrganisationListComponent implements OnInit, OnDestroy {
     }
   }
   approveItem(data: any) {
-    if (data.isApproved) {
-      this.toaster.warning('This organisation is already approved.');
-      return;
-    }
+      if (data.isApproved) {
+    this.toaster.warning('This organisation is already approved.');
+    return;
+  }
     var organisationId = data.id;
     var request = { data: organisationId }
     this.service.ApproveOrganisation(request).subscribe({
       next: (response: any) => {
         if (response.isSuccess) {
           data = response.data;
-          this.toaster.success('Organisation approved successfully.');
+           this.toaster.success('Organisation approved successfully.');
           this.loadOrganisations()
         }
       }
@@ -122,48 +119,48 @@ export class OrganisationListComponent implements OnInit, OnDestroy {
   }
 
   // onLogin(item: any) {
+  //   debugger;
   //   this.service.LogInAsOrgenisation(item.id).subscribe({
   //     next: (response: any) => {
   //       if (response.isSuccess) {
-  //         // Set current active token
   //         this.service.SetToken(response.data.token, false);
-
-  //         // Save impersonated user token separately
-  //         localStorage.setItem('user_token', response.data.token);
-
   //         this.service.User = response.data;
-  //         // this.toaster.success('Login success');
-
+  //         this.toaster.success('Login success');
   //         if (response.data) {
   //           this.router.navigate(['/profile'], { queryParams: { i: 'CompleteProfile' } });
   //         }
   //       } else {
-  //         this.toaster.warning('Organistion is not approved yet');
+  //         this.toaster.error('Invalid Email or password');
   //       }
   //     }
-  //   });
+  //   })
   // }
 
+
   onLogin(item: any) {
-
-
-    var adminToken = localStorage.getItem('token') ? localStorage.getItem('token') : sessionStorage.getItem('token')
-    localStorage.setItem('admin_token', adminToken || "");
-
+    debugger;
     this.service.LogInAsOrgenisation(item.id).subscribe({
       next: (response: any) => {
         if (response.isSuccess) {
+          // Set current active token
           this.service.SetToken(response.data.token, false);
 
-          this.service.User = response.data;
+          // Save impersonated user token separately
+          localStorage.setItem('user_token', response.data.token);
 
+          this.service.User = response.data;
+          // this.toaster.success('Login success');
+
+        if (response.data) {
           this.router.navigate(['/profile'], { queryParams: { i: 'CompleteProfile' } });
-        } else {
-          this.toaster.warning('Organisation is not approved yet');
         }
+      } else {
+        this.toaster.warning('Organistion is not approved yet');
       }
-    });
-  }
+    }
+  });
+}
+
 
 
   SuspendOrRecover(): void {

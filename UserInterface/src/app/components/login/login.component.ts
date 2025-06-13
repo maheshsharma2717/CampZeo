@@ -53,6 +53,7 @@ export class LoginComponent implements OnInit{
   }
 
   onSubmit() {
+  debugger;
   if (this.loginForm.valid) {
     const loginData = this.loginForm.value;
 
@@ -62,11 +63,11 @@ export class LoginComponent implements OnInit{
           this.service.SetToken(response.data.token, this.loginForm.value.rememberMe);
           this.authService.setCurrentUser(response.data);
 
-          // if (response.data.role == 1) {
-          //   localStorage.setItem('admin_token', response.data.token);
-          // } else {
-          //   localStorage.setItem('user_token', response.data.token);
-          // }
+          if (response.data.role == 1) {
+            localStorage.setItem('admin_token', response.data.token);
+          } else {
+            localStorage.setItem('user_token', response.data.token);
+          }
 
           this.service.User = response.data;
           localStorage.setItem('IsFirstLogin', response.data.isFirstLogin);
