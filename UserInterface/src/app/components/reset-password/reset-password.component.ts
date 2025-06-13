@@ -19,7 +19,6 @@ export class ResetPasswordComponent implements OnInit {
 
   constructor(private activatedRoute: ActivatedRoute, private service: AppService, private tostr: ToastrService, private router: Router) {
     this.resetPasswordForm = new FormGroup({
-      email: new FormControl('', [Validators.required, Validators.required]),
       newPassword: new FormControl('', [Validators.required]),
       confirmPassword: new FormControl('', [Validators.required]),
     })
@@ -39,7 +38,6 @@ export class ResetPasswordComponent implements OnInit {
       if (newPass === confirmPass) {
 
         let request = {
-          email: this.resetPasswordForm.get('email')?.value,
           token: this.token,
           password: newPass
         }
