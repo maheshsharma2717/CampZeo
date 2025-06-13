@@ -271,7 +271,7 @@
                       <p class="text-muted">{{ service.User.email ?? "" }}</p><a [routerLink]="'/profile'"
                         class="btn btn-xs btn-secondary btn-sm mx-1 ">View Profile</a>
                         <button 
-                        *ngIf="actualUser?.role === 1 && service?.User?.role !== 1" 
+                        *ngIf="checkVisible()" 
                         class="btn btn-xs btn-secondary btn-sm mx-1" 
                         (click)="onAdminClick()">
                         Admin

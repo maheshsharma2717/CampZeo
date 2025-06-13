@@ -129,7 +129,6 @@ export class AddPostComponent {
     }
   }
   onSubmit(): void {
-debugger
     if (this.CampaignPostForm.valid) {
       this.GetMessagePromise()
         .then(() => {
