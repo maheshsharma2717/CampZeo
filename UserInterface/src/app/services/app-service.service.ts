@@ -4,6 +4,9 @@ import { environment } from '../../environments/environments';
 import { Router } from '@angular/router';
 import { BehaviorSubject, map, Observable } from 'rxjs';
 import { AuthService } from './auth.service';
+import { OAuthModule, OAuthService } from "angular-oauth2-oidc";
+import { appConfig, authConfig } from '../app.config';
+
 const ApiUrl = environment.API_BASE_URL
 @Injectable({
   providedIn: 'root'
@@ -23,11 +26,17 @@ export class AppService {
     4: { name: 'RCS', class: "fa fa-globe" },
     5: { name: 'Facebook', class: "fab fa-facebook" },
     6: { name: 'Instagram', class: "fab fa-instagram" },
-    7: { name: 'Linkedin', class: "fab fa-linkedin-in" }
+    7: { name: 'Linkedin', class: "fab fa-linkedin-in" },
+    8: { name: 'Youtube', class: "fab fa-youtube text-danger" }
   };
   Platforms: any[] = [];
 
-  constructor(private http: HttpClient, private router: Router, private authService: AuthService) { }
+  private connectedUserSubject = new BehaviorSubject<string | null>(null);
+  connectedUser$ = this.connectedUserSubject.asObservable();
+
+  constructor(private http: HttpClient, private router: Router, private authService: AuthService,) {
+    // this.configure();
+  }
 
   SetToken(token: any, rememberMe: boolean) {
     if (rememberMe) { localStorage.setItem('token', token); }
@@ -35,7 +44,6 @@ export class AppService {
     this.Token = token;
     this.IsUserAuthenticated = true;
   }
-
 
   ValidateToken(token: any) {
     const fbRedirect = localStorage.getItem('fbRedirect');
@@ -52,12 +60,12 @@ export class AppService {
           this.GetPlatformsForOrganisation({}).subscribe({
             next: (res: any) => {
               var platforms = res.data;
-              this.Platforms =platforms
+              this.Platforms = platforms
 
-          if (fbRedirect) {
-            this.router.navigate(['/accounts']);
-            return;
-          }
+              if (fbRedirect) {
+                this.router.navigate(['/accounts']);
+                return;
+              }
               if (!response.data.firstName) {
                 this.router.navigate(['/profile'], { queryParams: { i: 'CompleteProfile' } });
               }
@@ -69,10 +77,21 @@ export class AppService {
       }
     });
   }
-  checkVisblePlatform(platform:any):boolean {
-    var result=this.Platforms.find((p: any) => p.id == platform) != null;
+  checkVisblePlatform(platform: any): boolean {
+    var result = this.Platforms.find((p: any) => p.id == platform) != null;
     return result;
   }
+
+  setConnectedUser(name: string) {
+    sessionStorage.setItem('connectedUser', name);
+    this.connectedUserSubject.next(name);
+  }
+
+  loadConnectedUser() {
+    const name = sessionStorage.getItem('connectedUser');
+    this.connectedUserSubject.next(name);
+  }
+
   ClearToken() {
     localStorage.removeItem('token');
     sessionStorage.removeItem('token');
@@ -81,7 +100,7 @@ export class AppService {
     localStorage.removeItem('UserRole');
     localStorage.removeItem('IsFirstLogin');
     localStorage.clear();
-    sessionStorage.clear();
+    // sessionStorage.clear();
     this.router.navigate(['/'])
   }
   LoginUser(request: any) {
@@ -274,6 +293,13 @@ export class AppService {
 
   getInstagramUserId(pageId: string, token: string) {
     return this.http.get(`${ApiUrl}socialmedia/instagram-business-account?pageId=${pageId}&accessToken=${token}`);
+  }
+  getYoutubeChannel(access_token:any) {
+    return this.http.get(`${ApiUrl}socialmedia/youtube-channel?accessToken=${access_token}`);
+  }
+
+  uploadToYoutube(data: any){
+    return this.http.post(`${ApiUrl}socialmedia/upload-youtube`, data);
   }
 
   postToInstagram(payload: {

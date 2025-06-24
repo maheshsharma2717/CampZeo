@@ -1,39 +1,71 @@
 <!doctype html>
 <html lang="en">
-<head>
-  <meta charset="utf-8">
-  <title>CampZeo</title>
-  <base href="/">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="icon" type="image/png" href="./ico.png">
-<!--  
-  <link href="https://fonts.gstatic.com" rel="preconnect">
-  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Nunito:300,300i,400,400i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i" rel="stylesheet">
 
-  <link href="assets/css/style.css" rel="stylesheet"> -->
-  <link rel="stylesheet" href="assets/css/bootstrap.min.css">
+<head>
+	<meta charset="utf-8">
+	<title>CampZeo</title>
+	<base href="/">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="icon" type="image/png" href="./ico.png">
+
+	<link rel="stylesheet" href="assets/css/bootstrap.min.css">
 	<link rel="stylesheet" href="assets/css/plugins.min.css">
-  <link href="assets/css/quill/quill.snow.css" rel="stylesheet">
-<link href="https://cdn.syncfusion.com/ej2/21.2.3/material.css" rel="stylesheet" />
-<!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"> -->
-<link rel="stylesheet" href="assets/css/fonts.min.css">
+	<link href="assets/css/quill/quill.snow.css" rel="stylesheet">
+	<link href="https://cdn.syncfusion.com/ej2/21.2.3/material.css" rel="stylesheet" />
+	<!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"> -->
+	<link rel="stylesheet" href="assets/css/fonts.min.css">
 	<link rel="stylesheet" href="assets/css/kaiadmin.min.css">
 	<link rel="stylesheet" href="assets/css/demo.css">
-<link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="./styles.css">
+	<link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@300;400;500;600;700&display=swap"
+		rel="stylesheet">
+	<link rel="stylesheet" href="./styles.css">
+
+	<script src="https://accounts.google.com/gsi/client" async defer></script>
+
+	<!-- <script>
+		function decodeJWT(token) {
+
+			let base64Url = token.split(".")[1];
+			let base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
+			let jsonPayload = decodeURIComponent(
+				atob(base64)
+					.split("")
+					.map(function (c) {
+						return "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2);
+					})
+					.join("")
+			);
+			return JSON.parse(jsonPayload);
+		}
+
+		function handleCredentialResponse(response) {
+
+			console.log("Encoded JWT ID token: " + response.credential);
+
+			const responsePayload = decodeJWT(response.credential);
+
+			console.log("Decoded JWT ID token fields:");
+			console.log("  Full Name: " + responsePayload.name);
+			console.log("  Given Name: " + responsePayload.given_name);
+			console.log("  Family Name: " + responsePayload.family_name);
+			console.log("  Unique ID: " + responsePayload.sub);
+			console.log("  Profile image URL: " + responsePayload.picture);
+			console.log("  Email: " + responsePayload.email);
+		}
+	</script> -->
 </head>
 
 <body class="mat-typography ">
-  
-  <app-root></app-root>
-  <script src="https://cdn.tiny.cloud/1/1jbu3iggkwcldx4lxqfj8h95xqcjifeeihmnsvvgqaykarkf/tinymce/7/tinymce.min.js" referrerpolicy="origin"></script>
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
-  
-  <!-- <script src="assets/js/vendor-all.min.js"></script>
-  <script src="assets/js/plugins/bootstrap.min.js"></script>
-<script src="assets/js/plugins/apexcharts.min.js"></script>
-<script src="assets/js/pages/dashboard-main.js"></script> -->
-<script src="assets/js/core/jquery-3.7.1.min.js"></script>
+
+
+	<app-root></app-root>
+	<script src="https://cdn.tiny.cloud/1/1jbu3iggkwcldx4lxqfj8h95xqcjifeeihmnsvvgqaykarkf/tinymce/7/tinymce.min.js"
+		referrerpolicy="origin"></script>
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+		integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+		crossorigin="anonymous"></script>
+
+	<script src="assets/js/core/jquery-3.7.1.min.js"></script>
 	<script src="assets/js/core/popper.min.js"></script>
 	<script src="assets/js/core/bootstrap.min.js"></script>
 
@@ -66,4 +98,5 @@
 	<script src="assets/js/kaiadmin.min.js"></script>
 
 </body>
+
 </html>

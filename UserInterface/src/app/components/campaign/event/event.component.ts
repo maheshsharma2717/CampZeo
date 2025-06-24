@@ -6,6 +6,7 @@ import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { NgxPaginationModule } from 'ngx-pagination';
 import { ToastrService } from 'ngx-toastr';
 import { EditService, FilterService, GridComponent, GridModule, PageService, SelectionService, SortService, ToolbarService } from '@syncfusion/ej2-angular-grids';
+
 @Component({
   selector: 'app-event',
   standalone: true,
@@ -44,6 +45,8 @@ export class EventComponent implements OnInit {
   pages: any[] = [];
   selectedPage: any;
   instagramUserId: string = '';
+  channels: any;
+  selectedChannel: any;
   videoUrl: string | ArrayBuffer | null = null;
   constructor(private service: AppService, private toaster: ToastrService, private router: Router, private activatedRoutes: ActivatedRoute) {
     this.activatedRoutes.queryParams.subscribe(param => {
@@ -65,15 +68,16 @@ export class EventComponent implements OnInit {
     }
   }
   GetData() {
-
     this.service.GetEventForCampaignPost({ data: this.id }).subscribe({
       next: (response: any) => {
-
         this.contacts = response.data.contacts
         this.Post = response.data.post
         this.filteredContacts = this.contacts
         this.total = this.contacts.length;
         this.videoUrl = this.Post?.videoUrl || '';
+        if (this.Post.type == 8) {
+          this.getChannel();
+        }
         this.setActiveTab();
       }
     })
@@ -96,6 +100,9 @@ export class EventComponent implements OnInit {
     }
     else if (this.Post.type == 7) {
       this.activeTab = 'linkedIn';
+    }
+    else if (this.Post.type == 8) {
+      this.activeTab = 'youtube';
     }
   }
   onTabClick(tab: string): void {
@@ -131,6 +138,9 @@ export class EventComponent implements OnInit {
     }
     else if (this.activeTab === 'linkedIn') {
       this.postToLinkedIn(content);
+    }
+    else if (this.activeTab === 'youtube') {
+      this.postToYoutube();
     }
     else {
       this.postToOtherChannels(campaignId, rawMessage);
@@ -213,7 +223,7 @@ export class EventComponent implements OnInit {
   }
 
   private postToLinkedIn(content: any) {
-
+    
     const base64Image = content.images[0];
     if (!base64Image) {
       this.toaster.warning('LinkedIn requires an image or video. Please add one.');
@@ -240,6 +250,35 @@ export class EventComponent implements OnInit {
       }
     });
   }
+  getChannel() {
+    let google_access_token = localStorage.getItem("google_access_token");
+    this.service.getYoutubeChannel(google_access_token).subscribe({
+      next: (res: any) => {
+        console.log(res)
+      }
+    })
+  }
+  
+  private async postToYoutube() {
+    let google_access_token = localStorage.getItem("google_access_token");
+    const payload = {
+      accessToken: google_access_token,
+      title: this.Post.subject,
+      description: this.Post.message,
+      tags: ['angular', 'youtube', 'upload'],
+      categoryId: '22',
+      privacyStatus: 'public',
+      videoUrl: this.videoUrl
+    };
+
+    this.service.uploadToYoutube(payload).subscribe({
+      next: (res: any) => {
+        console.log(res);
+        this.toaster.success("Video successfully uploaded to youtube.");
+      }
+    })
+  }
+
 
   private postToOtherChannels(campaignId: number, message: string) {
     const selectedContacts = this.grid.getSelectedRecords();
@@ -308,10 +347,6 @@ export class EventComponent implements OnInit {
   pageChangeEvent(event: number) {
     this.page = event;
   }
-  // onItemsPerPageChange(value: number): void {
-  //   this.itemsPerPage = value;
-  //   this.page = 1;
-  // }
 
   onSearchChange(): void {
     if (this.searchTerm) {

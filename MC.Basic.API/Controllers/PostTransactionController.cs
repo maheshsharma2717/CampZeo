@@ -4,6 +4,7 @@ using MC.Basic.Application.Models.Post;
 using MC.Basic.Domains;
 using MC.Basic.Domains.Entities;
 using MC.Basic.Persistance;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
@@ -12,7 +13,14 @@ using Newtonsoft.Json.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
+using System.Text.RegularExpressions;
 using static System.Net.WebRequestMethods;
+using Google.Apis.Auth.OAuth2;
+using Google.Apis.YouTube.v3;
+using Google.Apis.YouTube.v3.Data;
+using Google.Apis.Services;
+using Google.Apis.Upload;
+using System.Net;
 
 namespace MC.Basic.API.Controllers
 {
@@ -89,28 +97,82 @@ namespace MC.Basic.API.Controllers
                 }
                 case "facebook":
                 {
-                    var appId = await _platformConfigurationRepository.GetConfigurationValueByKey("AppId", PlatformType.Facebook);
-                    var AppSecret = await _platformConfigurationRepository.GetConfigurationValueByKey("AppSecret", PlatformType.Facebook);
+                        try
+                        {
+                            var appId = await _platformConfigurationRepository.GetConfigurationValueByKey("AppId", PlatformType.Facebook);
+                            var AppSecret = await _platformConfigurationRepository.GetConfigurationValueByKey("AppSecret", PlatformType.Facebook);
 
-                    var fbResponse = await _httpClient.GetAsync(
-                    $"https://graph.facebook.com/v19.0/oauth/access_token?client_id={appId}&redirect_uri={"http://localhost:4200/auth-callback"}&client_secret={AppSecret}&code={request.Code}"
-                    );
+                            var fbResponse = await _httpClient.GetAsync(
+                            $"https://graph.facebook.com/v19.0/oauth/access_token?fields=id,name,email&client_id={appId}&redirect_uri={"http://localhost:4200/auth-callback"}&client_secret={AppSecret}&code={request.Code}"
+                            );
 
-                    var fbContent = await fbResponse.Content.ReadAsStringAsync();
-                    var token = JsonConvert.DeserializeObject<FacebookTokenResponse>(fbContent);
+                            var fbContent = await fbResponse.Content.ReadAsStringAsync();
+                            var token = JsonConvert.DeserializeObject<FacebookTokenResponse>(fbContent);
 
-                    if(token != null)
-                    {
+
+                            var fbUrl = $"https://graph.facebook.com/me?fields=id,name,email&access_token={token?.AccessToken}";
+                            var fbUserResponse = await _httpClient.GetAsync(fbUrl);
+                            if (!fbUserResponse.IsSuccessStatusCode)
+                                return StatusCode((int)fbUserResponse.StatusCode, await fbUserResponse.Content.ReadAsStringAsync());
+                            var Content = await fbUserResponse.Content.ReadAsStringAsync();
+                            var fbUserContent = JsonConvert.DeserializeObject<FacebookUserDto>(Content);
+                            FacebookUserDto fbUser = new FacebookUserDto();
+                            fbUser.Id = fbUserContent?.Id;
+                            fbUser.Name = fbUserContent?.Name;
+
+
+                            var user = _context.Users.FirstOrDefault(x => x.Id == request.UserId);
+                            if (token != null)
+                            {
+                                if (user == null) return NotFound("User not found");
+
+                                user.FacebookAccessToken = token.AccessToken;
+                                user.FacebookTokenType = token.TokenType;
+                                user.FacebookTokenCreatedAt = DateTime.UtcNow;
+                                user.FacebookTokenExpiresIn = token.ExpiresIn.HasValue ? token.ExpiresIn.Value : 5184000;
+                                await _context.SaveChangesAsync();
+                            }
+
+                            return Ok(new
+                            {
+                                AccessToken = token,
+                                User = fbUser
+                            });
+                        }
+                        catch(Exception ex)
+                        {
+                            throw new Exception("Error exchanging Facebook token", ex);
+                        }
+                }
+                case "youtube":
+                {
+                        var AppId = await _platformConfigurationRepository.GetConfigurationValueByKey("ClientId", PlatformType.Youtube);
+                        var AppSecret = await _platformConfigurationRepository.GetConfigurationValueByKey("ClientSecret", PlatformType.Youtube);
+
+                        if (string.IsNullOrEmpty(request.Code)){
+                            return BadRequest("Token is missing");
+                        }
+                        using var httpClient = new HttpClient();
+                        httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", request.Code);
+                        var response = await httpClient.GetAsync($"https://www.googleapis.com/oauth2/v3/userinfo?access_token={request.Code}&redirect_uri={"http://localhost:4200/auth-callback"}&client_secret={AppSecret}");
+
+                        var content = await response.Content.ReadAsStringAsync();
+                        var YoutubeChannelData = JsonConvert.DeserializeObject<YoutubeUserDto>(content);
+
+                        YoutubeUserDto youtubeUser = new YoutubeUserDto();
+                        youtubeUser.sub = YoutubeChannelData?.sub;
+                        youtubeUser.Name = YoutubeChannelData?.Name;
+                        youtubeUser.email = YoutubeChannelData?.email;
                         var user = _context.Users.FirstOrDefault(x => x.Id == request.UserId);
-                        if(user == null) return NotFound("User not found");
-
-                        user.FacebookAccessToken = token.AccessToken;
-                        user.FacebookTokenType = token.TokenType;
-                        user.FacebookTokenCreatedAt = DateTime.UtcNow;
-                        user.FacebookTokenExpiresIn = token.ExpiresIn.HasValue ? token.ExpiresIn.Value : 5184000;
+                        if (user == null) return NotFound("User not found");
+                        user.YoutubeAccessToken = request.Code;
+                        user.YoutubeAuthUrn = youtubeUser.sub;
                         await _context.SaveChangesAsync();
-                    }
-                    return Ok(token);
+                        return Ok(new
+                        {
+                            AccessToken = request.Code,
+                            User = youtubeUser
+                        });
                 }
                 case "linkedin":
                 {
@@ -312,6 +374,94 @@ namespace MC.Basic.API.Controllers
                 expiresIn = user.FacebookTokenExpiresIn,
                 //expiresAt = user.FacebookTokenCreatedAt.Value.AddSeconds(user.FacebookTokenExpiresIn.Value)
             });
+        }
+
+        [HttpGet("youtube-channel")]
+        public async Task<IActionResult> GetYouTubeChannel([FromQuery] string accessToken)
+        {
+            if (string.IsNullOrEmpty(accessToken))
+            {
+                return BadRequest("Access token is required.");
+            }
+            var url = $"https://www.googleapis.com/youtube/v3/channels?part=snippet&mine=true&access_token={accessToken}";
+            var response = await _httpClient.GetAsync(url);
+            var content = await response.Content.ReadAsStringAsync();
+            if (!response.IsSuccessStatusCode)
+            {
+                return BadRequest(new { error = "Failed to get YouTube channel", response = content });
+            }
+            var data = JsonConvert.DeserializeObject<dynamic>(content);
+            if (data.items == null || data.items.Count == 0)
+            {
+                return NotFound("No YouTube channel found for the provided access token.");
+            }
+            var channelId = data.items[0].id.ToString();
+            var channelTitle = data.items[0].snippet.title.ToString();
+            return Ok(new { channelId, channelTitle });
+        }
+
+        [HttpPost("upload-youtube")]
+        public async Task<IActionResult> UploadYouTubeVideo([FromBody] YouTubeUploadRequest request)
+        {
+            if (string.IsNullOrEmpty(request.AccessToken))
+                return BadRequest("Access token required");
+            if (string.IsNullOrEmpty(request.VideoUrl))
+                return BadRequest("No video data.");
+            
+            var videoUrl = request.VideoUrl;
+            var filename = Path.GetFileName(new Uri(videoUrl).AbsolutePath);
+            var fullFilePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads", filename);
+            if(!System.IO.File.Exists(fullFilePath))
+            {
+                return NotFound("Video file not found.");
+            }
+
+            var credential = GoogleCredential.FromAccessToken(request.AccessToken)
+                .CreateScoped(YouTubeService.Scope.YoutubeUpload);
+            var YoutubeService = new YouTubeService(new BaseClientService.Initializer
+            {
+                HttpClientInitializer = credential,
+                ApplicationName = "CampZeo",
+            });
+            var videoDescription = WebUtility.HtmlDecode(request.Description);
+            videoDescription = Regex.Replace(videoDescription, "<.*?>", string.Empty);
+            var video = new Video
+            {
+                Snippet = new VideoSnippet
+                {
+                    Title = request.Title,
+                    Description = videoDescription,
+                    Tags = request.Tags,
+                    CategoryId = request.CategoryId
+                },
+                Status = new VideoStatus
+                {
+                    PrivacyStatus = request.PrivacyStatus
+                }
+            };
+
+
+            using (var videoStream = new FileStream(fullFilePath, FileMode.Open, FileAccess.Read))
+            {
+                var videoInsertRequest = YoutubeService.Videos.Insert(video, "snippet,status", videoStream, "video/*");
+                var uploadProgress = await videoInsertRequest.UploadAsync();
+                Console.WriteLine($"Upload Status: {uploadProgress.Status}");
+                if (uploadProgress.Exception != null)
+                    Console.WriteLine($"Upload Exception: {uploadProgress.Exception.Message}");
+                if (videoInsertRequest.ResponseBody != null)
+                {
+                    var videoId = videoInsertRequest.ResponseBody.Id;
+                    return Ok(new
+                    {
+                        VideoId = videoId,
+                        VideoUrl = $"https://www.youtube.com/watch?v={videoId}"
+                    });
+                }
+                else
+                {
+                    return BadRequest("Video upload failed.");
+                }
+            }
         }
 
         [HttpGet("instagram-business-account")]

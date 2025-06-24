@@ -1,65 +1,84 @@
+<div class="page-header flex-column align-items-start">
+    <ul class="breadcrumbs mb-3" style="margin-left: 0; padding-left: 0; border: none;">
+        <li class="nav-home">
+            <a [routerLink]="'/dashboard'">
+                <i class="icon-home"></i>
+            </a>
+        </li>
+        <li class="separator">
+            <i class="icon-arrow-right"></i>
+        </li>
+        <li class="nav-item">
+            <a [routerLink]="'/accounts'">
+                Accounts</a>
+        </li>
 
-            <div class="page-header flex-column align-items-start">
-                <ul class="breadcrumbs mb-3" style="margin-left: 0; padding-left: 0; border: none;">
-                    <li class="nav-home">
-                        <a [routerLink]="'/dashboard'">
-                            <i class="icon-home"></i>
-                        </a>
-                    </li>
-                    <li class="separator">
-                        <i class="icon-arrow-right"></i>
-                    </li>
-                    <li class="nav-item">
-                        <a [routerLink]="'/accounts'">
-                            Accounts</a>
-                    </li>
-
-                </ul>
-                <h3 class="fw-bold mb-3">Accounts</h3>
-            </div>
-            <div class="row">
-                <div class="col-sm-12">
-                    <div class="card">
-                        <div class="my-4">
-                            <div class="d-flex g-3">
-                                <div class="d-flex flex-column" *ngIf="service.checkVisblePlatform(5)">
-                                    <div class="card text-center selected-facebook-hover mx-3 mb-2"
-                                        style="width: 8rem; border-radius: 10px;">
-                                        <div class="card-body rounded pt-4 bg-white pointer border"
-                                            (click)="loginWithFacebook()"
-                                            [ngClass]="{'selected-facebook': selectedPlatform === 'facebook'}">
-                                            <i class="fab fa-facebook fa-2x"></i>
-                                            <p class="card-text mt-2">Facebook</p>
-                                        </div>
-                                    </div>
-                                    <p *ngIf="isFacebookConnected" class="text-success text-center">Connected</p>
-                                </div>
-                                <div class="d-flex flex-column"  *ngIf="service.checkVisblePlatform(6)">
-                                    <div class="card text-center selected-instagram-hover mx-3 mb-2"
-                                        style="width: 8rem; border-radius: 10px;">
-                                        <div class="card-body rounded pt-4 bg-white pointer border"
-                                            (click)="loginWithInstagram()"
-                                            [ngClass]="{'selected-instagram': selectedPlatform === 'instagram'}">
-                                            <i class="fab fa-instagram fa-2x"></i>
-                                            <p class="card-text mt-2">Instagram</p>
-                                        </div>
-                                    </div>
-                                    <p *ngIf="isInstagramConnected" class="text-success text-center">Connected</p>
-                                </div>
-                                <div class="d-flex flex-column p-2"  *ngIf="service.checkVisblePlatform(7)">
-                                    <div class="card text-center selected-instagram-hover mx-3 mb-2"
-                                        style="width: 8rem; border-radius: 10px;">
-                                        <div class="card-body rounded pt-4 bg-white pointer border"
-                                            (click)="connectToLinkedIn()"
-                                            [ngClass]="{'selected-linkedIn': selectedPlatform === 'linkedIn'}">
-                                            <i class="fab fa-linkedin-in fa-2x"></i>
-                                            <p class="card-text mt-2">LinkedIn</p>
-                                        </div>
-                                    </div>
-                                    <p *ngIf="isLinkedInConnected" class="text-success text-center">Connected</p>
-                                </div>
+    </ul>
+    <h3 class="fw-bold mb-3">Accounts</h3>
+</div>
+<div class="row">
+    <div class="col-sm-12">
+        <div class="card">
+            <div class="my-4">
+                <div class="d-flex g-3">
+                    <div class="d-flex flex-column" *ngIf="service.checkVisblePlatform(5)">
+                        <div class="card text-center selected-facebook-hover mx-3 mb-2"
+                            style="width: 8rem; border-radius: 10px;">
+                            <div class="card-body rounded pt-4 bg-white pointer border" (click)="loginWithFacebook()"
+                                [ngClass]="{'selected-facebook': selectedPlatform === 'facebook'}">
+                                <i class="fab fa-facebook fa-2x"></i>
+                                <p class="card-text mt-2">Facebook</p>
                             </div>
                         </div>
+                        <p *ngIf="isFacebookConnected == true" class="text-success text-center mt-2">
+                            <!-- <i *ngIf="isFacebookConnected == true" class="fas fa-check-circle me-1"></i> -->
+                            {{ facebookAccountName || '' }}
+                        </p>
+                        <p *ngIf="isFacebookConnected" class="text-success text-center">Connected</p>
+                    </div>
+                    <div class="d-flex flex-column" *ngIf="service.checkVisblePlatform(6)">
+                        <div class="card text-center selected-instagram-hover mx-3 mb-2"
+                            style="width: 8rem; border-radius: 10px;">
+                            <div class="card-body rounded pt-4 bg-white pointer border" (click)="loginWithInstagram()"
+                                [ngClass]="{'selected-instagram': selectedPlatform === 'instagram'}">
+                                <i class="fab fa-instagram fa-2x"></i>
+                                <p class="card-text mt-2">Instagram</p>
+                            </div>
+                        </div>
+                        <p *ngIf="isFacebookConnected == true" class="text-success text-center mt-2">
+                            <!-- <i *ngIf="isFacebookConnected == true" class="fas fa-check-circle me-1"></i> -->
+                            {{ facebookAccountName || '' }}
+                        </p>
+                        <p *ngIf="isInstagramConnected" class="text-success text-center">Connected</p>
+                    </div>
+                    <div class="d-flex flex-column" *ngIf="service.checkVisblePlatform(7)">
+                        <div class="card text-center selected-instagram-hover mx-3 mb-2"
+                            style="width: 8rem; border-radius: 10px;">
+                            <div class="card-body rounded pt-4 bg-white pointer border" (click)="connectToLinkedIn()"
+                                [ngClass]="{'selected-linkedIn': selectedPlatform === 'linkedIn'}">
+                                <i class="fab fa-linkedin-in fa-2x"></i>
+                                <p class="card-text mt-2">LinkedIn</p>
+                            </div>
+                        </div>
+                        <p *ngIf="isLinkedInConnected" class="text-success text-center">Connected</p>
+                    </div>
+                    <div class="d-flex flex-column" *ngIf="service.checkVisblePlatform(7)">
+                        <div class="card text-center selected-instagram-hover mx-3 mb-2"
+                            style="width: 8rem; border-radius: 10px;">
+                            <div id="googleSignInDiv" class="card-body rounded pt-4 bg-white pointer border" (click)="connectToYoutube(1)"
+                                [ngClass]="{'selected-linkedIn': selectedPlatform === 'linkedIn'}">
+                                <i class="fab fa-youtube text-danger fa-2x"></i>
+                                <p class="card-text mt-2">Youtube</p>
+                            </div>
+                        </div>
+                        <p *ngIf="isFacebookConnected == true" class="text-success text-center mt-2">
+                            <!-- <i *ngIf="isFacebookConnected == true" class="fas fa-check-circle me-1"></i> -->
+                            {{ googleAccountName || '' }}
+                        </p>
+                        <p *ngIf="isLinkedInConnected" class="text-success text-center">Connected</p>
                     </div>
                 </div>
             </div>
+        </div>
+    </div>
+</div>
