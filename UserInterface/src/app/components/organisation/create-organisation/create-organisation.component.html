@@ -191,6 +191,13 @@
                             <p class="card-text mt-2">Linkedin</p>
                         </div>
                     </div>
+                    <div class="card  text-center mb-1 selected-hover " style="width: 8rem; border-radius: 10px;">
+                        <div class="card-body pt-3 rounded bg-white pointer border" (click)="selectType(8)"
+                            [ngClass]="{'selected':checkSelected(8)}">
+                            <i class="{{service.platformTypeMapping[8].class}} fa-2x"></i>
+                            <p class="card-text mt-2">Youtube</p>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

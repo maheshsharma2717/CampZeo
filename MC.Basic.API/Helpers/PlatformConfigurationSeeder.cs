@@ -45,7 +45,11 @@ namespace MC.Basic.API.Helpers
             
             // Linkedin
             new() { Key = "ClientId", Value = "", Platform = PlatformType.LinkedIn },
-            new() { Key = "ClientSecret", Value = "", Platform = PlatformType.LinkedIn } 
+            new() { Key = "ClientSecret", Value = "", Platform = PlatformType.LinkedIn } ,
+
+            //Youtube
+            new() {Key = "ClientId", Value="", Platform = PlatformType.Youtube},
+            new() {Key = "ClientSecret", Value="", Platform = PlatformType.Youtube}
             };
 
             foreach(var config in configsToAdd)

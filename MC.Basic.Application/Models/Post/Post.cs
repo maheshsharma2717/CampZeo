@@ -84,7 +84,16 @@ namespace MC.Basic.Application.Models.Post
         public string? ImageUrl { get; set; }
         public List<string>? Videos { get; set; } = new();
     }
-
+    public class YouTubeUploadRequest
+    {
+        public string AccessToken { get; set; }
+        public string Title { get; set; }
+        public string Description { get; set; }
+        public List<string> Tags { get; set; }
+        public string CategoryId { get; set; } = "22";
+        public string PrivacyStatus { get; set; } = "unlisted";
+        public string VideoUrl { get; set; }
+    }
     public class InstagramMediaResponse
     {
         [JsonProperty("id")]

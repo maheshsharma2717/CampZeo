@@ -43,5 +43,8 @@ namespace MC.Basic.Domains.Entities
 
         public string? LinkedInAccessToken { get; set; } 
         public string? LinkedInAuthUrn { get; set; }
+        public string? YoutubeAccessToken { get; set; }
+        public string? YoutubeAuthUrn { get; set; }
+
     }
 }

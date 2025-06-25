@@ -14,33 +14,49 @@ import { AppService } from '../../services/app-service.service';
 export class AuthCallbackComponent implements OnInit {
   loading = true;
   errorMessage = '';
-  constructor( private route: ActivatedRoute, private router: Router, private http: HttpClient,public service: AppService ) {}
+  googleAccessToken: any;
+  constructor(private route: ActivatedRoute, private router: Router, private http: HttpClient, public service: AppService) { }
 
   ngOnInit(): void {
-    const code = this.route.snapshot.queryParamMap.get('code');
-    const platform = this.route.snapshot.queryParamMap.get('state') || 'facebook';
+    let code = this.route.snapshot.queryParamMap.get('code');
+    let platform = this.route.snapshot.queryParamMap.get('state') || 'facebook';
     const userId = this.service.User.id;
-  
+
+    const hash = window.location.hash.substring(1);
+    const params = new URLSearchParams(hash);
+    this.googleAccessToken = params.get('access_token');
+
+    if (this.googleAccessToken) {
+      code = this.googleAccessToken;
+      platform = 'Youtube'
+    }
+
     if (!code) {
       this.loading = false;
       this.errorMessage = 'No authorization code found.';
       return;
     }
-  
+
     this.service.exchangeToken(code, userId, platform).subscribe({
       next: (res: any) => {
+        
         console.log(`${platform} Token:`, res);
-  
+
         if (platform === 'instagram') {
           localStorage.setItem('insta_access_token', res.accessToken);
           localStorage.setItem('insta_connected', 'true');
-        } else if(platform === 'facebook') {
+        } else if (platform === 'facebook') {
           localStorage.setItem('access_token', res.accessToken);
           localStorage.setItem('fb_connected', 'true');
-        
-        } else if(platform === 'linkedIn') {
+          sessionStorage.setItem('connectedUser', res.user.name);
+          this.service.setConnectedUser(res.user.name);
+        } else if (platform === 'linkedIn') {
           localStorage.setItem('linkedIn_access_token', res.accessToken);
           localStorage.setItem('linkedIn_connected', 'true');
+        } else if (platform == 'Youtube') {
+          localStorage.setItem('google_access_token', res.accessToken);
+          sessionStorage.setItem('google_access_token', res.accessToken);
+          sessionStorage.setItem('YoutubeUserName', res.user.name);
         }
         this.router.navigate(['/accounts']);
       },
@@ -50,5 +66,5 @@ export class AuthCallbackComponent implements OnInit {
       }
     });
   }
-  
+
 }

@@ -8,6 +8,7 @@ public enum PlatformType : long
     RCS = 4,
     Facebook=5,
     Instagram=6,
-    LinkedIn=7
+    LinkedIn=7,
+    Youtube=8
 }
 

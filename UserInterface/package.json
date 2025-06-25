@@ -26,6 +26,7 @@
     "@syncfusion/ej2-angular-schedule": "^29.1.38",
     "@syncfusion/ej2-base": "^29.1.36",
     "@syncfusion/ej2-grids": "^29.2.4",
+    "@types/gapi.auth2": "^0.0.61",
     "angular-email-editor": "^15.2.0",
     "bootstrap": "^5.3.3",
     "daypilot-pro-angular": "^0.0.0",

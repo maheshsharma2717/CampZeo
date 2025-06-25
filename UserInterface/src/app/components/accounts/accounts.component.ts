@@ -1,39 +1,67 @@
 import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
-import { Component } from '@angular/core';
+import { Component, AfterViewInit, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { ActivatedRoute, Router, RouterModule } from '@angular/router';
+import { ActivatedRoute, NavigationEnd, Router, RouterModule } from '@angular/router';
 import { AppService } from '../../services/app-service.service';
 import { ToastrService } from 'ngx-toastr';
-import { environment } from '../../../environments/environments';
+declare var google: any;
 
 @Component({
   selector: 'app-accounts',
   standalone: true,
-  imports: [RouterModule, FormsModule, CommonModule],
+  imports: [
+    RouterModule,
+    FormsModule,
+    CommonModule,
+  ],
   templateUrl: './accounts.component.html',
-  styleUrl: './accounts.component.css'
+  styleUrl: './accounts.component.css',
 })
 
-export class AccountsComponent {
+export class AccountsComponent implements OnInit {
   pages: any[] = [];
   selectedPlatform: 'facebook' | 'instagram' | 'linkedIn' | null = null;
   isFacebookConnected: boolean = false;
   isInstagramConnected: boolean = false;
   isLinkedInConnected: boolean = false;
   private fbAppId = '1308015943977582';
+  private googleClientId = '407987005028-goqhfc0ndc8cj6sadlko00bl7jtapbut.apps.googleusercontent.com'
   private redirectUri = window.location.origin + '/auth-callback';
-  linkedinClientId: any = "";
-  constructor(private route: ActivatedRoute, private router: Router, private http: HttpClient,
-    public service: AppService, private toaster: ToastrService) { }
+  linkedinClientId: any = '';
+  facebookAccountName: any;
+  googleAccountName: any;
+
+  constructor(
+    private route: ActivatedRoute,
+    private router: Router,
+    private http: HttpClient,
+    public service: AppService,
+    private toaster: ToastrService,
+  ) { }
 
   ngOnInit(): void {
+    window.addEventListener('message', (event) => {
+      if (event.data?.type === 'google-token') {
+        const token = event.data.token;
+        console.log('Received access token:', token);
+      }
+    });
     const userId = this.service.User.id;
-    localStorage.removeItem('fbRedirect')
+    localStorage.removeItem('fbRedirect');
+    this.facebookAccountName = sessionStorage.getItem('connectedUser');
+    this.googleAccountName = sessionStorage.getItem('YoutubeUserName');
+    this.service.connectedUser$.subscribe(name => {
+      if (name) {
+        this.facebookAccountName = name;
+      }
+    })
+    this.service.loadConnectedUser();
+
     this.service.getSocialMediaTokenByUser(userId).subscribe({
       next: (res: any) => {
         const now = new Date();
-        const expiry = new Date(res.expiresAt);
+        const expiry = new Date(res.expiresIn);
         this.linkedinClientId = res.linkedInClientId;
 
         if (res.accessToken) {
@@ -42,22 +70,19 @@ export class AccountsComponent {
           this.selectedPlatform = 'facebook';
           this.selectedPlatform = 'instagram';
           this.getPages(res.accessToken);
-        }
-        else {
+
+        } else {
           this.isFacebookConnected = false;
         }
-        if (res.linkedInAccessToken && res.linkedInAccessToken.trim() != "") {
+        if (res.linkedInAccessToken && res.linkedInAccessToken.trim() != '') {
           this.isLinkedInConnected = true;
         }
       },
-      error: () => {
-
-      }
+      error: () => { },
     });
   }
 
   getPages(token: string): void {
-    debugger;
     this.service.getFacebookPages(token).subscribe((res: any) => {
       this.pages = res.data;
       this.selectedPlatform = 'facebook';
@@ -65,7 +90,8 @@ export class AccountsComponent {
   }
 
   loginWithFacebook(): void {
-    const scope = 'public_profile,pages_show_list,pages_manage_posts,pages_read_engagement,pages_manage_metadata,instagram_basic,instagram_content_publish,business_management';
+    const scope =
+      'public_profile,pages_show_list,pages_manage_posts,pages_read_engagement,pages_manage_metadata,instagram_basic,instagram_content_publish,business_management';
     const redirectUri = encodeURIComponent(this.redirectUri);
     const state = 'facebook';
     const fbLoginUrl = `https://www.facebook.com/v19.0/dialog/oauth?client_id=${this.fbAppId}&redirect_uri=${redirectUri}&scope=${scope}&response_type=code&state=${state}`;
@@ -74,11 +100,12 @@ export class AccountsComponent {
   }
 
   loginWithInstagram(): void {
-    const scope = 'instagram_basic,instagram_content_publish,pages_show_list,pages_read_engagement';
+    const scope =
+      'instagram_basic,instagram_content_publish,pages_show_list,pages_read_engagement';
     const redirectUri = encodeURIComponent(this.redirectUri);
     const state = 'instagram';
     const igLoginUrl = `https://www.facebook.com/v16.0/dialog/oauth?client_id=${this.fbAppId}&redirect_uri=${redirectUri}&scope=${scope}&response_type=code&state=${state}`;
-    console.log('Instagram Login URL:', igLoginUrl);
+    // console.log('Instagram Login URL:', igLoginUrl);
     window.location.href = igLoginUrl;
   }
 
@@ -86,7 +113,8 @@ export class AccountsComponent {
     const redirectUri = this.redirectUri;
     const scope = 'w_member_social profile openid';
     const state = 'linkedIn';
-    const authUrl = `https://www.linkedin.com/oauth/v2/authorization` +
+    const authUrl =
+      `https://www.linkedin.com/oauth/v2/authorization` +
       `?response_type=code` +
       `&client_id=${this.linkedinClientId}` +
       `&redirect_uri=${encodeURIComponent(redirectUri)}` +
@@ -94,4 +122,20 @@ export class AccountsComponent {
 
     window.location.href = authUrl;
   }
+
+  connectToYoutube(id: any) {
+    const clientId = '407987005028-goqhfc0ndc8cj6sadlko00bl7jtapbut.apps.googleusercontent.com';
+    const redirectUri = 'http://localhost:4200/auth-callback';
+    const scope = [
+      'https://www.googleapis.com/auth/userinfo.profile',
+      'https://www.googleapis.com/auth/userinfo.email',
+      'https://www.googleapis.com/auth/youtube.upload',
+      'https://www.googleapis.com/auth/youtube.readonly'
+    ].join(' ');
+
+    const url = `https://accounts.google.com/o/oauth2/v2/auth?response_type=token&client_id=${clientId}&redirect_uri=${redirectUri}&scope=${encodeURIComponent(scope)}&include_granted_scopes=true&prompt=consent`;
+
+    window.location.href = url;
+  }
+
 }

@@ -102,6 +102,12 @@ export class AddPostComponent {
                 this.videoUrl = response.data.videoUrl;
               }
             }
+            else if (this.CampaignPostForm.get('type').value === 8) {
+              this.editorContent = response.data.message;
+              if (response.data.videoUrl) {
+                this.videoUrl = response.data.videoUrl;
+              }
+            }
             else {
               this.simpleText = response.data.message;
             }
@@ -209,6 +215,11 @@ export class AddPostComponent {
           });
           resolve();
         } else if (this.CampaignPostForm.controls.type.value == 7) {
+          this.CampaignPostForm.patchValue({
+            message: this.editorContent
+          });
+          resolve();
+        }else if (this.CampaignPostForm.controls.type.value == 8) {
           this.CampaignPostForm.patchValue({
             message: this.editorContent
           });
