@@ -77,6 +77,7 @@ export class EventComponent implements OnInit {
         this.videoUrl = this.Post?.videoUrl || '';
         if (this.Post.type == 8) {
           this.getChannel();
+          this.getYoutubeVideoList();
         }
         this.setActiveTab();
       }
@@ -223,7 +224,7 @@ export class EventComponent implements OnInit {
   }
 
   private postToLinkedIn(content: any) {
-    
+
     const base64Image = content.images[0];
     if (!base64Image) {
       this.toaster.warning('LinkedIn requires an image or video. Please add one.');
@@ -258,7 +259,7 @@ export class EventComponent implements OnInit {
       }
     })
   }
-  
+
   private async postToYoutube() {
     let google_access_token = localStorage.getItem("google_access_token");
     const payload = {
@@ -275,6 +276,19 @@ export class EventComponent implements OnInit {
       next: (res: any) => {
         console.log(res);
         this.toaster.success("Video successfully uploaded to youtube.");
+      }
+    })
+  }
+
+  getYoutubeVideoList() {
+    let google_access_token = localStorage.getItem("google_access_token");
+    if (!google_access_token) {
+      this.toaster.error("Access token not found");
+      return;
+    }
+    this.service.getVideoList(google_access_token).subscribe({
+      next: (res:any) =>{
+        console.log(res);
       }
     })
   }

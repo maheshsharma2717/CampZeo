@@ -464,6 +464,57 @@ namespace MC.Basic.API.Controllers
             }
         }
 
+        [HttpGet("GetVideoList")]
+        public async Task<IActionResult> GetVideoList([FromQuery] string accesstoken)
+        {
+            var credential = GoogleCredential.FromAccessToken(accesstoken)
+                .CreateScoped(YouTubeService.Scope.YoutubeReadonly);
+            var youtubeService = new YouTubeService(new BaseClientService.Initializer()
+            { 
+                HttpClientInitializer = credential,
+                ApplicationName = "Campzeo" 
+            });
+            var ChannelListRequest = youtubeService.Channels.List("snippet,contentDetails");
+            ChannelListRequest.Mine = true;
+            var channelResponse = await ChannelListRequest.ExecuteAsync();
+            if (channelResponse.Items == null || channelResponse.Items.Count == 0)
+            {
+                return NotFound("No YouTube channel found for the provided access token.");
+            }
+            var videos = new List<Video>();
+            foreach (var channel in channelResponse.Items)
+            {
+                var uploadsId = channel.ContentDetails?.RelatedPlaylists?.Uploads;
+                var nextPageToken = string.Empty;
+                while (nextPageToken != null)
+                {
+                    var videoListRequest = youtubeService.PlaylistItems.List("snippet");
+                    videoListRequest.PlaylistId = uploadsId;
+                    videoListRequest.MaxResults = 50; // Adjust as needed
+                    videoListRequest.PageToken = nextPageToken;
+                    var videoListResponse = await videoListRequest.ExecuteAsync();
+                    if (videoListResponse.Items != null)
+                    {
+                        foreach (var item in videoListResponse.Items)
+                        {
+                            videos.Add(new Video
+                            {
+                                Id = item.Snippet.ResourceId.VideoId,
+                                Snippet = new VideoSnippet
+                                {
+                                    Title = item.Snippet.Title,
+                                    Description = item.Snippet.Description,
+                                    Thumbnails = item.Snippet.Thumbnails
+                                }
+                            });
+                        }
+                    }
+                    nextPageToken = videoListResponse.NextPageToken;
+                }
+            }
+            return Ok(videos);
+        }
+
         [HttpGet("instagram-business-account")]
         public async Task<IActionResult> GetInstagramBusinessAccount([FromQuery] string pageId, [FromQuery] string accessToken)
         {

@@ -4,8 +4,6 @@ import { environment } from '../../environments/environments';
 import { Router } from '@angular/router';
 import { BehaviorSubject, map, Observable } from 'rxjs';
 import { AuthService } from './auth.service';
-import { OAuthModule, OAuthService } from "angular-oauth2-oidc";
-import { appConfig, authConfig } from '../app.config';
 
 const ApiUrl = environment.API_BASE_URL
 @Injectable({
@@ -300,6 +298,10 @@ export class AppService {
 
   uploadToYoutube(data: any){
     return this.http.post(`${ApiUrl}socialmedia/upload-youtube`, data);
+  }
+
+  getVideoList(gToken: any){
+    return this.http.get(`${ApiUrl}socialmedia/GetVideoList?accessToken=${gToken}`);
   }
 
   postToInstagram(payload: {
