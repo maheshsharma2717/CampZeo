@@ -21,7 +21,7 @@ declare var google: any;
 
 export class AccountsComponent implements OnInit {
   pages: any[] = [];
-  selectedPlatform: 'facebook' | 'instagram' | 'linkedIn' | null = null;
+  selectedPlatform: 'facebook' | 'instagram' | 'linkedIn' | 'youtube' | null = null;
   isFacebookConnected: boolean = false;
   isInstagramConnected: boolean = false;
   isLinkedInConnected: boolean = false;
@@ -31,6 +31,7 @@ export class AccountsComponent implements OnInit {
   linkedinClientId: any = '';
   facebookAccountName: any;
   googleAccountName: any;
+  fb: any;
 
   constructor(
     private route: ActivatedRoute,
@@ -47,6 +48,10 @@ export class AccountsComponent implements OnInit {
         console.log('Received access token:', token);
       }
     });
+    let fbVal = localStorage.getItem('connectedUser');
+    if(!fbVal){
+      this.fb = false;
+    }
     const userId = this.service.User.id;
     localStorage.removeItem('fbRedirect');
     this.facebookAccountName = sessionStorage.getItem('connectedUser');
@@ -54,6 +59,11 @@ export class AccountsComponent implements OnInit {
     this.service.connectedUser$.subscribe(name => {
       if (name) {
         this.facebookAccountName = name;
+        this.isFacebookConnected = true;
+        this.fb = true;
+      }else{
+        this.isFacebookConnected = false;
+        this.fb = false;
       }
     })
     this.service.loadConnectedUser();
@@ -123,7 +133,7 @@ export class AccountsComponent implements OnInit {
     window.location.href = authUrl;
   }
 
-  connectToYoutube(id: any) {
+  connectToYoutube() {
     const clientId = '407987005028-goqhfc0ndc8cj6sadlko00bl7jtapbut.apps.googleusercontent.com';
     const redirectUri = 'http://localhost:4200/auth-callback';
     const scope = [

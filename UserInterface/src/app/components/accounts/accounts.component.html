@@ -30,11 +30,10 @@
                                 <p class="card-text mt-2">Facebook</p>
                             </div>
                         </div>
-                        <p *ngIf="isFacebookConnected == true" class="text-success text-center mt-2">
-                            <!-- <i *ngIf="isFacebookConnected == true" class="fas fa-check-circle me-1"></i> -->
-                            {{ facebookAccountName || '' }}
+                        <p  class="text-success text-center mt-2">
+                            {{ facebookAccountName }}
                         </p>
-                        <p *ngIf="isFacebookConnected" class="text-success text-center">Connected</p>
+                        <p class="text-success text-center">{{ fb ? 'Connected' : ''}}</p>
                     </div>
                     <div class="d-flex flex-column" *ngIf="service.checkVisblePlatform(6)">
                         <div class="card text-center selected-instagram-hover mx-3 mb-2"
@@ -45,11 +44,10 @@
                                 <p class="card-text mt-2">Instagram</p>
                             </div>
                         </div>
-                        <p *ngIf="isFacebookConnected == true" class="text-success text-center mt-2">
-                            <!-- <i *ngIf="isFacebookConnected == true" class="fas fa-check-circle me-1"></i> -->
-                            {{ facebookAccountName || '' }}
+                        <p  class="text-success text-center mt-2">
+                            {{ facebookAccountName }}
                         </p>
-                        <p *ngIf="isInstagramConnected" class="text-success text-center">Connected</p>
+                        <p class="text-success text-center">{{ fb ? 'Connected' : ''}}</p>
                     </div>
                     <div class="d-flex flex-column" *ngIf="service.checkVisblePlatform(7)">
                         <div class="card text-center selected-instagram-hover mx-3 mb-2"
@@ -62,20 +60,19 @@
                         </div>
                         <p *ngIf="isLinkedInConnected" class="text-success text-center">Connected</p>
                     </div>
-                    <div class="d-flex flex-column" *ngIf="service.checkVisblePlatform(7)">
+                    <div class="d-flex flex-column" *ngIf="service.checkVisblePlatform(8)">
                         <div class="card text-center selected-instagram-hover mx-3 mb-2"
                             style="width: 8rem; border-radius: 10px;">
-                            <div id="googleSignInDiv" class="card-body rounded pt-4 bg-white pointer border" (click)="connectToYoutube(1)"
-                                [ngClass]="{'selected-linkedIn': selectedPlatform === 'linkedIn'}">
+                            <div id="googleSignInDiv" class="card-body rounded pt-4 bg-white pointer border" (click)="connectToYoutube()"
+                                [ngClass]="{'selected-youtube': selectedPlatform === 'youtube'}">
                                 <i class="fab fa-youtube text-danger fa-2x"></i>
                                 <p class="card-text mt-2">Youtube</p>
                             </div>
                         </div>
                         <p *ngIf="isFacebookConnected == true" class="text-success text-center mt-2">
-                            <!-- <i *ngIf="isFacebookConnected == true" class="fas fa-check-circle me-1"></i> -->
-                            {{ googleAccountName || '' }}
+                            {{ googleAccountName }}
                         </p>
-                        <p *ngIf="isLinkedInConnected" class="text-success text-center">Connected</p>
+                        <p class="text-success text-center">{{ googleAccountName ? 'Connected' : '' }}</p>
                     </div>
                 </div>
             </div>
