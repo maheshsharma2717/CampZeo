@@ -364,3 +364,4 @@ FodyWeavers.xsd
 /MC.Basic.API/appsettings.json
 /UserInterface/package-lock.json
 /MC.Basic.API/wwwroot/uploads
+MC.Basic.API/appsettings.Development.json
