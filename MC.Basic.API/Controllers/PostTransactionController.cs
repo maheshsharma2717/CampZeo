@@ -451,6 +451,18 @@ namespace MC.Basic.API.Controllers
                 if (videoInsertRequest.ResponseBody != null)
                 {
                     var videoId = videoInsertRequest.ResponseBody.Id;
+                    var channelData = GetYouTubeChannel(request.AccessToken);
+                    var newYoutubePost = new PostTransaction
+                    {
+                        Platform = "Youtube",
+                        PostId = videoId,
+                        Message = request.Description,
+                        CreatedAt = DateTime.UtcNow,
+                        AccessToken = request.AccessToken,
+                        IsScheduled = false,
+                        Published = true,
+                        PublishedAt = DateTime.UtcNow
+                    };
                     return Ok(new
                     {
                         VideoId = videoId,
@@ -513,6 +525,51 @@ namespace MC.Basic.API.Controllers
                 }
             }
             return Ok(videos);
+        }
+
+        [HttpGet("GetCommentsList")]
+        public async Task<IActionResult> GetCommentsList([FromQuery] string accessToken, [FromQuery] string videoId)
+        {
+            try
+            {
+                if(string.IsNullOrEmpty(accessToken) || accessToken == null)
+                {
+                    return BadRequest("Access token is required.");
+                }
+                if (string.IsNullOrEmpty(videoId) || videoId == null)
+                {
+                    return BadRequest("Video ID is required.");
+                }
+                var credential = GoogleCredential.FromAccessToken(accessToken)
+                    .CreateScoped(YouTubeService.Scope.YoutubeReadonly);
+                var youtubeService = new YouTubeService(new BaseClientService.Initializer()
+                {
+                    HttpClientInitializer = credential,
+                    ApplicationName = "Campzeo"
+                });
+                var commentRequest = youtubeService.CommentThreads.List("snippet");
+                commentRequest.VideoId = videoId;
+                commentRequest.MaxResults = 50;
+                var commentResponse = await commentRequest.ExecuteAsync();
+                if (commentResponse.Items == null || commentResponse.Items.Count == 0)
+                {
+                    return NotFound("No comments found for the provided video ID.");
+                }
+                var comments = commentResponse.Items.Select(c => new
+                {
+                    Id = c.Id,
+                    Author = c.Snippet.TopLevelComment.Snippet.AuthorDisplayName,
+                    Text = c.Snippet.TopLevelComment.Snippet.TextDisplay,
+                    LikeCount = c.Snippet.TopLevelComment.Snippet.LikeCount,
+                    PublishedAt = c.Snippet.TopLevelComment.Snippet.PublishedAtDateTimeOffset,
+                    VideoId = c.Snippet.TopLevelComment.Snippet.VideoId,
+                }).ToList();
+                return Ok(comments);
+            }
+            catch(Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
         }
 
         [HttpGet("instagram-business-account")]
