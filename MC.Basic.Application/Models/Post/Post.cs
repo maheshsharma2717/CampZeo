@@ -93,6 +93,7 @@ namespace MC.Basic.Application.Models.Post
         public string CategoryId { get; set; } = "22";
         public string PrivacyStatus { get; set; } = "unlisted";
         public string VideoUrl { get; set; }
+        public List<string> Videos { get; set; }
     }
     public class InstagramMediaResponse
     {
@@ -139,5 +140,22 @@ namespace MC.Basic.Application.Models.Post
         public string ContactMobile { get; set; }
         public string ContactWhatsApp { get; set; }
     }
+
+    public class PinterestProfile
+    {
+        public string WebsiteUrl { get; set; }
+        public string Username { get; set; }
+        public int pin_count { get; set; }
+        public string AccountType { get; set; }
+        public int FollowerCount { get; set; }
+        public string About { get; set; }
+        public int BoardCount { get; set; }
+        public int FollowingCount { get; set; }
+        public int MonthlyViews { get; set; }
+        public string Id { get; set; }
+        public string Profile_Image { get; set; }
+        public string Business_Name { get; set; }
+    }
+
 
 }

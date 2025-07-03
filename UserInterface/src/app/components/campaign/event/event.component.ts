@@ -76,7 +76,7 @@ export class EventComponent implements OnInit {
         this.total = this.contacts.length;
         this.videoUrl = this.Post?.videoUrl || '';
         if (this.Post.type == 8) {
-          this.getChannel();
+          // this.getChannel();
         }
         this.setActiveTab();
       }
@@ -269,6 +269,7 @@ export class EventComponent implements OnInit {
       categoryId: '22',
       privacyStatus: 'public',
       videoUrl: this.videoUrl
+      
     };
 
     this.service.uploadToYoutube(payload).subscribe({

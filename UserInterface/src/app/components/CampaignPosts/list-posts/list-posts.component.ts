@@ -47,7 +47,7 @@ export class ListPostsComponent {
 
   ngOnInit(): void {
     this.GetCampaignDetails();
-    this.getYoutubeVideoList();
+    // this.getYoutubeVideoList();
     this.GetCampaignPosts();
   }
   GetCampaignPosts() {

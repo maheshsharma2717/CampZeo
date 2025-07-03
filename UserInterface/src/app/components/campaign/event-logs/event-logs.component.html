@@ -67,6 +67,34 @@
                         <p class="card-text mt-2">RCS</p>
                     </div>
                 </div>
+                <div class="card  text-center mb-1 selected-instagram-hover " style="width: 8rem; border-radius: 10px;">
+                    <div class="card-body pt-3 rounded bg-white pointer border" (click)="ChangeType('instagram')"
+                        [ngClass]="{'selected-instagram':type=='instagram'}">
+                        <i class="fab fa-instagram fa-2x"></i>
+                        <p class="card-text mt-2">Instagram</p>
+                    </div>
+                </div>
+                <div class="card  text-center mb-1 selected-linkedin-hover " style="width: 8rem; border-radius: 10px;">
+                    <div class="card-body pt-3 rounded bg-white pointer border" (click)="ChangeType('linkedin')"
+                        [ngClass]="{'selected-linkedin':type=='linkedin'}">
+                        <i class="fab fa-linkedin text-primary fa-2x"></i>
+                        <p class="card-text mt-2">Linkedin</p>
+                    </div>
+                </div>
+                <div class="card  text-center mb-1 selected-youtube-hover " style="width: 8rem; border-radius: 10px;">
+                    <div class="card-body pt-3 rounded bg-white pointer border" (click)="ChangeType('youtube')"
+                        [ngClass]="{'selected-youtube':type=='youtube'}">
+                        <i class="fab fa-youtube text-danger fa-2x"></i>
+                        <p class="card-text mt-2">Youtube</p>
+                    </div>
+                </div>
+                <div class="card  text-center mb-1 selected-pinterest-hover " style="width: 8rem; border-radius: 10px;">
+                    <div class="card-body pt-3 rounded bg-white pointer border" (click)="ChangeType('pinterest')"
+                        [ngClass]="{'selected-pinterest':type=='pinterest'}">
+                        <i class="fab fa-pinterest text-danger fa-2x"></i>
+                        <p class="card-text mt-2">Pinterest</p>
+                    </div>
+                </div>
             </div>
             <div class="card-body table-border-style pb-1">
                 <div class="table-responsive">

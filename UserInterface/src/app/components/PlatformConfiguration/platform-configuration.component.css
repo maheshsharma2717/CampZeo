@@ -28,6 +28,24 @@
 .selected-facebook i{
     color: #316FF6 !important;
 }
+.selected-linkedin{
+    box-shadow: 0 0 8px 0 #0077b5;
+}
+.selected-linkedin i{
+    color: #0077b5 !important;
+}
+.selected-youtube{
+    box-shadow: 0 0 8px 0 #ff0033;
+}
+.selected-youtube i{
+    color: #ff0033 !important;
+}
+.selected-pinterest{
+    box-shadow: 0 0 8px 0 #e60023;
+}
+.selected-pinterest i{
+    color: #e60023 !important;
+}
 
 .selected-instagram {
     /* content: '';

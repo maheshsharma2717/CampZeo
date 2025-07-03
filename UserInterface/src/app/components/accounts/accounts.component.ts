@@ -21,7 +21,7 @@ declare var google: any;
 
 export class AccountsComponent implements OnInit {
   pages: any[] = [];
-  selectedPlatform: 'facebook' | 'instagram' | 'linkedIn' | 'youtube' | null = null;
+  selectedPlatform: 'facebook' | 'instagram' | 'linkedIn' | 'youtube' | 'pinterest' | null = null;
   isFacebookConnected: boolean = false;
   isInstagramConnected: boolean = false;
   isLinkedInConnected: boolean = false;
@@ -136,6 +136,7 @@ export class AccountsComponent implements OnInit {
   connectToYoutube() {
     const clientId = '407987005028-goqhfc0ndc8cj6sadlko00bl7jtapbut.apps.googleusercontent.com';
     const redirectUri = 'http://localhost:4200/auth-callback';
+    const state = 'youtube';
     const scope = [
       'https://www.googleapis.com/auth/userinfo.profile',
       'https://www.googleapis.com/auth/userinfo.email',
@@ -144,9 +145,16 @@ export class AccountsComponent implements OnInit {
       'https://www.googleapis.com/auth/youtube.force-ssl'
     ].join(' ');
 
-    const url = `https://accounts.google.com/o/oauth2/v2/auth?response_type=token&client_id=${clientId}&redirect_uri=${redirectUri}&scope=${encodeURIComponent(scope)}&include_granted_scopes=true&prompt=consent`;
+    const url = `https://accounts.google.com/o/oauth2/v2/auth?response_type=token&client_id=${clientId}&redirect_uri=${redirectUri}&scope=${encodeURIComponent(scope)}&include_granted_scopes=true&prompt=consent&state=${state}`;
 
     window.location.href = url;
+  }
+  connectToPinterest() {
+    const clientId = '1524471';
+    const redirectUri = 'http://localhost:4200/auth-callback';
+    const state = 'Pinterest';
+    const url = `https://www.pinterest.com/oauth/?client_id=${clientId}&redirect_uri=${redirectUri}&response_type=code&scope=boards:read,pins:read&state=${state}`;
+    window.location.href = url
   }
 
 }
