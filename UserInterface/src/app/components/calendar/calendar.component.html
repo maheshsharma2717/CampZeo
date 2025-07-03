@@ -85,6 +85,22 @@
                     </div>
                 </div>
 
+                <div class="text-start mt-3" *ngIf="previewData?.type">
+                    <div class="d-flex align-items-center mb-2">
+                        <label class="form-label fw-semibold text-secondary mb-0 me-2">Post Type:</label>
+                        <span class="d-flex align-items-center">
+                            <i 
+                                [ngClass]="getIconByType(mapTemplateTypeToString(previewData?.type))"
+                                [style.color]="getColorByType(mapTemplateTypeToString(previewData?.type))"
+                                style="font-size: 2rem; vertical-align: middle;"
+                            ></i>
+                            <span class="ms-2 text-capitalize fw-medium text-dark">
+                                {{ mapTemplateTypeToString(previewData?.type) }}
+                            </span>
+                        </span>
+                    </div>
+                </div>
+
                 <div class="text-start mt-3">
                     <label for="subject">Subject</label>
                     <input class="form-control" id="subject" [value]="previewData?.subject" type="text" readonly />
