@@ -49,7 +49,10 @@ namespace MC.Basic.API.Helpers
 
             //Youtube
             new() {Key = "ClientId", Value="", Platform = PlatformType.Youtube},
-            new() {Key = "ClientSecret", Value="", Platform = PlatformType.Youtube}
+            new() {Key = "ClientSecret", Value="", Platform = PlatformType.Youtube},
+
+            new() {Key = "AppId", Value = "", Platform = PlatformType.Pinterest},
+            new() {Key = "ClientSecret", Value = "", Platform = PlatformType.Pinterest},
             };
 
             foreach(var config in configsToAdd)

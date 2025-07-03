@@ -1,0 +1,39 @@
+@media screen and (max-width: 993px) {
+    .e-grid .e-table {
+        width: auto !important;
+    }
+}
+
+
+@media screen and (min-width: 992px) {
+
+    .e-grid.e-device .e-rowcell:last-child,
+    .e-grid.e-device .e-summarycell:last-child {
+        padding: 0 !important;
+    }
+
+}
+
+.small-margin{
+    margin-left: 5px;
+    margin-right: 5px;
+}
+
+.custom-tooltip {
+  position: relative;
+  cursor: help;
+}
+
+.custom-tooltip:hover::after {
+  content: attr(data);
+  position: absolute;
+  top: 120%;
+  left: 0;
+  background: black;
+  color: white;
+  font-size: 12px;
+  padding: 4px 8px;
+  border-radius: 4px;
+  white-space: nowrap;
+  z-index: 1000;
+}

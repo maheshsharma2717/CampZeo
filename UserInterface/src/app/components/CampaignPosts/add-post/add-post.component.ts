@@ -90,6 +90,9 @@ export class AddPostComponent {
                 }
               }
             }
+            else if (this.CampaignPostForm.get('type').value === 3) {
+              this.editorContent = response.data.message;
+            }
             else if (this.CampaignPostForm.get('type').value === 4) {
               this.editorContent = response.data.message;
             }
@@ -198,6 +201,12 @@ export class AddPostComponent {
             });
             resolve();
           });
+        }
+        else if (this.CampaignPostForm.controls.type.value == 3) {
+          this.CampaignPostForm.patchValue({
+            message: this.editorContent
+          });
+          resolve();
         }
         else if (this.CampaignPostForm.controls.type.value == 4) {
           this.CampaignPostForm.patchValue({

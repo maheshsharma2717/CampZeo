@@ -24,8 +24,9 @@ export class AppService {
     4: { name: 'RCS', class: "fa fa-globe" },
     5: { name: 'Facebook', class: "fab fa-facebook" },
     6: { name: 'Instagram', class: "fab fa-instagram" },
-    7: { name: 'Linkedin', class: "fab fa-linkedin-in" },
-    8: { name: 'Youtube', class: "fab fa-youtube text-danger" }
+    7: { name: 'Linkedin', class: "fab fa-linkedin-in text-primary" },
+    8: { name: 'Youtube', class: "fab fa-youtube text-danger" },
+    9: { name: 'Pinterest', class: "fab fa-pinterest text-danger" },
   };
   Platforms: any[] = [];
 

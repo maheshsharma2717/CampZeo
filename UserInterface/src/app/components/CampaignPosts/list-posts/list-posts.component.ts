@@ -47,6 +47,7 @@ export class ListPostsComponent {
 
   ngOnInit(): void {
     this.GetCampaignDetails();
+    // this.getYoutubeVideoList();
     this.GetCampaignPosts();
   }
   GetCampaignPosts() {
@@ -92,6 +93,21 @@ export class ListPostsComponent {
     localStorage.setItem("campainId", "0")
   }
 
+
+  getYoutubeVideoList() {
+    let google_access_token = localStorage.getItem("google_access_token");
+    if (!google_access_token) {
+      this.toastr.error("Access token not found");
+      return;
+    }
+    this.service.getVideoList(google_access_token).subscribe({
+      next: (res: any) => {
+        console.log(res);
+      }
+    })
+  }
+
+
   onItemsPerPageChange(value: number): void {
     this.itemsPerPage = value;
     this.page = 1;
@@ -99,10 +115,10 @@ export class ListPostsComponent {
 
   delete() {
     let req = {
-      data : this.deleteId
+      data: this.deleteId
     }
     this.service.deleteCampaignPostById(req).subscribe({
-      next: (res: any) =>{
+      next: (res: any) => {
         this.GetCampaignPosts();
         this.toastr.info("Post deleted successfully.");
         this.closePostDeleteModal();
