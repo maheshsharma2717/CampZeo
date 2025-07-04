@@ -399,7 +399,7 @@ export class CalendarComponent implements OnInit {
           <span style="
             display: flex;
             margin-right: 10px;
-          ">
+           ">
             ${iconHtml}
           </span>
           <div style="display: flex; flex-direction: column; justify-content: center;">
