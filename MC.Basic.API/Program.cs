@@ -9,4 +9,7 @@ var app = builder
     .ConfigurePipeline();
 await app.ResetDatabaseAsync();
 
+app.UseDefaultFiles();
+app.UseStaticFiles();
+
 app.Run();

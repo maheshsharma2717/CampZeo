@@ -20,7 +20,7 @@
         <div class="title-table d-flex align-items-center">
             <h5>Manage your Platform configurations</h5>
         </div>
-        <div class="d-flex justify-content-around w-50 mt-2 ">
+        <div class="d-flex justify-content-around  mt-2 ">
             <div class="card  text-center mb-1 selected-email-hover" style="width: 8rem; border-radius: 10px;">
                 <div class="card-body pt-3 rounded bg-white pointer border" (click)="ChangeType(1)"
                     [ngClass]="{'selected-email':type ==1}">
@@ -77,6 +77,13 @@
                     [ngClass]="{'selected-youtube':type==8}">
                     <i class="{{service.platformTypeMapping[8].class}} fa-2x"></i>
                     <p class="card-text mt-2">Youtube</p>
+                </div>
+            </div>
+            <div class="card  text-center mb-1 selected-rcs-hover " style="width: 8rem; border-radius: 10px;">
+                <div class="card-body pt-3 rounded bg-white pointer border" (click)="ChangeType(9)"
+                    [ngClass]="{'selected-pinterest':type==9}">
+                    <i class="{{service.platformTypeMapping[9].class}} fa-2x"></i>
+                    <p class="card-text mt-2">Pinterest</p>
                 </div>
             </div>
         </div>

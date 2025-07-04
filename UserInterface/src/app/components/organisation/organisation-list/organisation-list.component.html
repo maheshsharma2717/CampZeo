@@ -154,12 +154,12 @@
                         <ng-template #toolbarTemplate></ng-template>
 
                         <e-columns>
-                            <e-column headerText="#" width="50" field="id" textAlign="Left"></e-column>
-                            <e-column headerText="Name" width="100" [template]="nameTemplate"></e-column>
-                            <e-column headerText="Phone" width="100" [template]="phoneTemplate"></e-column>
-                            <e-column headerText="Email" width="100" [template]="emailTemplate"></e-column>
-                            <e-column headerText="Address" width="100" [template]="ownerTemplate"></e-column>
-                            <e-column headerText="Approve" width="50" [template]="approvalTemplate"></e-column>
+                            <e-column headerText="#" width="20" field="id" textAlign="Left"></e-column>
+                            <e-column headerText="Name" width="50" [template]="nameTemplate"></e-column>
+                            <e-column headerText="Phone" width="50" [template]="phoneTemplate"></e-column>
+                            <e-column headerText="Email" width="50" [template]="emailTemplate"></e-column>
+                            <e-column headerText="Address" width="50" [template]="ownerTemplate"></e-column>
+                            <e-column headerText="Approve" width="20" [template]="approvalTemplate"></e-column>
                             <e-column headerText="Action" width="100" [template]="actionTemplate"></e-column>
                         </e-columns>
 
@@ -170,23 +170,23 @@
                     </ng-template>
 
                     <ng-template #nameTemplate let-data>
-                        <p class="fw-semibold m-0">{{ data.name }}</p>
+                        <p class="fw-semibold m-0" [title]="data.name">{{ data.name }}</p>
                     </ng-template>
 
                     <ng-template #phoneTemplate let-data>
-                        <p class="fw-semibold m-0">{{ data.phone }}</p>
+                        <p class="fw-semibold m-0" [title]="data.phone">{{ data.phone }}</p>
                     </ng-template>
 
                     <ng-template #emailTemplate let-data>
-                        <p class="fw-semibold m-0">{{ data.email }}</p>
+                        <p class="fw-semibold m-0" [title]="data.email">{{ data.email }}</p>
                     </ng-template>
 
                     <ng-template #addressTemplate let-data>
-                        <p class="fw-semibold m-0">{{ data.address }}</p>
+                        <p class="fw-semibold m-0" [title]="data.address">{{ data.address }}</p>
                     </ng-template>
 
                     <ng-template #ownerTemplate let-data>
-                        <p class="fw-semibold m-0">{{ data.ownerName }}</p>
+                        <p class="fw-semibold m-0" [title]="data.ownerName">{{ data.ownerName }}</p>
                     </ng-template>
 
                     <ng-template #approvalTemplate let-data>
@@ -199,12 +199,12 @@
 
                     <ng-template #actionTemplate let-data>
                         <div *ngIf="this.service.User.role == 1">
-                            <a class="pointer mx-3" title="Edit Organisation" [routerLink]="'/create-organisation'"
+                            <a class="pointer small-margin" title="Edit Organisation" [routerLink]="'/create-organisation'"
                                 [queryParams]="{ id: data.id }">
                                 <i class="far fa-edit"></i>
                             </a>
 
-                            <button class="btn mx-2 py-1" [ngClass]="data.isDeleted ? 'border' : 'btn-danger'"
+                            <button class="btn small-margin py-1" [ngClass]="data.isDeleted ? 'border' : 'btn-danger'"
                                 (click)="data.isDeleted ?openSuspendModal(data.id) : openSuspendModal(data.id)">
                                 {{ data.isDeleted ? 'Recover' : 'Suspend' }}
                             </button>

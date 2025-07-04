@@ -15,6 +15,7 @@ export class AuthCallbackComponent implements OnInit {
   loading = true;
   errorMessage = '';
   googleAccessToken: any;
+  state: any;
   constructor(private route: ActivatedRoute, private router: Router, private http: HttpClient, public service: AppService) { }
 
   ngOnInit(): void {
@@ -25,8 +26,9 @@ export class AuthCallbackComponent implements OnInit {
     const hash = window.location.hash.substring(1);
     const params = new URLSearchParams(hash);
     this.googleAccessToken = params.get('access_token');
+    this.state = params.get('state');
 
-    if (this.googleAccessToken) {
+    if (this.state === 'youtube') {
       code = this.googleAccessToken;
       platform = 'Youtube'
     }

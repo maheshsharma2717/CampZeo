@@ -9,6 +9,7 @@ public enum PlatformType : long
     Facebook=5,
     Instagram=6,
     LinkedIn=7,
-    Youtube=8
+    Youtube=8,
+    Pinterest=9
 }
 

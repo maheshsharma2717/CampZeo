@@ -122,6 +122,15 @@
                                     <p class="card-text mt-2">Youtube</p>
                                 </div>
                             </div>
+                            <div  *ngIf="service.checkVisblePlatform(9)"
+                                class="card text-center selected-instagram-hover m-2"
+                                style="width: 8rem; border-radius: 10px;">
+                                <div class="card-body pt-3 rounded bg-white pointer border" (click)="ChangeType(9)"
+                                    [ngClass]="{'selected-facebook': CampaignPostForm.controls.type.value == 9 || smsPlatform === 'pinterest'}">
+                                    <i class="fab fa-pinterest text-danger fa-2x"></i>
+                                    <p class="card-text mt-2">Pinterest</p>
+                                </div>
+                            </div>
                         </div>
                     </div>
                     <div>
@@ -141,10 +150,28 @@
                                 <email-editor (loaded)="editorLoaded($event)"
                                     (ready)="editorReady($event)"></email-editor>
                             </div>}
-                            @if(CampaignPostForm.get('type').value==2||CampaignPostForm.get('type').value==3){
+                            @if(CampaignPostForm.get('type').value==2){
 
                             <textarea class="form-control" [(ngModel)]="simpleText" [ngModelOptions]="{standalone:true}"
                                 style="min-height: 30vh;"></textarea> }
+                            @if(CampaignPostForm.get('type').value==3){
+                                <div class="video-upload-container">
+                                    <div class="input-group mb-3">
+                                        <div class="custom-file">
+                                            <input type="file" class="custom-file-input" id="inputGroupFile01"
+                                                (change)="onVideoSelected($event)" accept="video/mp4" />
+                                            <label class="custom-file-label" for="inputGroupFile01">Choose file to send</label>
+                                        </div>
+                                    </div>
+                                    <div *ngIf="videoUrl">
+                                        <video [src]="videoUrl" controls width="400">
+                                            Your browser does not support the video tag.
+                                        </video>
+                                    </div>
+                                </div>
+                                <textarea class="form-control" [(ngModel)]="simpleText" [ngModelOptions]="{standalone:true}"
+                                style="min-height: 30vh;"></textarea> 
+                            }
                             @if(CampaignPostForm.get('type').value==4||CampaignPostForm.get('type').value==5||CampaignPostForm.get('type').value==6||CampaignPostForm.get('type').value==7 || CampaignPostForm.get('type').value==8)
                             {
                             @if(CampaignPostForm.get('type').value==6||CampaignPostForm.get('type').value==7 || CampaignPostForm.get('type').value==8){

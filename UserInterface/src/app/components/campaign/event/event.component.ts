@@ -76,8 +76,7 @@ export class EventComponent implements OnInit {
         this.total = this.contacts.length;
         this.videoUrl = this.Post?.videoUrl || '';
         if (this.Post.type == 8) {
-          this.getChannel();
-          this.getYoutubeVideoList();
+          // this.getChannel();
         }
         this.setActiveTab();
       }
@@ -270,25 +269,13 @@ export class EventComponent implements OnInit {
       categoryId: '22',
       privacyStatus: 'public',
       videoUrl: this.videoUrl
+      
     };
 
     this.service.uploadToYoutube(payload).subscribe({
       next: (res: any) => {
         console.log(res);
         this.toaster.success("Video successfully uploaded to youtube.");
-      }
-    })
-  }
-
-  getYoutubeVideoList() {
-    let google_access_token = localStorage.getItem("google_access_token");
-    if (!google_access_token) {
-      this.toaster.error("Access token not found");
-      return;
-    }
-    this.service.getVideoList(google_access_token).subscribe({
-      next: (res:any) =>{
-        console.log(res);
       }
     })
   }

@@ -21,6 +21,7 @@ using Google.Apis.YouTube.v3.Data;
 using Google.Apis.Services;
 using Google.Apis.Upload;
 using System.Net;
+using System.Text.Json.Nodes;
 
 namespace MC.Basic.API.Controllers
 {
@@ -222,6 +223,40 @@ namespace MC.Basic.API.Controllers
                     // Step 3: Return token + authorUrn
                     return Ok(token);
                 }
+                case "pinterest":
+                    {
+                        var AppId = await _platformConfigurationRepository.GetConfigurationValueByKey("AppId", PlatformType.Pinterest);
+                        var AppSecret = await _platformConfigurationRepository.GetConfigurationValueByKey("ClientSecret", PlatformType.Pinterest);
+
+                        if (string.IsNullOrEmpty(request.Code))
+                        {
+                            return BadRequest("Invalid token");
+                        }
+
+                        var values = new Dictionary<string, string>
+    {
+        { "grant_type", "authorization_code" },
+        { "client_id", AppId },
+        { "client_secret", AppSecret },
+        { "code", request.Code },
+        { "redirect_uri", "http://localhost:4200/auth-callback" }
+    };
+
+                        using var httpClient = new HttpClient();
+                        var content = new FormUrlEncodedContent(values);
+                        content.Headers.ContentType = new MediaTypeHeaderValue("application/x-www-form-urlencoded");
+                        httpClient.DefaultRequestHeaders.Accept.Clear();
+                        httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+                        var response = await httpClient.PostAsync("https://api.pinterest.com/v5/oauth/token", content);
+                        if (!response.IsSuccessStatusCode)
+                        {
+                            var errorContent = await response.Content.ReadAsStringAsync();
+                            return BadRequest(new { error = "Failed to exchange Pinterest token", response = errorContent });
+                        }
+
+                        return null;
+                    }
                 default:
                 return BadRequest("Invalid platform specified.");
             }
@@ -451,6 +486,24 @@ namespace MC.Basic.API.Controllers
                 if (videoInsertRequest.ResponseBody != null)
                 {
                     var videoId = videoInsertRequest.ResponseBody.Id;
+                    var channelData = GetYouTubeChannel(request.AccessToken);
+                    var MediaUrls = new List<string>();
+                    MediaUrls.AddRange(request.Videos);
+
+                    var newYoutubePost = new PostTransaction
+                    {
+                        Platform = "Youtube",
+                        PostId = videoId,
+                        Message = request.Description,
+                        CreatedAt = DateTime.UtcNow,
+                        MediaUrls = JsonConvert.SerializeObject(MediaUrls),
+                        AccessToken = request.AccessToken,
+                        IsScheduled = false,
+                        Published = true,
+                        PublishedAt = DateTime.UtcNow
+                    };
+                    _context.PostTransactions.Add(newYoutubePost);
+                    await _context.SaveChangesAsync();
                     return Ok(new
                     {
                         VideoId = videoId,
@@ -467,52 +520,146 @@ namespace MC.Basic.API.Controllers
         [HttpGet("GetVideoList")]
         public async Task<IActionResult> GetVideoList([FromQuery] string accesstoken)
         {
-            var credential = GoogleCredential.FromAccessToken(accesstoken)
+            try
+            {
+                var credential = GoogleCredential.FromAccessToken(accesstoken)
                 .CreateScoped(YouTubeService.Scope.YoutubeReadonly);
-            var youtubeService = new YouTubeService(new BaseClientService.Initializer()
-            { 
-                HttpClientInitializer = credential,
-                ApplicationName = "Campzeo" 
-            });
-            var ChannelListRequest = youtubeService.Channels.List("snippet,contentDetails");
-            ChannelListRequest.Mine = true;
-            var channelResponse = await ChannelListRequest.ExecuteAsync();
-            if (channelResponse.Items == null || channelResponse.Items.Count == 0)
-            {
-                return NotFound("No YouTube channel found for the provided access token.");
-            }
-            var videos = new List<Video>();
-            foreach (var channel in channelResponse.Items)
-            {
-                var uploadsId = channel.ContentDetails?.RelatedPlaylists?.Uploads;
-                var nextPageToken = string.Empty;
-                while (nextPageToken != null)
+                var youtubeService = new YouTubeService(new BaseClientService.Initializer()
                 {
-                    var videoListRequest = youtubeService.PlaylistItems.List("snippet");
-                    videoListRequest.PlaylistId = uploadsId;
-                    videoListRequest.MaxResults = 50; // Adjust as needed
-                    videoListRequest.PageToken = nextPageToken;
-                    var videoListResponse = await videoListRequest.ExecuteAsync();
-                    if (videoListResponse.Items != null)
-                    {
-                        foreach (var item in videoListResponse.Items)
-                        {
-                            videos.Add(new Video
-                            {
-                                Id = item.Snippet.ResourceId.VideoId,
-                                Snippet = new VideoSnippet
-                                {
-                                    Title = item.Snippet.Title,
-                                    Description = item.Snippet.Description,
-                                    Thumbnails = item.Snippet.Thumbnails
-                                }
-                            });
-                        }
-                    }
-                    nextPageToken = videoListResponse.NextPageToken;
+                    HttpClientInitializer = credential,
+                    ApplicationName = "Campzeo"
+                });
+                var ChannelListRequest = youtubeService.Channels.List("snippet,contentDetails");
+                ChannelListRequest.Mine = true;
+                var channelResponse = await ChannelListRequest.ExecuteAsync();
+                if (channelResponse.Items == null || channelResponse.Items.Count == 0)
+                {
+                    return NotFound("No YouTube channel found for the provided access token.");
                 }
+                var videos = new List<Video>();
+                foreach (var channel in channelResponse.Items)
+                {
+                    var uploadsId = channel.ContentDetails?.RelatedPlaylists?.Uploads;
+                    var nextPageToken = string.Empty;
+                    while (nextPageToken != null)
+                    {
+                        var videoListRequest = youtubeService.PlaylistItems.List("snippet");
+                        videoListRequest.PlaylistId = uploadsId;
+                        videoListRequest.MaxResults = 50; // Adjust as needed
+                        videoListRequest.PageToken = nextPageToken;
+                        var videoListResponse = await videoListRequest.ExecuteAsync();
+                        if (videoListResponse.Items != null)
+                        {
+                            foreach (var item in videoListResponse.Items)
+                            {
+                                videos.Add(new Video
+                                {
+                                    Id = item.Snippet.ResourceId.VideoId,
+                                    Snippet = new VideoSnippet
+                                    {
+                                        Title = item.Snippet.Title,
+                                        Description = item.Snippet.Description,
+                                        Thumbnails = item.Snippet.Thumbnails
+                                    }
+                                });
+                            }
+                        }
+                        nextPageToken = videoListResponse.NextPageToken;
+                    }
+                }
+                return Ok(videos);
             }
-            return Ok(videos);
+            catch(Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
+        [HttpGet("GetCommentsList")]
+        public async Task<IActionResult> GetCommentsList([FromQuery] string accessToken, [FromQuery] string videoId)
+        {
+            try
+            {
+                if(string.IsNullOrEmpty(accessToken) || accessToken == null)
+                {
+                    return BadRequest("Access token is required.");
+                }
+                if (string.IsNullOrEmpty(videoId) || videoId == null)
+                {
+                    return BadRequest("Video ID is required.");
+                }
+                var credential = GoogleCredential.FromAccessToken(accessToken)
+                    .CreateScoped(YouTubeService.Scope.YoutubeReadonly);
+                var youtubeService = new YouTubeService(new BaseClientService.Initializer()
+                {
+                    HttpClientInitializer = credential,
+                    ApplicationName = "Campzeo"
+                });
+                var commentRequest = youtubeService.CommentThreads.List("snippet");
+                commentRequest.VideoId = videoId;
+                commentRequest.MaxResults = 50;
+                var commentResponse = await commentRequest.ExecuteAsync();
+                if (commentResponse.Items == null || commentResponse.Items.Count == 0)
+                {
+                    return NotFound("No comments found for the provided video ID.");
+                }
+                var comments = commentResponse.Items.Select(c => new
+                {
+                    Id = c.Id,
+                    Author = c.Snippet.TopLevelComment.Snippet.AuthorDisplayName,
+                    Text = c.Snippet.TopLevelComment.Snippet.TextDisplay,
+                    LikeCount = c.Snippet.TopLevelComment.Snippet.LikeCount,
+                    PublishedAt = c.Snippet.TopLevelComment.Snippet.PublishedAtDateTimeOffset,
+                    VideoId = c.Snippet.TopLevelComment.Snippet.VideoId,
+                }).ToList();
+                return Ok(comments);
+            }
+            catch(Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+        [HttpGet("PinterestAccount")]
+        public async Task<IActionResult> PinterestAccount([FromQuery] string accessToken)
+        {
+            try
+            {
+                if (accessToken == null || string.IsNullOrEmpty(accessToken))
+                {
+                    return BadRequest("URL and Access Token are required.");
+                }
+
+                var request = new HttpRequestMessage(HttpMethod.Get, "https://api.pinterest.com/v5/user_account");
+                request.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", accessToken);
+
+                var response = await _httpClient.SendAsync(request);
+                if (!response.IsSuccessStatusCode)
+                {
+                    var errorContent = await response.Content.ReadAsStringAsync();
+                    return BadRequest(new { error = "Failed to fetch Pinterest account", response = errorContent });
+                }
+                var content = await response.Content.ReadAsStringAsync();
+                var data = JsonConvert.DeserializeObject<PinterestProfile>(content);
+                var result = JsonObject.Parse(content);
+                if (data == null)
+                {
+                    return NotFound("Pinterest account not found.");
+                }
+                var pinterestAccount = new
+                {
+                    Id = data.Id,
+                    Username = data.Username,
+                    BusinessName = data.Business_Name,
+                    FollowerCount = data.FollowerCount,
+                    FollowingCount = data.FollowingCount,
+                    ProfileImageUrl = data.Profile_Image
+                };
+                return Ok(pinterestAccount);
+            }
+            catch(Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
         }
 
         [HttpGet("instagram-business-account")]
