@@ -59,6 +59,8 @@ export class CalendarComponent implements OnInit {
   @ViewChild("month") month!: DayPilotMonthComponent;
   @ViewChild("navigator") nav!: DayPilotNavigatorComponent;
 
+  calendarFaded = false;
+
   constructor(
     private activatedRoute: ActivatedRoute,
     private route: Router,
@@ -115,6 +117,9 @@ export class CalendarComponent implements OnInit {
       case 2: return "sms";
       case 3: return "whatsapp";
       case 4: return "rcs";
+      case 7: return "linkedin";
+      case 8: return "youtube";
+      case 9: return "pinterest";
       default: return "other";
     }
   }
@@ -126,6 +131,9 @@ export class CalendarComponent implements OnInit {
     sms: ["#f1c232", "#f4d35e", "#f7e678", "#f7e656"],
     rcs: ["#cc4125", "#e05234", "#f0654a", "#f0653c"],
     whatsapp: ["#25D366", "#45e087", "#7fffd4", "#7fffc6"],
+    linkedin: ["#0077b5", "#0091ea", "#00b0f4", "#00c853"],
+    youtube: ["#ff0000", "#ff3333", "#ff6666", "#ff9999"],
+    pinterest: ["#e60023", "#ff4060", "#ff7a98", "#ffb3c6"],
     other: ["#808080", "#a0a0a0"]
   };
 
@@ -152,6 +160,8 @@ export class CalendarComponent implements OnInit {
     if (campaign.isSmsCampaign) types.push("sms");
     if (campaign.isRCSCampaign) types.push("rcs");
     if (campaign.isWhatsAppCampaign) types.push("whatsapp");
+    if (campaign.isYouTubeCampaign) types.push("youtube");
+    if (campaign.isPinterestCampaign) types.push("pinterest");
     return types.length ? types : ["other"];
   }
 
@@ -162,6 +172,8 @@ export class CalendarComponent implements OnInit {
     if (campaign.isSmsCampaign) return "sms";
     if (campaign.isRCSCampaign) return "rcs";
     if (campaign.isWhatsAppCampaign) return "whatsapp";
+    if (campaign.isYouTubeCampaign) return "youtube";
+    if (campaign.isPinterestCampaign) return "pinterest";
     return "other";
   }
 
@@ -173,6 +185,9 @@ export class CalendarComponent implements OnInit {
       case "sms": return "#f1c232";
       case "rcs": return "#cc4125";
       case "whatsapp": return "#25D366";
+      case "linkedin": return "#0077b5";
+      case "youtube": return "#ff0000";
+      case "pinterest": return "#e60023";
       default: return "#808080";
     }
   }
@@ -185,6 +200,9 @@ export class CalendarComponent implements OnInit {
       case "sms": return "fa fa-comment";
       case "rcs": return "fa fa-comments";
       case "whatsapp": return "fab fa-whatsapp";
+      case "linkedin": return "fab fa-linkedin-in";
+      case "youtube": return "fab fa-youtube";
+      case "pinterest": return "fab fa-pinterest";
       default: return "fa fa-bullhorn";
     }
   }
@@ -223,16 +241,19 @@ export class CalendarComponent implements OnInit {
 
   configMonth: DayPilot.MonthConfig = {
     eventBarVisible: false,
+
     onTimeRangeSelected: this.onTimeRangeSelected.bind(this),
+
+    onBeforeEventRender: this.onBeforeEventRender.bind(this),
     onEventClick: this.onEventClick.bind(this),
   };
 
   viewDay(): void {
+    debugger
     this.configNavigator.selectMode = "Day";
     this.configDay.visible = true;
     this.configWeek.visible = false;
     this.configMonth.visible = false;
-
   }
 
   viewWeek(): void {
@@ -250,7 +271,28 @@ export class CalendarComponent implements OnInit {
   }
 
   async onTimeRangeSelected(args: any) {
+    debugger;
+  
+    const selectedDate = args.start;
+    if (selectedDate) {
+      this.date = selectedDate;
 
+      this.viewDay();
+
+      this.configDay.startDate = selectedDate;
+      this.configWeek.startDate = selectedDate;
+      this.configMonth.startDate = selectedDate;
+
+      this.loadScheduledPosts(selectedDate);
+
+      if (this.day) {
+        this.day.control.startDate = selectedDate;
+        this.day.control.update();
+      }
+
+
+    }
+    
   }
 
   formatDateTimeLocal(date: Date): string {
@@ -305,6 +347,7 @@ export class CalendarComponent implements OnInit {
 
 
           this.isPreviewModalOpen = true;
+
         } else {
           this.toaster.warning(response.message);
         }
@@ -323,6 +366,8 @@ export class CalendarComponent implements OnInit {
       case 'facebook': return 5;
       case 'instagram': return 6;
       case 'linkedin': return 7;
+      case 'youtube': return 8;
+      case 'pinterest': return 9;
       default: return 0;
     }
   }
@@ -335,29 +380,143 @@ export class CalendarComponent implements OnInit {
 
   }
 
-  // Preview changes end 
 
   onBeforeEventRender(args: any) {
-    const type = args.data.tags?.type;
-    const iconClass = this.getIconByType(type);
+    let types: string[] = [];
+    if (Array.isArray(args.data.tags?.type)) {
+      types = args.data.tags.type;
+    } else if (args.data.tags?.type) {
+      types = [args.data.tags.type];
+    }
+    const iconHtml = types.map(type => `<i class="${this.getIconByType(type)}" style="font-size: 16px; background: rgba(66, 64, 64, 0.2); padding: 5px; border-radius: 4px;"></i>`).join(' ');
     const backColor = args.data.backColor;
     const textColor = "#ffffff";
-
     const name = args.data.text || "Campaign";
     const description = args.data.tags?.description || "";
-
     args.data.backColor = backColor;
     args.data.fontColor = textColor;
+    const eventDate = args.data.start ? new DayPilot.Date(args.data.start).toString("yyyy-MM-dd") : null;
+    const eventHour = args.data.start ? new DayPilot.Date(args.data.start).getHours() : null;
+    let eventsOnSameDate :any[] = [];
+    if (eventDate && Array.isArray(this.events)) {
+      eventsOnSameDate = this.events.filter(ev => {
+        const evDate = ev.start ? new DayPilot.Date(ev.start).toString("yyyy-MM-dd") : null;
+        return evDate === eventDate;
+      });
+    }
 
-    args.data.html = `
-      <div style="display: flex; gap: 8px; align-items: center; padding: 5px;">
-        <i class="${iconClass}" style="font-size: 16px; background: rgba(66, 64, 64, 0.2); padding: 5px; border-radius: 4px;"></i>
-        <div style="display: flex; flex-direction: column;">
-          <div style="font-weight: bold; color: ${textColor}; font-size: 14px;">${name}</div>
-          <div style="font-size: 12px; color: ${textColor};">${description}</div>
+    if (this.configNavigator.selectMode === 'Week' && eventsOnSameDate.length > 1) {
+      const hoursSet = new Set(
+        eventsOnSameDate.map(ev => ev.start ? new DayPilot.Date(ev.start).getHours() : null)
+      );
+      if (hoursSet.size === 1) {
+        args.data.html = `
+          <div style="
+            display: flex;
+          ">
+            <span style="
+              display: flex;
+              align-items: center;
+            ">
+              ${iconHtml}
+            </span>
+          </div>
+        `;
+      } else {
+        args.data.html = `
+          <div style="
+            display: flex; 
+          ">
+            <span style="
+              display: flex;
+              margin-right: 10px;
+              color: #ffffff;
+            ">
+              ${iconHtml}
+            </span>
+            <div style="display: flex; flex-direction: column; justify-content: center;">
+              <div style="
+                font-weight: 600;
+                color: ${textColor};
+                font-size: 15px;
+                letter-spacing: 0.2px;
+                margin-bottom: 2px;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                max-width: 140px;
+              ">${name}</div>
+              <div style="
+                font-size: 12px;
+                color: #e6e6e6;
+                opacity: 0.85;
+                font-style: italic;
+                letter-spacing: 0.1px;
+              ">${eventDate}</div>
+            </div>
+          </div>
+        `;
+      }
+    } else if (this.configNavigator.selectMode === 'Month') {
+      args.data.html = `
+        <div style="
+          display: flex;
+          align-items: center;
+        ">
+          <span style="
+            display: flex;
+            margin-right: 10px;
+            color: #ffffff;
+          ">
+            ${iconHtml}
+          </span>
+          <div style="
+            font-weight: 600;
+            color: #ffffff;
+            font-size: 15px;
+            letter-spacing: 0.2px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 120px;
+          ">${name}</div>
         </div>
-      </div>
-    `;
+      `;
+    } else {
+      args.data.html = `
+        <div style="
+          display: flex; 
+        ">
+          <span style="
+            display: flex;
+            margin-right: 10px;
+            color: #ffffff;
+           ">
+            ${iconHtml}
+          </span>
+          <div style="display: flex; flex-direction: column; justify-content: center;">
+            <div style="
+              font-weight: 600;
+              color: ${textColor};
+              font-size: 15px;
+              letter-spacing: 0.2px;
+              margin-bottom: 2px;
+              white-space: nowrap;
+              overflow: hidden;
+              text-overflow: ellipsis;
+              max-width: 140px;
+            ">${name}</div>
+            <div style="
+              font-size: 12px;
+              color: #e6e6e6;
+              opacity: 0.85;
+              font-style: italic;
+              letter-spacing: 0.1px;
+            ">${eventDate}</div>
+          </div>
+        </div>
+      `;
+    }
   }
 
   closeModal() {
@@ -366,6 +525,8 @@ export class CalendarComponent implements OnInit {
     if (modalInstance) {
       modalInstance.hide();
     }
+    this.isPreviewModalOpen = false;
+    this.calendarFaded = false;
   }
   GetHtml(message: any) {
     var html = message.split('[{(break)}]');
@@ -388,6 +549,7 @@ export class CalendarComponent implements OnInit {
     this.showNavigator = !this.showNavigator;
   }
   onNavigatorDateChange(date: DayPilot.Date): void {
+
     this.changeDate(date);
     this.showNavigator = false;
   }

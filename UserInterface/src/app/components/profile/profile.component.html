@@ -145,15 +145,25 @@
                                         <label for="currentPassword" class="col-md-4 col-lg-3 col-form-label">Current
                                             Password</label>
                                         <div class="col-md-8 col-lg-9 position-relative">
-                                            <input [type]="showCurrent ? 'text' : 'password'"
-                                                formControlName="currentPassword" class="form-control"
-                                                id="currentPassword" />
-                                            <i class="fa" [ngClass]="showCurrent ? 'fa-eye-slash' : 'fa-eye'"
-                                                (click)="showCurrent = !showCurrent"
-                                                style="position: absolute; top: 50%; right: 25px; transform: translateY(-50%); cursor: pointer;"></i>
+                                            <div style="position: relative;">
+                                                <input [type]="showCurrent ? 'text' : 'password'"
+                                                    formControlName="currentPassword" class="form-control"
+                                                    id="currentPassword" style="padding-right: 40px;" />
+                                                <i class="fa" [ngClass]="showCurrent ? 'fa-eye-slash' : 'fa-eye'"
+                                                    (click)="showCurrent = !showCurrent"
+                                                    style="position: absolute; top: 50%; right: 15px; transform: translateY(-50%); cursor: pointer;"></i>
+                                            </div>
                                             <small class="text-danger"
                                                 *ngIf="pwForm.get('currentPassword')?.touched && pwForm.get('currentPassword')?.errors?.['required']">
                                                 Current password is required.
+                                            </small>
+                                            <small class="text-danger"
+                                                *ngIf="pwForm.get('currentPassword')?.errors?.['minlength']">
+                                                Minimum 6 characters required.
+                                            </small>
+                                            <small class="text-danger"
+                                                *ngIf="pwForm.get('currentPassword')?.errors?.['pattern']">
+                                                Must include 1 uppercase and 1 special character.
                                             </small>
                                         </div>
                                     </div>
@@ -162,12 +172,14 @@
                                         <label for="newPassword" class="col-md-4 col-lg-3 col-form-label">New
                                             Password</label>
                                         <div class="col-md-8 col-lg-9 position-relative">
-                                            <input [type]="showNew ? 'text' : 'password'" formControlName="newPassword"
-                                                class="form-control" id="newPassword" />
-                                            <i class="fa" [ngClass]="showNew ? 'fa-eye-slash' : 'fa-eye'"
-                                                (click)="showNew = !showNew"
-                                                style="position: absolute; top: 50%; right: 25px; transform: translateY(-50%); cursor: pointer;">
-                                            </i>
+                                            <div style="position: relative;">
+                                                <input [type]="showNew ? 'text' : 'password'" formControlName="newPassword"
+                                                    class="form-control" id="newPassword"
+                                                    style="padding-right: 40px;" />
+                                                <i class="fa" [ngClass]="showNew ? 'fa-eye-slash' : 'fa-eye'"
+                                                    (click)="showNew = !showNew"
+                                                    style="position: absolute; top: 50%; right: 15px; transform: translateY(-50%); cursor: pointer;"></i>
+                                            </div>
                                             <small class="text-danger"
                                                 *ngIf="pwForm.get('newPassword')?.touched && pwForm.get('newPassword')?.errors?.['required']">
                                                 New password is required.
@@ -187,12 +199,14 @@
                                         <label for="renewPassword" class="col-md-4 col-lg-3 col-form-label">Re-enter New
                                             Password</label>
                                         <div class="col-md-8 col-lg-9 position-relative">
-                                            <input [type]="showConfirm ? 'text' : 'password'"
-                                                formControlName="renewPassword" class="form-control"
-                                                id="renewPassword" />
-                                            <i class="fa" [ngClass]="showConfirm ? 'fa-eye-slash' : 'fa-eye'"
-                                                (click)="showConfirm = !showConfirm"
-                                                style="position: absolute; top: 49%; right: 25px; transform: translateY(-50%); cursor: pointer;"></i>
+                                            <div style="position: relative;">
+                                                <input [type]="showConfirm ? 'text' : 'password'"
+                                                    formControlName="renewPassword" class="form-control"
+                                                    id="renewPassword" style="padding-right: 40px;" />
+                                                <i class="fa" [ngClass]="showConfirm ? 'fa-eye-slash' : 'fa-eye'"
+                                                    (click)="showConfirm = !showConfirm"
+                                                    style="position: absolute; top: 50%; right: 15px; transform: translateY(-50%); cursor: pointer;"></i>
+                                            </div>
                                             <small class="text-danger"
                                                 *ngIf="pwForm.get('renewPassword')?.touched && pwForm.get('renewPassword')?.errors?.['required']">
                                                 Confirmation is required.
@@ -200,6 +214,14 @@
                                             <small class="text-danger"
                                                 *ngIf="pwForm.get('renewPassword')?.touched && pwForm.value.newPassword !== pwForm.value.renewPassword">
                                                 Passwords do not match.
+                                            </small>
+                                            <small class="text-danger"
+                                                *ngIf="pwForm.get('renewPassword')?.errors?.['minlength']">
+                                                Minimum 6 characters required.
+                                            </small>
+                                            <small class="text-danger"
+                                                *ngIf="pwForm.get('renewPassword')?.errors?.['pattern']">
+                                                Must include 1 uppercase and 1 special character.
                                             </small>
                                         </div>
                                     </div>

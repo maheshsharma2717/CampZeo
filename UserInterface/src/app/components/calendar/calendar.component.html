@@ -26,9 +26,11 @@
                         </div>
                     </div>
 
-                    <daypilot-calendar [config]="configDay" [events]="events" #day></daypilot-calendar>
-                    <daypilot-calendar [config]="configWeek" [events]="events" #week></daypilot-calendar>
-                    <daypilot-month [config]="configMonth" [events]="events" #month></daypilot-month>
+                    <div [class.calendar-faded]="calendarFaded">
+                        <daypilot-calendar [config]="configDay" [events]="events" #day></daypilot-calendar>
+                        <daypilot-calendar [config]="configWeek" [events]="events" #week></daypilot-calendar>
+                        <daypilot-month [config]="configMonth" [events]="events" #month></daypilot-month> 
+                    </div>
 
                 </div>
             </div>
@@ -82,6 +84,22 @@
                                 </div>
                             </div>
                         </div>
+                    </div>
+                </div>
+
+                <div class="text-start mt-3" *ngIf="previewData?.type">
+                    <div class="d-flex align-items-center mb-2">
+                        <label class="form-label fw-semibold text-secondary mb-0 me-2">Post Type:</label>
+                        <span class="d-flex align-items-center">
+                            <i 
+                                [ngClass]="getIconByType(mapTemplateTypeToString(previewData?.type))"
+                                [style.color]="getColorByType(mapTemplateTypeToString(previewData?.type))"
+                                style="font-size: 2rem; vertical-align: middle;"
+                            ></i>
+                            <span class="ms-2 text-capitalize fw-medium text-dark">
+                                {{ mapTemplateTypeToString(previewData?.type) }}
+                            </span>
+                        </span>
                     </div>
                 </div>
 
