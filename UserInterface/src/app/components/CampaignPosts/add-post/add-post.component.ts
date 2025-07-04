@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, ViewChild } from '@angular/core';
+import { Component, ViewChild, ElementRef } from '@angular/core';
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { EmailEditorComponent, EmailEditorModule } from 'angular-email-editor';
@@ -7,6 +7,8 @@ import { QuillModule } from 'ngx-quill';
 import { AppService } from '../../../services/app-service.service';
 import { ToastrService } from 'ngx-toastr';
 import { queryParams } from '@syncfusion/ej2-base';
+
+
 
 @Component({
   selector: 'app-add-post',
@@ -27,6 +29,7 @@ export class AddPostComponent {
   });
   campaigns: any[] = [];
   @ViewChild(EmailEditorComponent) private emailEditor!: EmailEditorComponent;
+  @ViewChild('dateTimeInput') dateTimeInput!: ElementRef;
   simpleText: string = '';
   id: any;
   editMode: boolean = false;
@@ -42,6 +45,7 @@ export class AddPostComponent {
   campaignSearch = { name: '', startDate: '', endDate: '' };
   campaignInputValue = '';
   showCampaignDropdown = false;
+  selectedFileName: string = '';
 
   constructor(public service: AppService, private toaster: ToastrService, private activatedRoute: ActivatedRoute, private route: Router) {
     this.activatedRoute.queryParams.subscribe(param => {
@@ -68,7 +72,7 @@ export class AddPostComponent {
 
     })
   }
-  
+
   ngOnInit(): void {
     if (this.id) {
       const request = { data: this.id };
@@ -122,7 +126,7 @@ export class AddPostComponent {
           console.error('Error fetching message template:', error);
         }
       });
-    } 
+    }
     this.setFormTypeBasedOnPlatform();
     document.addEventListener('click', this.closeDropdownOnOutsideClick.bind(this));
 
@@ -153,7 +157,7 @@ export class AddPostComponent {
                 this.toaster.success(this.editMode ? "Updated successfully" : "Created successfully");
                 this.route.navigate(['/list-campaign-posts'], {
                   queryParams: { campaignId: this.CampainIdFromTemplate }
-                });``
+                }); ``
 
               }
             })
@@ -228,7 +232,7 @@ export class AddPostComponent {
             message: this.editorContent
           });
           resolve();
-        }else if (this.CampaignPostForm.controls.type.value == 8) {
+        } else if (this.CampaignPostForm.controls.type.value == 8) {
           this.CampaignPostForm.patchValue({
             message: this.editorContent
           });
@@ -304,6 +308,7 @@ export class AddPostComponent {
   }
 
   onVideoSelected(event: Event): void {
+    debugger;
     const input = event.target as HTMLInputElement;
     if (input.files && input.files[0]) {
       const file = input.files[0];
@@ -324,6 +329,10 @@ export class AddPostComponent {
           this.toaster.error('Failed to upload video');
         });
     }
+  }
+  openDatePicker() {
+    this.dateTimeInput.nativeElement.showPicker?.();
+    this.dateTimeInput.nativeElement.focus();
   }
 
 }
