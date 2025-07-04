@@ -47,7 +47,7 @@
                     <div class="mb-3">
                         <label for="platform">Select a Platform</label>
                         <div class="d-flex ">
-                            <div  *ngIf="service.checkVisblePlatform(1)"
+                            <div *ngIf="service.checkVisblePlatform(1)"
                                 class="card text-center selected-email-hover m-2"
                                 style="width: 8rem; border-radius: 10px;">
                                 <div class="card-body pt-3 rounded bg-white pointer border" (click)="ChangeType(1)"
@@ -57,8 +57,7 @@
                                 </div>
                             </div>
 
-                            <div  *ngIf="service.checkVisblePlatform(2)"
-                                class="card text-center selected-sms-hover m-2"
+                            <div *ngIf="service.checkVisblePlatform(2)" class="card text-center selected-sms-hover m-2"
                                 style="width: 8rem; border-radius: 10px;">
                                 <div class="card-body pt-3 rounded bg-white pointer border" (click)="ChangeType(2)"
                                     [ngClass]="{'selected-sms': CampaignPostForm.controls.type.value == 2 || smsPlatform === 'SMS'}">
@@ -67,7 +66,7 @@
                                 </div>
                             </div>
 
-                            <div  *ngIf="service.checkVisblePlatform(3)"
+                            <div *ngIf="service.checkVisblePlatform(3)"
                                 class="card text-center selected-whatsapp-hover m-2"
                                 style="width: 8rem; border-radius: 10px;">
                                 <div class="card-body pt-3 rounded bg-white pointer border" (click)="ChangeType(3)"
@@ -77,8 +76,7 @@
                                 </div>
                             </div>
 
-                            <div  *ngIf="service.checkVisblePlatform(4)"
-                                class="card text-center selected-rcs-hover m-2"
+                            <div *ngIf="service.checkVisblePlatform(4)" class="card text-center selected-rcs-hover m-2"
                                 style="width: 8rem; border-radius: 10px;">
                                 <div class="card-body pt-3 rounded bg-white pointer border" (click)="ChangeType(4)"
                                     [ngClass]="{'selected-rcs': CampaignPostForm.controls.type.value == 4 || smsPlatform === 'RCS'}">
@@ -86,7 +84,7 @@
                                     <p class="card-text mt-2">RCS</p>
                                 </div>
                             </div>
-                            <div  *ngIf="service.checkVisblePlatform(5)"
+                            <div *ngIf="service.checkVisblePlatform(5)"
                                 class="card text-center selected-facebook-hover m-2"
                                 style="width: 8rem; border-radius: 10px;">
                                 <div class="card-body pt-3 rounded bg-white pointer border" (click)="ChangeType(5)"
@@ -95,7 +93,7 @@
                                     <p class="card-text mt-2">FaceBook</p>
                                 </div>
                             </div>
-                            <div  *ngIf="service.checkVisblePlatform(6)"
+                            <div *ngIf="service.checkVisblePlatform(6)"
                                 class="card text-center selected-instagram-hover m-2"
                                 style="width: 8rem; border-radius: 10px;">
                                 <div class="card-body pt-3 rounded bg-white pointer border" (click)="ChangeType(6)"
@@ -104,7 +102,7 @@
                                     <p class="card-text mt-2">Instagram</p>
                                 </div>
                             </div>
-                            <div  *ngIf="service.checkVisblePlatform(7)"
+                            <div *ngIf="service.checkVisblePlatform(7)"
                                 class="card text-center selected-instagram-hover m-2"
                                 style="width: 8rem; border-radius: 10px;">
                                 <div class="card-body pt-3 rounded bg-white pointer border" (click)="ChangeType(7)"
@@ -113,7 +111,8 @@
                                     <p class="card-text mt-2">LinkedIn</p>
                                 </div>
                             </div>
-                            <div  *ngIf="service.checkVisblePlatform(8)"
+
+                            <div *ngIf="service.checkVisblePlatform(8)"
                                 class="card text-center selected-instagram-hover m-2"
                                 style="width: 8rem; border-radius: 10px;">
                                 <div class="card-body pt-3 rounded bg-white pointer border" (click)="ChangeType(8)"
@@ -122,7 +121,8 @@
                                     <p class="card-text mt-2">Youtube</p>
                                 </div>
                             </div>
-                            <div  *ngIf="service.checkVisblePlatform(9)"
+                            
+                            <div *ngIf="service.checkVisblePlatform(9)"
                                 class="card text-center selected-instagram-hover m-2"
                                 style="width: 8rem; border-radius: 10px;">
                                 <div class="card-body pt-3 rounded bg-white pointer border" (click)="ChangeType(9)"
@@ -155,26 +155,29 @@
                             <textarea class="form-control" [(ngModel)]="simpleText" [ngModelOptions]="{standalone:true}"
                                 style="min-height: 30vh;"></textarea> }
                             @if(CampaignPostForm.get('type').value==3){
-                                <div class="video-upload-container">
-                                    <div class="input-group mb-3">
-                                        <div class="custom-file">
-                                            <input type="file" class="custom-file-input" id="inputGroupFile01"
-                                                (change)="onVideoSelected($event)" accept="video/mp4" />
-                                            <label class="custom-file-label" for="inputGroupFile01">Choose file to send</label>
-                                        </div>
-                                    </div>
-                                    <div *ngIf="videoUrl">
-                                        <video [src]="videoUrl" controls width="400">
-                                            Your browser does not support the video tag.
-                                        </video>
+                            <div class="video-upload-container">
+                                <div class="input-group mb-3">
+                                    <div class="custom-file">
+                                        <input type="file" class="custom-file-input" id="inputGroupFile01"
+                                            (change)="onVideoSelected($event)" accept="video/mp4" />
+                                        <label class="custom-file-label" for="inputGroupFile01">Choose file to
+                                            send</label>
                                     </div>
                                 </div>
-                                <textarea class="form-control" [(ngModel)]="simpleText" [ngModelOptions]="{standalone:true}"
-                                style="min-height: 30vh;"></textarea> 
+                                <div *ngIf="videoUrl">
+                                    <video [src]="videoUrl" controls width="400">
+                                        Your browser does not support the video tag.
+                                    </video>
+                                </div>
+                            </div>
+                            <textarea class="form-control" [(ngModel)]="simpleText" [ngModelOptions]="{standalone:true}"
+                                style="min-height: 30vh;"></textarea>
                             }
-                            @if(CampaignPostForm.get('type').value==4||CampaignPostForm.get('type').value==5||CampaignPostForm.get('type').value==6||CampaignPostForm.get('type').value==7 || CampaignPostForm.get('type').value==8)
+                            @if(CampaignPostForm.get('type').value==4||CampaignPostForm.get('type').value==5||CampaignPostForm.get('type').value==6||CampaignPostForm.get('type').value==7
+                            || CampaignPostForm.get('type').value==8)
                             {
-                            @if(CampaignPostForm.get('type').value==6||CampaignPostForm.get('type').value==7 || CampaignPostForm.get('type').value==8){
+                            @if(CampaignPostForm.get('type').value==6||CampaignPostForm.get('type').value==7 ||
+                            CampaignPostForm.get('type').value==8){
                             <div class="video-upload-container">
                                 <div class="input-group mb-3">
                                     <div class="custom-file">
@@ -209,15 +212,17 @@
                             Please enter a valid email.
                         </div>}
                     </div>
-                    <div class="text-start mt-3">
+                    <div class="text-start mt-3" (click)="openDatePicker()" style="cursor: pointer;">
                         <label for="scheduledPostTime">Post Time</label>
                         <input type="datetime-local" id="scheduledPostTime" class="form-control"
-                            formControlName="scheduledPostTime" />
+                            formControlName="scheduledPostTime" #dateTimeInput />
                     </div>
+
                     <div *ngIf="CampaignPostForm.get('scheduledPostTime')?.invalid && CampaignPostForm.get('scheduledPostTime')?.touched"
                         class="text-danger">
                         Please select a valid date and time.
                     </div>
+
 
                     <br>
                 </div>
