@@ -377,7 +377,6 @@ export class CalendarComponent implements OnInit {
       });
     }
 
-    // Only show icon-only for week view, otherwise show both icon and details
     if (this.configNavigator.selectMode === 'Week' && eventsOnSameDate.length > 1) {
       args.data.html = `
         <div style="
@@ -389,6 +388,39 @@ export class CalendarComponent implements OnInit {
           ">
             ${iconHtml}
           </span>
+        </div>
+      `;
+    } else if (this.configNavigator.selectMode === 'Month') {
+      args.data.html = `
+        <div style="
+          display: flex;
+        ">
+          <span style="
+            display: flex;
+            margin-right: 10px;
+           ">
+            ${iconHtml}
+          </span>
+          <div style="display: flex; flex-direction: column; justify-content: center;">
+            <div style="
+              font-weight: 600;
+              color: ${textColor};
+              font-size: 15px;
+              letter-spacing: 0.2px;
+              margin-bottom: 2px;
+              white-space: nowrap;
+              overflow: hidden;
+              text-overflow: ellipsis;
+              max-width: 140px;
+            ">${name}</div>
+            <div style="
+              font-size: 12px;
+              color: #e6e6e6;
+              opacity: 0.85;
+              font-style: italic;
+              letter-spacing: 0.1px;
+            ">${eventDate}</div>
+          </div>
         </div>
       `;
     } else {
