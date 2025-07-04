@@ -59,6 +59,8 @@ export class CalendarComponent implements OnInit {
   @ViewChild("month") month!: DayPilotMonthComponent;
   @ViewChild("navigator") nav!: DayPilotNavigatorComponent;
 
+  calendarFaded = false;
+
   constructor(
     private activatedRoute: ActivatedRoute,
     private route: Router,
@@ -239,16 +241,19 @@ export class CalendarComponent implements OnInit {
 
   configMonth: DayPilot.MonthConfig = {
     eventBarVisible: false,
+
     onTimeRangeSelected: this.onTimeRangeSelected.bind(this),
+
+    onBeforeEventRender: this.onBeforeEventRender.bind(this),
     onEventClick: this.onEventClick.bind(this),
   };
 
   viewDay(): void {
+    debugger
     this.configNavigator.selectMode = "Day";
     this.configDay.visible = true;
     this.configWeek.visible = false;
     this.configMonth.visible = false;
-
   }
 
   viewWeek(): void {
@@ -266,7 +271,28 @@ export class CalendarComponent implements OnInit {
   }
 
   async onTimeRangeSelected(args: any) {
+    debugger;
+  
+    const selectedDate = args.start;
+    if (selectedDate) {
+      this.date = selectedDate;
 
+      this.viewDay();
+
+      this.configDay.startDate = selectedDate;
+      this.configWeek.startDate = selectedDate;
+      this.configMonth.startDate = selectedDate;
+
+      this.loadScheduledPosts(selectedDate);
+
+      if (this.day) {
+        this.day.control.startDate = selectedDate;
+        this.day.control.update();
+      }
+
+
+    }
+    
   }
 
   formatDateTimeLocal(date: Date): string {
@@ -321,6 +347,7 @@ export class CalendarComponent implements OnInit {
 
 
           this.isPreviewModalOpen = true;
+
         } else {
           this.toaster.warning(response.message);
         }
@@ -369,7 +396,8 @@ export class CalendarComponent implements OnInit {
     args.data.backColor = backColor;
     args.data.fontColor = textColor;
     const eventDate = args.data.start ? new DayPilot.Date(args.data.start).toString("yyyy-MM-dd") : null;
-    let eventsOnSameDate = [];
+    const eventHour = args.data.start ? new DayPilot.Date(args.data.start).getHours() : null;
+    let eventsOnSameDate :any[] = [];
     if (eventDate && Array.isArray(this.events)) {
       eventsOnSameDate = this.events.filter(ev => {
         const evDate = ev.start ? new DayPilot.Date(ev.start).toString("yyyy-MM-dd") : null;
@@ -378,59 +406,91 @@ export class CalendarComponent implements OnInit {
     }
 
     if (this.configNavigator.selectMode === 'Week' && eventsOnSameDate.length > 1) {
-      args.data.html = `
-        <div style="
-          display: flex;
-        ">
-          <span style="
+      const hoursSet = new Set(
+        eventsOnSameDate.map(ev => ev.start ? new DayPilot.Date(ev.start).getHours() : null)
+      );
+      if (hoursSet.size === 1) {
+        args.data.html = `
+          <div style="
             display: flex;
-            align-items: center;
           ">
-            ${iconHtml}
-          </span>
-        </div>
-      `;
+            <span style="
+              display: flex;
+              align-items: center;
+            ">
+              ${iconHtml}
+            </span>
+          </div>
+        `;
+      } else {
+        args.data.html = `
+          <div style="
+            display: flex; 
+          ">
+            <span style="
+              display: flex;
+              margin-right: 10px;
+              color: #ffffff;
+            ">
+              ${iconHtml}
+            </span>
+            <div style="display: flex; flex-direction: column; justify-content: center;">
+              <div style="
+                font-weight: 600;
+                color: ${textColor};
+                font-size: 15px;
+                letter-spacing: 0.2px;
+                margin-bottom: 2px;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                max-width: 140px;
+              ">${name}</div>
+              <div style="
+                font-size: 12px;
+                color: #e6e6e6;
+                opacity: 0.85;
+                font-style: italic;
+                letter-spacing: 0.1px;
+              ">${eventDate}</div>
+            </div>
+          </div>
+        `;
+      }
     } else if (this.configNavigator.selectMode === 'Month') {
       args.data.html = `
         <div style="
           display: flex;
+          align-items: center;
         ">
           <span style="
             display: flex;
             margin-right: 10px;
-           ">
+            color: #ffffff;
+          ">
             ${iconHtml}
           </span>
-          <div style="display: flex; flex-direction: column; justify-content: center;">
-            <div style="
-              font-weight: 600;
-              color: ${textColor};
-              font-size: 15px;
-              letter-spacing: 0.2px;
-              margin-bottom: 2px;
-              white-space: nowrap;
-              overflow: hidden;
-              text-overflow: ellipsis;
-              max-width: 140px;
-            ">${name}</div>
-            <div style="
-              font-size: 12px;
-              color: #e6e6e6;
-              opacity: 0.85;
-              font-style: italic;
-              letter-spacing: 0.1px;
-            ">${eventDate}</div>
-          </div>
+          <div style="
+            font-weight: 600;
+            color: #ffffff;
+            font-size: 15px;
+            letter-spacing: 0.2px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 120px;
+          ">${name}</div>
         </div>
       `;
     } else {
       args.data.html = `
         <div style="
-          display: flex;
+          display: flex; 
         ">
           <span style="
             display: flex;
             margin-right: 10px;
+            color: #ffffff;
            ">
             ${iconHtml}
           </span>
@@ -465,6 +525,8 @@ export class CalendarComponent implements OnInit {
     if (modalInstance) {
       modalInstance.hide();
     }
+    this.isPreviewModalOpen = false;
+    this.calendarFaded = false;
   }
   GetHtml(message: any) {
     var html = message.split('[{(break)}]');
@@ -487,6 +549,7 @@ export class CalendarComponent implements OnInit {
     this.showNavigator = !this.showNavigator;
   }
   onNavigatorDateChange(date: DayPilot.Date): void {
+
     this.changeDate(date);
     this.showNavigator = false;
   }

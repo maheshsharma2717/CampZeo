@@ -26,9 +26,11 @@
                         </div>
                     </div>
 
-                    <daypilot-calendar [config]="configDay" [events]="events" #day></daypilot-calendar>
-                    <daypilot-calendar [config]="configWeek" [events]="events" #week></daypilot-calendar>
-                    <daypilot-month [config]="configMonth" [events]="events" #month></daypilot-month> 
+                    <div [class.calendar-faded]="calendarFaded">
+                        <daypilot-calendar [config]="configDay" [events]="events" #day></daypilot-calendar>
+                        <daypilot-calendar [config]="configWeek" [events]="events" #week></daypilot-calendar>
+                        <daypilot-month [config]="configMonth" [events]="events" #month></daypilot-month> 
+                    </div>
 
                 </div>
             </div>
