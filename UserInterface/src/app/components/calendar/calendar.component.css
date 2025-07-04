@@ -360,3 +360,8 @@
   background-clip: text;
   -webkit-background-clip: text;
 }
+
+.calendar-faded {
+  opacity: 0.5;
+  pointer-events: none;
+}

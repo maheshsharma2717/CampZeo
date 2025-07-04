@@ -59,11 +59,14 @@
                   </div>
                 </div>
               </div>
+
               <div class="col-md-6">
-                <div class="form-group">
-                  <label for="startDate" class="floating-label">Start Date <span class="text-danger">*</span></label>
+                <div class="form-group" (click)="startDateInput.showPicker()">
+                  <label for="startDate" class="floating-label">
+                    Start Date <span class="text-danger">*</span>
+                  </label>
                   <input type="datetime-local" id="startDate" formControlName="startDate" class="form-control p-2"
-                    [value]="campaignForm.controls.startDate.value | date:'yyyy-MM-ddTHH:mm'">
+                    #startDateInput />
                   <div *ngIf="campaignForm.controls.startDate.invalid && campaignForm.controls.startDate.touched"
                     class="text-danger">
                     Start Date is required
@@ -72,12 +75,15 @@
               </div>
 
               <div class="col-md-6">
-                <div class="form-group">
-                  <label for="endDate" class="floating-label">End Date <span class="text-danger">*</span></label>
+                <div class="form-group" (click)="endDateInput.showPicker()">
+                  <label for="endDate" class="floating-label">
+                    End Date <span class="text-danger">*</span>
+                  </label>
                   <input type="datetime-local" id="endDate" formControlName="endDate" class="form-control p-2"
-                    [value]="campaignForm.controls.endDate.value | date:'yyyy-MM-ddTHH:mm'">
+                    #endDateInput />
                 </div>
               </div>
+
 
               <div class="col-md-6">
                 <div class="form-group">
@@ -86,6 +92,7 @@
                 </div>
               </div>
             </div>
+
             <!-- <div class="form-check mb-2 d-none">
               <input class="form-check-input" type="checkbox" #isEmailCampaign formControlName="isEmailCampaign">
               <label class="form-check-label" for="isEmailCampaign">Is Email Campaign</label>
