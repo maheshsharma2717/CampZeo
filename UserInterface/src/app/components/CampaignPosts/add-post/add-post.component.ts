@@ -7,6 +7,7 @@ import { QuillModule } from 'ngx-quill';
 import { AppService } from '../../../services/app-service.service';
 import { ToastrService } from 'ngx-toastr';
 import { queryParams } from '@syncfusion/ej2-base';
+import { TextGenerationService } from '../../../services/textgeneration.service';
 
 
 
@@ -46,8 +47,13 @@ export class AddPostComponent {
   campaignInputValue = '';
   showCampaignDropdown = false;
   selectedFileName: string = '';
+  generatingSubject = false;
+  generatingContent = false;
+  aiTitleOptions: string[] = [];
+  aiContentOptions: string[] = [];
+  aiContentFullResponse: string = '';
 
-  constructor(public service: AppService, private toaster: ToastrService, private activatedRoute: ActivatedRoute, private route: Router) {
+  constructor(public service: AppService, private toaster: ToastrService, private activatedRoute: ActivatedRoute, private route: Router, private textGenService: TextGenerationService) {
     this.activatedRoute.queryParams.subscribe(param => {
       this.id = param['id']
       this.CampaignPostForm.patchValue({
@@ -333,6 +339,109 @@ export class AddPostComponent {
   openDatePicker() {
     this.dateTimeInput.nativeElement.showPicker?.();
     this.dateTimeInput.nativeElement.focus();
+  }
+
+  getSelectedPlatformName(): string {
+    const type = this.CampaignPostForm.get('type').value;
+    switch (type) {
+      case 1: return 'Email';
+      case 2: return 'SMS';
+      case 3: return 'WhatsApp';
+      case 4: return 'RCS';
+      case 5: return 'Facebook';
+      case 6: return 'Instagram';
+      case 7: return 'LinkedIn';
+      case 8: return 'YouTube';
+      case 9: return 'Pinterest';
+      default: return 'Platform';
+    }
+  }
+
+  generateSubjectWithAI() {
+    this.generatingSubject = true;
+    this.aiTitleOptions = [];
+    const platform = this.getSelectedPlatformName();
+    const prompt = `Generate a catchy subject/title for a ${platform} campaign post.`;
+    this.textGenService.generateText({ prompt }).subscribe({
+      next: (res: { text: string }) => {
+        let text = res.text;
+        // Extract all bullet points (lines starting with *)
+        const bullets = text.match(/\*+\s?(.+)/g);
+        let options: string[] = [];
+        if (bullets && bullets.length > 0) {
+          options = bullets.map(b => b.replace(/^\*+\s?/, '').trim());
+        } else {
+          // Fallback: split by lines and filter non-empty
+          options = text.split(/\r?\n/).map(l => l.trim()).filter(l => l);
+        }
+        // Limit each option to 20 words
+        options = options.map(opt => {
+          const words = opt.split(/\s+/);
+          return words.length > 20 ? words.slice(0, 20).join(' ') + '...' : opt;
+        });
+        this.aiTitleOptions = options;
+        this.generatingSubject = false;
+      },
+      error: () => { this.generatingSubject = false; }
+    });
+  }
+
+  selectAiTitleOption(option: string) {
+    this.CampaignPostForm.get('subject').setValue(option);
+    this.aiTitleOptions = [];
+  }
+
+  generateContentWithAI() {
+    this.generatingContent = true;
+    this.aiContentOptions = [];
+    this.aiContentFullResponse = '';
+    const platform = this.getSelectedPlatformName();
+    const prompt = `Generate engaging content for a ${platform} campaign post.`;
+    this.textGenService.generateText({ prompt }).subscribe({
+      next: (res: { text: string }) => {
+        let text = res.text;
+        this.aiContentFullResponse = text;
+        // Extract all bullet points (lines starting with *)
+        const bullets = text.match(/\*+\s?(.+)/g);
+        let options: string[] = [];
+        if (bullets && bullets.length > 0) {
+          options = bullets.map(b => b.replace(/^\*+\s?/, '').trim());
+        } else {
+          // Fallback: split by lines and filter non-empty
+          options = text.split(/\r?\n/).map(l => l.trim()).filter(l => l);
+        }
+        // Limit each option to 100 words (for content)
+        options = options.map(opt => {
+          const words = opt.split(/\s+/);
+          return words.length > 100 ? words.slice(0, 100).join(' ') + '...' : opt;
+        });
+        this.aiContentOptions = options;
+        this.generatingContent = false;
+      },
+      error: () => { this.generatingContent = false; }
+    });
+  }
+
+  selectAiContentOption(option: string) {
+    const type = this.CampaignPostForm.get('type').value;
+    const contentToApply = this.aiContentFullResponse || option;
+    if (type === 1 && this.emailEditor && this.emailEditor.editor && this.emailEditor.editor.loadDesign) {
+      try {
+        const design = JSON.parse(contentToApply);
+        this.emailEditor.editor.loadDesign(design);
+        this.CampaignPostForm.patchValue({ message: contentToApply });
+      } catch {
+        this.editorContent = contentToApply;
+        this.CampaignPostForm.patchValue({ message: contentToApply });
+      }
+    } else if (type === 2 || type === 3) {
+      this.simpleText = contentToApply;
+      this.CampaignPostForm.patchValue({ message: contentToApply });
+    } else {
+      this.editorContent = contentToApply;
+      this.CampaignPostForm.patchValue({ message: contentToApply });
+    }
+    this.aiContentOptions = [];
   }
 
 }

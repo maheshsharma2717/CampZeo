@@ -81,6 +81,7 @@ namespace MC.Basic.API
                            .AllowCredentials();
                 });
             });
+            builder.Services.AddHttpClient<ITextGenerationService, TextGenerationService>();
             builder.Services.AddControllers()
     .AddNewtonsoftJson(options =>
     {

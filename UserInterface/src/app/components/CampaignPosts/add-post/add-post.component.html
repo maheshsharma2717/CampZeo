@@ -135,7 +135,18 @@
                     </div>
                     <div>
                         <label for="subject">Subject</label>
-                        <input class="form-control" id="subject" formControlName="subject" type="text" />
+                        <div class="input-group">
+                            <input class="form-control" id="subject" formControlName="subject" type="text" />
+                            <button type="button" class="btn btn-outline-secondary d-flex align-items-center px-2" (click)="generateSubjectWithAI()" [disabled]="generatingSubject" title="Generate with AI">
+                                <i class="fas fa-magic me-1" aria-hidden="true"></i>
+                                <span class="d-none d-md-inline">AI</span>
+                            </button>
+                        </div>
+                        <div *ngIf="aiTitleOptions.length > 0" class="mt-2">
+                            <span *ngFor="let option of aiTitleOptions" class="badge rounded-pill bg-light text-dark border me-2 mb-1 pointer" style="cursor:pointer; font-size: 1em;" (click)="selectAiTitleOption(option)">
+                                {{ option }}
+                            </span>
+                        </div>
                         @if(CampaignPostForm.get('subject').invalid &&
                         CampaignPostForm.get('subject').touched){
                         <div class="text-danger">
@@ -149,11 +160,26 @@
                             <div class="row my-4 mx-auto p-5 " style="width: 100%;">
                                 <email-editor (loaded)="editorLoaded($event)"
                                     (ready)="editorReady($event)"></email-editor>
+                                <button type="button" class="btn btn-outline-secondary d-flex align-items-center px-2 mt-2 ms-2" (click)="generateContentWithAI()" [disabled]="generatingContent" title="Generate with AI">
+                                    <i class="fas fa-magic me-1" aria-hidden="true"></i>
+                                    <span class="d-none d-md-inline">AI</span>
+                                </button>
                             </div>}
                             @if(CampaignPostForm.get('type').value==2){
-
-                            <textarea class="form-control" [(ngModel)]="simpleText" [ngModelOptions]="{standalone:true}"
-                                style="min-height: 30vh;"></textarea> }
+                            <div class="d-flex align-items-center">
+                                <textarea class="form-control" [(ngModel)]="simpleText" [ngModelOptions]="{standalone:true}"
+                                    style="min-height: 30vh;"></textarea>
+                                <button type="button" class="btn btn-outline-secondary d-flex align-items-center px-2 mt-2 ms-2" (click)="generateContentWithAI()" [disabled]="generatingContent" title="Generate with AI">
+                                    <i class="fas fa-magic me-1" aria-hidden="true"></i>
+                                    <span class="d-none d-md-inline">AI</span>
+                                </button>
+                            </div>
+                            <div *ngIf="aiContentOptions.length > 0" class="mt-2 mb-2 d-flex flex-wrap" style="gap: 0.5rem; max-height: 200px; overflow-y: auto;">
+                                <span *ngFor="let option of aiContentOptions" class="badge rounded-pill bg-info text-dark border pointer" style="cursor:pointer; font-size: 1em; white-space: normal; padding: 0.75em 1em;" (click)="selectAiContentOption(option)">
+                                    {{ option }}
+                                </span>
+                            </div>
+                            }
                             @if(CampaignPostForm.get('type').value==3){
                             <div class="video-upload-container">
                                 <div class="input-group mb-3">
@@ -170,8 +196,14 @@
                                     </video>
                                 </div>
                             </div>
-                            <textarea class="form-control" [(ngModel)]="simpleText" [ngModelOptions]="{standalone:true}"
-                                style="min-height: 30vh;"></textarea>
+                            <div class="d-flex align-items-center">
+                                <textarea class="form-control" [(ngModel)]="simpleText" [ngModelOptions]="{standalone:true}"
+                                    style="min-height: 30vh;"></textarea>
+                                <button type="button" class="btn btn-outline-secondary d-flex align-items-center px-2 mt-2 ms-2" (click)="generateContentWithAI()" [disabled]="generatingContent" title="Generate with AI">
+                                    <i class="fas fa-magic me-1" aria-hidden="true"></i>
+                                    <span class="d-none d-md-inline">AI</span>
+                                </button>
+                            </div>
                             }
                             @if(CampaignPostForm.get('type').value==4||CampaignPostForm.get('type').value==5||CampaignPostForm.get('type').value==6||CampaignPostForm.get('type').value==7
                             || CampaignPostForm.get('type').value==8)
@@ -198,6 +230,15 @@
                                     [ngModelOptions]="{standalone:true}" (onFocus)="focus($event)"
                                     (onBlur)="blur($event)" (onEditorCreated)="created($event)"
                                     class="mb-4"></quill-editor>
+                                <button type="button" class="btn btn-outline-secondary d-flex align-items-center px-2 mt-2 ms-2" (click)="generateContentWithAI()" [disabled]="generatingContent" title="Generate with AI">
+                                    <i class="fas fa-magic me-1" aria-hidden="true"></i>
+                                    <span class="d-none d-md-inline">AI</span>
+                                </button>
+                            </div>
+                            <div *ngIf="aiContentOptions.length > 0" class="mt-2 mb-2 d-flex flex-wrap" style="gap: 0.5rem; max-height: 200px; overflow-y: auto;">
+                                <span *ngFor="let option of aiContentOptions" class="badge rounded-pill bg-info text-dark border pointer" style="cursor:pointer; font-size: 1em; white-space: normal; padding: 0.75em 1em;" (click)="selectAiContentOption(option)">
+                                    {{ option }}
+                                </span>
                             </div>
                             }
                         </div>
