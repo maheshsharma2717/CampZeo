@@ -8,13 +8,14 @@ import { AppService } from '../../../services/app-service.service';
 import { ToastrService } from 'ngx-toastr';
 import { queryParams } from '@syncfusion/ej2-base';
 import { TextGenerationService } from '../../../services/textgeneration.service';
+import { ChatComponent } from './chat/chat.component';
 
 
 
 @Component({
   selector: 'app-add-post',
   standalone: true,
-  imports: [FormsModule, ReactiveFormsModule, EmailEditorModule, CommonModule, QuillModule, RouterModule],
+  imports: [FormsModule, ReactiveFormsModule, EmailEditorModule, CommonModule, QuillModule, RouterModule, ChatComponent],
   templateUrl: './add-post.component.html',
   styleUrl: './add-post.component.css'
 })
@@ -52,6 +53,13 @@ export class AddPostComponent {
   aiTitleOptions: string[] = [];
   aiContentOptions: string[] = [];
   aiContentFullResponse: string = '';
+  hoveredTitle: string | null = null;
+  hoveredContent: string | null = null;
+  selectedTitleBadge: number | null = null;
+  selectedContentOption: number | null = null;
+  showContentAIPopover: boolean = false;
+  showChatHelper: boolean = false;
+  showAIContentModal: boolean = false;
 
   constructor(public service: AppService, private toaster: ToastrService, private activatedRoute: ActivatedRoute, private route: Router, private textGenService: TextGenerationService) {
     this.activatedRoute.queryParams.subscribe(param => {
@@ -359,89 +367,115 @@ export class AddPostComponent {
 
   generateSubjectWithAI() {
     this.generatingSubject = true;
-    this.aiTitleOptions = [];
+    this.selectedTitleBadge = null;
     const platform = this.getSelectedPlatformName();
-    const prompt = `Generate a catchy subject/title for a ${platform} campaign post.`;
+    const currentTitle = this.CampaignPostForm.get('subject').value || '';
+    const prompt = `Enhance the following ${platform} campaign post title with catchy look and feel. Respond ONLY with the improved title, no extra text, explanations, or formatting.\nTitle: ${currentTitle}`;
+
     this.textGenService.generateText({ prompt }).subscribe({
-      next: (res: { text: string }) => {
-        let text = res.text;
-        // Extract all bullet points (lines starting with *)
-        const bullets = text.match(/\*+\s?(.+)/g);
-        let options: string[] = [];
-        if (bullets && bullets.length > 0) {
-          options = bullets.map(b => b.replace(/^\*+\s?/, '').trim());
+      next: (res: any) => {
+        let responseObj = res;
+        let text = '';
+        if (Array.isArray(responseObj.response)) {
+          text = responseObj.response.join('\n');
+        } else if (typeof responseObj.response === 'string') {
+          text = responseObj.response;
         } else {
-          // Fallback: split by lines and filter non-empty
-          options = text.split(/\r?\n/).map(l => l.trim()).filter(l => l);
+          text = '';
         }
-        // Limit each option to 20 words
-        options = options.map(opt => {
-          const words = opt.split(/\s+/);
-          return words.length > 20 ? words.slice(0, 20).join(' ') + '...' : opt;
-        });
-        this.aiTitleOptions = options;
+        this.CampaignPostForm.get('subject').setValue(text);
         this.generatingSubject = false;
       },
       error: () => { this.generatingSubject = false; }
     });
   }
 
-  selectAiTitleOption(option: string) {
+  stripOptionPrefix(str: string): string {
+    return str;
+  }
+
+  selectAiTitleOption(option: string, index: number) {
     this.CampaignPostForm.get('subject').setValue(option);
-    this.aiTitleOptions = [];
+    this.selectedTitleBadge = index;
   }
 
-  generateContentWithAI() {
-    this.generatingContent = true;
-    this.aiContentOptions = [];
-    this.aiContentFullResponse = '';
-    const platform = this.getSelectedPlatformName();
-    const prompt = `Generate engaging content for a ${platform} campaign post.`;
-    this.textGenService.generateText({ prompt }).subscribe({
-      next: (res: { text: string }) => {
-        let text = res.text;
-        this.aiContentFullResponse = text;
-        // Extract all bullet points (lines starting with *)
-        const bullets = text.match(/\*+\s?(.+)/g);
-        let options: string[] = [];
-        if (bullets && bullets.length > 0) {
-          options = bullets.map(b => b.replace(/^\*+\s?/, '').trim());
-        } else {
-          // Fallback: split by lines and filter non-empty
-          options = text.split(/\r?\n/).map(l => l.trim()).filter(l => l);
-        }
-        // Limit each option to 100 words (for content)
-        options = options.map(opt => {
-          const words = opt.split(/\s+/);
-          return words.length > 100 ? words.slice(0, 100).join(' ') + '...' : opt;
-        });
-        this.aiContentOptions = options;
-        this.generatingContent = false;
-      },
-      error: () => { this.generatingContent = false; }
-    });
-  }
 
-  selectAiContentOption(option: string) {
+  selectAiContentOption(option: string, index: number) {
+    const cleanOption = this.stripOptionPrefix(option);
     const type = this.CampaignPostForm.get('type').value;
-    const contentToApply = this.aiContentFullResponse || option;
     if (type === 1 && this.emailEditor && this.emailEditor.editor && this.emailEditor.editor.loadDesign) {
       try {
-        const design = JSON.parse(contentToApply);
+        const design = JSON.parse(cleanOption);
         this.emailEditor.editor.loadDesign(design);
-        this.CampaignPostForm.patchValue({ message: contentToApply });
+        this.CampaignPostForm.patchValue({ message: cleanOption });
       } catch {
-        this.editorContent = contentToApply;
-        this.CampaignPostForm.patchValue({ message: contentToApply });
+        this.CampaignPostForm.patchValue({ message: cleanOption });
       }
     } else if (type === 2 || type === 3) {
-      this.simpleText = contentToApply;
-      this.CampaignPostForm.patchValue({ message: contentToApply });
+      this.simpleText = cleanOption;
+      this.CampaignPostForm.patchValue({ message: cleanOption });
     } else {
-      this.editorContent = contentToApply;
-      this.CampaignPostForm.patchValue({ message: contentToApply });
+      this.editorContent = cleanOption;
+      this.CampaignPostForm.patchValue({ message: cleanOption });
     }
-    this.aiContentOptions = [];
+    this.selectedContentOption = index;
+  }
+
+  onChatContentGenerated(content: string) {
+    const type = this.CampaignPostForm.get('type').value;
+    if (type === 1 && this.emailEditor && this.emailEditor.editor && this.emailEditor.editor.loadDesign) {
+      try {
+        const design = JSON.parse(content);
+        this.emailEditor.editor.loadDesign(design);
+        this.CampaignPostForm.patchValue({ message: content });
+      } catch {
+        this.CampaignPostForm.patchValue({ message: content });
+      }
+    } else if (type === 2 || type === 3) {
+      this.simpleText = content;
+      this.CampaignPostForm.patchValue({ message: content });
+    } else {
+      this.editorContent = content;
+      this.CampaignPostForm.patchValue({ message: content });
+    }
+  }
+
+  onContentInputBlur() {
+    setTimeout(() => { this.showContentAIPopover = false; this.showChatHelper = false; }, 200); 
+  }
+  onContentInputChange() {
+    if (this.simpleText) {
+      this.showContentAIPopover = false;
+      this.showChatHelper = false;
+    }
+  }
+
+  openAIContentModal() {
+    this.showAIContentModal = true;
+  }
+
+  closeAIContentModal() {
+    this.showAIContentModal = false;
+  }
+
+  onAIContentSelected(content: string) {
+    const type = this.CampaignPostForm.get('type').value;
+    if (type === 1 && this.emailEditor && this.emailEditor.editor && this.emailEditor.editor.loadDesign) {
+      try {
+        const design = JSON.parse(content);
+        this.emailEditor.editor.loadDesign(design);
+        this.CampaignPostForm.patchValue({ message: content });
+      } catch {
+        this.CampaignPostForm.patchValue({ message: content });
+      }
+    } else if (type === 2 || type === 3) {
+      this.simpleText = content;
+      this.CampaignPostForm.patchValue({ message: content });
+    } else {
+      this.editorContent = content;
+      this.CampaignPostForm.patchValue({ message: content });
+    }
+    this.closeAIContentModal();
   }
 
 }

@@ -11,11 +11,9 @@ public class AuthorizeAttribute : Attribute, IAuthorizationFilter
 {
     public void OnAuthorization(AuthorizationFilterContext context)
     {
-        //this is the token we get in the header from UI side.
         var user = (User)context.HttpContext.Items["User"];
         if(user == null)
         {
-            // not logged in
             context.Result = new JsonResult(new { message = "Unauthorized" }) { StatusCode = StatusCodes.Status401Unauthorized };
         }
     }

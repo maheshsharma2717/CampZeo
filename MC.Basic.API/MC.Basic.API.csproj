@@ -28,7 +28,6 @@
     <PackageReference Include="Serilog.Sinks.File" Version="6.0.0" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="7.1.0" />
     <PackageReference Include="Swashbuckle.AspNetCore.Swagger" Version="7.1.0" />
-    <!-- TODO: Add Google Gemini API client package if available -->
   </ItemGroup>
 
   <ItemGroup>
