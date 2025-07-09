@@ -24,7 +24,7 @@ export class ChatComponent implements OnInit, AfterViewChecked {
 
   @Output() contentGenerated = new EventEmitter<string>();
   @Input() platform: string = 'Platform';
-
+  showSpinner: boolean = false;
   messages: ChatMessage[] = [];
   newMessage: string = '';
   isLoading: boolean = false;
@@ -59,13 +59,19 @@ export class ChatComponent implements OnInit, AfterViewChecked {
     this.selectedOptionIndex = null;
     this.selectedText = '';
     this.showPopover = false;
-
-    const prompt = `Generate 5 engaging content options for a ${this.platform} (note- this can be a campaign post, a post on a social media platform, a text message, an email, a WhatsApp message, an RCS message, a Facebook post, an Instagram post, a LinkedIn post, a YouTube post, a Pinterest post). Respond ONLY as a numbered list in the format: Option 1: ..., Option 2: ..., Option 3: ..., Option 4: ..., Option 5: ...\nUser request: ${userMessage}`;
+    this.showSpinner = false;
+    const prompt = `Generate 5 engaging content options for a ${this.platform} (note- this can be a campaign post, a post on a social media platform, a text message, an email, a WhatsApp message, an RCS message, a Facebook post, an Instagram post, a LinkedIn post, a YouTube post, a Pinterest post). Respond ONLY as a numbered list in the format: Option 1: ..., Option 2: ..., Option 3: ..., Option 4: ..., Option 5: ...  also at the end create  popular hastags for every options
+    \nUser request: ${userMessage}`;
 
     this.textGenerationService.generateText({ prompt }).subscribe({
       next: (response:any) => {
         this.addMessage(response.response, false);
-        
+       
+        this.addMessage(
+          'Please select the desired text from the options above to add to your input.',
+          false
+        );
+        this.showSpinner = false;
         this.isLoading = false;
       },
       error: (error) => {
@@ -129,10 +135,10 @@ export class ChatComponent implements OnInit, AfterViewChecked {
     const selection = window.getSelection();
     if (selection && selection.toString().length > 0) {
       this.selectedText = selection.toString();
-      this.contentGenerated.emit(this.selectedText); // Emit immediately on selection
+      this.contentGenerated.emit(this.selectedText);
     } else {
       this.selectedText = '';
-      this.contentGenerated.emit(''); // Clear selection in parent
+      this.contentGenerated.emit('');
     }
   }
 }

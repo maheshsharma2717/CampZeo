@@ -49,7 +49,7 @@
                         <div class="col-12 d-flex ">
                             <div *ngIf="service.checkVisblePlatform(1)"
                                 class="card text-center selected-email-hover m-2"
-                                style="width: 8rem; border-radius: 10px;">
+                                style=" border-radius: 10px;">
                                 <div class="card-body se pt-3 rounded bg-white pointer " (click)="ChangeType(1)"
                                     [ngClass]="{'selected-email': CampaignPostForm.controls.type.value == 1 || smsPlatform === 'Email'}">
                                     <i class="fas fa-envelope-open fa-2x"></i>
@@ -58,7 +58,7 @@
                             </div>
 
                             <div *ngIf="service.checkVisblePlatform(2)" class="card text-center selected-sms-hover m-2"
-                                style="width: 8rem; border-radius: 10px;">
+                                style=" border-radius: 10px;">
                                 <div class="card-body se pt-3 rounded bg-white pointer " (click)="ChangeType(2)"
                                     [ngClass]="{'selected-sms': CampaignPostForm.controls.type.value == 2 || smsPlatform === 'SMS'}">
                                     <i class="fa fa-envelope text-warning fa-2x"></i>
@@ -68,7 +68,7 @@
 
                             <div *ngIf="service.checkVisblePlatform(3)"
                                 class="card text-center selected-whatsapp-hover m-2"
-                                style="width: 8rem; border-radius: 10px;">
+                                style=" border-radius: 10px;">
                                 <div class="card-body se pt-3 rounded bg-white pointer " (click)="ChangeType(3)"
                                     [ngClass]="{'selected-whatsapp': CampaignPostForm.controls.type.value == 3 || smsPlatform === 'WhatsApp'}">
                                     <i class="fab fa-whatsapp fa-2x"></i>
@@ -77,7 +77,7 @@
                             </div>
 
                             <div *ngIf="service.checkVisblePlatform(4)" class="card text-center selected-rcs-hover m-2"
-                                style="width: 8rem; border-radius: 10px;">
+                                style=" border-radius: 10px;">
                                 <div class="card-body se pt-3 rounded bg-white pointer " (click)="ChangeType(4)"
                                     [ngClass]="{'selected-rcs': CampaignPostForm.controls.type.value == 4 || smsPlatform === 'RCS'}">
                                     <i class="fa fa-globe fa-2x"></i>
@@ -86,7 +86,7 @@
                             </div>
                             <div *ngIf="service.checkVisblePlatform(5)"
                                 class="card text-center selected-facebook-hover m-2"
-                                style="width: 8rem; border-radius: 10px;">
+                                style=" border-radius: 10px;">
                                 <div class="card-body se pt-3 rounded bg-white pointer " (click)="ChangeType(5)"
                                     [ngClass]="{'selected-facebook': CampaignPostForm.controls.type.value == 5 || smsPlatform === 'Facebook'}">
                                     <i class="fab fa-facebook fa-2x"></i>
@@ -95,7 +95,7 @@
                             </div>
                             <div *ngIf="service.checkVisblePlatform(6)"
                                 class="card text-center selected-instagram-hover m-2"
-                                style="width: 8rem; border-radius: 10px;">
+                                style=" border-radius: 10px;">
                                 <div class="card-body se pt-3 rounded bg-white pointer " (click)="ChangeType(6)"
                                     [ngClass]="{'selected-instagram': CampaignPostForm.controls.type.value == 6 || smsPlatform === 'Instagram'}">
                                     <i class="fab fa-instagram fa-2x"></i>
@@ -104,7 +104,7 @@
                             </div>
                             <div *ngIf="service.checkVisblePlatform(7)"
                                 class="card text-center selected-instagram-hover m-2"
-                                style="width: 8rem; border-radius: 10px;">
+                                style=" border-radius: 10px;">
                                 <div class="card-body se pt-3 rounded bg-white pointer " (click)="ChangeType(7)"
                                     [ngClass]="{'selected-facebook': CampaignPostForm.controls.type.value == 7 || smsPlatform === 'LinkedIn'}">
                                     <i class="fab fa-linkedin-in fa-2x"></i>
@@ -114,7 +114,7 @@
 
                             <div *ngIf="service.checkVisblePlatform(8)"
                                 class="card text-center selected-instagram-hover m-2"
-                                style="width: 8rem; border-radius: 10px;">
+                                style=" border-radius: 10px;">
                                 <div class="card-body se   pt-3 rounded bg-white pointer " (click)="ChangeType(8)"
                                     [ngClass]="{'selected-facebook': CampaignPostForm.controls.type.value == 8 || smsPlatform === 'youtube'}">
                                     <i class="fab fa-youtube text-danger fa-2x"></i>
@@ -124,7 +124,7 @@
 
                             <div *ngIf="service.checkVisblePlatform(9)"
                                 class="card text-center selected-instagram-hover m-2"
-                                style="width: 8rem; border-radius: 10px;">
+                                style=" border-radius: 10px;">
                                 <div class="card-body pt-3 rounded bg-white pointer " (click)="ChangeType(9)"
                                     [ngClass]="{'selected-facebook': CampaignPostForm.controls.type.value == 9 || smsPlatform === 'pinterest'}">
                                     <i class="fab fa-pinterest text-danger fa-2x"></i>
@@ -164,7 +164,7 @@
                         class="d-flex align-items-center mb-2">
                         <label for="organisationName" style="float: inline-start; width: 100%;">Campaign Post
                             Content</label>
-                        <a type="button" class="btn btn-sm d-flex align-items-center btn-outline-primary  mt-3" style="font-size: 10px; width: 13%;" (click)="openAIContentModal()">
+                        <a type="button" class="btn btn-sm d-flex align-items-center btn-outline-primary  mt-3" style="font-size: 12px; width: 10%;" (click)="openAIContentModal()">
                             <i class="fas fa-magic mx-2 " aria-hidden="true"></i> Generate with AI
                         </a>
                     </div>
@@ -299,7 +299,7 @@
 </div>
 
 <div *ngIf="showAIContentModal" class="modal fade show d-block" tabindex="-1" role="dialog" style="background: rgba(0,0,0,0.5); overflow-y: auto;">
-  <div class="modal-dialog modal-lg" role="document">
+  <div class="modal-dialog modal-lg " role="document" style="    margin-block: 9%; overflow: hidden;">
     <div class="modal-content">
       <div class="modal-header bg-gradient bg-secondary text-white px-4 py-3">
         <h5 class="modal-title mb-0">AI Content Generation</h5>
@@ -310,11 +310,11 @@
       <div class="card-body p-4 position-relative">
         <app-chat [platform]="getSelectedPlatformName()" (contentGenerated)="onChatTextSelected($event)"></app-chat>
         <div *ngIf="showAddToContentButton" class="w-100 d-flex justify-content-end mt-2" style="position: relative;">
-          <a type="button" style="color: #6861ce; " class="btn  special d-flex align-items-center" (click)="addSelectedChatTextToContent()" (mouseenter)="startTooltipTimer()" (mouseleave)="clearTooltipTimer()">
+          <button type="button" class="btn btn-primary d-flex align-items-center" (click)="addSelectedChatTextToContent()">
             <i class="fas fa-plus me-2"></i> Add to content
-          </a>
+          </button>
           <span class="ms-2 d-flex align-items-center" style="position: relative;">
-            <i class="fas fa-info-circle" style="cursor: pointer; font-size: 18px; color: #6861ce;" (mouseenter)="showTooltipImmediate()" (mouseleave)="hideTooltip()"></i>
+            <i class="fas fa-info-circle" style="cursor: pointer; font-size: 18px; color: #007bff;" (mouseenter)="showTooltipImmediate()" (mouseleave)="hideTooltip()"></i>
             <span *ngIf="showAddToContentTooltip" class="position-absolute" style="bottom: 120%; right: 0; z-index: 10; background: #fff; color: #333; border: 1px solid #ccc; border-radius: 6px; padding: 6px 12px; font-size: 13px; min-width: 220px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); white-space: nowrap;">
               <i class="fas fa-info-circle me-1"></i> Select text to add to content box.
             </span>
