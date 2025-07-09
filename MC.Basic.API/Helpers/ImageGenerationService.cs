@@ -4,6 +4,7 @@ using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 using System.Collections.Generic; // Added for KeyValuePair
+using Serilog;
 
 namespace MC.Basic.API.Helpers;
 
@@ -28,21 +29,29 @@ public class ImageGenerationService : IImageGenerationService
 
     public async Task<string> GenerateImageAsync(string prompt)
     {
-        var url = "https://api.deepai.org/api/text2img";
-        var content = new FormUrlEncodedContent(new[]
+        try
         {
-            new KeyValuePair<string, string>("text", prompt),
-            new KeyValuePair<string, string>("apikey", _apiKey)
-        });
-        var request = new HttpRequestMessage(HttpMethod.Post, url)
+            var url = "https://api.deepai.org/api/text2img";
+            var content = new FormUrlEncodedContent(new[]
+            {
+                new KeyValuePair<string, string>("text", prompt),
+                new KeyValuePair<string, string>("apikey", _apiKey)
+            });
+            var request = new HttpRequestMessage(HttpMethod.Post, url)
+            {
+                Content = content
+            };
+            var response = await _httpClient.SendAsync(request);
+            response.EnsureSuccessStatusCode();
+            var responseString = await response.Content.ReadAsStringAsync();
+            var result = JsonSerializer.Deserialize<DeepAIResponse>(responseString);
+            return result?.OutputUrl ?? "No image URL found.";
+        }
+        catch (Exception ex)
         {
-            Content = content
-        };
-        var response = await _httpClient.SendAsync(request);
-        response.EnsureSuccessStatusCode();
-        var responseString = await response.Content.ReadAsStringAsync();
-        var result = JsonSerializer.Deserialize<DeepAIResponse>(responseString);
-        return result?.OutputUrl ?? "No image URL found.";
+            Log.Error(ex, "Error generating image for prompt: {Prompt}", prompt);
+            throw;
+        }
     }
 }
 
@@ -69,46 +78,56 @@ public class TextGenerationService : ITextGenerationService
 
     public async Task<string> GenerateTextAsync(string prompt)
     {
-        var url = $"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key={_apiKey}";
-        var requestBody = new
-        {
-            contents = new[]
-            {
-                new
-                {
-                    parts = new[]
-                    {
-                        new { text = prompt }
-                    }
-                }
-            }
-        };
-        var content = new StringContent(JsonSerializer.Serialize(requestBody), Encoding.UTF8, "application/json");
-        var response = await _httpClient.PostAsync(url, content);
-        response.EnsureSuccessStatusCode();
-        var responseString = await response.Content.ReadAsStringAsync();
-        string extractedText = null;
         try
         {
-            using var doc = JsonDocument.Parse(responseString);
-            JsonElement root = doc.RootElement;
+            Serilog.Log.Error( "this is the prompt :", prompt);
 
-            if (root.TryGetProperty("response", out var responseProp) && responseProp.ValueKind == JsonValueKind.String)
+            var url = $"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key={_apiKey}";
+            var requestBody = new
             {
-                using var innerDoc = JsonDocument.Parse(responseProp.GetString());
-                extractedText = ExtractTextFromGeminiResponse(innerDoc.RootElement);
-            }
-            else
+                contents = new[]
+                {
+                    new
+                    {
+                        parts = new[]
+                        {
+                            new { text = prompt }
+                        }
+                    }
+                }
+            };
+            var content = new StringContent(JsonSerializer.Serialize(requestBody), Encoding.UTF8, "application/json");
+            var response = await _httpClient.PostAsync(url, content);
+            response.EnsureSuccessStatusCode();
+            var responseString = await response.Content.ReadAsStringAsync();
+            string extractedText = null;
+            try
             {
-                extractedText = ExtractTextFromGeminiResponse(root);
+                using var doc = JsonDocument.Parse(responseString);
+                JsonElement root = doc.RootElement;
+
+                if (root.TryGetProperty("response", out var responseProp) && responseProp.ValueKind == JsonValueKind.String)
+                {
+                    using var innerDoc = JsonDocument.Parse(responseProp.GetString());
+                    extractedText = ExtractTextFromGeminiResponse(innerDoc.RootElement);
+                }
+                else
+                {
+                    extractedText = ExtractTextFromGeminiResponse(root);
+                }
             }
+            catch
+            {
+                extractedText = responseString;
+            }
+
+            return extractedText;
         }
-        catch
+        catch (Exception ex)
         {
-            extractedText = responseString;
+            Serilog.Log.Error(ex, "Error generating text for prompt: {Prompt}", prompt);
+            throw;
         }
-
-        return extractedText;
     }
 
     private string ExtractTextFromGeminiResponse(JsonElement root)
