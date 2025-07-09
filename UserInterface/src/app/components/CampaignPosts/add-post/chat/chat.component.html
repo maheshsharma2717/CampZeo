@@ -1,20 +1,26 @@
 <div class="card chat-container shadow-sm ">
-  <div class="card-header bg-primary text-white py-2">
-    <h5 class="mb-0">AI generation </h5>
-  </div>
-  <div #messageContainer class="chat-messages card-body bg-light position-relative" style="overflow-y:auto; max-height:300px;"
-    (mouseup)="onChatMouseUp($event)">
+
+  <div #messageContainer class="chat-messages card-body bg-light position-relative"
+    style="overflow-y:auto; max-height:300px;" (mouseup)="onChatMouseUp($event)">
     <div *ngFor="let message of messages" class="mb-2">
       <div [ngClass]="{'text-end': message.isUser, 'text-start': !message.isUser}">
-        <span *ngIf="!message.isUser" (mouseup)="onTextSelection($event)"
-          class="d-inline-block p-2 rounded bg-white border text-dark ai-message"
-          style="white-space: pre-line; cursor: text; max-width: 90%;">
-          {{ message.text }}
-        </span>
-        <span *ngIf="message.isUser" class="d-inline-block p-2 rounded bg-primary text-white user-message"
-          style="max-width: 90%;">
-          {{ message.text }}
-        </span>
+        <ng-container *ngIf="message.text === 'Please select the desired text from the options above to add to your input.'; else normalMessage">
+          <span class="d-inline-block p-2 rounded highlight-message-info d-flex align-items-center" style="background: #fffbe6; border: 1px solid #ffe58f; color: #ad8b00; font-weight: 500; max-width: 90%;">
+            <i class="fas fa-info-circle me-2" style="font-size: 18px;"></i>
+            {{ message.text }}
+          </span>
+        </ng-container>
+        <ng-template #normalMessage>
+          <span *ngIf="!message.isUser" (mouseup)="onTextSelection($event)"
+            class="d-inline-block p-2 rounded bg-white border text-dark ai-message"
+            style="white-space: pre-line; cursor: text; max-width: 90%;">
+            {{ message.text }}
+          </span>
+          <span *ngIf="message.isUser" class="d-inline-block p-2 rounded bg-primary text-white user-message"
+            style="max-width: 90%;">
+            {{ message.text }}
+          </span>
+        </ng-template>
       </div>
     </div>
     <div *ngIf="isLoading" class="mb-2">
@@ -31,6 +37,8 @@
         </div>
       </div>
     </div>
+   
+     
   </div>
   <div class="card-footer bg-white border-top-0">
     <div class="input-group">
@@ -42,29 +50,6 @@
       </button>
     </div>
   </div>
-  
-<div *ngIf="showPopover" [ngStyle]="{
-  'position': 'absolute', 
-  'top.px': popoverPosition.top, 
-  'left.px': popoverPosition.left, 
-  'z-index': 1000,
-  'max-width': '90%',
-  'min-width': '140px'
-}" (mousedown)="popoverMousedown = true" (mouseup)="popoverMousedown = false">
-<div style="position: fixed; inset: 0; z-index: 999; pointer-events: none;"
-  (mousedown)="onPopoverBackdropClick($event)" *ngIf="showPopover" tabindex="-1"></div>
-<div class="tooltip bs-tooltip-bottom show shadow-sm rounded border-0"
-  style="min-width: 160px; background: #222; color: #fff; font-size: 0.95rem; padding: 0.5rem 0.75rem; text-align: center; pointer-events: auto;">
-  <div class="d-flex flex-column align-items-stretch">
-    <span class="mb-2 text-light" style="font-size: 0.95rem;">
-      Add selected to content?
-    </span>
-    <button class="btn btn-light btn-sm fw-semibold w-100 py-1 px-2" (click)="useSelectedText()"
-      style="letter-spacing: 0.5px; font-size: 0.95rem;">
-      <i class="fas fa-check-circle me-2"></i>Insert
-    </button>
-  </div>
-  <div class="tooltip-arrow" style="position: absolute; left: 50%; transform: translateX(-50%);"></div>
-</div>
-</div>
+
+
 </div>

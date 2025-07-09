@@ -20,7 +20,7 @@ export class AuthInterceptor implements HttpInterceptor {
   intercept(request: HttpRequest<unknown>, next: HttpHandler): Observable<HttpEvent<unknown>> {
     const token = this.service.Token;
 
-    const isChatApi = request.url.includes('/textgeneration');
+    const isChatApi = request.url.includes('/GenText');
 
     if (!isChatApi) {
       setTimeout(() => {

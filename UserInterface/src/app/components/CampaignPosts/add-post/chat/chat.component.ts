@@ -2,6 +2,7 @@ import { Component, OnInit, ViewChild, ElementRef, AfterViewChecked, Output, Eve
 import { TextGenerationService } from '../../../../services/textgeneration.service';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
+import { AppService } from '../../../../services/app-service.service';
 
 export interface ChatMessage {
   id: number;
@@ -23,7 +24,7 @@ export class ChatComponent implements OnInit, AfterViewChecked {
 
   @Output() contentGenerated = new EventEmitter<string>();
   @Input() platform: string = 'Platform';
-
+  showSpinner: boolean = false;
   messages: ChatMessage[] = [];
   newMessage: string = '';
   isLoading: boolean = false;
@@ -37,7 +38,7 @@ export class ChatComponent implements OnInit, AfterViewChecked {
   popoverMousedown = false;
   lastMouseUp: { x: number, y: number } | null = null;
 
-  constructor(private textGenerationService: TextGenerationService) {}
+  constructor(private textGenerationService: TextGenerationService,private spinner:AppService) {}
 
   ngOnInit(): void {
     this.addMessage('Hello! I\'m your AI assistant. How can I help you today?', false);
@@ -58,12 +59,19 @@ export class ChatComponent implements OnInit, AfterViewChecked {
     this.selectedOptionIndex = null;
     this.selectedText = '';
     this.showPopover = false;
-
-    const prompt = `Generate 5 engaging content options for a ${this.platform} (note- this can be a campaign post, a post on a social media platform, a text message, an email, a WhatsApp message, an RCS message, a Facebook post, an Instagram post, a LinkedIn post, a YouTube post, a Pinterest post). Respond ONLY as a numbered list in the format: Option 1: ..., Option 2: ..., Option 3: ..., Option 4: ..., Option 5: ...\nUser request: ${userMessage}`;
+    this.showSpinner = false;
+    const prompt = `Generate 5 engaging content options for a ${this.platform} (note- this can be a campaign post, a post on a social media platform, a text message, an email, a WhatsApp message, an RCS message, a Facebook post, an Instagram post, a LinkedIn post, a YouTube post, a Pinterest post). Respond ONLY as a numbered list in the format: Option 1: ..., Option 2: ..., Option 3: ..., Option 4: ..., Option 5: ...  also at the end create  popular hastags for every options
+    \nUser request: ${userMessage}`;
 
     this.textGenerationService.generateText({ prompt }).subscribe({
       next: (response:any) => {
         this.addMessage(response.response, false);
+       
+        this.addMessage(
+          'Please select the desired text from the options above to add to your input.',
+          false
+        );
+        this.showSpinner = false;
         this.isLoading = false;
       },
       error: (error) => {
@@ -126,23 +134,11 @@ export class ChatComponent implements OnInit, AfterViewChecked {
   onChatMouseUp(event: MouseEvent) {
     const selection = window.getSelection();
     if (selection && selection.toString().length > 0) {
-      this.lastMouseUp = { x: event.clientX, y: event.clientY };
       this.selectedText = selection.toString();
-      this.showPopover = true;
-      const popoverWidth = 180;
-      const popoverHeight = 60;
-      const maxLeft = window.innerWidth - popoverWidth - 8;
-      const maxTop = window.innerHeight - popoverHeight - 8;
-      let top = event.clientY + window.scrollY;
-      let left = event.clientX + window.scrollX;
-      this.popoverPosition = {
-        top: Math.min(top, maxTop),
-        left: Math.min(left, maxLeft)
-      };
+      this.contentGenerated.emit(this.selectedText);
     } else {
-      this.showPopover = false;
       this.selectedText = '';
-      this.lastMouseUp = null;
+      this.contentGenerated.emit('');
     }
   }
 }

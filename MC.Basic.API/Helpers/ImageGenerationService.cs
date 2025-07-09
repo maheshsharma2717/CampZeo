@@ -3,6 +3,7 @@ using System.Net.Http;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
+using System.Collections.Generic; // Added for KeyValuePair
 
 namespace MC.Basic.API.Helpers;
 
@@ -18,27 +19,37 @@ public class ImageGenerationService : IImageGenerationService
     public ImageGenerationService(HttpClient httpClient, IConfiguration configuration)
     {
         _httpClient = httpClient;
-        _apiKey = configuration["Gemini:ApiKey"];
+        _apiKey = configuration["DeepAI:ApiKey"];
+        if (!_httpClient.DefaultRequestHeaders.Contains("api-key"))
+        {
+            _httpClient.DefaultRequestHeaders.Add("api-key", _apiKey);
+        }
     }
 
     public async Task<string> GenerateImageAsync(string prompt)
     {
-        var url = $"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-preview-image-generation:generateContent?key={_apiKey}";
-        var requestBody = new {
-            contents = new[] {
-                new {
-                    parts = new[] {
-                        new { text = prompt }
-                    }
-                }
-            }
+        var url = "https://api.deepai.org/api/text2img";
+        var content = new FormUrlEncodedContent(new[]
+        {
+            new KeyValuePair<string, string>("text", prompt),
+            new KeyValuePair<string, string>("apikey", _apiKey)
+        });
+        var request = new HttpRequestMessage(HttpMethod.Post, url)
+        {
+            Content = content
         };
-        var content = new StringContent(JsonSerializer.Serialize(requestBody), Encoding.UTF8, "application/json");
-        var response = await _httpClient.PostAsync(url, content);
+        var response = await _httpClient.SendAsync(request);
         response.EnsureSuccessStatusCode();
         var responseString = await response.Content.ReadAsStringAsync();
-        return responseString;
+        var result = JsonSerializer.Deserialize<DeepAIResponse>(responseString);
+        return result?.OutputUrl ?? "No image URL found.";
     }
+}
+
+public class DeepAIResponse
+{
+    public string Id { get; set; }
+    public string OutputUrl { get; set; }
 }
 
 public interface ITextGenerationService

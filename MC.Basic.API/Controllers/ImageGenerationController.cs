@@ -22,7 +22,7 @@ public class ImageGenerationController : ControllerBase
         try
         {
             var result = await _imageGenerationService.GenerateImageAsync(request.Prompt);
-            return Ok(new { response = result });
+            return Ok(new { imageUrl = result });
         }
         catch (Exception ex)
         {
