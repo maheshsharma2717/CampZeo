@@ -158,7 +158,7 @@ namespace MC.Basic.Infrastructure.Message
         {
             var accountSid = await _platformConfigurationRepository.GetConfigurationValueByKey("accountSid", PlatformType.WhatsApp);
             var authToken = await _platformConfigurationRepository.GetConfigurationValueByKey("authToken", PlatformType.WhatsApp);
-            var twilioNumber = await _platformConfigurationRepository.GetConfigurationValueByKey("twilioNumber", PlatformType.WhatsApp);
+            var twilioNumber = await _platformConfigurationRepository.GetConfigurationValueByKey("twilioWhatsappNumber", PlatformType.WhatsApp);
 
             TwilioClient.Init(accountSid, authToken);
 
