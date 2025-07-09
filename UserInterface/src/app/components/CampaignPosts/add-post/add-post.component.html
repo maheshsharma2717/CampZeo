@@ -40,92 +40,92 @@
         </ul>
         <h3 class="fw-bold mb-3">@if(editMode){Update}@else{Create} Campaign Post</h3>
     </div>
-    <div class="row">
-        <div class="card-body ">
+    <div class="row ">
+        <div class="card-body  col-8">
             <form [formGroup]="CampaignPostForm" (ngSubmit)="onSubmit()" class="">
-                <div class="card card-body">
+                <div class="card card-body col-12">
                     <div class="mb-3">
                         <label for="platform">Select a Platform</label>
-                        <div class="d-flex ">
-                            <div  *ngIf="service.checkVisblePlatform(1)"
+                        <div class="col-12 d-flex ">
+                            <div *ngIf="service.checkVisblePlatform(1)"
                                 class="card text-center selected-email-hover m-2"
                                 style="width: 8rem; border-radius: 10px;">
-                                <div class="card-body pt-3 rounded bg-white pointer border" (click)="ChangeType(1)"
+                                <div class="card-body se pt-3 rounded bg-white pointer " (click)="ChangeType(1)"
                                     [ngClass]="{'selected-email': CampaignPostForm.controls.type.value == 1 || smsPlatform === 'Email'}">
                                     <i class="fas fa-envelope-open fa-2x"></i>
                                     <p class="card-text mt-2">Email</p>
                                 </div>
                             </div>
 
-                            <div  *ngIf="service.checkVisblePlatform(2)"
-                                class="card text-center selected-sms-hover m-2"
+                            <div *ngIf="service.checkVisblePlatform(2)" class="card text-center selected-sms-hover m-2"
                                 style="width: 8rem; border-radius: 10px;">
-                                <div class="card-body pt-3 rounded bg-white pointer border" (click)="ChangeType(2)"
+                                <div class="card-body se pt-3 rounded bg-white pointer " (click)="ChangeType(2)"
                                     [ngClass]="{'selected-sms': CampaignPostForm.controls.type.value == 2 || smsPlatform === 'SMS'}">
                                     <i class="fa fa-envelope text-warning fa-2x"></i>
                                     <p class="card-text mt-2">SMS</p>
                                 </div>
                             </div>
 
-                            <div  *ngIf="service.checkVisblePlatform(3)"
+                            <div *ngIf="service.checkVisblePlatform(3)"
                                 class="card text-center selected-whatsapp-hover m-2"
                                 style="width: 8rem; border-radius: 10px;">
-                                <div class="card-body pt-3 rounded bg-white pointer border" (click)="ChangeType(3)"
+                                <div class="card-body se pt-3 rounded bg-white pointer " (click)="ChangeType(3)"
                                     [ngClass]="{'selected-whatsapp': CampaignPostForm.controls.type.value == 3 || smsPlatform === 'WhatsApp'}">
                                     <i class="fab fa-whatsapp fa-2x"></i>
-                                    <p class="card-text mt-2">WhatsApp</p>
+                                    <p class="card-text  mt-2" style="font-size: 12px;">WhatsApp</p>
                                 </div>
                             </div>
 
-                            <div  *ngIf="service.checkVisblePlatform(4)"
-                                class="card text-center selected-rcs-hover m-2"
+                            <div *ngIf="service.checkVisblePlatform(4)" class="card text-center selected-rcs-hover m-2"
                                 style="width: 8rem; border-radius: 10px;">
-                                <div class="card-body pt-3 rounded bg-white pointer border" (click)="ChangeType(4)"
+                                <div class="card-body se pt-3 rounded bg-white pointer " (click)="ChangeType(4)"
                                     [ngClass]="{'selected-rcs': CampaignPostForm.controls.type.value == 4 || smsPlatform === 'RCS'}">
                                     <i class="fa fa-globe fa-2x"></i>
                                     <p class="card-text mt-2">RCS</p>
                                 </div>
                             </div>
-                            <div  *ngIf="service.checkVisblePlatform(5)"
+                            <div *ngIf="service.checkVisblePlatform(5)"
                                 class="card text-center selected-facebook-hover m-2"
                                 style="width: 8rem; border-radius: 10px;">
-                                <div class="card-body pt-3 rounded bg-white pointer border" (click)="ChangeType(5)"
+                                <div class="card-body se pt-3 rounded bg-white pointer " (click)="ChangeType(5)"
                                     [ngClass]="{'selected-facebook': CampaignPostForm.controls.type.value == 5 || smsPlatform === 'Facebook'}">
                                     <i class="fab fa-facebook fa-2x"></i>
                                     <p class="card-text mt-2">FaceBook</p>
                                 </div>
                             </div>
-                            <div  *ngIf="service.checkVisblePlatform(6)"
+                            <div *ngIf="service.checkVisblePlatform(6)"
                                 class="card text-center selected-instagram-hover m-2"
                                 style="width: 8rem; border-radius: 10px;">
-                                <div class="card-body pt-3 rounded bg-white pointer border" (click)="ChangeType(6)"
+                                <div class="card-body se pt-3 rounded bg-white pointer " (click)="ChangeType(6)"
                                     [ngClass]="{'selected-instagram': CampaignPostForm.controls.type.value == 6 || smsPlatform === 'Instagram'}">
                                     <i class="fab fa-instagram fa-2x"></i>
-                                    <p class="card-text mt-2">Instagram</p>
+                                    <p class="card-text mt-2" style="font-size: 12px;">Instagram</p>
                                 </div>
                             </div>
-                            <div  *ngIf="service.checkVisblePlatform(7)"
+                            <div *ngIf="service.checkVisblePlatform(7)"
                                 class="card text-center selected-instagram-hover m-2"
                                 style="width: 8rem; border-radius: 10px;">
-                                <div class="card-body pt-3 rounded bg-white pointer border" (click)="ChangeType(7)"
+                                <div class="card-body se pt-3 rounded bg-white pointer " (click)="ChangeType(7)"
                                     [ngClass]="{'selected-facebook': CampaignPostForm.controls.type.value == 7 || smsPlatform === 'LinkedIn'}">
                                     <i class="fab fa-linkedin-in fa-2x"></i>
                                     <p class="card-text mt-2">LinkedIn</p>
                                 </div>
                             </div>
-                            <div  *ngIf="service.checkVisblePlatform(8)"
+
+                            <div *ngIf="service.checkVisblePlatform(8)"
                                 class="card text-center selected-instagram-hover m-2"
                                 style="width: 8rem; border-radius: 10px;">
-                                <div class="card-body pt-3 rounded bg-white pointer border" (click)="ChangeType(8)"
+                                <div class="card-body se   pt-3 rounded bg-white pointer " (click)="ChangeType(8)"
                                     [ngClass]="{'selected-facebook': CampaignPostForm.controls.type.value == 8 || smsPlatform === 'youtube'}">
                                     <i class="fab fa-youtube text-danger fa-2x"></i>
                                     <p class="card-text mt-2">Youtube</p>
                                 </div>
                             </div>
-                            <div  *ngIf="service.checkVisblePlatform(9)"
+
+                            <div *ngIf="service.checkVisblePlatform(9)"
                                 class="card text-center selected-instagram-hover m-2"
                                 style="width: 8rem; border-radius: 10px;">
-                                <div class="card-body pt-3 rounded bg-white pointer border" (click)="ChangeType(9)"
+                                <div class="card-body pt-3 rounded bg-white pointer " (click)="ChangeType(9)"
                                     [ngClass]="{'selected-facebook': CampaignPostForm.controls.type.value == 9 || smsPlatform === 'pinterest'}">
                                     <i class="fab fa-pinterest text-danger fa-2x"></i>
                                     <p class="card-text mt-2">Pinterest</p>
@@ -135,46 +135,82 @@
                     </div>
                     <div>
                         <label for="subject">Subject</label>
-                        <input class="form-control" id="subject" formControlName="subject" type="text" />
+                        <div class="input-group">
+                            <input class="form-control" id="subject" formControlName="subject"
+                                placeholder="Enter subject title to  generate with AI" type="text"  />
+                            <button type="button" style="width: 7%; border-top-right-radius: 25px; border-bottom-right-radius: 25px; font-size: 10px;"
+                                class="btn btn-outline-primary d-flex justify-content-center align-items-center px-2"
+                                (click)="generateSubjectWithAI()" [disabled]="generatingSubject"
+                                title="Generate with AI">
+                                <i class="fas fa-magic me-1 " aria-hidden="true"></i>
+                                <span class="d-none d-md-inline">AI</span>
+                            </button>
+                        </div>
+                        <div *ngIf="aiTitleOptions.length > 0" class="d-flex flex-wrap gap-2 mt-2">
+                            <span *ngFor="let option of aiTitleOptions; let i = index"
+                                class="badge badge-pill badge-primary px-3 py-2 mr-2 mb-2 ai-title-badge"
+                                [class.selected-badge]="selectedTitleBadge === i"
+                                (click)="selectAiTitleOption(option, i)" tabindex="0">
+                                {{ stripOptionPrefix(option) }}
+                            </span>
+                        </div>
                         @if(CampaignPostForm.get('subject').invalid &&
                         CampaignPostForm.get('subject').touched){
                         <div class="text-danger">
                             Subject is required.
                         </div>}
                     </div>
+                    <div *ngIf="CampaignPostForm.get('type').value !== 0 && CampaignPostForm.get('type').value >= 2 && CampaignPostForm.get('type').value <= 9"
+                        class="d-flex align-items-center mb-2">
+                        <label for="organisationName" style="float: inline-start; width: 100%;">Campaign Post
+                            Content</label>
+                        <a type="button" class="btn btn-sm d-flex align-items-center btn-outline-primary  mt-3" style="font-size: 10px; width: 13%;" (click)="openAIContentModal()">
+                            <i class="fas fa-magic mx-2 " aria-hidden="true"></i> Generate with AI
+                        </a>
+                    </div>
                     <div class="d-flex my-3">
                         <div class="w-100 ">
-                            <label for="organisationName " style="float: inline-start; width: 100%;">Campaign Post
-                                Content</label> @if(CampaignPostForm.get('type').value==1 ){
+                            @if(CampaignPostForm.get('type').value==1 ){
                             <div class="row my-4 mx-auto p-5 " style="width: 100%;">
                                 <email-editor (loaded)="editorLoaded($event)"
                                     (ready)="editorReady($event)"></email-editor>
                             </div>}
                             @if(CampaignPostForm.get('type').value==2){
-
-                            <textarea class="form-control" [(ngModel)]="simpleText" [ngModelOptions]="{standalone:true}"
-                                style="min-height: 30vh;"></textarea> }
+                            <div class="row my-4 mx-auto mb-5" style="width: 100%;">
+                                <textarea class="form-control" [(ngModel)]="simpleText"
+                                    [ngModelOptions]="{standalone:true}"
+                                    style="min-height: 30vh; resize: vertical; border-radius: 8px; padding: 12px; font-size: 14px; line-height: 1.5;"
+                                    placeholder="Enter your SMS content here..." (focus)="showContentAIPopover = true"
+                                    (blur)="onContentInputBlur()" (input)="onContentInputChange()"
+                                    #contentInput></textarea>
+                            </div>
+                            }
                             @if(CampaignPostForm.get('type').value==3){
-                                <div class="video-upload-container">
-                                    <div class="input-group mb-3">
-                                        <div class="custom-file">
-                                            <input type="file" class="custom-file-input" id="inputGroupFile01"
-                                                (change)="onVideoSelected($event)" accept="video/mp4" />
-                                            <label class="custom-file-label" for="inputGroupFile01">Choose file to send</label>
-                                        </div>
-                                    </div>
-                                    <div *ngIf="videoUrl">
-                                        <video [src]="videoUrl" controls width="400">
-                                            Your browser does not support the video tag.
-                                        </video>
+                            <div class="video-upload-container">
+                                <div class="input-group mb-3">
+                                    <div class="custom-file">
+                                        <input type="file" class="custom-file-input" id="inputGroupFile01"
+                                            (change)="onVideoSelected($event)" accept="video/mp4" />
+                                        <label class="custom-file-label" for="inputGroupFile01">Choose file to
+                                            send</label>
                                     </div>
                                 </div>
-                                <textarea class="form-control" [(ngModel)]="simpleText" [ngModelOptions]="{standalone:true}"
-                                style="min-height: 30vh;"></textarea> 
+                                <div *ngIf="videoUrl">
+                                    <video [src]="videoUrl" controls width="400">
+                                        Your browser does not support the video tag.
+                                    </video>
+                                </div>
+                            </div>
+                            <div class="d-flex align-items-center">
+                                <textarea class="form-control" [(ngModel)]="simpleText"
+                                    [ngModelOptions]="{standalone:true}" style="min-height: 30vh;"></textarea>
+                            </div>
                             }
-                            @if(CampaignPostForm.get('type').value==4||CampaignPostForm.get('type').value==5||CampaignPostForm.get('type').value==6||CampaignPostForm.get('type').value==7 || CampaignPostForm.get('type').value==8)
+                            @if(CampaignPostForm.get('type').value==4||CampaignPostForm.get('type').value==5||CampaignPostForm.get('type').value==6||CampaignPostForm.get('type').value==7
+                            || CampaignPostForm.get('type').value==8)
                             {
-                            @if(CampaignPostForm.get('type').value==6||CampaignPostForm.get('type').value==7 || CampaignPostForm.get('type').value==8){
+                            @if(CampaignPostForm.get('type').value==6||CampaignPostForm.get('type').value==7 ||
+                            CampaignPostForm.get('type').value==8){
                             <div class="video-upload-container">
                                 <div class="input-group mb-3">
                                     <div class="custom-file">
@@ -200,6 +236,7 @@
                         </div>
                     </div>
 
+
                     <div>
                         <label for="senderEmail">Sender Email</label>
                         <input class="form-control" id="senderEmail" formControlName="senderEmail" type="email" />
@@ -209,21 +246,83 @@
                             Please enter a valid email.
                         </div>}
                     </div>
-                    <div class="text-start mt-3">
+                    <div class="text-start mt-3" (click)="openDatePicker()" style="cursor: pointer;">
                         <label for="scheduledPostTime">Post Time</label>
                         <input type="datetime-local" id="scheduledPostTime" class="form-control"
-                            formControlName="scheduledPostTime" />
+                            formControlName="scheduledPostTime" #dateTimeInput />
                     </div>
+
                     <div *ngIf="CampaignPostForm.get('scheduledPostTime')?.invalid && CampaignPostForm.get('scheduledPostTime')?.touched"
                         class="text-danger">
                         Please select a valid date and time.
                     </div>
 
+
                     <br>
+                 
                 </div>
                 <button type="submit" class="btn btn-primary"
                     [disabled]="CampaignPostForm.invalid">@if(editMode){Update}@else{Create} Campaign Post</button>
             </form>
+
+
         </div>
+
     </div>
 </div>
+
+<div *ngIf="aiTitleOptions.length > 0" class="ai-options-section">
+    <h5>Select a Suggested Title:</h5>
+    <div *ngFor="let option of aiTitleOptions; let i = index" class="ai-option-item">
+        <button type="button" (click)="selectAiTitleOption(option,i)">
+            Option {{i + 1}}: {{option}}
+        </button>
+    </div>
+</div>
+
+<div *ngIf="aiContentOptions.length > 0" class="ai-options-section">
+    <h5>Select a Suggested Content:</h5>
+    <div *ngFor="let option of aiContentOptions; let i = index" class="ai-option-item">
+        <button type="button" (click)="selectAiContentOption(option, i)">
+            Option {{i + 1}}: {{option}}
+        </button>
+    </div>
+</div>
+
+<div *ngIf="aiContentOptions.length > 0" class="ai-content-chat mt-3">
+    <div *ngFor="let option of aiContentOptions; let i = index" class="chat-bubble ai-content-option">
+        <span>{{ stripOptionPrefix(option) }}</span>
+        <button type="button" class="btn btn-success btn-sm ml-2" (click)="selectAiContentOption(option, i)">
+            &#10003;
+        </button>
+    </div>
+</div>
+
+<div *ngIf="showAIContentModal" class="modal fade show d-block" tabindex="-1" role="dialog" style="background: rgba(0,0,0,0.5); overflow-y: auto;">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header bg-gradient bg-secondary text-white px-4 py-3">
+        <h5 class="modal-title mb-0">AI Content Generation</h5>
+        <button type="button" class="btn btn-danger br-50 ms-2" style="border-radius: 50%;" aria-label="Close" (click)="closeAIContentModal()">
+          <span aria-hidden="true" class="text-white">X</span>
+        </button>
+      </div>
+      <div class="card-body p-4 position-relative">
+        <app-chat [platform]="getSelectedPlatformName()" (contentGenerated)="onChatTextSelected($event)"></app-chat>
+        <div *ngIf="showAddToContentButton" class="w-100 d-flex justify-content-end mt-2" style="position: relative;">
+          <a type="button" style="color: #6861ce; " class="btn  special d-flex align-items-center" (click)="addSelectedChatTextToContent()" (mouseenter)="startTooltipTimer()" (mouseleave)="clearTooltipTimer()">
+            <i class="fas fa-plus me-2"></i> Add to content
+          </a>
+          <span class="ms-2 d-flex align-items-center" style="position: relative;">
+            <i class="fas fa-info-circle" style="cursor: pointer; font-size: 18px; color: #6861ce;" (mouseenter)="showTooltipImmediate()" (mouseleave)="hideTooltip()"></i>
+            <span *ngIf="showAddToContentTooltip" class="position-absolute" style="bottom: 120%; right: 0; z-index: 10; background: #fff; color: #333; border: 1px solid #ccc; border-radius: 6px; padding: 6px 12px; font-size: 13px; min-width: 220px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); white-space: nowrap;">
+              <i class="fas fa-info-circle me-1"></i> Select text to add to content box.
+            </span>
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+

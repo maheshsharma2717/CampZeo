@@ -76,6 +76,7 @@
           </span>}
         </a>
       </ng-template> -->
+      
       <ng-template #postsTemplate let-data>
         <a class="pointer d-flex w-100 gap-2 mx-3" title="Manage Posts" [routerLink]="'/list-campaign-posts'"
           [queryParams]="{ campaignId: data.id }">

@@ -18,8 +18,8 @@ import { CalendarComponent } from '../calendar/calendar.component';
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [SidebarComponent, TopbarComponent, RouterOutlet, FormsModule, CommonModule,
-    ScheduleModule, EmailEditorModule, ReactiveFormsModule, QuillModule, CalendarComponent,RouterModule],
+  imports: [FormsModule, CommonModule,
+    ScheduleModule, EmailEditorModule, ReactiveFormsModule, QuillModule, CalendarComponent, RouterModule],
   providers: [
     DayService,
     WeekService,
