@@ -46,7 +46,6 @@ export class ChatComponent implements OnInit, AfterViewChecked {
   }
 
   ngAfterViewChecked(): void {
-    this.scrollToBottom();
   }
 
   sendMessage(): void {
@@ -73,13 +72,16 @@ export class ChatComponent implements OnInit, AfterViewChecked {
         );
         this.showSpinner = false;
         this.isLoading = false;
+        this.scrollToBottom(); 
       },
       error: (error) => {
         this.addMessage('Sorry, I encountered an error. Please try again.', false);
         this.isLoading = false;
+        this.scrollToBottom(); 
         console.error('Error:', error);
       }
     });
+    this.scrollToBottom();
   }
 
   onTextSelection(event: MouseEvent) {
@@ -108,6 +110,7 @@ export class ChatComponent implements OnInit, AfterViewChecked {
       isLoading
     };
     this.messages.push(message);
+    this.scrollToBottom(); // Scroll only when a new message is added
     return message;
   }
 
