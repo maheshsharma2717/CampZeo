@@ -1,5 +1,5 @@
 import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
-import { Route, Router, RouterModule, NavigationStart } from '@angular/router';
+import { Route, Router, RouterModule, NavigationStart, ActivatedRoute } from '@angular/router';
 import { AppService } from '../../../services/app-service.service';
 import { CommonModule, DATE_PIPE_DEFAULT_OPTIONS, DatePipe, NgFor } from '@angular/common';
 import * as bootstrap from 'bootstrap'; import { Subscription } from 'rxjs';
@@ -43,14 +43,15 @@ export class ListCampaignComponent implements OnInit, OnDestroy {
   page: number = 1;
   total: number = 0;
   showPostsPopup: boolean = false;
-  isRecovering: boolean =false;
+  isRecovering: boolean = false;
   deleteId: number | undefined;
+  campaignData: any = {};
   // syncfusion grid 
 
   pageSettings = { pageSize: 10, pageSizes: [5, 10, 20, 50] };
   //pageSizes = [5, 10, 20, 50];
   toolbarOptions = ['Custom'];
-  constructor(public service: AppService, private toastr: ToastrService, private sanitizer: DomSanitizer, private router: Router) {
+  constructor(public service: AppService, private route: ActivatedRoute, private toastr: ToastrService, private sanitizer: DomSanitizer, private router: Router) {
 
   }
   ngOnInit(): void {
@@ -96,22 +97,22 @@ export class ListCampaignComponent implements OnInit, OnDestroy {
     });
   }
 
-  openDeleteModal(id: any){
+  openDeleteModal(id: any) {
     this.deleteId = id;
 
     const modalElement = document.getElementById('deleteCampaignModal');
-    if(modalElement){
+    if (modalElement) {
       const modalInstance = new bootstrap.Modal(modalElement);
       modalInstance.show();
       this.isRecovering = this.isRecovering;
     }
   }
 
-  closeCampaignModal(): void{
+  closeCampaignModal(): void {
     const modalElement = document.getElementById('deleteCampaignModal');
-    if(modalElement){
+    if (modalElement) {
       const modalInstance = bootstrap.Modal.getInstance(modalElement);
-      if(modalInstance){
+      if (modalInstance) {
         modalInstance?.hide();
       }
     }
