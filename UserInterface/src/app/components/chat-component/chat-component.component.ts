@@ -22,6 +22,16 @@ export class ChatComponentComponent {
   constructor(public service: AppService) {
 
   }
+
+  getCurrentTime(): string {
+    const now = new Date();
+    return now.toLocaleTimeString('en-US', { 
+      hour: '2-digit', 
+      minute: '2-digit',
+      hour12: true 
+    });
+  }
+
   GetResponseFromAi() {
     this.myMessage = this.questionText;
     const prompt = ` input : ${this.questionText}
