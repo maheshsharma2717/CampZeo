@@ -60,6 +60,10 @@ export class AddPostComponent {
   showContentAIPopover: boolean = false;
   showChatHelper: boolean = false;
   showAIContentModal: boolean = false;
+  selectedChatText: string = '';
+  showAddToContentButton: boolean = false;
+  showAddToContentTooltip: boolean = false;
+  private tooltipTimer: any = null;
 
   constructor(public service: AppService, private toaster: ToastrService, private activatedRoute: ActivatedRoute, private route: Router, private textGenService: TextGenerationService) {
     this.activatedRoute.queryParams.subscribe(param => {
@@ -370,7 +374,7 @@ export class AddPostComponent {
     this.selectedTitleBadge = null;
     const platform = this.getSelectedPlatformName();
     const currentTitle = this.CampaignPostForm.get('subject').value || '';
-    const prompt = `Enhance the following ${platform} campaign post title with catchy look and feel. Respond ONLY with the improved title, no extra text, explanations, or formatting.\nTitle: ${currentTitle}`;
+    const prompt = `Enhance the following ${platform} campaign post title with catchy look and feel  sentence. Respond ONLY with the improved title, no extra text, explanations, or formatting.\nTitle: ${currentTitle}`;
 
     this.textGenService.generateText({ prompt }).subscribe({
       next: (res: any) => {
@@ -403,7 +407,7 @@ export class AddPostComponent {
   selectAiContentOption(option: string, index: number) {
     const cleanOption = this.stripOptionPrefix(option);
     const type = this.CampaignPostForm.get('type').value;
-    if (type === 1 && this.emailEditor && this.emailEditor.editor && this.emailEditor.editor.loadDesign) {
+    if (type === 1 && this.emailEditor && this.emailEditor.editor) {
       try {
         const design = JSON.parse(cleanOption);
         this.emailEditor.editor.loadDesign(design);
@@ -422,8 +426,9 @@ export class AddPostComponent {
   }
 
   onChatContentGenerated(content: string) {
+    // This is for direct content insertion (old logic)
     const type = this.CampaignPostForm.get('type').value;
-    if (type === 1 && this.emailEditor && this.emailEditor.editor && this.emailEditor.editor.loadDesign) {
+    if (type === 1 && this.emailEditor && this.emailEditor.editor) {
       try {
         const design = JSON.parse(content);
         this.emailEditor.editor.loadDesign(design);
@@ -438,6 +443,55 @@ export class AddPostComponent {
       this.editorContent = content;
       this.CampaignPostForm.patchValue({ message: content });
     }
+  }
+
+  onAIContentSelected(content: string) {
+    // This is for direct content insertion (old logic)
+    const type = this.CampaignPostForm.get('type').value;
+    if (type === 1 && this.emailEditor && this.emailEditor.editor) {
+      try {
+        const design = JSON.parse(content);
+        this.emailEditor.editor.loadDesign(design);
+        this.CampaignPostForm.patchValue({ message: content });
+      } catch {
+        this.CampaignPostForm.patchValue({ message: content });
+      }
+    } else if (type === 2 || type === 3) {
+      this.simpleText = content;
+      this.CampaignPostForm.patchValue({ message: content });
+    } else {
+      this.editorContent = content;
+      this.CampaignPostForm.patchValue({ message: content });
+    }
+    this.closeAIContentModal();
+  }
+
+  onChatTextSelected(selected: string) {
+    this.selectedChatText = selected;
+    this.showAddToContentButton = !!selected;
+  }
+
+  addSelectedChatTextToContent() {
+    if (!this.selectedChatText) return;
+    const type = this.CampaignPostForm.get('type').value;
+    if (type === 1 && this.emailEditor && this.emailEditor.editor) {
+      this.CampaignPostForm.patchValue({ message: (this.CampaignPostForm.get('message').value || '') + this.selectedChatText });
+    } else if (type === 2 || type === 3) {
+      this.simpleText = (this.simpleText || '') + this.selectedChatText;
+      this.CampaignPostForm.patchValue({ message: this.simpleText });
+    } else {
+      this.editorContent = (this.editorContent || '') + this.selectedChatText;
+      this.CampaignPostForm.patchValue({ message: this.editorContent });
+    }
+    this.selectedChatText = '';
+    this.showAddToContentButton = false;
+  }
+
+  showTooltip() {
+    this.showAddToContentTooltip = true;
+  }
+  hideTooltip() {
+    this.showAddToContentTooltip = false;
   }
 
   onContentInputBlur() {
@@ -458,24 +512,24 @@ export class AddPostComponent {
     this.showAIContentModal = false;
   }
 
-  onAIContentSelected(content: string) {
-    const type = this.CampaignPostForm.get('type').value;
-    if (type === 1 && this.emailEditor && this.emailEditor.editor && this.emailEditor.editor.loadDesign) {
-      try {
-        const design = JSON.parse(content);
-        this.emailEditor.editor.loadDesign(design);
-        this.CampaignPostForm.patchValue({ message: content });
-      } catch {
-        this.CampaignPostForm.patchValue({ message: content });
-      }
-    } else if (type === 2 || type === 3) {
-      this.simpleText = content;
-      this.CampaignPostForm.patchValue({ message: content });
-    } else {
-      this.editorContent = content;
-      this.CampaignPostForm.patchValue({ message: content });
+  startTooltipTimer() {
+    this.clearTooltipTimer();
+    this.tooltipTimer = setTimeout(() => {
+      this.showAddToContentTooltip = true;
+    }, 2000);
+  }
+
+  clearTooltipTimer() {
+    if (this.tooltipTimer) {
+      clearTimeout(this.tooltipTimer);
+      this.tooltipTimer = null;
     }
-    this.closeAIContentModal();
+    this.showAddToContentTooltip = false;
+  }
+
+  showTooltipImmediate() {
+    this.clearTooltipTimer();
+    this.showAddToContentTooltip = true;
   }
 
 }

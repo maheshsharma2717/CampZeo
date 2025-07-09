@@ -105,3 +105,17 @@
     padding: 0.5rem;
   }
 }
+
+.special{
+    border: 1px solid #6861ce;
+}
+.special:hover{
+    background-color: #6861ce;
+    color: white !important;
+}
+.special i{
+    color: #6861ce;
+}
+.special:hover i{
+    color: #fff !important;
+}

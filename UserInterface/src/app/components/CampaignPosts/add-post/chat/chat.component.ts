@@ -2,6 +2,7 @@ import { Component, OnInit, ViewChild, ElementRef, AfterViewChecked, Output, Eve
 import { TextGenerationService } from '../../../../services/textgeneration.service';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
+import { AppService } from '../../../../services/app-service.service';
 
 export interface ChatMessage {
   id: number;
@@ -37,7 +38,7 @@ export class ChatComponent implements OnInit, AfterViewChecked {
   popoverMousedown = false;
   lastMouseUp: { x: number, y: number } | null = null;
 
-  constructor(private textGenerationService: TextGenerationService) {}
+  constructor(private textGenerationService: TextGenerationService,private spinner:AppService) {}
 
   ngOnInit(): void {
     this.addMessage('Hello! I\'m your AI assistant. How can I help you today?', false);
@@ -64,6 +65,7 @@ export class ChatComponent implements OnInit, AfterViewChecked {
     this.textGenerationService.generateText({ prompt }).subscribe({
       next: (response:any) => {
         this.addMessage(response.response, false);
+        
         this.isLoading = false;
       },
       error: (error) => {
@@ -126,23 +128,11 @@ export class ChatComponent implements OnInit, AfterViewChecked {
   onChatMouseUp(event: MouseEvent) {
     const selection = window.getSelection();
     if (selection && selection.toString().length > 0) {
-      this.lastMouseUp = { x: event.clientX, y: event.clientY };
       this.selectedText = selection.toString();
-      this.showPopover = true;
-      const popoverWidth = 180;
-      const popoverHeight = 60;
-      const maxLeft = window.innerWidth - popoverWidth - 8;
-      const maxTop = window.innerHeight - popoverHeight - 8;
-      let top = event.clientY + window.scrollY;
-      let left = event.clientX + window.scrollX;
-      this.popoverPosition = {
-        top: Math.min(top, maxTop),
-        left: Math.min(left, maxLeft)
-      };
+      this.contentGenerated.emit(this.selectedText); // Emit immediately on selection
     } else {
-      this.showPopover = false;
       this.selectedText = '';
-      this.lastMouseUp = null;
+      this.contentGenerated.emit(''); // Clear selection in parent
     }
   }
 }

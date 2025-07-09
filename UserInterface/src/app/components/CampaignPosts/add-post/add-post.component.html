@@ -138,7 +138,7 @@
                         <div class="input-group">
                             <input class="form-control" id="subject" formControlName="subject"
                                 placeholder="Enter subject title to  generate with AI" type="text"  />
-                            <button type="button" style="width: 7%; border-top-right-radius: 25px; border-bottom-right-radius: 25px; "
+                            <button type="button" style="width: 7%; border-top-right-radius: 25px; border-bottom-right-radius: 25px; font-size: 10px;"
                                 class="btn btn-outline-primary d-flex justify-content-center align-items-center px-2"
                                 (click)="generateSubjectWithAI()" [disabled]="generatingSubject"
                                 title="Generate with AI">
@@ -164,9 +164,9 @@
                         class="d-flex align-items-center mb-2">
                         <label for="organisationName" style="float: inline-start; width: 100%;">Campaign Post
                             Content</label>
-                        <button type="button" class="btn btn-outline-primary ms-2 mt-3" (click)="openAIContentModal()">
-                            <i class="fas fa-magic me-1" aria-hidden="true"></i> Generate with AI
-                        </button>
+                        <a type="button" class="btn btn-sm d-flex align-items-center btn-outline-primary  mt-3" style="font-size: 10px; width: 13%;" (click)="openAIContentModal()">
+                            <i class="fas fa-magic mx-2 " aria-hidden="true"></i> Generate with AI
+                        </a>
                     </div>
                     <div class="d-flex my-3">
                         <div class="w-100 ">
@@ -297,23 +297,31 @@
     </div>
 </div>
 
-<div *ngIf="showAIContentModal" class="ai-content-modal-backdrop">
-  <div class="ai-content-modal position-absolute top-50 start-50 translate-middle shadow-lg border-0 rounded-4 p-0" style="max-width: 520px; width: 96vw; background: #fff;">
-    <div class="d-flex justify-content-end p-2">
-      <button class="btn btn-close" (click)="closeAIContentModal()" aria-label="Close"></button>
-    </div>
-    <div class="p-4">
-      <app-chat [platform]="getSelectedPlatformName()" (contentGenerated)="onAIContentSelected($event)"></app-chat>
+<div *ngIf="showAIContentModal" class="modal fade show d-block" tabindex="-1" role="dialog" style="background: rgba(0,0,0,0.5); overflow-y: auto;">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header bg-gradient bg-secondary text-white px-4 py-3">
+        <h5 class="modal-title mb-0">AI Content Generation</h5>
+        <button type="button" class="btn btn-danger br-50 ms-2" style="border-radius: 50%;" aria-label="Close" (click)="closeAIContentModal()">
+          <span aria-hidden="true" class="text-white">X</span>
+        </button>
+      </div>
+      <div class="card-body p-4 position-relative">
+        <app-chat [platform]="getSelectedPlatformName()" (contentGenerated)="onChatTextSelected($event)"></app-chat>
+        <div *ngIf="showAddToContentButton" class="w-100 d-flex justify-content-end mt-2" style="position: relative;">
+          <a type="button" style="color: #6861ce; " class="btn  special d-flex align-items-center" (click)="addSelectedChatTextToContent()" (mouseenter)="startTooltipTimer()" (mouseleave)="clearTooltipTimer()">
+            <i class="fas fa-plus me-2"></i> Add to content
+          </a>
+          <span class="ms-2 d-flex align-items-center" style="position: relative;">
+            <i class="fas fa-info-circle" style="cursor: pointer; font-size: 18px; color: #6861ce;" (mouseenter)="showTooltipImmediate()" (mouseleave)="hideTooltip()"></i>
+            <span *ngIf="showAddToContentTooltip" class="position-absolute" style="bottom: 120%; right: 0; z-index: 10; background: #fff; color: #333; border: 1px solid #ccc; border-radius: 6px; padding: 6px 12px; font-size: 13px; min-width: 220px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); white-space: nowrap;">
+              <i class="fas fa-info-circle me-1"></i> Select text to add to content box.
+            </span>
+          </span>
+        </div>
+      </div>
     </div>
   </div>
 </div>
 
 
-
-<div *ngIf="aiTitleOptions.length > 0" class="d-flex flex-wrap gap-2 mt-2">
-    <span *ngFor="let option of aiTitleOptions; let i = index"
-        class="badge badge-pill badge-primary px-3 py-2 mr-2 mb-2 ai-title-badge"
-        [class.selected-badge]="selectedTitleBadge === i" (click)="selectAiTitleOption(option, i)" tabindex="0">
-        {{ stripOptionPrefix(option) }}
-    </span>
-</div>
