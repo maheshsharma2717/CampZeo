@@ -40,17 +40,17 @@
         </ul>
         <h3 class="fw-bold mb-3">@if(editMode){Update}@else{Create} Campaign Post</h3>
     </div>
-    <div class="row">
-        <div class="card-body ">
+    <div class="row ">
+        <div class="card-body  col-8">
             <form [formGroup]="CampaignPostForm" (ngSubmit)="onSubmit()" class="">
-                <div class="card card-body">
+                <div class="card card-body col-12">
                     <div class="mb-3">
                         <label for="platform">Select a Platform</label>
-                        <div class="d-flex ">
+                        <div class="col-12 d-flex ">
                             <div *ngIf="service.checkVisblePlatform(1)"
                                 class="card text-center selected-email-hover m-2"
                                 style="width: 8rem; border-radius: 10px;">
-                                <div class="card-body pt-3 rounded bg-white pointer border" (click)="ChangeType(1)"
+                                <div class="card-body se pt-3 rounded bg-white pointer " (click)="ChangeType(1)"
                                     [ngClass]="{'selected-email': CampaignPostForm.controls.type.value == 1 || smsPlatform === 'Email'}">
                                     <i class="fas fa-envelope-open fa-2x"></i>
                                     <p class="card-text mt-2">Email</p>
@@ -59,7 +59,7 @@
 
                             <div *ngIf="service.checkVisblePlatform(2)" class="card text-center selected-sms-hover m-2"
                                 style="width: 8rem; border-radius: 10px;">
-                                <div class="card-body pt-3 rounded bg-white pointer border" (click)="ChangeType(2)"
+                                <div class="card-body se pt-3 rounded bg-white pointer " (click)="ChangeType(2)"
                                     [ngClass]="{'selected-sms': CampaignPostForm.controls.type.value == 2 || smsPlatform === 'SMS'}">
                                     <i class="fa fa-envelope text-warning fa-2x"></i>
                                     <p class="card-text mt-2">SMS</p>
@@ -69,16 +69,16 @@
                             <div *ngIf="service.checkVisblePlatform(3)"
                                 class="card text-center selected-whatsapp-hover m-2"
                                 style="width: 8rem; border-radius: 10px;">
-                                <div class="card-body pt-3 rounded bg-white pointer border" (click)="ChangeType(3)"
+                                <div class="card-body se pt-3 rounded bg-white pointer " (click)="ChangeType(3)"
                                     [ngClass]="{'selected-whatsapp': CampaignPostForm.controls.type.value == 3 || smsPlatform === 'WhatsApp'}">
                                     <i class="fab fa-whatsapp fa-2x"></i>
-                                    <p class="card-text mt-2">WhatsApp</p>
+                                    <p class="card-text  mt-2" style="font-size: 12px;">WhatsApp</p>
                                 </div>
                             </div>
 
                             <div *ngIf="service.checkVisblePlatform(4)" class="card text-center selected-rcs-hover m-2"
                                 style="width: 8rem; border-radius: 10px;">
-                                <div class="card-body pt-3 rounded bg-white pointer border" (click)="ChangeType(4)"
+                                <div class="card-body se pt-3 rounded bg-white pointer " (click)="ChangeType(4)"
                                     [ngClass]="{'selected-rcs': CampaignPostForm.controls.type.value == 4 || smsPlatform === 'RCS'}">
                                     <i class="fa fa-globe fa-2x"></i>
                                     <p class="card-text mt-2">RCS</p>
@@ -87,7 +87,7 @@
                             <div *ngIf="service.checkVisblePlatform(5)"
                                 class="card text-center selected-facebook-hover m-2"
                                 style="width: 8rem; border-radius: 10px;">
-                                <div class="card-body pt-3 rounded bg-white pointer border" (click)="ChangeType(5)"
+                                <div class="card-body se pt-3 rounded bg-white pointer " (click)="ChangeType(5)"
                                     [ngClass]="{'selected-facebook': CampaignPostForm.controls.type.value == 5 || smsPlatform === 'Facebook'}">
                                     <i class="fab fa-facebook fa-2x"></i>
                                     <p class="card-text mt-2">FaceBook</p>
@@ -96,16 +96,16 @@
                             <div *ngIf="service.checkVisblePlatform(6)"
                                 class="card text-center selected-instagram-hover m-2"
                                 style="width: 8rem; border-radius: 10px;">
-                                <div class="card-body pt-3 rounded bg-white pointer border" (click)="ChangeType(6)"
+                                <div class="card-body se pt-3 rounded bg-white pointer " (click)="ChangeType(6)"
                                     [ngClass]="{'selected-instagram': CampaignPostForm.controls.type.value == 6 || smsPlatform === 'Instagram'}">
                                     <i class="fab fa-instagram fa-2x"></i>
-                                    <p class="card-text mt-2">Instagram</p>
+                                    <p class="card-text mt-2" style="font-size: 12px;">Instagram</p>
                                 </div>
                             </div>
                             <div *ngIf="service.checkVisblePlatform(7)"
                                 class="card text-center selected-instagram-hover m-2"
                                 style="width: 8rem; border-radius: 10px;">
-                                <div class="card-body pt-3 rounded bg-white pointer border" (click)="ChangeType(7)"
+                                <div class="card-body se pt-3 rounded bg-white pointer " (click)="ChangeType(7)"
                                     [ngClass]="{'selected-facebook': CampaignPostForm.controls.type.value == 7 || smsPlatform === 'LinkedIn'}">
                                     <i class="fab fa-linkedin-in fa-2x"></i>
                                     <p class="card-text mt-2">LinkedIn</p>
@@ -115,17 +115,17 @@
                             <div *ngIf="service.checkVisblePlatform(8)"
                                 class="card text-center selected-instagram-hover m-2"
                                 style="width: 8rem; border-radius: 10px;">
-                                <div class="card-body pt-3 rounded bg-white pointer border" (click)="ChangeType(8)"
+                                <div class="card-body se   pt-3 rounded bg-white pointer " (click)="ChangeType(8)"
                                     [ngClass]="{'selected-facebook': CampaignPostForm.controls.type.value == 8 || smsPlatform === 'youtube'}">
                                     <i class="fab fa-youtube text-danger fa-2x"></i>
                                     <p class="card-text mt-2">Youtube</p>
                                 </div>
                             </div>
-                            
+
                             <div *ngIf="service.checkVisblePlatform(9)"
                                 class="card text-center selected-instagram-hover m-2"
                                 style="width: 8rem; border-radius: 10px;">
-                                <div class="card-body pt-3 rounded bg-white pointer border" (click)="ChangeType(9)"
+                                <div class="card-body pt-3 rounded bg-white pointer " (click)="ChangeType(9)"
                                     [ngClass]="{'selected-facebook': CampaignPostForm.controls.type.value == 9 || smsPlatform === 'pinterest'}">
                                     <i class="fab fa-pinterest text-danger fa-2x"></i>
                                     <p class="card-text mt-2">Pinterest</p>
@@ -135,25 +135,56 @@
                     </div>
                     <div>
                         <label for="subject">Subject</label>
-                        <input class="form-control" id="subject" formControlName="subject" type="text" />
+                        <div class="input-group">
+                            <input class="form-control" id="subject" formControlName="subject"
+                                placeholder="Enter subject title to  generate with AI" type="text"  />
+                            <button type="button" style="width: 7%; border-top-right-radius: 25px; border-bottom-right-radius: 25px; "
+                                class="btn btn-outline-primary d-flex justify-content-center align-items-center px-2"
+                                (click)="generateSubjectWithAI()" [disabled]="generatingSubject"
+                                title="Generate with AI">
+                                <i class="fas fa-magic me-1 " aria-hidden="true"></i>
+                                <span class="d-none d-md-inline">AI</span>
+                            </button>
+                        </div>
+                        <div *ngIf="aiTitleOptions.length > 0" class="d-flex flex-wrap gap-2 mt-2">
+                            <span *ngFor="let option of aiTitleOptions; let i = index"
+                                class="badge badge-pill badge-primary px-3 py-2 mr-2 mb-2 ai-title-badge"
+                                [class.selected-badge]="selectedTitleBadge === i"
+                                (click)="selectAiTitleOption(option, i)" tabindex="0">
+                                {{ stripOptionPrefix(option) }}
+                            </span>
+                        </div>
                         @if(CampaignPostForm.get('subject').invalid &&
                         CampaignPostForm.get('subject').touched){
                         <div class="text-danger">
                             Subject is required.
                         </div>}
                     </div>
+                    <div *ngIf="CampaignPostForm.get('type').value !== 0 && CampaignPostForm.get('type').value >= 2 && CampaignPostForm.get('type').value <= 9"
+                        class="d-flex align-items-center mb-2">
+                        <label for="organisationName" style="float: inline-start; width: 100%;">Campaign Post
+                            Content</label>
+                        <button type="button" class="btn btn-outline-primary ms-2 mt-3" (click)="openAIContentModal()">
+                            <i class="fas fa-magic me-1" aria-hidden="true"></i> Generate with AI
+                        </button>
+                    </div>
                     <div class="d-flex my-3">
                         <div class="w-100 ">
-                            <label for="organisationName " style="float: inline-start; width: 100%;">Campaign Post
-                                Content</label> @if(CampaignPostForm.get('type').value==1 ){
+                            @if(CampaignPostForm.get('type').value==1 ){
                             <div class="row my-4 mx-auto p-5 " style="width: 100%;">
                                 <email-editor (loaded)="editorLoaded($event)"
                                     (ready)="editorReady($event)"></email-editor>
                             </div>}
                             @if(CampaignPostForm.get('type').value==2){
-
-                            <textarea class="form-control" [(ngModel)]="simpleText" [ngModelOptions]="{standalone:true}"
-                                style="min-height: 30vh;"></textarea> }
+                            <div class="row my-4 mx-auto mb-5" style="width: 100%;">
+                                <textarea class="form-control" [(ngModel)]="simpleText"
+                                    [ngModelOptions]="{standalone:true}"
+                                    style="min-height: 30vh; resize: vertical; border-radius: 8px; padding: 12px; font-size: 14px; line-height: 1.5;"
+                                    placeholder="Enter your SMS content here..." (focus)="showContentAIPopover = true"
+                                    (blur)="onContentInputBlur()" (input)="onContentInputChange()"
+                                    #contentInput></textarea>
+                            </div>
+                            }
                             @if(CampaignPostForm.get('type').value==3){
                             <div class="video-upload-container">
                                 <div class="input-group mb-3">
@@ -170,8 +201,10 @@
                                     </video>
                                 </div>
                             </div>
-                            <textarea class="form-control" [(ngModel)]="simpleText" [ngModelOptions]="{standalone:true}"
-                                style="min-height: 30vh;"></textarea>
+                            <div class="d-flex align-items-center">
+                                <textarea class="form-control" [(ngModel)]="simpleText"
+                                    [ngModelOptions]="{standalone:true}" style="min-height: 30vh;"></textarea>
+                            </div>
                             }
                             @if(CampaignPostForm.get('type').value==4||CampaignPostForm.get('type').value==5||CampaignPostForm.get('type').value==6||CampaignPostForm.get('type').value==7
                             || CampaignPostForm.get('type').value==8)
@@ -203,6 +236,7 @@
                         </div>
                     </div>
 
+
                     <div>
                         <label for="senderEmail">Sender Email</label>
                         <input class="form-control" id="senderEmail" formControlName="senderEmail" type="email" />
@@ -229,6 +263,57 @@
                 <button type="submit" class="btn btn-primary"
                     [disabled]="CampaignPostForm.invalid">@if(editMode){Update}@else{Create} Campaign Post</button>
             </form>
+
+
         </div>
+
     </div>
+</div>
+
+<div *ngIf="aiTitleOptions.length > 0" class="ai-options-section">
+    <h5>Select a Suggested Title:</h5>
+    <div *ngFor="let option of aiTitleOptions; let i = index" class="ai-option-item">
+        <button type="button" (click)="selectAiTitleOption(option,i)">
+            Option {{i + 1}}: {{option}}
+        </button>
+    </div>
+</div>
+
+<div *ngIf="aiContentOptions.length > 0" class="ai-options-section">
+    <h5>Select a Suggested Content:</h5>
+    <div *ngFor="let option of aiContentOptions; let i = index" class="ai-option-item">
+        <button type="button" (click)="selectAiContentOption(option, i)">
+            Option {{i + 1}}: {{option}}
+        </button>
+    </div>
+</div>
+
+<div *ngIf="aiContentOptions.length > 0" class="ai-content-chat mt-3">
+    <div *ngFor="let option of aiContentOptions; let i = index" class="chat-bubble ai-content-option">
+        <span>{{ stripOptionPrefix(option) }}</span>
+        <button type="button" class="btn btn-success btn-sm ml-2" (click)="selectAiContentOption(option, i)">
+            &#10003;
+        </button>
+    </div>
+</div>
+
+<div *ngIf="showAIContentModal" class="ai-content-modal-backdrop">
+  <div class="ai-content-modal position-absolute top-50 start-50 translate-middle shadow-lg border-0 rounded-4 p-0" style="max-width: 520px; width: 96vw; background: #fff;">
+    <div class="d-flex justify-content-end p-2">
+      <button class="btn btn-close" (click)="closeAIContentModal()" aria-label="Close"></button>
+    </div>
+    <div class="p-4">
+      <app-chat [platform]="getSelectedPlatformName()" (contentGenerated)="onAIContentSelected($event)"></app-chat>
+    </div>
+  </div>
+</div>
+
+
+
+<div *ngIf="aiTitleOptions.length > 0" class="d-flex flex-wrap gap-2 mt-2">
+    <span *ngFor="let option of aiTitleOptions; let i = index"
+        class="badge badge-pill badge-primary px-3 py-2 mr-2 mb-2 ai-title-badge"
+        [class.selected-badge]="selectedTitleBadge === i" (click)="selectAiTitleOption(option, i)" tabindex="0">
+        {{ stripOptionPrefix(option) }}
+    </span>
 </div>
