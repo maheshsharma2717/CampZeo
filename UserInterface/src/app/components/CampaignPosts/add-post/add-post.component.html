@@ -121,7 +121,7 @@
                                     <p class="card-text mt-2">Youtube</p>
                                 </div>
                             </div>
-                            
+
                             <div *ngIf="service.checkVisblePlatform(9)"
                                 class="card text-center selected-instagram-hover m-2"
                                 style="width: 8rem; border-radius: 10px;">
@@ -225,6 +225,7 @@
 
 
                     <br>
+                 
                 </div>
                 <button type="submit" class="btn btn-primary"
                     [disabled]="CampaignPostForm.invalid">@if(editMode){Update}@else{Create} Campaign Post</button>

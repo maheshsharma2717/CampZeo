@@ -24,7 +24,7 @@ export class AddPostComponent {
     message: new FormControl(''),
     senderEmail: new FormControl('', [Validators.required, Validators.email]),
     scheduledPostTime: new FormControl('', Validators.required),
-    type: new FormControl(0),
+    type: new FormControl(null, Validators.required), // Changed from 0 to null and added Validators.required
     html: new FormControl('')
   });
   campaigns: any[] = [];
