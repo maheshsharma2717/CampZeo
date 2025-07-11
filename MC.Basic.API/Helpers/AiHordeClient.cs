@@ -106,7 +106,7 @@ public class AiHordeClient
 
         var content = new StringContent(json, Encoding.UTF8, "application/json");
 
-        // Headers required
+       
         _httpClient.DefaultRequestHeaders.Clear();
         _httpClient.DefaultRequestHeaders.Add("apikey", "CsZ4uD-Sjv3HFb6nvGUoSQ");
         _httpClient.DefaultRequestHeaders.Add("Client-Agent", "dotnet-client");

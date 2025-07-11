@@ -2,7 +2,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { environment } from '../../environments/environments';
 import { Router } from '@angular/router';
-import { BehaviorSubject, map, Observable } from 'rxjs';
+import { BehaviorSubject, map, Observable, of } from 'rxjs';
 import { AuthService } from './auth.service';
 
 const ApiUrl = environment.API_BASE_URL
@@ -404,6 +404,11 @@ export class AppService {
   AssginPlatformForOrganisation(request: any) {
     request.token = this.Token;
     return this.http.post(ApiUrl + "Organisation/AssginPlatformForOrganisation", request);
+  }
+
+  saveTestAIPayload(payload: { image: string, prompt: string }): Observable<any> {
+    console.log('Payload to save:', payload);
+    return of({ success: true });
   }
 }
 
