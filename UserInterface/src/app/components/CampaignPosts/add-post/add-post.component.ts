@@ -1,25 +1,32 @@
 import { CommonModule } from '@angular/common';
-import { Component, ViewChild, ElementRef } from '@angular/core';
+import { Component, ViewChild, ElementRef, AfterViewInit, HostListener } from '@angular/core';
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { EmailEditorComponent, EmailEditorModule } from 'angular-email-editor';
 import { QuillModule } from 'ngx-quill';
 import { AppService } from '../../../services/app-service.service';
 import { ToastrService } from 'ngx-toastr';
-import { queryParams } from '@syncfusion/ej2-base';
 import { TextGenerationService } from '../../../services/textgeneration.service';
 import { ChatComponent } from './chat/chat.component';
-
-
+import { ImageEditorSharedModule } from './image-editor.module';
 
 @Component({
   selector: 'app-add-post',
   standalone: true,
-  imports: [FormsModule, ReactiveFormsModule, EmailEditorModule, CommonModule, QuillModule, RouterModule, ChatComponent],
+  imports: [
+    CommonModule,
+    FormsModule,
+    ReactiveFormsModule,
+    RouterModule,
+    EmailEditorModule,
+    QuillModule,
+    ChatComponent,
+    ImageEditorSharedModule,
+  ],
   templateUrl: './add-post.component.html',
   styleUrl: './add-post.component.css'
 })
-export class AddPostComponent {
+export class AddPostComponent implements AfterViewInit {
   CampaignPostForm: any = new FormGroup({
     campaignId: new FormControl('', Validators.required),
     subject: new FormControl('', Validators.required),
@@ -32,6 +39,7 @@ export class AddPostComponent {
   campaigns: any[] = [];
   @ViewChild(EmailEditorComponent) private emailEditor!: EmailEditorComponent;
   @ViewChild('dateTimeInput') dateTimeInput!: ElementRef;
+  @ViewChild('imageEditor') imageEditor!: any;
   simpleText: string = '';
   id: any;
   editMode: boolean = false;
@@ -64,6 +72,32 @@ export class AddPostComponent {
   showAddToContentButton: boolean = false;
   showAddToContentTooltip: boolean = false;
   private tooltipTimer: any = null;
+  showAIImageModal: boolean = false;
+  aiImagePrompt: string = '';
+  aiImageLoading: boolean = false;
+  aiImageResultUrl: string | null = null;
+  aiImageResults: string[] = [];
+  selectedAIImageIndex: number | null = null;
+  showManualEditorModal: boolean = false;
+  manualEditorImageUrl: string | null = null;
+  aiImageError: string | null = null;
+  showImageEditorModal: boolean = false;
+  imageEditorUrl: string | null = null;
+  editedImageDataUrl: string | null = null;
+  aiEditPrompt: string = '';
+  aiEditProcessingType: string = 'img2img';
+  aiEditLoading: boolean = false;
+  aiEditError: string | null = null;
+  aiEditResultUrl: string | null = null;
+  showAIEditModal: boolean = false;
+  editorLoading: boolean = false;
+
+  public imageEditorSettings: any = {
+    width: '100%',
+    height: '500px',
+    toolbar: ['Undo', 'Redo', 'ZoomIn', 'ZoomOut', 'Pan', 'Crop', 'Transform', 'Annotate', 'Filter', 'Finetune', 'Shape', 'Frame', 'Text', 'Pen', 'Eraser']
+  };
+
 
   constructor(public service: AppService, private toaster: ToastrService, private activatedRoute: ActivatedRoute, private route: Router, private textGenService: TextGenerationService) {
     this.activatedRoute.queryParams.subscribe(param => {
@@ -426,7 +460,6 @@ export class AddPostComponent {
   }
 
   onChatContentGenerated(content: string) {
-    // This is for direct content insertion (old logic)
     const type = this.CampaignPostForm.get('type').value;
     if (type === 1 && this.emailEditor && this.emailEditor.editor) {
       try {
@@ -446,7 +479,6 @@ export class AddPostComponent {
   }
 
   onAIContentSelected(content: string) {
-    // This is for direct content insertion (old logic)
     const type = this.CampaignPostForm.get('type').value;
     if (type === 1 && this.emailEditor && this.emailEditor.editor) {
       try {
@@ -530,6 +562,204 @@ export class AddPostComponent {
   showTooltipImmediate() {
     this.clearTooltipTimer();
     this.showAddToContentTooltip = true;
+  }
+
+  openAIImageModal() {
+    this.showAIImageModal = true;
+    this.aiImagePrompt = '';
+    this.aiImageResultUrl = null;
+    this.aiImageResults = [];
+    this.selectedAIImageIndex = null;
+    this.aiImageError = null;
+  }
+
+  closeAIImageModal() {
+    this.showAIImageModal = false;
+    this.aiImagePrompt = '';
+    this.aiImageResultUrl = null;
+    this.aiImageResults = [];
+    this.selectedAIImageIndex = null;
+    this.aiImageError = null;
+    this.aiImageLoading = false;
+  }
+
+  generateImageWithAI() {
+    if (!this.aiImagePrompt.trim()) {
+      this.aiImageError = 'Prompt is required.';
+      return;
+    }
+    this.aiImageLoading = true;
+    this.aiImageError = null;
+    this.aiImageResultUrl = null;
+    this.aiImageResults = [];
+    this.selectedAIImageIndex = null;
+    this.textGenService.generateImageWithHorde(this.aiImagePrompt).subscribe({
+      next: (res: any) => {
+        this.aiImageResults = Array.isArray(res.images) ? res.images : [];
+        this.aiImageResultUrl = this.aiImageResults.length > 0 ? this.aiImageResults[0] : null;
+        this.selectedAIImageIndex = this.aiImageResults.length > 0 ? 0 : null;
+        this.aiImageLoading = false;
+        if (!this.aiImageResults.length) {
+          this.aiImageError = 'No image returned.';
+        }
+      },
+      error: (err) => {
+        this.aiImageError = 'Failed to generate image.';
+        this.aiImageLoading = false;
+      }
+    });
+  }
+
+  selectAIImage(index: number) {
+    this.selectedAIImageIndex = index;
+    this.aiImageResultUrl = this.aiImageResults[index];
+  }
+
+  openManualEditorModal() {
+    if (this.selectedAIImageIndex !== null && this.aiImageResults[this.selectedAIImageIndex]) {
+      this.manualEditorImageUrl = this.aiImageResults[this.selectedAIImageIndex];
+      this.showManualEditorModal = true;
+      this.editorLoading = true;
+      setTimeout(() => this.initImageEditor(), 200);
+    }
+  }
+
+  initImageEditor() {
+    if (this.imageEditor && this.manualEditorImageUrl) {
+      this.imageEditor.open(this.manualEditorImageUrl);
+      this.editorLoading = false;
+    }
+  }
+
+  closeManualEditorModal() {
+    this.showManualEditorModal = false;
+    this.editorLoading = false;
+  }
+
+  saveEditedImage() {
+    if (this.imageEditor) {
+      const now = new Date();
+      const yyyy = now.getFullYear();
+      const mm = String(now.getMonth() + 1).padStart(2, '0');
+      const dd = String(now.getDate()).padStart(2, '0');
+      const filename = `post-${yyyy}-${mm}-${dd}.png`;
+      this.imageEditor.export('PNG', (dataUrl:any) => {
+        const link = document.createElement('a');
+        link.href = dataUrl;
+        link.download = filename;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        this.aiImageResultUrl = dataUrl;
+        if (this.selectedAIImageIndex !== null) {
+          this.aiImageResults[this.selectedAIImageIndex] = dataUrl;
+        }
+        this.closeManualEditorModal();
+      });
+    }
+  }
+
+  openAIEditModal() {
+    if (this.selectedAIImageIndex !== null && this.aiImageResults[this.selectedAIImageIndex]) {
+      this.aiImageResultUrl = this.aiImageResults[this.selectedAIImageIndex];
+      this.showAIEditModal = true;
+      this.aiEditPrompt = '';
+      this.aiEditProcessingType = 'img2img';
+      this.aiEditError = null;
+      this.aiEditResultUrl = null;
+    }
+  }
+
+  closeAIEditModal() {
+    this.showAIEditModal = false;
+    this.aiEditPrompt = '';
+    this.aiEditProcessingType = 'img2img';
+    this.aiEditError = null;
+    this.aiEditResultUrl = null;
+  }
+
+  async submitAIEdit() {
+    if (!this.aiEditPrompt.trim()) {
+      this.aiEditError = 'Prompt is required.';
+      return;
+    }
+    if (!this.aiImageResultUrl) {
+      this.aiEditError = 'No image to edit.';
+      return;
+    }
+
+    this.aiEditLoading = true;
+    this.aiEditError = null;
+    this.aiEditResultUrl = null;
+
+    try {
+      const url: string = this.aiImageResultUrl;
+      const imageName = url.substring(url.lastIndexOf('/') + 1);
+      this.textGenService.editImageWithHorde({
+        prompt: this.aiEditPrompt,
+        base64Image: imageName,
+        processingType: this.aiEditProcessingType
+      }).subscribe({
+        next: (res: any) => {
+          this.aiEditResultUrl = res.images && res.images.length > 0 ? res.images[0] : null;
+          this.aiEditLoading = false;
+          if (!this.aiEditResultUrl) {
+            this.aiEditError = 'No edited image returned.';
+          }
+        },
+        error: (err) => {
+          this.aiEditError = 'Failed to edit image.';
+          this.aiEditLoading = false;
+        }
+      });
+    } catch (err) {
+      this.aiEditError = 'Failed to process image.';
+      this.aiEditLoading = false;
+    }
+  }
+
+  dataURLtoFile(dataurl: string, filename: string): Promise<File> {
+    return fetch(dataurl)
+      .then(res => res.arrayBuffer())
+      .then(buf => new File([buf], filename, { type: 'image/png' }));
+  }
+
+  convertImageUrlToBase64(url: string): Promise<string> {
+    return new Promise((resolve, reject) => {
+      const img = new window.Image();
+      img.crossOrigin = 'Anonymous';
+      img.onload = function () {
+        const canvas = document.createElement('canvas');
+        canvas.width = img.width;
+        canvas.height = img.height;
+        const ctx = canvas.getContext('2d');
+        if (!ctx) return reject('Canvas context error');
+        ctx.drawImage(img, 0, 0);
+        try {
+          const dataURL = canvas.toDataURL('image/png');
+          resolve(dataURL.replace(/^data:image\/png;base64,/, ''));
+        } catch (e) {
+          reject(e);
+        }
+      };
+      img.onerror = function (err) {
+        reject('Image load error');
+      };
+      img.src = url;
+      if (img.complete || img.complete === undefined) {
+        img.src = url;
+      }
+    });
+  }
+
+  ngAfterViewInit() {
+    if (this.showManualEditorModal) {
+    }
+  }
+
+  ngDoCheck() {
+    if (this.showManualEditorModal) {
+    }
   }
 
 }

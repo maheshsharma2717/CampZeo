@@ -18,4 +18,21 @@ export class TextGenerationService {
   generateText(request: TextGenerationRequest): Observable<{ text: string }> {
     return this.http.post<{ text: string }>(this.apiUrl, request);
   }
+
+  generateImageWithHorde(prompt: string): Observable<any> {
+   
+    const url = `${environment.API_BASE}Horde/Generate?prompt=${encodeURIComponent(prompt)}`;
+    return this.http.get<any>(url);
+  }
+
+  editImageWithHorde(data: { prompt: string, base64Image: string, processingType: string }) {
+    const url = '/Horde/Edit';
+    return this.http.post<any>(url, {
+      prompt: data.prompt,
+      base64Image: data.base64Image,
+      processingType: data.processingType
+    }, {
+      headers: { 'Content-Type': 'application/json-patch+json' }
+    });
+  }
 }
