@@ -1,3 +1,5 @@
+
+
 ::ng-deep .pagination .current {
   background-color: #1abc9c !important;
   padding: .1875rem .625rem;
@@ -98,6 +100,7 @@
 .e-input-group.e-control-wrapper.e-float-icon-left:not(.e-float-input) .e-input-in-wrap::after {
   background: #5867dd;
 }
+
 html {
   font-size: 0.75em;
   font-family: Arial, Helvetica, sans-serif;
