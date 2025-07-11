@@ -91,6 +91,9 @@ export class AddPostComponent implements AfterViewInit {
   aiEditResultUrl: string | null = null;
   showAIEditModal: boolean = false;
   editorLoading: boolean = false;
+  showTestAIPayloadModal: boolean = false;
+  testAIPayloadImage: string | null = null;
+  testAIPayloadPrompt: string = '';
 
   public imageEditorSettings: any = {
     width: '100%',
@@ -759,6 +762,87 @@ export class AddPostComponent implements AfterViewInit {
 
   ngDoCheck() {
     if (this.showManualEditorModal) {
+    }
+  }
+
+  openTestAIPayloadModal() {
+    // Default to selected image and prompt if available
+    if (this.selectedAIImageIndex !== null && this.aiImageResults[this.selectedAIImageIndex]) {
+      this.testAIPayloadImage = this.aiImageResults[this.selectedAIImageIndex];
+      this.testAIPayloadPrompt = this.aiImagePrompt;
+    } else {
+      this.testAIPayloadImage = null;
+      this.testAIPayloadPrompt = '';
+    }
+    this.showTestAIPayloadModal = true;
+  }
+
+  closeTestAIPayloadModal() {
+    this.showTestAIPayloadModal = false;
+  }
+
+  onTestAIPayloadFileChange(event: Event) {
+    const input = event.target as HTMLInputElement;
+    if (input.files && input.files[0]) {
+      const file = input.files[0];
+      const reader = new FileReader();
+      reader.onload = () => {
+        this.testAIPayloadImage = reader.result as string;
+      };
+      reader.readAsDataURL(file);
+    }
+  }
+
+  saveTestAIPayload() {
+    if (!this.testAIPayloadImage || !this.testAIPayloadPrompt) return;
+    // Ensure the image is a Data URL and read as Data URL if not already
+    if (!this.testAIPayloadImage.startsWith('data:image')) {
+      // If not a data URL, try to convert it using FileReader
+      const imgUrl = this.testAIPayloadImage;
+      fetch(imgUrl)
+        .then(res => res.blob())
+        .then(blob => {
+          const reader = new FileReader();
+          reader.onload = () => {
+            let base64Image = reader.result as string;
+            if (base64Image.startsWith('data:image')) {
+              base64Image = base64Image.split(',')[1];
+            }
+            const payload = {
+              image: base64Image,
+              prompt: this.testAIPayloadPrompt
+            };
+            this.textGenService.Edit(payload).subscribe({
+              next: () => {
+                this.toaster.success('Payload saved successfully!');
+                this.closeTestAIPayloadModal();
+              },
+              error: () => {
+                this.toaster.error('Failed to save payload');
+              }
+            });
+          };
+          reader.readAsDataURL(blob);
+        })
+        .catch(() => {
+          this.toaster.error('Failed to process image');
+        });
+    } else {
+      // Already a data URL
+      let base64Image = this.testAIPayloadImage.split(',')[1];
+      const payload = {
+        image: base64Image,
+        prompt: this.testAIPayloadPrompt
+      };
+      this.textGenService.Edit(payload).subscribe({
+        next: () => {
+          this.toaster.success('Payload saved successfully!');
+          this.closeTestAIPayloadModal();
+        },
+        error: () => {
+          this.toaster.error('Failed to save payload');
+        }
+      });
     }
   }
 
