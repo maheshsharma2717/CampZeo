@@ -20,7 +20,7 @@ public class ImageGenerationService : IImageGenerationService
     public ImageGenerationService(HttpClient httpClient, IConfiguration configuration)
     {
         _httpClient = httpClient;
-     var    _apiKey = "7c4823e2-7206-4220-8cc7-90e0759f6c2f";
+        _apiKey = configuration["DeepAI:ApiKey"];
         if (!_httpClient.DefaultRequestHeaders.Contains("api-key"))
         {
             _httpClient.DefaultRequestHeaders.Add("api-key", _apiKey);
