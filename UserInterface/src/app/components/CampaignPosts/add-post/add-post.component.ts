@@ -319,10 +319,23 @@ export class AddPostComponent implements AfterViewInit {
     );
   }
   ChangeType(type: number) {
-
     this.CampaignPostForm.patchValue({
-      type: type
-    })
+      type: type,
+      subject: '',
+      message: ''
+    });
+    
+    this.simpleText = '';
+    this.editorContent = '';
+    this.videoUrl = null;
+    this.uploadedVideoUrl = '';
+    
+    this.aiImagePrompt = '';
+    this.aiImageResults = [];
+    this.selectedAIImageIndex = null;
+    this.aiImageResultUrl = null;
+    this.aiImageError = null;
+    
     this.smsPlatform = '';
   }
 
@@ -766,7 +779,6 @@ export class AddPostComponent implements AfterViewInit {
   }
 
   openTestAIPayloadModal() {
-    // Default to selected image and prompt if available
     if (this.selectedAIImageIndex !== null && this.aiImageResults[this.selectedAIImageIndex]) {
       this.testAIPayloadImage = this.aiImageResults[this.selectedAIImageIndex];
       this.testAIPayloadPrompt = this.aiImagePrompt;
@@ -795,9 +807,7 @@ export class AddPostComponent implements AfterViewInit {
 
   saveTestAIPayload() {
     if (!this.testAIPayloadImage || !this.testAIPayloadPrompt) return;
-    // Ensure the image is a Data URL and read as Data URL if not already
     if (!this.testAIPayloadImage.startsWith('data:image')) {
-      // If not a data URL, try to convert it using FileReader
       const imgUrl = this.testAIPayloadImage;
       fetch(imgUrl)
         .then(res => res.blob())
@@ -828,7 +838,6 @@ export class AddPostComponent implements AfterViewInit {
           this.toaster.error('Failed to process image');
         });
     } else {
-      // Already a data URL
       let base64Image = this.testAIPayloadImage.split(',')[1];
       const payload = {
         image: base64Image,
