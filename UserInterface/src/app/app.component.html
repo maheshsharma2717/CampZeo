@@ -4,7 +4,8 @@
 
 <div class="" [ngClass]="{'expanded': !service.toggle, 'collapsed': service.toggle,'toggle-sidebar':!service.toggle}">
    <div class="">
-      <app-sidebar [collapsed]="isSidebarCollapsed" [collapsed]="isCollapsed" (togglebar)="isCollapsed = $event" [isMobileNavOpen]="isMobileNavOpen"></app-sidebar>
+      <app-sidebar [collapsed]="isSidebarCollapsed" [collapsed]="isCollapsed" (togglebar)="isCollapsed = $event"
+         [isMobileNavOpen]="isMobileNavOpen"></app-sidebar>
       <div>
          <div class="">
             <nav class="">
@@ -32,7 +33,8 @@
                <router-outlet class=""></router-outlet>
                </section> -->
                <section>
-                  <div [ngClass]="{'sidebar_minimize' : isCollapsed, 'uncollapsed-width': isCollapsed}" class="main-panel">
+                  <div [ngClass]="{'sidebar_minimize' : isCollapsed, 'uncollapsed-width': isCollapsed}"
+                     class="main-panel">
 
                      <div class="container">
                         <div class="page-inner" [ngClass]="{'inner-width' : !isCollapsed}">

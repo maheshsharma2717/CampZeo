@@ -117,3 +117,6 @@ btn btn-xs btn-secondary btn-sm {
 .html-content-div img {
     max-width: 100%;
 }
+  quill-editor.mb-4.ng-untouched.ng-pristine.ng-valid {
+    padding-left: 0;
+}

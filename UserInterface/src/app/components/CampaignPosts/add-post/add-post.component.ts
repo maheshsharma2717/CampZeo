@@ -71,29 +71,9 @@ export class AddPostComponent implements AfterViewInit {
   selectedChatText: string = '';
   showAddToContentButton: boolean = false;
   showAddToContentTooltip: boolean = false;
+  attemptedSubmit: boolean = false;
   private tooltipTimer: any = null;
-  showAIImageModal: boolean = false;
-  aiImagePrompt: string = '';
-  aiImageLoading: boolean = false;
-  aiImageResultUrl: string | null = null;
-  aiImageResults: string[] = [];
-  selectedAIImageIndex: number | null = null;
-  showManualEditorModal: boolean = false;
-  manualEditorImageUrl: string | null = null;
-  aiImageError: string | null = null;
-  showImageEditorModal: boolean = false;
-  imageEditorUrl: string | null = null;
-  editedImageDataUrl: string | null = null;
-  aiEditPrompt: string = '';
-  aiEditProcessingType: string = 'img2img';
-  aiEditLoading: boolean = false;
-  aiEditError: string | null = null;
-  aiEditResultUrl: string | null = null;
-  showAIEditModal: boolean = false;
-  editorLoading: boolean = false;
-  showTestAIPayloadModal: boolean = false;
-  testAIPayloadImage: string | null = null;
-  testAIPayloadPrompt: string = '';
+  selectedFileType: 'image' | 'video' | null = null;
 
   public imageEditorSettings: any = {
     width: '100%',
@@ -184,8 +164,8 @@ export class AddPostComponent implements AfterViewInit {
     }
     this.setFormTypeBasedOnPlatform();
     document.addEventListener('click', this.closeDropdownOnOutsideClick.bind(this));
-
   }
+
   ngOnDestroy() {
     document.removeEventListener('click', this.closeDropdownOnOutsideClick.bind(this));
   }
@@ -196,7 +176,14 @@ export class AddPostComponent implements AfterViewInit {
       this.showCampaignDropdown = false;
     }
   }
+
   onSubmit(): void {
+    this.attemptedSubmit = true;
+    const type = this.CampaignPostForm.get('type')?.value;
+    if (type === 8 && !this.uploadedVideoUrl) {
+      this.toaster.error('Please upload a video for YouTube post.');
+      return;
+    }
     if (this.CampaignPostForm.valid) {
       this.GetMessagePromise()
         .then(() => {
@@ -376,28 +363,39 @@ export class AddPostComponent implements AfterViewInit {
   }
 
   onVideoSelected(event: Event): void {
-    debugger;
     const input = event.target as HTMLInputElement;
     if (input.files && input.files[0]) {
       const file = input.files[0];
+      const fileType = file.type;
+      const isImage = fileType.startsWith('image/');
+      const isVideo = fileType.startsWith('video/');
 
+      if (!isImage && !isVideo) {
+        this.toaster.error('Please upload a valid image or video file.');
+        return;
+      }
+      this.selectedFileType = isImage ? 'image' : 'video';
       const reader = new FileReader();
       reader.onload = () => {
         this.videoUrl = reader.result;
       };
       reader.readAsDataURL(file);
-
       this.service.uploadMediaFile(file)
         .then((response: any) => {
           this.uploadedVideoUrl = response.url;
-          this.toaster.success('Video uploaded successfully!');
+          if (isImage) {
+            this.toaster.success('Image uploaded successfully!');
+          } else {
+            this.toaster.success('Video uploaded successfully!');
+          }
         })
         .catch((error: any) => {
-          console.error('Video upload failed', error);
-          this.toaster.error('Failed to upload video');
+          console.error('File upload failed', error);
+          this.toaster.error('Failed to upload file');
         });
     }
   }
+
   openDatePicker() {
     this.dateTimeInput.nativeElement.showPicker?.();
     this.dateTimeInput.nativeElement.focus();
@@ -543,7 +541,7 @@ export class AddPostComponent implements AfterViewInit {
   }
 
   onContentInputBlur() {
-    setTimeout(() => { this.showContentAIPopover = false; this.showChatHelper = false; }, 200); 
+    setTimeout(() => { this.showContentAIPopover = false; this.showChatHelper = false; }, 200);
   }
   onContentInputChange() {
     if (this.simpleText) {
@@ -578,6 +576,19 @@ export class AddPostComponent implements AfterViewInit {
   showTooltipImmediate() {
     this.clearTooltipTimer();
     this.showAddToContentTooltip = true;
+  }
+
+  getAcceptType(): string {
+    const type = this.CampaignPostForm.get('type').value;
+    if (type === 5) return 'image/*';
+    if (type === 6 || type === 7 || type === 8) return 'video/*';
+    return '';
+  }
+
+  removeSelectedFile(fileInput: HTMLInputElement): void {
+    fileInput.value = '';
+    this.videoUrl = '';
+    this.uploadedVideoUrl = '';
   }
 
   openAIImageModal() {
