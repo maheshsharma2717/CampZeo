@@ -1,17 +1,20 @@
 ﻿using System.Text.Json;
 using System.Text;
+using Microsoft.Extensions.Configuration;
 
 public class AiHordeClient
 {
     private readonly HttpClient _httpClient;
+    private readonly string _apiKey;
 
-    public AiHordeClient()
+    public AiHordeClient(IConfiguration configuration)
     {
         _httpClient = new HttpClient
         {
             BaseAddress = new Uri("https://stablehorde.net/")
         };
-        _httpClient.DefaultRequestHeaders.Add("apikey", "CsZ4uD-Sjv3HFb6nvGUoSQ");
+        _apiKey = configuration["AiHorde:ApiKey"];
+        _httpClient.DefaultRequestHeaders.Add("apikey", _apiKey);
     }
 
     public async Task<string> SubmitPromptAsync(string prompt)
@@ -108,7 +111,7 @@ public class AiHordeClient
 
        
         _httpClient.DefaultRequestHeaders.Clear();
-        _httpClient.DefaultRequestHeaders.Add("apikey", "CsZ4uD-Sjv3HFb6nvGUoSQ");
+        _httpClient.DefaultRequestHeaders.Add("apikey", _apiKey);
         _httpClient.DefaultRequestHeaders.Add("Client-Agent", "dotnet-client");
 
         var response = await _httpClient.PostAsync("api/v2/generate/async", content);
