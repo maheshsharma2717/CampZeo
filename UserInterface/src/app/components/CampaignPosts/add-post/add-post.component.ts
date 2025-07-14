@@ -324,18 +324,18 @@ export class AddPostComponent implements AfterViewInit {
       subject: '',
       message: ''
     });
-    
+
     this.simpleText = '';
     this.editorContent = '';
     this.videoUrl = null;
     this.uploadedVideoUrl = '';
-    
+
     this.aiImagePrompt = '';
     this.aiImageResults = [];
     this.selectedAIImageIndex = null;
     this.aiImageResultUrl = null;
     this.aiImageError = null;
-    
+
     this.smsPlatform = '';
   }
 
@@ -543,7 +543,7 @@ export class AddPostComponent implements AfterViewInit {
   }
 
   onContentInputBlur() {
-    setTimeout(() => { this.showContentAIPopover = false; this.showChatHelper = false; }, 200); 
+    setTimeout(() => { this.showContentAIPopover = false; this.showChatHelper = false; }, 200);
   }
   onContentInputChange() {
     if (this.simpleText) {
@@ -635,8 +635,50 @@ export class AddPostComponent implements AfterViewInit {
     if (this.selectedAIImageIndex !== null && this.aiImageResults[this.selectedAIImageIndex]) {
       this.manualEditorImageUrl = this.aiImageResults[this.selectedAIImageIndex];
       this.showManualEditorModal = true;
-      this.editorLoading = true;
-      setTimeout(() => this.initImageEditor(), 200);
+      this.editorLoading = false;
+      setTimeout(() => {
+        if (this.imageEditor && this.manualEditorImageUrl) {
+          this.imageEditor.open(this.manualEditorImageUrl);
+        }
+      }, 100);
+    }
+    else if (this.manualEditorImageUrl) {
+      this.showManualEditorModal = true;
+      this.editorLoading = false;
+      setTimeout(() => {
+        if (this.imageEditor && this.manualEditorImageUrl) {
+          this.imageEditor.open(this.manualEditorImageUrl);
+        }
+      }, 100);
+    }
+    // Otherwise, prompt for upload
+    else {
+      const fileInput = document.createElement('input');
+      fileInput.type = 'file';
+      fileInput.accept = 'image/*';
+      fileInput.style.display = 'none';
+      document.body.appendChild(fileInput);
+      fileInput.onchange = (event: any) => {
+        const file = event.target.files[0];
+        if (file) {
+          const reader = new FileReader();
+          reader.onload = () => {
+            this.manualEditorImageUrl = reader.result as string;
+            this.showManualEditorModal = true;
+            this.editorLoading = false;
+            setTimeout(() => {
+              if (this.imageEditor && this.manualEditorImageUrl) {
+                this.imageEditor.open(this.manualEditorImageUrl);
+              }
+            }, 100);
+            document.body.removeChild(fileInput);
+          };
+          reader.readAsDataURL(file);
+        } else {
+          document.body.removeChild(fileInput);
+        }
+      };
+      fileInput.click();
     }
   }
 
@@ -659,7 +701,7 @@ export class AddPostComponent implements AfterViewInit {
       const mm = String(now.getMonth() + 1).padStart(2, '0');
       const dd = String(now.getDate()).padStart(2, '0');
       const filename = `post-${yyyy}-${mm}-${dd}.png`;
-      this.imageEditor.export('PNG', (dataUrl:any) => {
+      this.imageEditor.export('PNG', (dataUrl: any) => {
         const link = document.createElement('a');
         link.href = dataUrl;
         link.download = filename;
@@ -853,6 +895,43 @@ export class AddPostComponent implements AfterViewInit {
         }
       });
     }
+  }
+
+  // --- Manual Image Upload and Insert to Content ---
+  onManualImageFileChange(event: Event) {
+    const input = event.target as HTMLInputElement;
+    if (input.files && input.files[0]) {
+      const file = input.files[0];
+      const reader = new FileReader();
+      reader.onload = () => {
+        this.manualEditorImageUrl = reader.result as string;
+        if (this.imageEditor) {
+          this.imageEditor.open(this.manualEditorImageUrl);
+          this.editorLoading = false;
+        }
+      };
+      reader.readAsDataURL(file);
+    }
+  }
+
+  insertManualEditorImageToContent() {
+    if (!this.manualEditorImageUrl) return;
+    const type = this.CampaignPostForm.get('type').value;
+    const imgTag = `<img src="${this.manualEditorImageUrl}" alt="Inserted Image" />`;
+
+    if (type === 1 && this.emailEditor && this.emailEditor.editor) {
+      let currentHtml = this.CampaignPostForm.get('message').value || '';
+      currentHtml += imgTag;
+      this.CampaignPostForm.patchValue({ message: currentHtml });
+      // Optionally update the email editor's content directly if needed
+    } else if (type === 2 || type === 3) {
+      this.simpleText = (this.simpleText || '') + imgTag;
+      this.CampaignPostForm.patchValue({ message: this.simpleText });
+    } else {
+      this.editorContent = (this.editorContent || '') + imgTag;
+      this.CampaignPostForm.patchValue({ message: this.editorContent });
+    }
+    this.closeManualEditorModal();
   }
 
 }
