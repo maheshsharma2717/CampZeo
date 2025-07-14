@@ -13,6 +13,7 @@ import { NgxPaginationModule } from 'ngx-pagination';
 @Component({
   selector: 'app-calendar',
   standalone: true,
+  
   imports: [DayPilotModule, RouterModule, FormsModule, CommonModule, ReactiveFormsModule, QuillModule, EmailEditorModule, NgxPaginationModule],
   templateUrl: './calendar.component.html',
   styleUrl: './calendar.component.css'
