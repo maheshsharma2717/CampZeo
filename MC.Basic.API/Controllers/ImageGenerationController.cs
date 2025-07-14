@@ -101,9 +101,9 @@ public class AiHordeController : ControllerBase
 {
     private readonly AiHordeClient _hordeClient;
 
-    public AiHordeController()
+    public AiHordeController(IConfiguration configuration)
     {
-        _hordeClient = new AiHordeClient();
+        _hordeClient = new AiHordeClient(configuration);
     }
 
     private async Task<string> DownloadAndSaveImageAsync(string imageUrl, string uploadsFolder, string baseUrl)
@@ -162,32 +162,29 @@ public class AiHordeController : ControllerBase
         {
             string base64Image = request.Base64Image;
 
-            if (!base64Image.Contains(",") &&
-                (base64Image.EndsWith(".png", StringComparison.OrdinalIgnoreCase) ||
-                 base64Image.EndsWith(".jpg", StringComparison.OrdinalIgnoreCase) ||
-                 base64Image.EndsWith(".jpeg", StringComparison.OrdinalIgnoreCase)))
+            // If the string does not start with 'data:image/', treat it as a file name and look for it in wwwroot/uploads
+            if (!base64Image.StartsWith("data:image/"))
             {
                 var uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/uploads");
                 var filePath = Path.Combine(uploadsFolder, base64Image);
-                if (!System.IO.File.Exists(filePath))
-                    return BadRequest("Referenced image file not found on server.");
-
-                var fileBytes = await System.IO.File.ReadAllBytesAsync(filePath);
-                var extension = Path.GetExtension(filePath).ToLowerInvariant();
-
-                string prefix = extension switch
+                if (System.IO.File.Exists(filePath))
                 {
-                    ".png" => "data:image/png;base64,",
-                    ".jpg" or ".jpeg" => "data:image/jpeg;base64,",
-                    _ => throw new Exception("Unsupported file type")
-                };
-
-                base64Image = prefix + Convert.ToBase64String(fileBytes);
+                    var fileBytes = await System.IO.File.ReadAllBytesAsync(filePath);
+                    var extension = Path.GetExtension(filePath).ToLowerInvariant();
+                    string prefix = extension switch
+                    {
+                        ".png" => "data:image/png;base64,",
+                        ".jpg" or ".jpeg" => "data:image/jpeg;base64,",
+                        _ => throw new Exception("Unsupported file type")
+                    };
+                    base64Image = prefix + Convert.ToBase64String(fileBytes);
+                }
+                else
+                {
+                    return BadRequest("Referenced image file not found on server.");
+                }
             }
-            else if (!base64Image.StartsWith("data:image/"))
-            {
-                base64Image = "data:image/png;base64," + base64Image;
-            }
+            // else: already base64, do nothing
 
             var submitJson = await _hordeClient.SubmitImageEditAsync(
                 base64Image,
