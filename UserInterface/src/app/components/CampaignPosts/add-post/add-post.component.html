@@ -241,8 +241,7 @@
                             <div class="video-upload-container">
                                 <div class="input-group mb-3">
                                     <div class="custom-file">
-                                        <div class="text-muted small me-2">Platform type: {{
-                                            CampaignPostForm.get('type')?.value }}</div>
+                                      
                                         <input #fileInput type="file" class="custom-file-input"
                                             (change)="onVideoSelected($event)" [accept]="getAcceptType()" />
 

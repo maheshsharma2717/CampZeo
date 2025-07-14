@@ -81,6 +81,30 @@ export class AddPostComponent implements AfterViewInit {
     toolbar: ['Undo', 'Redo', 'ZoomIn', 'ZoomOut', 'Pan', 'Crop', 'Transform', 'Annotate', 'Filter', 'Finetune', 'Shape', 'Frame', 'Text', 'Pen', 'Eraser']
   };
 
+  // --- Modal and AI Image Properties (ensure all are defined) ---
+  showAIImageModal: boolean = false;
+  aiImagePrompt: string = '';
+  aiImageLoading: boolean = false;
+  aiImageError: string | null = null;
+  aiImageResultUrl: string | null = null;
+  aiImageResults: string[] = [];
+  selectedAIImageIndex: number | null = null;
+
+  showAIEditModal: boolean = false;
+  aiEditPrompt: string = '';
+  aiEditProcessingType: string = 'img2img';
+  aiEditLoading: boolean = false;
+  aiEditError: string | null = null;
+  aiEditResultUrl: string | null = null;
+
+  showManualEditorModal: boolean = false;
+  editorLoading: boolean = false;
+  manualEditorImageUrl: string | null = null;
+
+  showTestAIPayloadModal: boolean = false;
+  testAIPayloadImage: string | null = null;
+  testAIPayloadPrompt: string = '';
+
 
   constructor(public service: AppService, private toaster: ToastrService, private activatedRoute: ActivatedRoute, private route: Router, private textGenService: TextGenerationService) {
     this.activatedRoute.queryParams.subscribe(param => {
