@@ -100,10 +100,41 @@ public class OpenAiController : ControllerBase
 public class AiHordeController : ControllerBase
 {
     private readonly AiHordeClient _hordeClient;
+    private static readonly Queue<DateTime> _requestTimestamps = new Queue<DateTime>();
+    private static readonly object _rateLimitLock = new object();
 
     public AiHordeController(IConfiguration configuration)
     {
         _hordeClient = new AiHordeClient(configuration);
+    }
+
+    private async Task ThrottleIfNeededAsync()
+    {
+        DateTime now = DateTime.UtcNow;
+        lock (_rateLimitLock)
+        {
+            while (_requestTimestamps.Count > 0 && (now - _requestTimestamps.Peek()).TotalSeconds > 60)
+            {
+                _requestTimestamps.Dequeue();
+            }
+            if (_requestTimestamps.Count >= 10)
+            {
+                var waitTime = 60 - (now - _requestTimestamps.Peek()).TotalSeconds;
+                if (waitTime > 0)
+                {
+                    Monitor.Exit(_rateLimitLock);
+                    try
+                    {
+                        Task.Delay((int)(waitTime * 1000)).Wait();
+                    }
+                    finally
+                    {
+                        Monitor.Enter(_rateLimitLock);
+                    }
+                }
+            }
+            _requestTimestamps.Enqueue(DateTime.UtcNow);
+        }
     }
 
     private async Task<string> DownloadAndSaveImageAsync(string imageUrl, string uploadsFolder, string baseUrl)
@@ -125,6 +156,7 @@ public class AiHordeController : ControllerBase
 
         try
         {
+            await ThrottleIfNeededAsync();
             var submitJson = await _hordeClient.SubmitPromptAsync(prompt);
             var doc = JsonDocument.Parse(submitJson);
             var requestId = doc.RootElement.GetProperty("id").GetString();
@@ -162,7 +194,6 @@ public class AiHordeController : ControllerBase
         {
             string base64Image = request.Base64Image;
 
-            // If the string does not start with 'data:image/', treat it as a file name and look for it in wwwroot/uploads
             if (!base64Image.StartsWith("data:image/"))
             {
                 var uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/uploads");
@@ -184,7 +215,6 @@ public class AiHordeController : ControllerBase
                     return BadRequest("Referenced image file not found on server.");
                 }
             }
-            // else: already base64, do nothing
 
             var submitJson = await _hordeClient.SubmitImageEditAsync(
                 base64Image,
@@ -198,7 +228,17 @@ public class AiHordeController : ControllerBase
             if (images == null || images.Count == 0)
                 return StatusCode(504, "Image editing timed out.");
 
-            return Ok(new { images });
+            var uploadsFolderOut = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/uploads");
+            if (!Directory.Exists(uploadsFolderOut))
+                Directory.CreateDirectory(uploadsFolderOut);
+            var baseUrl = $"{Request.Scheme}://{Request.Host}";
+            var localImageUrls = new List<string>();
+            foreach (var imageUrl in images)
+            {
+                var localUrl = await DownloadAndSaveImageAsync(imageUrl, uploadsFolderOut, baseUrl);
+                localImageUrls.Add(localUrl);
+            }
+            return Ok(new { images = localImageUrls });
         }
         catch (Exception ex)
         {
