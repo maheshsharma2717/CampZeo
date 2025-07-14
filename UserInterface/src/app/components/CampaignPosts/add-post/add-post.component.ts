@@ -63,7 +63,9 @@ export class AddPostComponent {
   selectedChatText: string = '';
   showAddToContentButton: boolean = false;
   showAddToContentTooltip: boolean = false;
+  attemptedSubmit: boolean = false;
   private tooltipTimer: any = null;
+  selectedFileType: 'image' | 'video' | null = null;
 
   constructor(public service: AppService, private toaster: ToastrService, private activatedRoute: ActivatedRoute, private route: Router, private textGenService: TextGenerationService) {
     this.activatedRoute.queryParams.subscribe(param => {
@@ -147,8 +149,8 @@ export class AddPostComponent {
     }
     this.setFormTypeBasedOnPlatform();
     document.addEventListener('click', this.closeDropdownOnOutsideClick.bind(this));
-
   }
+
   ngOnDestroy() {
     document.removeEventListener('click', this.closeDropdownOnOutsideClick.bind(this));
   }
@@ -159,7 +161,14 @@ export class AddPostComponent {
       this.showCampaignDropdown = false;
     }
   }
+
   onSubmit(): void {
+    this.attemptedSubmit = true;
+    const type = this.CampaignPostForm.get('type')?.value;
+    if (type === 8 && !this.uploadedVideoUrl) {
+      this.toaster.error('Please upload a video for YouTube post.');
+      return;
+    }
     if (this.CampaignPostForm.valid) {
       this.GetMessagePromise()
         .then(() => {
@@ -326,28 +335,39 @@ export class AddPostComponent {
   }
 
   onVideoSelected(event: Event): void {
-    debugger;
     const input = event.target as HTMLInputElement;
     if (input.files && input.files[0]) {
       const file = input.files[0];
+      const fileType = file.type;
+      const isImage = fileType.startsWith('image/');
+      const isVideo = fileType.startsWith('video/');
 
+      if (!isImage && !isVideo) {
+        this.toaster.error('Please upload a valid image or video file.');
+        return;
+      }
+      this.selectedFileType = isImage ? 'image' : 'video';
       const reader = new FileReader();
       reader.onload = () => {
         this.videoUrl = reader.result;
       };
       reader.readAsDataURL(file);
-
       this.service.uploadMediaFile(file)
         .then((response: any) => {
           this.uploadedVideoUrl = response.url;
-          this.toaster.success('Video uploaded successfully!');
+          if (isImage) {
+            this.toaster.success('Image uploaded successfully!');
+          } else {
+            this.toaster.success('Video uploaded successfully!');
+          }
         })
         .catch((error: any) => {
-          console.error('Video upload failed', error);
-          this.toaster.error('Failed to upload video');
+          console.error('File upload failed', error);
+          this.toaster.error('Failed to upload file');
         });
     }
   }
+
   openDatePicker() {
     this.dateTimeInput.nativeElement.showPicker?.();
     this.dateTimeInput.nativeElement.focus();
@@ -495,7 +515,7 @@ export class AddPostComponent {
   }
 
   onContentInputBlur() {
-    setTimeout(() => { this.showContentAIPopover = false; this.showChatHelper = false; }, 200); 
+    setTimeout(() => { this.showContentAIPopover = false; this.showChatHelper = false; }, 200);
   }
   onContentInputChange() {
     if (this.simpleText) {
@@ -530,6 +550,19 @@ export class AddPostComponent {
   showTooltipImmediate() {
     this.clearTooltipTimer();
     this.showAddToContentTooltip = true;
+  }
+
+  getAcceptType(): string {
+    const type = this.CampaignPostForm.get('type').value;
+    if (type === 5) return 'image/*';
+    if (type === 6 || type === 7 || type === 8) return 'video/*';
+    return '';
+  }
+
+  removeSelectedFile(fileInput: HTMLInputElement): void {
+    fileInput.value = '';
+    this.videoUrl = '';
+    this.uploadedVideoUrl = '';
   }
 
 }
