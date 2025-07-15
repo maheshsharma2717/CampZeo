@@ -984,8 +984,12 @@ export class AddPostComponent implements AfterViewInit {
       const dataUrl = canvas.toDataURL('image/png');
       // Instead of inserting into content, upload as if via upload button
       this.uploadExternalVideoOrImage(dataUrl, 'image');
-      this.closeManualEditorModal();
     }
+    // Close all modals
+    this.showManualEditorModal = false;
+    this.showAIImageModal = false;
+    this.showAIEditModal = false;
+    this.showTestAIPayloadModal = false;
   }
 
   onSimpleTextChange(value: string) {
