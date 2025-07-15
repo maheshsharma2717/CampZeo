@@ -22,26 +22,30 @@
 <div class="row">
     <div class="col-12">
         <div class="card">
-            <!-- Responsive Filters and Actions -->
-            <div class="card-header d-flex flex-wrap flex-column flex-md-row align-items-stretch align-items-md-center justify-content-between py-2 gap-2">
-                <div class="d-flex flex-column flex-sm-row align-items-stretch align-items-sm-center gap-2 flex-grow-1">
-                    <div class="d-flex flex-column flex-sm-row align-items-stretch align-items-sm-center gap-2 flex-grow-1">
-                        <label class="m-0 me-sm-2">Filter Suspended :</label>
+            <div class="card-header d-flex flex-wrap flex-row align-items-center justify-content-between py-2 gap-2">
+                <h3 class="fw-bold mb-3">Organisations</h3>
+                <div class="d-flex align-items-center gap-2 ms-auto">
+                    <div class="d-flex align-items-center gap-2">
+                        <label class="m-0 me-2">Filter Suspended:</label>
                         <select [(ngModel)]="isSuspendedFilter" [ngModelOptions]="{standalone:true}"
-                            class="form-control w-100 w-sm-auto py-1 mb-2 mb-sm-0" (change)="loadOrganisations();currentPage = 1">
+                            class="form-control w-auto py-1" (change)="loadOrganisations();currentPage = 1">
                             <option value="">All</option>
                             <option value="true">Suspended</option>
                             <option value="false">Active</option>
                         </select>
                     </div>
-                    <div *ngIf="this.service.User.role == 1" class="mt-2 mt-sm-0 ms-0 ms-sm-2">
-                        <a [routerLink]="'/create-organisation'"><button type="button"
-                                class="btn btn-outline-primary w-100 w-sm-auto">Add New</button>
+                    <div *ngIf="this.service.User.role == 1">
+                        <a [routerLink]="'/create-organisation'">
+                            <button type="button" class="btn btn-outline-primary">Add New</button>
                         </a>
                     </div>
                 </div>
-                <div class="d-flex flex-column flex-sm-row align-items-stretch align-items-sm-center gap-2 flex-grow-1 justify-content-end">
-                    <input type="text" class="form-control w-100 w-sm-50" placeholder="Search..." [(ngModel)]="SearchText"
+            </div>
+      
+      
+            <div class="col-12 py-2 px-4">
+                <div class="d-flex flex-column flex-sm-row align-items-stretch align-items-sm-center gap-2 flex-grow-1 justify-content-between">
+                    <input type="text" class="form-control w-20 w-sm-50" placeholder="Search..." [(ngModel)]="SearchText"
                         (input)="loadOrganisations()" />
                     <div class="d-flex align-items-center gap-2 justify-content-end">
                         <span class="text-primary d-none d-sm-inline">entries per page</span>
@@ -53,6 +57,7 @@
                     </div>
                 </div>
             </div>
+        
             <div class="card-body table-border-style pb-1">
                 <!-- Table -->
                 <div class="table-responsive">
@@ -89,7 +94,7 @@
                                 <td>
                                     <span class="fw-semibold" [title]="item.ownerName">{{ item.ownerName }}</span>
                                 </td>
-                                <td *ngIf="this.service.User.role == 1" class="text-center">
+                                <td *ngIf="this.service.User.role == 1">
                                     <ng-container *ngIf="item.isApproved; else notApproved">
                                         <span class="badge bg-success px-3 py-2">
                                             <i class="fa fa-check-circle me-1"></i> Approved

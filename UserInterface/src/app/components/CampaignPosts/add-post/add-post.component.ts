@@ -34,7 +34,7 @@ export class AddPostComponent implements AfterViewInit {
     message: new FormControl(''),
     senderEmail: new FormControl('', [Validators.required, Validators.email]),
     scheduledPostTime: new FormControl('', Validators.required),
-    type: new FormControl(null, Validators.required), // Changed from 0 to null and added Validators.required
+    type: new FormControl(null, Validators.required),
     html: new FormControl('')
   });
   campaigns: any[] = [];
@@ -76,6 +76,8 @@ export class AddPostComponent implements AfterViewInit {
   private tooltipTimer: any = null;
   selectedFileType: 'image' | 'video' | null = null;
   @ViewChild('fileInput') fileInput!: ElementRef<HTMLInputElement>;
+  emailEditorReady = false;
+  pendingEmailDesign: any = null;
 
   public imageEditorSettings: any = {
     width: '100%',
@@ -83,7 +85,6 @@ export class AddPostComponent implements AfterViewInit {
     toolbar: ['Undo', 'Redo', 'ZoomIn', 'ZoomOut', 'Pan', 'Crop', 'Transform', 'Annotate', 'Filter', 'Finetune', 'Shape', 'Frame', 'Text', 'Pen', 'Eraser']
   };
 
-  // --- Modal and AI Image Properties (ensure all are defined) ---
   showAIImageModal: boolean = false;
   aiImagePrompt: string = '';
   aiImageLoading: boolean = false;
@@ -121,6 +122,11 @@ export class AddPostComponent implements AfterViewInit {
       }
       this.smsPlatform = param['type'];
     })
+    this.CampaignPostForm.get('message').valueChanges.subscribe((val: string) => {
+      if (val !== this.simpleText) {
+        this.simpleText = val;
+      }
+    });
   }
 
   getCampaignPostDetails() {
@@ -142,42 +148,49 @@ export class AddPostComponent implements AfterViewInit {
           if (response?.data) {
             this.CampainIdFromTemplate = response.data.campaignId
             this.CampaignPostForm.patchValue(response.data);
+            this.simpleText = response.data.message;
+            this.CampaignPostForm.get('message').setValue(response.data.message);
+            this.editorContent = response.data.message;
             if (this.CampaignPostForm.get('type').value === 1) {
               const HtmlJson = response.data.message.split('[{(break)}]');
+              let designToLoad = null;
               if (HtmlJson.length > 1) {
                 try {
                   this.jsonValue = JSON.parse(HtmlJson[1]);
-                  if (this.emailEditor?.editor?.loadDesign) {
-                    this.emailEditor.editor.loadDesign(this.jsonValue);
-                  }
+                  designToLoad = this.jsonValue;
                 } catch (error) {
                   console.error('Error parsing email content:', error);
                 }
+              } else {
+                designToLoad = {
+                  body: {
+                    rows: [
+                      {
+                        columns: [
+                          {
+                            contents: [
+                              {
+                                type: "text",
+                                values: {
+                                  text:  response.data.message
+                                }
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                };
+              }
+              if (this.emailEditorReady && this.emailEditor?.editor?.loadDesign) {
+                this.emailEditor.editor.loadDesign(designToLoad);
+              } else {
+                this.pendingEmailDesign = designToLoad;
               }
             }
-            else if (this.CampaignPostForm.get('type').value === 3) {
-              this.editorContent = response.data.message;
-            }
-            else if (this.CampaignPostForm.get('type').value === 4) {
-              this.editorContent = response.data.message;
-            }
-            else if (this.CampaignPostForm.get('type').value === 5) {
-              this.editorContent = response.data.message;
-            }
-            else if (this.CampaignPostForm.get('type').value === 6) {
-              this.editorContent = response.data.message;
-              if (response.data.videoUrl) {
-                this.videoUrl = response.data.videoUrl;
-              }
-            }
-            else if (this.CampaignPostForm.get('type').value === 8) {
-              this.editorContent = response.data.message;
-              if (response.data.videoUrl) {
-                this.videoUrl = response.data.videoUrl;
-              }
-            }
-            else {
-              this.simpleText = response.data.message;
+            if ([6, 8].includes(this.CampaignPostForm.get('type').value) && response.data.videoUrl) {
+              this.videoUrl = response.data.videoUrl;
             }
           } else {
             console.error('Invalid response data');
@@ -206,7 +219,6 @@ export class AddPostComponent implements AfterViewInit {
   onSubmit(): void {
     this.attemptedSubmit = true;
     const type = this.CampaignPostForm.get('type')?.value;
-    // Require image or video for LinkedIn post
     if (type === 7 && !this.uploadedVideoUrl) {
       this.toaster.error('Please upload an image or video for LinkedIn post.');
       return;
@@ -223,16 +235,24 @@ export class AddPostComponent implements AfterViewInit {
           templateData.id = this.id ? this.id : 0;
           templateData.campainId = this.CampainIdFromTemplate;
           templateData.VideoUrl = this.uploadedVideoUrl;
-          templateData.videoUrl = this.uploadedVideoUrl; // Ensure lowercase for backend compatibility
+          templateData.videoUrl = this.uploadedVideoUrl; 
           var request = { data: templateData };
-          if (!this.smsPlatform) {
-            this.service.AddCampaignPost(request).subscribe({
+          if (this.editMode) {
+            this.service.UpdateCampaignPost(request).subscribe({
               next: (response: any) => {
-                this.toaster.success(this.editMode ? "Updated successfully" : "Created successfully");
+                this.toaster.success('Post Updated successfully');
                 this.route.navigate(['/list-campaign-posts'], {
                   queryParams: { campaignId: this.CampainIdFromTemplate }
-                }); ``
-
+                });
+              }
+            });
+          } else if (!this.smsPlatform) {
+            this.service.AddCampaignPost(request).subscribe({
+              next: (response: any) => {
+                this.toaster.success('Post Created successfully');
+                this.route.navigate(['/list-campaign-posts'], {
+                  queryParams: { campaignId: this.CampainIdFromTemplate }
+                });
               }
             })
           } else {
@@ -325,7 +345,11 @@ export class AddPostComponent implements AfterViewInit {
   }
 
   editorLoaded(event: any) {
-    console.log('editorLoaded');
+    this.emailEditorReady = true;
+    if (this.pendingEmailDesign && this.emailEditor?.editor?.loadDesign) {
+      this.emailEditor.editor.loadDesign(this.pendingEmailDesign);
+      this.pendingEmailDesign = null;
+    }
   }
 
   editorReady(event: any) {
@@ -357,7 +381,6 @@ export class AddPostComponent implements AfterViewInit {
 
     this.smsPlatform = '';
 
-    // Reset file input so file name does not persist across platforms
     if (this.fileInput && this.fileInput.nativeElement) {
       this.fileInput.nativeElement.value = '';
     }
@@ -970,7 +993,6 @@ export class AddPostComponent implements AfterViewInit {
     }
   }
 
-  // --- Manual Image Upload and Insert to Content ---
   onManualImageFileChange(event: Event) {
     const input = event.target as HTMLInputElement;
     if (input.files && input.files[0]) {
@@ -990,9 +1012,7 @@ export class AddPostComponent implements AfterViewInit {
   insertManualEditorImageToContent() {
     if (!this.imageEditor) return;
     const type = this.CampaignPostForm.get('type').value;
-    // Get the image data from the editor
     const imageData = this.imageEditor.getImageData();
-    // Create a canvas to convert ImageData to a data URL
     const canvas = document.createElement('canvas');
     canvas.width = imageData.width;
     canvas.height = imageData.height;
@@ -1014,6 +1034,11 @@ export class AddPostComponent implements AfterViewInit {
       }
       this.closeManualEditorModal();
     }
+  }
+
+  onSimpleTextChange(value: string) {
+    this.simpleText = value;
+    this.CampaignPostForm.get('message').setValue(value);
   }
 
 }

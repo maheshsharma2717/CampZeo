@@ -805,6 +805,17 @@ public class ApplicationService : IApplicationService
         return response;
     }
 
+    public async Task<ApiResponse<CampaignPost>> UpdateCampaignPost(ApiRequest<CampaignPost> request)
+    {
+        ApiResponse<CampaignPost> response = new ApiResponse<CampaignPost>
+        {
+            Data = await _campaignPostRepository.CreateUpdateMessageTemplate(request.Data),
+            IsSuccess = true,
+            Message = "Campaign post updated successfully."
+        };
+        return response;
+    }
+
     //public async Task<ApiResponse<CampaignTemplateResponseDto>> GetCampaignsMessageTemplate(ApiRequest<CampaignTemplateRequestDto> request)
     //{
     //    var OrganizationId = GetOrganisationIdFromToken(request.Token);

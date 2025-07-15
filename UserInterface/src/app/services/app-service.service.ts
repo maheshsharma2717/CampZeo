@@ -198,6 +198,10 @@ export class AppService {
     request.token = this.Token;
     return this.http.post(ApiUrl + "CampaignPost/GetCampaignPostsByCampaignId", request);
   }
+  UpdateCampaignPost(request: any) {
+    request.token = this.Token;
+    return this.http.post(ApiUrl + "CampaignPost/UpdateCampaignPost", request);
+  }
   AddCampaignPost(request: any) {
     request.token = this.Token;
     return this.http.post(ApiUrl + "CampaignPost/CreateCampaignPost", request);
