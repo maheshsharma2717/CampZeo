@@ -173,7 +173,7 @@ i=0;
       this.service.SuspendOrRecoverOrganisation(this.organisationToDeleteId).subscribe({
         next: () => {
           this.Organisations.find(org => org.id == this.organisationToDeleteId).isDeleted = !this.isRecovering;
-          this.toaster.show(!this.isRecovering ? 'Organisation suspended successfully' : 'Organisation recovered successfully');
+          this.toaster.success(!this.isRecovering ? 'Organisation suspended successfully' : 'Organisation recovered successfully');
           this.loadOrganisations();
           this.closeModal();
         },
