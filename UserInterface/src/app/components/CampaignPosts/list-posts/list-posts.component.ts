@@ -37,7 +37,8 @@ export class ListPostsComponent {
   emailHtmlContent: string = '';
   jsonValue: any = {};
   isRecovering: boolean = false;
-
+imageresponse:any;
+vedioresponse:any;
   constructor(private toastr: ToastrService, public service: AppService, private activatedRoutes: ActivatedRoute) {
     this.activatedRoutes.queryParams.subscribe(param => {
       this.campaignId = param['campaignId']
@@ -51,6 +52,7 @@ export class ListPostsComponent {
     this.GetCampaignPosts();
   }
   GetCampaignPosts() {
+    debugger;
     var request: any = {
       "data": {
         "pageSize": this.itemsPerPage,
@@ -65,6 +67,7 @@ export class ListPostsComponent {
       next: (response: any) => {
         this.CampaignPosts = response.data.list;
         this.total = response.data.totalCount
+    
         if (response.isSuccess) {
           // this.toastr.success(response.message)
           //  this.toastr.success('Campaign Posts loaded successfully')
@@ -77,10 +80,12 @@ export class ListPostsComponent {
 
   }
   GetCampaignDetails() {
+ 
     var request = { data: parseInt(this.campaignId ?? "0") }
     this.service.GetCampaignById(request).subscribe({
       next: (response: any) => {
         this.Campaign = response.data
+      
       }
     })
   }
@@ -202,6 +207,19 @@ export class ListPostsComponent {
             } else {
               this.emailHtmlContent = this.previewData.message;
             }
+          }
+
+          var url = this.previewData.videoUrl;
+          if (url) {
+            let urls: string[] = Array.isArray(url) ? url : [url];
+            urls.forEach((u: string) => {
+              if (/\.(jpg|jpeg|png|gif|bmp|webp|svg)$/i.test(u)) {
+                this.imageresponse = u;
+              }
+              else if (/\.(mp4|mov|avi|wmv|flv|webm|mkv|m4v)$/i.test(u)) {
+                this.vedioresponse = u;
+              }
+            });
           }
 
           this.isPreviewModalOpen = true;

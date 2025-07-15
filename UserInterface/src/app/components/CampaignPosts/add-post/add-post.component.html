@@ -99,7 +99,7 @@
                                 </div>
                             </div>
                             <div *ngIf="service.checkVisblePlatform(7)"
-                                class="card text-center selected-instagram-hover m-2" style=" border-radius: 10px;">
+                                class="card text-center selected-rcs-hover m-2" style=" border-radius: 10px;">
                                 <div class="card-body se pt-3 rounded bg-white pointer " (click)="ChangeType(7)"
                                     [ngClass]="{'selected-facebook': CampaignPostForm.controls.type.value == 7 || smsPlatform === 'LinkedIn'}">
                                     <i class="fab fa-linkedin-in fa-2x"></i>
@@ -245,7 +245,7 @@
                                     <div class="custom-file">
                                       
                                         <input #fileInput type="file" class="custom-file-input"
-                                            (change)="onVideoSelected($event)" [accept]="getAcceptType()" />
+                                            (change)="onVideoSelected($event)" accept="image/*,video/*" />
 
                                        
 
@@ -558,7 +558,7 @@
             <div class="d-flex flex-column align-items-center justify-content-center m-1">
               <label for="testAIPayloadUpload" class="btn btn-outline-secondary btn-sm mb-1" style="width: 120px; height: 120px; display: flex; align-items: center; justify-content: center; border-radius: 10px;">
                 <i class="fas fa-upload fa-2x"></i>
-                <input id="testAIPayloadUpload" type="file" accept="image/*" style="display: none;" (change)="onTestAIPayloadFileChange($event)" />
+                <input id="testAIPayloadUpload" type="file" accept="image/*,video/*" style="display: none;" (change)="onTestAIPayloadFileChange($event)" />
               </label>
               <span style="font-size: 12px;">Upload</span>
             </div>

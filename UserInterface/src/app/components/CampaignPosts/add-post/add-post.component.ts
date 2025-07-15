@@ -435,60 +435,23 @@ export class AddPostComponent implements AfterViewInit {
         this.toaster.error('Please upload a valid image or video file.');
         return;
       }
+      // Always clear previous preview
+      this.videoUrl = null;
       this.selectedFileType = isImage ? 'image' : 'video';
-      if (isImage) {
-        const reader = new FileReader();
-        reader.onload = (e: any) => {
-          const img = new Image();
-          img.onload = () => {
-            const size = 200;
-            const canvas = document.createElement('canvas');
-            canvas.width = size;
-            canvas.height = size;
-            const ctx = canvas.getContext('2d');
-            if (ctx) {
-              ctx.clearRect(0, 0, size, size);
-              const scale = Math.min(size / img.width, size / img.height);
-              const x = (size - img.width * scale) / 2;
-              const y = (size - img.height * scale) / 2;
-              ctx.drawImage(img, x, y, img.width * scale, img.height * scale);
-              const dataUrl = canvas.toDataURL('image/png');
-              this.videoUrl = dataUrl;
-              fetch(dataUrl)
-                .then(res => res.blob())
-                .then(blob => {
-                  const resizedFile = new File([blob], file.name, { type: 'image/png' });
-                  this.service.uploadMediaFile(resizedFile)
-                    .then((response: any) => {
-                      this.uploadedVideoUrl = response.url;
-                      this.toaster.success('Image uploaded successfully!');
-                    })
-                    .catch((error: any) => {
-                      console.error('File upload failed', error);
-                      this.toaster.error('Failed to upload file');
-                    });
-                });
-            }
-          };
-          img.src = e.target.result;
-        };
-        reader.readAsDataURL(file);
-      } else if (isVideo) {
-        const reader = new FileReader();
-        reader.onload = () => {
-          this.videoUrl = reader.result;
-        };
-        reader.readAsDataURL(file);
-        this.service.uploadMediaFile(file)
-          .then((response: any) => {
-            this.uploadedVideoUrl = response.url;
-            this.toaster.success('Video uploaded successfully!');
-          })
-          .catch((error: any) => {
-            console.error('File upload failed', error);
-            this.toaster.error('Failed to upload file');
-          });
-      }
+      const reader = new FileReader();
+      reader.onload = (e: any) => {
+        this.videoUrl = e.target.result;
+      };
+      reader.readAsDataURL(file);
+      this.service.uploadMediaFile(file)
+        .then((response: any) => {
+          this.uploadedVideoUrl = response.url;
+          this.toaster.success(isImage ? 'Image uploaded successfully!' : 'Video uploaded successfully!');
+        })
+        .catch((error: any) => {
+          console.error('File upload failed', error);
+          this.toaster.error('Failed to upload file');
+        });
     }
   }
 
@@ -1011,7 +974,6 @@ export class AddPostComponent implements AfterViewInit {
 
   insertManualEditorImageToContent() {
     if (!this.imageEditor) return;
-    const type = this.CampaignPostForm.get('type').value;
     const imageData = this.imageEditor.getImageData();
     const canvas = document.createElement('canvas');
     canvas.width = imageData.width;
@@ -1020,18 +982,8 @@ export class AddPostComponent implements AfterViewInit {
     if (ctx) {
       ctx.putImageData(imageData, 0, 0);
       const dataUrl = canvas.toDataURL('image/png');
-      const imgTag = `<img src="${dataUrl}" alt="Inserted Image" />`;
-      if (type === 1 && this.emailEditor && this.emailEditor.editor) {
-        let currentHtml = this.CampaignPostForm.get('message').value || '';
-        currentHtml += imgTag;
-        this.CampaignPostForm.patchValue({ message: currentHtml });
-      } else if (type === 2 || type === 3) {
-        this.simpleText = (this.simpleText || '') + imgTag;
-        this.CampaignPostForm.patchValue({ message: this.simpleText });
-      } else {
-        this.editorContent = (this.editorContent || '') + imgTag;
-        this.CampaignPostForm.patchValue({ message: this.editorContent });
-      }
+      // Instead of inserting into content, upload as if via upload button
+      this.uploadExternalVideoOrImage(dataUrl, 'image');
       this.closeManualEditorModal();
     }
   }
@@ -1039,6 +991,63 @@ export class AddPostComponent implements AfterViewInit {
   onSimpleTextChange(value: string) {
     this.simpleText = value;
     this.CampaignPostForm.get('message').setValue(value);
+  }
+
+  /**
+   * Uploads an external image or video (from AI or manual editor) as if selected via the upload button.
+   *
+   * Usage:
+   *   // In your AI or manual modal/component, when the user clicks 'Add to content' for an image or video:
+   *   this.uploadExternalVideoOrImage(url, 'video'); // or 'image'
+   *
+   * This will upload the file and update the preview/upload state, but WILL NOT insert the file into the message/content editor.
+   *
+   * Do NOT update editorContent, simpleText, or any message field with the file.
+   *
+   * @param url The URL or data URL of the image/video
+   * @param type 'image' or 'video'
+   */
+  async uploadExternalVideoOrImage(url: string, type: 'image' | 'video') {
+    try {
+      let blob: Blob;
+      if (url.startsWith('data:')) {
+        const arr = url.split(',');
+        const mimeMatch = arr[0].match(/:(.*?);/);
+        if (!mimeMatch) {
+          this.toaster.error('Invalid data URL format');
+          return;
+        }
+        const mime = mimeMatch[1];
+        const bstr = atob(arr[1]);
+        let n = bstr.length;
+        const u8arr = new Uint8Array(n);
+        while (n--) {
+          u8arr[n] = bstr.charCodeAt(n);
+        }
+        blob = new Blob([u8arr], { type: mime });
+      } else {
+        const response = await fetch(url);
+        blob = await response.blob();
+      }
+      const ext = type === 'video' ? 'mp4' : 'png';
+      const file = new File([blob], `external-upload.${ext}`, { type: blob.type });
+      this.selectedFileType = type;
+      const reader = new FileReader();
+      reader.onload = (e: any) => {
+        this.videoUrl = e.target.result;
+      };
+      reader.readAsDataURL(file);
+      this.service.uploadMediaFile(file)
+        .then((uploadResponse: any) => {
+          this.uploadedVideoUrl = uploadResponse.url;
+          this.toaster.success(type === 'image' ? 'Image uploaded successfully!' : 'Video uploaded successfully!');
+        })
+        .catch((error: any) => {
+          this.toaster.error('Failed to upload file');
+        });
+    } catch (err) {
+      this.toaster.error('Failed to process file');
+    }
   }
 
 }
