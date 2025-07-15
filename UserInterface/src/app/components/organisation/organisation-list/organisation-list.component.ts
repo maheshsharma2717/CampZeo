@@ -170,16 +170,18 @@ i=0;
 
   SuspendOrRecover(): void {
     if (this.organisationToDeleteId !== null) {
+      this.closeModal();
+      this.service.showSpinner = true;
       this.service.SuspendOrRecoverOrganisation(this.organisationToDeleteId).subscribe({
         next: () => {
           this.Organisations.find(org => org.id == this.organisationToDeleteId).isDeleted = !this.isRecovering;
-          this.toaster.show(!this.isRecovering ? 'Organisation suspended successfully' : 'Organisation recovered successfully');
+          this.toaster.success(!this.isRecovering ? 'Organisation suspended successfully' : 'Organisation recovered successfully');
           this.loadOrganisations();
-          this.closeModal();
+          this.service.showSpinner = false;
         },
         error: () => {
           this.toaster.error('Error deleting organisation');
-          this.closeModal();
+          this.service.showSpinner = false;
         }
       });
     }
