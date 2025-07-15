@@ -118,7 +118,7 @@
 
                             <div *ngIf="service.checkVisblePlatform(9)"
                                 class="card text-center selected-instagram-hover m-2" style=" border-radius: 10px;">
-                                <div class="card-body pt-3 rounded bg-white pointer " (click)="ChangeType(9)"
+                                <div class="card-body se pt-3 rounded bg-white pointer " (click)="ChangeType(9)"
                                     [ngClass]="{'selected-facebook': CampaignPostForm.controls.type.value == 9 || smsPlatform === 'pinterest'}">
                                     <i class="fab fa-pinterest text-danger fa-2x"></i>
                                     <p class="card-text mt-2">Pinterest</p>
@@ -580,6 +580,10 @@
       </div>
     </div>
   </div>
+</div>
+
+<div *ngIf="CampaignPostForm.get('type').value === 7 && !uploadedVideoUrl && attemptedSubmit" class="text-danger">
+  Please upload an image or video for LinkedIn post.
 </div>
 
 

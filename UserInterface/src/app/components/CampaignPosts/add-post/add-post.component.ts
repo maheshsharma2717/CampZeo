@@ -9,6 +9,7 @@ import { ToastrService } from 'ngx-toastr';
 import { TextGenerationService } from '../../../services/textgeneration.service';
 import { ChatComponent } from './chat/chat.component';
 import { ImageEditorSharedModule } from './image-editor.module';
+import { ImageEditorComponent } from '@syncfusion/ej2-angular-image-editor';
 
 @Component({
   selector: 'app-add-post',
@@ -39,7 +40,7 @@ export class AddPostComponent implements AfterViewInit {
   campaigns: any[] = [];
   @ViewChild(EmailEditorComponent) private emailEditor!: EmailEditorComponent;
   @ViewChild('dateTimeInput') dateTimeInput!: ElementRef;
-  @ViewChild('imageEditor') imageEditor!: any;
+  @ViewChild('imageEditor') imageEditor!: ImageEditorComponent;
   simpleText: string = '';
   id: any;
   editMode: boolean = false;
@@ -74,6 +75,7 @@ export class AddPostComponent implements AfterViewInit {
   attemptedSubmit: boolean = false;
   private tooltipTimer: any = null;
   selectedFileType: 'image' | 'video' | null = null;
+  @ViewChild('fileInput') fileInput!: ElementRef<HTMLInputElement>;
 
   public imageEditorSettings: any = {
     width: '100%',
@@ -204,6 +206,11 @@ export class AddPostComponent implements AfterViewInit {
   onSubmit(): void {
     this.attemptedSubmit = true;
     const type = this.CampaignPostForm.get('type')?.value;
+    // Require image or video for LinkedIn post
+    if (type === 7 && !this.uploadedVideoUrl) {
+      this.toaster.error('Please upload an image or video for LinkedIn post.');
+      return;
+    }
     if (type === 8 && !this.uploadedVideoUrl) {
       this.toaster.error('Please upload a video for YouTube post.');
       return;
@@ -216,6 +223,7 @@ export class AddPostComponent implements AfterViewInit {
           templateData.id = this.id ? this.id : 0;
           templateData.campainId = this.CampainIdFromTemplate;
           templateData.VideoUrl = this.uploadedVideoUrl;
+          templateData.videoUrl = this.uploadedVideoUrl; // Ensure lowercase for backend compatibility
           var request = { data: templateData };
           if (!this.smsPlatform) {
             this.service.AddCampaignPost(request).subscribe({
@@ -348,6 +356,12 @@ export class AddPostComponent implements AfterViewInit {
     this.aiImageError = null;
 
     this.smsPlatform = '';
+
+    // Reset file input so file name does not persist across platforms
+    if (this.fileInput && this.fileInput.nativeElement) {
+      this.fileInput.nativeElement.value = '';
+    }
+    this.selectedFileType = null;
   }
 
   ngOnChanges() {
@@ -399,24 +413,59 @@ export class AddPostComponent implements AfterViewInit {
         return;
       }
       this.selectedFileType = isImage ? 'image' : 'video';
-      const reader = new FileReader();
-      reader.onload = () => {
-        this.videoUrl = reader.result;
-      };
-      reader.readAsDataURL(file);
-      this.service.uploadMediaFile(file)
-        .then((response: any) => {
-          this.uploadedVideoUrl = response.url;
-          if (isImage) {
-            this.toaster.success('Image uploaded successfully!');
-          } else {
+      if (isImage) {
+        const reader = new FileReader();
+        reader.onload = (e: any) => {
+          const img = new Image();
+          img.onload = () => {
+            const size = 200;
+            const canvas = document.createElement('canvas');
+            canvas.width = size;
+            canvas.height = size;
+            const ctx = canvas.getContext('2d');
+            if (ctx) {
+              ctx.clearRect(0, 0, size, size);
+              const scale = Math.min(size / img.width, size / img.height);
+              const x = (size - img.width * scale) / 2;
+              const y = (size - img.height * scale) / 2;
+              ctx.drawImage(img, x, y, img.width * scale, img.height * scale);
+              const dataUrl = canvas.toDataURL('image/png');
+              this.videoUrl = dataUrl;
+              fetch(dataUrl)
+                .then(res => res.blob())
+                .then(blob => {
+                  const resizedFile = new File([blob], file.name, { type: 'image/png' });
+                  this.service.uploadMediaFile(resizedFile)
+                    .then((response: any) => {
+                      this.uploadedVideoUrl = response.url;
+                      this.toaster.success('Image uploaded successfully!');
+                    })
+                    .catch((error: any) => {
+                      console.error('File upload failed', error);
+                      this.toaster.error('Failed to upload file');
+                    });
+                });
+            }
+          };
+          img.src = e.target.result;
+        };
+        reader.readAsDataURL(file);
+      } else if (isVideo) {
+        const reader = new FileReader();
+        reader.onload = () => {
+          this.videoUrl = reader.result;
+        };
+        reader.readAsDataURL(file);
+        this.service.uploadMediaFile(file)
+          .then((response: any) => {
+            this.uploadedVideoUrl = response.url;
             this.toaster.success('Video uploaded successfully!');
-          }
-        })
-        .catch((error: any) => {
-          console.error('File upload failed', error);
-          this.toaster.error('Failed to upload file');
-        });
+          })
+          .catch((error: any) => {
+            console.error('File upload failed', error);
+            this.toaster.error('Failed to upload file');
+          });
+      }
     }
   }
 
@@ -736,19 +785,8 @@ export class AddPostComponent implements AfterViewInit {
       const mm = String(now.getMonth() + 1).padStart(2, '0');
       const dd = String(now.getDate()).padStart(2, '0');
       const filename = `post-${yyyy}-${mm}-${dd}.png`;
-      this.imageEditor.export('PNG', (dataUrl: any) => {
-        const link = document.createElement('a');
-        link.href = dataUrl;
-        link.download = filename;
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-        this.aiImageResultUrl = dataUrl;
-        if (this.selectedAIImageIndex !== null) {
-          this.aiImageResults[this.selectedAIImageIndex] = dataUrl;
-        }
-        this.closeManualEditorModal();
-      });
+      this.imageEditor.export('PNG', filename);
+      this.closeManualEditorModal();
     }
   }
 
@@ -950,23 +988,32 @@ export class AddPostComponent implements AfterViewInit {
   }
 
   insertManualEditorImageToContent() {
-    if (!this.manualEditorImageUrl) return;
+    if (!this.imageEditor) return;
     const type = this.CampaignPostForm.get('type').value;
-    const imgTag = `<img src="${this.manualEditorImageUrl}" alt="Inserted Image" />`;
-
-    if (type === 1 && this.emailEditor && this.emailEditor.editor) {
-      let currentHtml = this.CampaignPostForm.get('message').value || '';
-      currentHtml += imgTag;
-      this.CampaignPostForm.patchValue({ message: currentHtml });
-      // Optionally update the email editor's content directly if needed
-    } else if (type === 2 || type === 3) {
-      this.simpleText = (this.simpleText || '') + imgTag;
-      this.CampaignPostForm.patchValue({ message: this.simpleText });
-    } else {
-      this.editorContent = (this.editorContent || '') + imgTag;
-      this.CampaignPostForm.patchValue({ message: this.editorContent });
+    // Get the image data from the editor
+    const imageData = this.imageEditor.getImageData();
+    // Create a canvas to convert ImageData to a data URL
+    const canvas = document.createElement('canvas');
+    canvas.width = imageData.width;
+    canvas.height = imageData.height;
+    const ctx = canvas.getContext('2d');
+    if (ctx) {
+      ctx.putImageData(imageData, 0, 0);
+      const dataUrl = canvas.toDataURL('image/png');
+      const imgTag = `<img src="${dataUrl}" alt="Inserted Image" />`;
+      if (type === 1 && this.emailEditor && this.emailEditor.editor) {
+        let currentHtml = this.CampaignPostForm.get('message').value || '';
+        currentHtml += imgTag;
+        this.CampaignPostForm.patchValue({ message: currentHtml });
+      } else if (type === 2 || type === 3) {
+        this.simpleText = (this.simpleText || '') + imgTag;
+        this.CampaignPostForm.patchValue({ message: this.simpleText });
+      } else {
+        this.editorContent = (this.editorContent || '') + imgTag;
+        this.CampaignPostForm.patchValue({ message: this.editorContent });
+      }
+      this.closeManualEditorModal();
     }
-    this.closeManualEditorModal();
   }
 
 }
