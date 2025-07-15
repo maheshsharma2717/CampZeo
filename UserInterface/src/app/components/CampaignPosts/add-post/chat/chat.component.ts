@@ -1,7 +1,7 @@
-import { Component, OnInit, ViewChild, ElementRef, AfterViewChecked, Output, EventEmitter, Input } from '@angular/core';
-import { TextGenerationService } from '../../../../services/textgeneration.service';
-import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
+import { Component, OnInit, AfterViewChecked, ViewChild, ElementRef, Input, Output, EventEmitter } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { TextGenerationService } from '../../../../services/textgeneration.service';
 import { AppService } from '../../../../services/app-service.service';
 
 export interface ChatMessage {
@@ -15,9 +15,9 @@ export interface ChatMessage {
 @Component({
   selector: 'app-chat',
   standalone: true,
-  imports: [FormsModule, CommonModule],
+  imports: [CommonModule, FormsModule],
   templateUrl: './chat.component.html',
-  styleUrl: './chat.component.css'
+  styleUrls: ['./chat.component.css']
 })
 export class ChatComponent implements OnInit, AfterViewChecked {
   @ViewChild('messageContainer') private messageContainer!: ElementRef;
@@ -46,7 +46,6 @@ export class ChatComponent implements OnInit, AfterViewChecked {
   }
 
   ngAfterViewChecked(): void {
-    this.scrollToBottom();
   }
 
   sendMessage(): void {
@@ -73,13 +72,16 @@ export class ChatComponent implements OnInit, AfterViewChecked {
         );
         this.showSpinner = false;
         this.isLoading = false;
+        this.scrollToBottom(); 
       },
       error: (error) => {
         this.addMessage('Sorry, I encountered an error. Please try again.', false);
         this.isLoading = false;
+        this.scrollToBottom(); 
         console.error('Error:', error);
       }
     });
+    this.scrollToBottom();
   }
 
   onTextSelection(event: MouseEvent) {
@@ -108,6 +110,7 @@ export class ChatComponent implements OnInit, AfterViewChecked {
       isLoading
     };
     this.messages.push(message);
+    this.scrollToBottom(); 
     return message;
   }
 

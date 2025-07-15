@@ -27,6 +27,7 @@ export class AddCampaignComponent implements OnInit {
 
   CampaignId: any;
   editMode: boolean = false;
+  originalCampaignData: any = null;
   constructor(private service: AppService, private toastr: ToastrService, private router: Router, private activatedRoutes: ActivatedRoute, private fb : FormBuilder) {
 
     activatedRoutes.queryParams.subscribe(param => {
@@ -42,6 +43,7 @@ export class AddCampaignComponent implements OnInit {
       this.service.GetCampaignById(request).subscribe({
         next: (response: any) => {
           this.campaignForm.patchValue(response.data)
+          this.originalCampaignData = { ...response.data };
         }
       })
     }
@@ -49,13 +51,30 @@ export class AddCampaignComponent implements OnInit {
   }
   onSubmit() {
     if (this.campaignForm.valid) {
+      if (this.editMode && this.originalCampaignData) {
+        const current = this.campaignForm.value;
+        const original = this.originalCampaignData;
+        const isUnchanged =
+          current.name === original.name &&
+          current.description === original.description &&
+          current.startDate === original.startDate &&
+          current.endDate === original.endDate;
+        if (isUnchanged) {
+          this.toastr.warning('No changes detected. Please update at least one field before saving.');
+          return;
+        }
+      }
       var request = {
         data: this.campaignForm.value
       }  
       request.data.id = parseInt(this.CampaignId ?? "0")
       this.service.AddCampaign(request).subscribe({
         next: (response: any) => {
-          this.toastr.success('Campaign created successfuly')
+          if (this.editMode) {
+            this.toastr.success('Campaign updated successfully');
+          } else {
+            this.toastr.success('Campaign created successfully');
+          }
           this.router.navigate(['/list-campaigns']);
         }
       })

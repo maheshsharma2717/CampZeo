@@ -1,37 +1,46 @@
 import { CommonModule } from '@angular/common';
-import { Component, ViewChild, ElementRef } from '@angular/core';
+import { Component, ViewChild, ElementRef, AfterViewInit, HostListener } from '@angular/core';
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { EmailEditorComponent, EmailEditorModule } from 'angular-email-editor';
 import { QuillModule } from 'ngx-quill';
 import { AppService } from '../../../services/app-service.service';
 import { ToastrService } from 'ngx-toastr';
-import { queryParams } from '@syncfusion/ej2-base';
 import { TextGenerationService } from '../../../services/textgeneration.service';
 import { ChatComponent } from './chat/chat.component';
-
-
+import { ImageEditorSharedModule } from './image-editor.module';
+import { ImageEditorComponent } from '@syncfusion/ej2-angular-image-editor';
 
 @Component({
   selector: 'app-add-post',
   standalone: true,
-  imports: [FormsModule, ReactiveFormsModule, EmailEditorModule, CommonModule, QuillModule, RouterModule, ChatComponent],
+  imports: [
+    CommonModule,
+    FormsModule,
+    ReactiveFormsModule,
+    RouterModule,
+    EmailEditorModule,
+    QuillModule,
+    ChatComponent,
+    ImageEditorSharedModule,
+  ],
   templateUrl: './add-post.component.html',
   styleUrl: './add-post.component.css'
 })
-export class AddPostComponent {
+export class AddPostComponent implements AfterViewInit {
   CampaignPostForm: any = new FormGroup({
     campaignId: new FormControl('', Validators.required),
     subject: new FormControl('', Validators.required),
     message: new FormControl(''),
     senderEmail: new FormControl('', [Validators.required, Validators.email]),
     scheduledPostTime: new FormControl('', Validators.required),
-    type: new FormControl(null, Validators.required), // Changed from 0 to null and added Validators.required
+    type: new FormControl(null, Validators.required),
     html: new FormControl('')
   });
   campaigns: any[] = [];
   @ViewChild(EmailEditorComponent) private emailEditor!: EmailEditorComponent;
   @ViewChild('dateTimeInput') dateTimeInput!: ElementRef;
+  @ViewChild('imageEditor') imageEditor!: ImageEditorComponent;
   simpleText: string = '';
   id: any;
   editMode: boolean = false;
@@ -63,7 +72,42 @@ export class AddPostComponent {
   selectedChatText: string = '';
   showAddToContentButton: boolean = false;
   showAddToContentTooltip: boolean = false;
+  attemptedSubmit: boolean = false;
   private tooltipTimer: any = null;
+  selectedFileType: 'image' | 'video' | null = null;
+  @ViewChild('fileInput') fileInput!: ElementRef<HTMLInputElement>;
+  emailEditorReady = false;
+  pendingEmailDesign: any = null;
+
+  public imageEditorSettings: any = {
+    width: '100%',
+    height: '500px',
+    toolbar: ['Undo', 'Redo', 'ZoomIn', 'ZoomOut', 'Pan', 'Crop', 'Transform', 'Annotate', 'Filter', 'Finetune', 'Shape', 'Frame', 'Text', 'Pen', 'Eraser']
+  };
+
+  showAIImageModal: boolean = false;
+  aiImagePrompt: string = '';
+  aiImageLoading: boolean = false;
+  aiImageError: string | null = null;
+  aiImageResultUrl: string | null = null;
+  aiImageResults: string[] = [];
+  selectedAIImageIndex: number | null = null;
+
+  showAIEditModal: boolean = false;
+  aiEditPrompt: string = '';
+  aiEditProcessingType: string = 'img2img';
+  aiEditLoading: boolean = false;
+  aiEditError: string | null = null;
+  aiEditResultUrl: string | null = null;
+
+  showManualEditorModal: boolean = false;
+  editorLoading: boolean = false;
+  manualEditorImageUrl: string | null = null;
+
+  showTestAIPayloadModal: boolean = false;
+  testAIPayloadImage: string | null = null;
+  testAIPayloadPrompt: string = '';
+
 
   constructor(public service: AppService, private toaster: ToastrService, private activatedRoute: ActivatedRoute, private route: Router, private textGenService: TextGenerationService) {
     this.activatedRoute.queryParams.subscribe(param => {
@@ -78,6 +122,11 @@ export class AddPostComponent {
       }
       this.smsPlatform = param['type'];
     })
+    this.CampaignPostForm.get('message').valueChanges.subscribe((val: string) => {
+      if (val !== this.simpleText) {
+        this.simpleText = val;
+      }
+    });
   }
 
   getCampaignPostDetails() {
@@ -99,42 +148,49 @@ export class AddPostComponent {
           if (response?.data) {
             this.CampainIdFromTemplate = response.data.campaignId
             this.CampaignPostForm.patchValue(response.data);
+            this.simpleText = response.data.message;
+            this.CampaignPostForm.get('message').setValue(response.data.message);
+            this.editorContent = response.data.message;
             if (this.CampaignPostForm.get('type').value === 1) {
               const HtmlJson = response.data.message.split('[{(break)}]');
+              let designToLoad = null;
               if (HtmlJson.length > 1) {
                 try {
                   this.jsonValue = JSON.parse(HtmlJson[1]);
-                  if (this.emailEditor?.editor?.loadDesign) {
-                    this.emailEditor.editor.loadDesign(this.jsonValue);
-                  }
+                  designToLoad = this.jsonValue;
                 } catch (error) {
                   console.error('Error parsing email content:', error);
                 }
+              } else {
+                designToLoad = {
+                  body: {
+                    rows: [
+                      {
+                        columns: [
+                          {
+                            contents: [
+                              {
+                                type: "text",
+                                values: {
+                                  text:  response.data.message
+                                }
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                };
+              }
+              if (this.emailEditorReady && this.emailEditor?.editor?.loadDesign) {
+                this.emailEditor.editor.loadDesign(designToLoad);
+              } else {
+                this.pendingEmailDesign = designToLoad;
               }
             }
-            else if (this.CampaignPostForm.get('type').value === 3) {
-              this.editorContent = response.data.message;
-            }
-            else if (this.CampaignPostForm.get('type').value === 4) {
-              this.editorContent = response.data.message;
-            }
-            else if (this.CampaignPostForm.get('type').value === 5) {
-              this.editorContent = response.data.message;
-            }
-            else if (this.CampaignPostForm.get('type').value === 6) {
-              this.editorContent = response.data.message;
-              if (response.data.videoUrl) {
-                this.videoUrl = response.data.videoUrl;
-              }
-            }
-            else if (this.CampaignPostForm.get('type').value === 8) {
-              this.editorContent = response.data.message;
-              if (response.data.videoUrl) {
-                this.videoUrl = response.data.videoUrl;
-              }
-            }
-            else {
-              this.simpleText = response.data.message;
+            if ([6, 8].includes(this.CampaignPostForm.get('type').value) && response.data.videoUrl) {
+              this.videoUrl = response.data.videoUrl;
             }
           } else {
             console.error('Invalid response data');
@@ -147,8 +203,8 @@ export class AddPostComponent {
     }
     this.setFormTypeBasedOnPlatform();
     document.addEventListener('click', this.closeDropdownOnOutsideClick.bind(this));
-
   }
+
   ngOnDestroy() {
     document.removeEventListener('click', this.closeDropdownOnOutsideClick.bind(this));
   }
@@ -159,7 +215,18 @@ export class AddPostComponent {
       this.showCampaignDropdown = false;
     }
   }
+
   onSubmit(): void {
+    this.attemptedSubmit = true;
+    const type = this.CampaignPostForm.get('type')?.value;
+    if (type === 7 && !this.uploadedVideoUrl) {
+      this.toaster.error('Please upload an image or video for LinkedIn post.');
+      return;
+    }
+    if (type === 8 && !this.uploadedVideoUrl) {
+      this.toaster.error('Please upload a video for YouTube post.');
+      return;
+    }
     if (this.CampaignPostForm.valid) {
       this.GetMessagePromise()
         .then(() => {
@@ -168,15 +235,24 @@ export class AddPostComponent {
           templateData.id = this.id ? this.id : 0;
           templateData.campainId = this.CampainIdFromTemplate;
           templateData.VideoUrl = this.uploadedVideoUrl;
+          templateData.videoUrl = this.uploadedVideoUrl; 
           var request = { data: templateData };
-          if (!this.smsPlatform) {
-            this.service.AddCampaignPost(request).subscribe({
+          if (this.editMode) {
+            this.service.UpdateCampaignPost(request).subscribe({
               next: (response: any) => {
-                this.toaster.success(this.editMode ? "Updated successfully" : "Created successfully");
+                this.toaster.success('Post Updated successfully');
                 this.route.navigate(['/list-campaign-posts'], {
                   queryParams: { campaignId: this.CampainIdFromTemplate }
-                }); ``
-
+                });
+              }
+            });
+          } else if (!this.smsPlatform) {
+            this.service.AddCampaignPost(request).subscribe({
+              next: (response: any) => {
+                this.toaster.success('Post Created successfully');
+                this.route.navigate(['/list-campaign-posts'], {
+                  queryParams: { campaignId: this.CampainIdFromTemplate }
+                });
               }
             })
           } else {
@@ -269,7 +345,11 @@ export class AddPostComponent {
   }
 
   editorLoaded(event: any) {
-    console.log('editorLoaded');
+    this.emailEditorReady = true;
+    if (this.pendingEmailDesign && this.emailEditor?.editor?.loadDesign) {
+      this.emailEditor.editor.loadDesign(this.pendingEmailDesign);
+      this.pendingEmailDesign = null;
+    }
   }
 
   editorReady(event: any) {
@@ -282,11 +362,29 @@ export class AddPostComponent {
     );
   }
   ChangeType(type: number) {
-
     this.CampaignPostForm.patchValue({
-      type: type
-    })
+      type: type,
+      subject: '',
+      message: ''
+    });
+
+    this.simpleText = '';
+    this.editorContent = '';
+    this.videoUrl = null;
+    this.uploadedVideoUrl = '';
+
+    this.aiImagePrompt = '';
+    this.aiImageResults = [];
+    this.selectedAIImageIndex = null;
+    this.aiImageResultUrl = null;
+    this.aiImageError = null;
+
     this.smsPlatform = '';
+
+    if (this.fileInput && this.fileInput.nativeElement) {
+      this.fileInput.nativeElement.value = '';
+    }
+    this.selectedFileType = null;
   }
 
   ngOnChanges() {
@@ -326,28 +424,74 @@ export class AddPostComponent {
   }
 
   onVideoSelected(event: Event): void {
-    debugger;
     const input = event.target as HTMLInputElement;
     if (input.files && input.files[0]) {
       const file = input.files[0];
+      const fileType = file.type;
+      const isImage = fileType.startsWith('image/');
+      const isVideo = fileType.startsWith('video/');
 
-      const reader = new FileReader();
-      reader.onload = () => {
-        this.videoUrl = reader.result;
-      };
-      reader.readAsDataURL(file);
-
-      this.service.uploadMediaFile(file)
-        .then((response: any) => {
-          this.uploadedVideoUrl = response.url;
-          this.toaster.success('Video uploaded successfully!');
-        })
-        .catch((error: any) => {
-          console.error('Video upload failed', error);
-          this.toaster.error('Failed to upload video');
-        });
+      if (!isImage && !isVideo) {
+        this.toaster.error('Please upload a valid image or video file.');
+        return;
+      }
+      this.selectedFileType = isImage ? 'image' : 'video';
+      if (isImage) {
+        const reader = new FileReader();
+        reader.onload = (e: any) => {
+          const img = new Image();
+          img.onload = () => {
+            const size = 200;
+            const canvas = document.createElement('canvas');
+            canvas.width = size;
+            canvas.height = size;
+            const ctx = canvas.getContext('2d');
+            if (ctx) {
+              ctx.clearRect(0, 0, size, size);
+              const scale = Math.min(size / img.width, size / img.height);
+              const x = (size - img.width * scale) / 2;
+              const y = (size - img.height * scale) / 2;
+              ctx.drawImage(img, x, y, img.width * scale, img.height * scale);
+              const dataUrl = canvas.toDataURL('image/png');
+              this.videoUrl = dataUrl;
+              fetch(dataUrl)
+                .then(res => res.blob())
+                .then(blob => {
+                  const resizedFile = new File([blob], file.name, { type: 'image/png' });
+                  this.service.uploadMediaFile(resizedFile)
+                    .then((response: any) => {
+                      this.uploadedVideoUrl = response.url;
+                      this.toaster.success('Image uploaded successfully!');
+                    })
+                    .catch((error: any) => {
+                      console.error('File upload failed', error);
+                      this.toaster.error('Failed to upload file');
+                    });
+                });
+            }
+          };
+          img.src = e.target.result;
+        };
+        reader.readAsDataURL(file);
+      } else if (isVideo) {
+        const reader = new FileReader();
+        reader.onload = () => {
+          this.videoUrl = reader.result;
+        };
+        reader.readAsDataURL(file);
+        this.service.uploadMediaFile(file)
+          .then((response: any) => {
+            this.uploadedVideoUrl = response.url;
+            this.toaster.success('Video uploaded successfully!');
+          })
+          .catch((error: any) => {
+            console.error('File upload failed', error);
+            this.toaster.error('Failed to upload file');
+          });
+      }
     }
   }
+
   openDatePicker() {
     this.dateTimeInput.nativeElement.showPicker?.();
     this.dateTimeInput.nativeElement.focus();
@@ -426,7 +570,6 @@ export class AddPostComponent {
   }
 
   onChatContentGenerated(content: string) {
-    // This is for direct content insertion (old logic)
     const type = this.CampaignPostForm.get('type').value;
     if (type === 1 && this.emailEditor && this.emailEditor.editor) {
       try {
@@ -446,7 +589,6 @@ export class AddPostComponent {
   }
 
   onAIContentSelected(content: string) {
-    // This is for direct content insertion (old logic)
     const type = this.CampaignPostForm.get('type').value;
     if (type === 1 && this.emailEditor && this.emailEditor.editor) {
       try {
@@ -495,7 +637,7 @@ export class AddPostComponent {
   }
 
   onContentInputBlur() {
-    setTimeout(() => { this.showContentAIPopover = false; this.showChatHelper = false; }, 200); 
+    setTimeout(() => { this.showContentAIPopover = false; this.showChatHelper = false; }, 200);
   }
   onContentInputChange() {
     if (this.simpleText) {
@@ -530,6 +672,373 @@ export class AddPostComponent {
   showTooltipImmediate() {
     this.clearTooltipTimer();
     this.showAddToContentTooltip = true;
+  }
+
+  getAcceptType(): string {
+    const type = this.CampaignPostForm.get('type').value;
+    if (type === 5) return 'image/*';
+    if (type === 6 || type === 7 || type === 8) return 'video/*';
+    return '';
+  }
+
+  removeSelectedFile(fileInput: HTMLInputElement): void {
+    fileInput.value = '';
+    this.videoUrl = '';
+    this.uploadedVideoUrl = '';
+  }
+
+  openAIImageModal() {
+    this.showAIImageModal = true;
+    this.aiImagePrompt = '';
+    this.aiImageResultUrl = null;
+    this.aiImageResults = [];
+    this.selectedAIImageIndex = null;
+    this.aiImageError = null;
+  }
+
+  closeAIImageModal() {
+    this.showAIImageModal = false;
+    this.aiImagePrompt = '';
+    this.aiImageResultUrl = null;
+    this.aiImageResults = [];
+    this.selectedAIImageIndex = null;
+    this.aiImageError = null;
+    this.aiImageLoading = false;
+  }
+
+  generateImageWithAI() {
+    if (!this.aiImagePrompt.trim()) {
+      this.aiImageError = 'Prompt is required.';
+      return;
+    }
+    this.aiImageLoading = true;
+    this.aiImageError = null;
+    this.aiImageResultUrl = null;
+    this.aiImageResults = [];
+    this.selectedAIImageIndex = null;
+    this.textGenService.generateImageWithHorde(this.aiImagePrompt).subscribe({
+      next: (res: any) => {
+        this.aiImageResults = Array.isArray(res.images) ? res.images : [];
+        this.aiImageResultUrl = this.aiImageResults.length > 0 ? this.aiImageResults[0] : null;
+        this.selectedAIImageIndex = this.aiImageResults.length > 0 ? 0 : null;
+        this.aiImageLoading = false;
+        if (!this.aiImageResults.length) {
+          this.aiImageError = 'No image returned.';
+        }
+      },
+      error: (err) => {
+        this.aiImageError = 'Failed to generate image.';
+        this.aiImageLoading = false;
+      }
+    });
+  }
+
+  selectAIImage(index: number) {
+    this.selectedAIImageIndex = index;
+    this.aiImageResultUrl = this.aiImageResults[index];
+  }
+
+  openManualEditorModal() {
+    if (this.selectedAIImageIndex !== null && this.aiImageResults[this.selectedAIImageIndex]) {
+      this.manualEditorImageUrl = this.aiImageResults[this.selectedAIImageIndex];
+      this.showManualEditorModal = true;
+      this.editorLoading = false;
+      setTimeout(() => {
+        if (this.imageEditor && this.manualEditorImageUrl) {
+          this.imageEditor.open(this.manualEditorImageUrl);
+        }
+      }, 100);
+    }
+    else if (this.manualEditorImageUrl) {
+      this.showManualEditorModal = true;
+      this.editorLoading = false;
+      setTimeout(() => {
+        if (this.imageEditor && this.manualEditorImageUrl) {
+          this.imageEditor.open(this.manualEditorImageUrl);
+        }
+      }, 100);
+    }
+    // Otherwise, prompt for upload
+    else {
+      const fileInput = document.createElement('input');
+      fileInput.type = 'file';
+      fileInput.accept = 'image/*';
+      fileInput.style.display = 'none';
+      document.body.appendChild(fileInput);
+      fileInput.onchange = (event: any) => {
+        const file = event.target.files[0];
+        if (file) {
+          const reader = new FileReader();
+          reader.onload = () => {
+            this.manualEditorImageUrl = reader.result as string;
+            this.showManualEditorModal = true;
+            this.editorLoading = false;
+            setTimeout(() => {
+              if (this.imageEditor && this.manualEditorImageUrl) {
+                this.imageEditor.open(this.manualEditorImageUrl);
+              }
+            }, 100);
+            document.body.removeChild(fileInput);
+          };
+          reader.readAsDataURL(file);
+        } else {
+          document.body.removeChild(fileInput);
+        }
+      };
+      fileInput.click();
+    }
+  }
+
+  initImageEditor() {
+    if (this.imageEditor && this.manualEditorImageUrl) {
+      this.imageEditor.open(this.manualEditorImageUrl);
+      this.editorLoading = false;
+    }
+  }
+
+  closeManualEditorModal() {
+    this.showManualEditorModal = false;
+    this.editorLoading = false;
+  }
+
+  saveEditedImage() {
+    if (this.imageEditor) {
+      const now = new Date();
+      const yyyy = now.getFullYear();
+      const mm = String(now.getMonth() + 1).padStart(2, '0');
+      const dd = String(now.getDate()).padStart(2, '0');
+      const filename = `post-${yyyy}-${mm}-${dd}.png`;
+      this.imageEditor.export('PNG', filename);
+      this.closeManualEditorModal();
+    }
+  }
+
+  openAIEditModal() {
+    if (this.selectedAIImageIndex !== null && this.aiImageResults[this.selectedAIImageIndex]) {
+      this.aiImageResultUrl = this.aiImageResults[this.selectedAIImageIndex];
+      this.showAIEditModal = true;
+      this.aiEditPrompt = '';
+      this.aiEditProcessingType = 'img2img';
+      this.aiEditError = null;
+      this.aiEditResultUrl = null;
+    }
+  }
+
+  closeAIEditModal() {
+    this.showAIEditModal = false;
+    this.aiEditPrompt = '';
+    this.aiEditProcessingType = 'img2img';
+    this.aiEditError = null;
+    this.aiEditResultUrl = null;
+  }
+
+  async submitAIEdit() {
+    if (!this.aiEditPrompt.trim()) {
+      this.aiEditError = 'Prompt is required.';
+      return;
+    }
+    if (!this.aiImageResultUrl) {
+      this.aiEditError = 'No image to edit.';
+      return;
+    }
+
+    this.aiEditLoading = true;
+    this.aiEditError = null;
+    this.aiEditResultUrl = null;
+
+    try {
+      const url: string = this.aiImageResultUrl;
+      const imageName = url.substring(url.lastIndexOf('/') + 1);
+      this.textGenService.editImageWithHorde({
+        prompt: this.aiEditPrompt,
+        base64Image: imageName,
+        processingType: this.aiEditProcessingType
+      }).subscribe({
+        next: (res: any) => {
+          this.aiEditResultUrl = res.images && res.images.length > 0 ? res.images[0] : null;
+          this.aiEditLoading = false;
+          if (!this.aiEditResultUrl) {
+            this.aiEditError = 'No edited image returned.';
+          }
+        },
+        error: (err) => {
+          this.aiEditError = 'Failed to edit image.';
+          this.aiEditLoading = false;
+        }
+      });
+    } catch (err) {
+      this.aiEditError = 'Failed to process image.';
+      this.aiEditLoading = false;
+    }
+  }
+
+  dataURLtoFile(dataurl: string, filename: string): Promise<File> {
+    return fetch(dataurl)
+      .then(res => res.arrayBuffer())
+      .then(buf => new File([buf], filename, { type: 'image/png' }));
+  }
+
+  convertImageUrlToBase64(url: string): Promise<string> {
+    return new Promise((resolve, reject) => {
+      const img = new window.Image();
+      img.crossOrigin = 'Anonymous';
+      img.onload = function () {
+        const canvas = document.createElement('canvas');
+        canvas.width = img.width;
+        canvas.height = img.height;
+        const ctx = canvas.getContext('2d');
+        if (!ctx) return reject('Canvas context error');
+        ctx.drawImage(img, 0, 0);
+        try {
+          const dataURL = canvas.toDataURL('image/png');
+          resolve(dataURL.replace(/^data:image\/png;base64,/, ''));
+        } catch (e) {
+          reject(e);
+        }
+      };
+      img.onerror = function (err) {
+        reject('Image load error');
+      };
+      img.src = url;
+      if (img.complete || img.complete === undefined) {
+        img.src = url;
+      }
+    });
+  }
+
+  ngAfterViewInit() {
+    if (this.showManualEditorModal) {
+    }
+  }
+
+  ngDoCheck() {
+    if (this.showManualEditorModal) {
+    }
+  }
+
+  openTestAIPayloadModal() {
+    if (this.selectedAIImageIndex !== null && this.aiImageResults[this.selectedAIImageIndex]) {
+      this.testAIPayloadImage = this.aiImageResults[this.selectedAIImageIndex];
+      this.testAIPayloadPrompt = this.aiImagePrompt;
+    } else {
+      this.testAIPayloadImage = null;
+      this.testAIPayloadPrompt = '';
+    }
+    this.showTestAIPayloadModal = true;
+  }
+
+  closeTestAIPayloadModal() {
+    this.showTestAIPayloadModal = false;
+  }
+
+  onTestAIPayloadFileChange(event: Event) {
+    const input = event.target as HTMLInputElement;
+    if (input.files && input.files[0]) {
+      const file = input.files[0];
+      const reader = new FileReader();
+      reader.onload = () => {
+        this.testAIPayloadImage = reader.result as string;
+      };
+      reader.readAsDataURL(file);
+    }
+  }
+
+  saveTestAIPayload() {
+    if (!this.testAIPayloadImage || !this.testAIPayloadPrompt) return;
+    if (!this.testAIPayloadImage.startsWith('data:image')) {
+      const imgUrl = this.testAIPayloadImage;
+      fetch(imgUrl)
+        .then(res => res.blob())
+        .then(blob => {
+          const reader = new FileReader();
+          reader.onload = () => {
+            let base64Image = reader.result as string;
+            if (base64Image.startsWith('data:image')) {
+              base64Image = base64Image.split(',')[1];
+            }
+            const payload = {
+              image: base64Image,
+              prompt: this.testAIPayloadPrompt
+            };
+            this.textGenService.Edit(payload).subscribe({
+              next: () => {
+                this.toaster.success('Payload saved successfully!');
+                this.closeTestAIPayloadModal();
+              },
+              error: () => {
+                this.toaster.error('Failed to save payload');
+              }
+            });
+          };
+          reader.readAsDataURL(blob);
+        })
+        .catch(() => {
+          this.toaster.error('Failed to process image');
+        });
+    } else {
+      let base64Image = this.testAIPayloadImage.split(',')[1];
+      const payload = {
+        image: base64Image,
+        prompt: this.testAIPayloadPrompt
+      };
+      this.textGenService.Edit(payload).subscribe({
+        next: () => {
+          this.toaster.success('Payload saved successfully!');
+          this.closeTestAIPayloadModal();
+        },
+        error: () => {
+          this.toaster.error('Failed to save payload');
+        }
+      });
+    }
+  }
+
+  onManualImageFileChange(event: Event) {
+    const input = event.target as HTMLInputElement;
+    if (input.files && input.files[0]) {
+      const file = input.files[0];
+      const reader = new FileReader();
+      reader.onload = () => {
+        this.manualEditorImageUrl = reader.result as string;
+        if (this.imageEditor) {
+          this.imageEditor.open(this.manualEditorImageUrl);
+          this.editorLoading = false;
+        }
+      };
+      reader.readAsDataURL(file);
+    }
+  }
+
+  insertManualEditorImageToContent() {
+    if (!this.imageEditor) return;
+    const type = this.CampaignPostForm.get('type').value;
+    const imageData = this.imageEditor.getImageData();
+    const canvas = document.createElement('canvas');
+    canvas.width = imageData.width;
+    canvas.height = imageData.height;
+    const ctx = canvas.getContext('2d');
+    if (ctx) {
+      ctx.putImageData(imageData, 0, 0);
+      const dataUrl = canvas.toDataURL('image/png');
+      const imgTag = `<img src="${dataUrl}" alt="Inserted Image" />`;
+      if (type === 1 && this.emailEditor && this.emailEditor.editor) {
+        let currentHtml = this.CampaignPostForm.get('message').value || '';
+        currentHtml += imgTag;
+        this.CampaignPostForm.patchValue({ message: currentHtml });
+      } else if (type === 2 || type === 3) {
+        this.simpleText = (this.simpleText || '') + imgTag;
+        this.CampaignPostForm.patchValue({ message: this.simpleText });
+      } else {
+        this.editorContent = (this.editorContent || '') + imgTag;
+        this.CampaignPostForm.patchValue({ message: this.editorContent });
+      }
+      this.closeManualEditorModal();
+    }
+  }
+
+  onSimpleTextChange(value: string) {
+    this.simpleText = value;
+    this.CampaignPostForm.get('message').setValue(value);
   }
 
 }

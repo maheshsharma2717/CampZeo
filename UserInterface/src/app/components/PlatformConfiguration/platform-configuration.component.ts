@@ -8,7 +8,7 @@ import { RouterModule } from '@angular/router';
 @Component({
   selector: 'app-platform-configuration',
   standalone: true,
-  imports: [ReactiveFormsModule, FormsModule, CommonModule,RouterModule],
+  imports: [ReactiveFormsModule, FormsModule, CommonModule, RouterModule],
   templateUrl: './platform-configuration.component.html',
   styleUrl: './platform-configuration.component.css'
 })

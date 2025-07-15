@@ -71,7 +71,7 @@
 
  .se{
     width :90px;
-    margin-inline: 10px;
+ 
  }
 
 
@@ -119,3 +119,27 @@
 .special:hover i{
     color: #fff !important;
 }
+.ai-image-thumb:hover {
+    transform: scale(1.1);
+    z-index: 3;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.18);
+  }
+  .ai-image-thumb.selected {
+    box-shadow: 0 8px 32px rgba(0,0,0,0.18);
+    border: 2px solid #007bff;
+    transform: none;
+    z-index: 2;
+  }
+
+  
+  .ai-image-thumb:hover {
+    transform: scale(1.1);
+    z-index: 3;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.18);
+  }
+  .ai-image-thumb.selected {
+    box-shadow: 0 8px 32px rgba(0,0,0,0.18);
+    border: 2px solid #007bff;
+    transform: none;
+    z-index: 2;
+  }

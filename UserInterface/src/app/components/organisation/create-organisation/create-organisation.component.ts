@@ -84,7 +84,8 @@ export class CreateOrganisationComponent implements OnInit {
     this.service.CreateOrganisation(request).subscribe({
       next: (response: any) => {
         if (response.isSuccess) {
-          this.toaster.success("Organisation Created Successfuly")
+          const message = this.editMode ? "Organisation Updated Successfully" : "Organisation Created Successfully";
+          this.toaster.success(message);
           this.router.navigate(['/list-organisation'])
         }
       }

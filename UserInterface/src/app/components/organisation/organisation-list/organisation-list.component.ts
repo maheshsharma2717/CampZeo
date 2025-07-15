@@ -38,7 +38,7 @@ export class OrganisationListComponent implements OnInit, OnDestroy {
   pageSettings = { pageSize: 10, pageSizes: [5, 10, 20, 50] };
   toolBarOptions = ['Custom'];
   token: string | null = null;
-
+i=0;
 
   constructor(public service: AppService, private toaster: ToastrService,
     private router: Router, private authService: AuthService
@@ -63,12 +63,12 @@ export class OrganisationListComponent implements OnInit, OnDestroy {
       this.sortBy = column;
       this.sortDesc = false;
     }
-    this.loadOrganisations(); // Reload data with new sort
+    this.loadOrganisations(); 
   }
 
   onPageSizeChange(): void {
-    this.currentPage = 1; // Reset to the first page
-    this.loadOrganisations(); // Reload data with the new page size
+    this.currentPage = 1; 
+    this.loadOrganisations(); 
   }
 
   loadOrganisations(): void {
@@ -174,6 +174,7 @@ export class OrganisationListComponent implements OnInit, OnDestroy {
         next: () => {
           this.Organisations.find(org => org.id == this.organisationToDeleteId).isDeleted = !this.isRecovering;
           this.toaster.show(!this.isRecovering ? 'Organisation suspended successfully' : 'Organisation recovered successfully');
+          this.loadOrganisations();
           this.closeModal();
         },
         error: () => {
