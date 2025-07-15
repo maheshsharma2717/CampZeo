@@ -223,30 +223,41 @@ export class EventComponent implements OnInit {
   }
 
   private postToLinkedIn(content: any) {
-
+    // Accept either image or video
     const base64Image = content.images[0];
-    if (!base64Image) {
+    const videoUrl = this.videoUrl;
+
+    if (!base64Image && !videoUrl) {
       this.toaster.warning('LinkedIn requires an image or video. Please add one.');
       return;
     }
 
-    this.service.uploadMedia(base64Image).subscribe({
-      next: (uploadedImageUrl) => {
-        const payload: any = {
-          caption: content.text,
-          imageUrl: uploadedImageUrl // Handle image upload separately if required
-        };
+    // Prefer image if present, else use video
+    let payload: any = {
+      caption: content.text
+    };
+    if (base64Image) {
+      this.service.uploadMedia(base64Image).subscribe({
+        next: (uploadedImageUrl) => {
+          payload.imageUrl = uploadedImageUrl;
+          this.sendLinkedInPost(payload);
+        }
+      });
+    } else if (videoUrl) {
+      payload.videoUrl = videoUrl;
+      this.sendLinkedInPost(payload);
+    }
+  }
 
-        this.service.postToLinkedIn(payload).subscribe({
-          next: () => {
-            this.toaster.success('Posted to LinkedIn successfully!');
-            this.router.navigate(['list-campaigns']);
-          },
-          error: (err: any) => {
-            console.error('LinkedIn post failed:', err);
-            this.toaster.error('Failed to post to LinkedIn.');
-          }
-        });
+  private sendLinkedInPost(payload: any) {
+    this.service.postToLinkedIn(payload).subscribe({
+      next: () => {
+        this.toaster.success('Posted to LinkedIn successfully!');
+        this.router.navigate(['list-campaigns']);
+      },
+      error: (err: any) => {
+        console.error('LinkedIn post failed:', err);
+        this.toaster.error('Failed to post to LinkedIn.');
       }
     });
   }

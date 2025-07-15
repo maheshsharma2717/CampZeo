@@ -28,7 +28,6 @@
         <form [formGroup]="contactForm" (ngSubmit)="onSubmit()">
           <div class="row">
 
-            <!-- Contact Name -->
             <div class="col-md-6">
               <div class="form-group">
                 <label for="contactName">Contact Name<span class="text-danger">*</span></label>
@@ -40,7 +39,6 @@
               </div>
             </div>
 
-            <!-- Contact Email -->
             <div class="col-md-6">
               <div class="form-group">
                 <label for="contactEmail">Contact Email<span class="text-danger">*</span></label>
@@ -58,7 +56,7 @@
               <div class="form-group">
                 <label for="contactMobile">Contact Mobile<span class="text-danger">*</span></label>
                 <div class="input-group">
-                  <select class="form-select" formControlName="contactMobileCode" style="max-width: 100px;">
+                  <select class="form-select custom-country-select me-2" formControlName="contactMobileCode" style="max-width: 120px; min-width: 100px;">
                     <option value="" disabled>Select</option>
                     <option *ngFor="let c of countryCodes" [value]="c.code">{{ c.name }} ({{ c.code }})</option>
                   </select>
@@ -83,7 +81,7 @@
               <div class="form-group">
                 <label for="contactWhatsApp">Contact WhatsApp Number</label>
                 <div class="input-group">
-                  <select class="form-select" formControlName="contactWhatsAppCode" style="max-width: 100px;">
+                  <select class="form-select custom-country-select me-2" formControlName="contactWhatsAppCode" style="max-width: 120px; min-width: 100px;">
                     <option value="" disabled>Select</option>
                     <option *ngFor="let c of countryCodes" [value]="c.code">{{ c.name }} ({{ c.code }})</option>
                   </select>
