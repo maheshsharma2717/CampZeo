@@ -123,4 +123,18 @@ public class CampaignPostController  : ControllerBase
             return BadRequest(new ApiResponse<string> { IsSuccess = false, Message = ex.Message });
         }
     }
+
+    [HttpPost("UpdateCampaignPost")]
+    public async Task<IActionResult> UpdateCampaignPost(ApiRequest<CampaignPost> request)
+    {
+        try
+        {
+            var response = await _applicationService.UpdateCampaignPost(request);
+            return Ok(response);
+        }
+        catch(Exception ex)
+        {
+            return BadRequest(new ApiResponse<string> { IsSuccess = false, Message = ex.Message });
+        }
+    }
 }
