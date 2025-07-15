@@ -293,15 +293,15 @@ export class AppService {
   getInstagramUserId(pageId: string, token: string) {
     return this.http.get(`${ApiUrl}socialmedia/instagram-business-account?pageId=${pageId}&accessToken=${token}`);
   }
-  getYoutubeChannel(access_token:any) {
+  getYoutubeChannel(access_token: any) {
     return this.http.get(`${ApiUrl}socialmedia/youtube-channel?accessToken=${access_token}`);
   }
 
-  uploadToYoutube(data: any){
+  uploadToYoutube(data: any) {
     return this.http.post(`${ApiUrl}socialmedia/upload-youtube`, data);
   }
 
-  getVideoList(gToken: any){
+  getVideoList(gToken: any) {
     return this.http.get(`${ApiUrl}socialmedia/GetVideoList?accessToken=${gToken}`);
   }
 
@@ -410,5 +410,16 @@ export class AppService {
     console.log('Payload to save:', payload);
     return of({ success: true });
   }
+
+  // getLocationByPincode(pincode: string) {
+  //   return this.http.get<any>(`/api/Organisation/${pincode}`);
+  // }
+
+getLocation(pinCode: string): Observable<any> {
+  debugger;
+  // return this.http.get(ApiUrl + "/Organisation/" + pinCode);
+    return this.http.get(ApiUrl+`Organisation/`+ pinCode)
+}
+  
 }
 

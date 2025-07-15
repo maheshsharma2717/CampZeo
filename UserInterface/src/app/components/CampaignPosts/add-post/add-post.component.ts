@@ -74,14 +74,33 @@ export class AddPostComponent implements AfterViewInit {
   attemptedSubmit: boolean = false;
   private tooltipTimer: any = null;
   selectedFileType: 'image' | 'video' | null = null;
-
+  @ViewChild('fileInput') fileInput!: ElementRef<HTMLInputElement>;
   public imageEditorSettings: any = {
     width: '100%',
     height: '500px',
     toolbar: ['Undo', 'Redo', 'ZoomIn', 'ZoomOut', 'Pan', 'Crop', 'Transform', 'Annotate', 'Filter', 'Finetune', 'Shape', 'Frame', 'Text', 'Pen', 'Eraser']
   };
+  showAIImageModal: boolean = false;
+  aiImagePrompt: string = '';
+  aiImageLoading: boolean = false;
+  aiImageError: string | null = null;
+  aiImageResultUrl: string | null = null;
+  aiImageResults: string[] = [];
+  selectedAIImageIndex: number | null = null;
+  showAIEditModal: boolean = false;
+  aiEditPrompt: string = '';
+  aiEditProcessingType: string = 'img2img';
+  aiEditLoading: boolean = false;
+  aiEditError: string | null = null;
+  aiEditResultUrl: string | null = null;
 
+  showManualEditorModal: boolean = false;
+  editorLoading: boolean = false;
+  manualEditorImageUrl: string | null = null;
 
+  showTestAIPayloadModal: boolean = false;
+  testAIPayloadImage: string | null = null;
+  testAIPayloadPrompt: string = '';
   constructor(public service: AppService, private toaster: ToastrService, private activatedRoute: ActivatedRoute, private route: Router, private textGenService: TextGenerationService) {
     this.activatedRoute.queryParams.subscribe(param => {
       this.id = param['id']
@@ -311,18 +330,18 @@ export class AddPostComponent implements AfterViewInit {
       subject: '',
       message: ''
     });
-    
+
     this.simpleText = '';
     this.editorContent = '';
     this.videoUrl = null;
     this.uploadedVideoUrl = '';
-    
+
     this.aiImagePrompt = '';
     this.aiImageResults = [];
     this.selectedAIImageIndex = null;
     this.aiImageResultUrl = null;
     this.aiImageError = null;
-    
+
     this.smsPlatform = '';
   }
 
@@ -670,7 +689,7 @@ export class AddPostComponent implements AfterViewInit {
       const mm = String(now.getMonth() + 1).padStart(2, '0');
       const dd = String(now.getDate()).padStart(2, '0');
       const filename = `post-${yyyy}-${mm}-${dd}.png`;
-      this.imageEditor.export('PNG', (dataUrl:any) => {
+      this.imageEditor.export('PNG', (dataUrl: any) => {
         const link = document.createElement('a');
         link.href = dataUrl;
         link.download = filename;

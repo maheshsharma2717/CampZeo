@@ -89,6 +89,16 @@
                                 </span>}
                             </div>
                         </div>
+                         <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="postalCode">PostalCode <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="postalCode" rows="3"
+                                    formControlName="postalCode">
+                                @if(form.get('postalCode')?.invalid && form.get('postalCode')?.touched){
+                                <span class="text-danger">PostalCode is required</span>
+                                }
+                            </div>
+                        </div>
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label for="city">City <span class="text-danger">*</span></label>
@@ -119,16 +129,7 @@
                             </div>
                         </div>
 
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label for="postalCode">PostalCode <span class="text-danger">*</span></label>
-                                <input type="text" class="form-control" id="postalCode" rows="3"
-                                    formControlName="postalCode">
-                                @if(form.get('postalCode')?.invalid && form.get('postalCode')?.touched){
-                                <span class="text-danger">PostalCode is required</span>
-                                }
-                            </div>
-                        </div>
+                       
                     </div>
 
                     <div class="container w-100 m-0">
