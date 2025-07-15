@@ -45,7 +45,7 @@ export class AddContactComponent implements OnInit {
       Validators.required,
       Validators.pattern('^[0-9]{7,15}$')
     ]),
-    contactWhatsApp: new FormControl('', [
+    contactWhatsApp: new FormControl('', [  Validators.required,
       Validators.pattern('^[0-9]{7,15}$')
     ]),
   });
