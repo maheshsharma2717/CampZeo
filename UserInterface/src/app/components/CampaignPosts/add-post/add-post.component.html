@@ -1,376 +1,376 @@
 <div class="pcoded-content">
-    <!-- <div class="page-header">
-        <div class="page-block">
-            <div class="row align-items-center">
-                <div class="col-md-12">
-                    <div class="page-header-title">
-                        <h5 class="m-b-10">@if(editMode){Update}@else{Create} Campaign Post</h5>
-                    </div>
-                    <ul class="breadcrumb">
-                        <li class="breadcrumb-item"><a [routerLink]="'/dashboard'"><i class="feather icon-home"></i></a>
-                        </li>
-                        <li class="breadcrumb-item"><a [routerLink]="'/list-message-templates'">Campaign Posts</a>
-                        </li>
-                        <li class="breadcrumb-item"><a
-                                [routerLink]="'/add-campaign-post'">@if(editMode){Update}@else{Create} Campaign Post</a>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-    </div> -->
-    <div class="page-header mb-0 flex-column align-items-start">
-        <ul class="breadcrumbs mb-3" style="margin-left: 0; padding-left: 0; border: none;">
-            <li class="nav-item">
-                <a [routerLink]="'/dashboard'"><i class=" icon-home"></i></a>
-            </li>
-            <li class="separator">
-                <i class="icon-arrow-right"></i>
-            </li>
-            <li class="nav-item">
-                <a [routerLink]="'/list-campaign-posts'">Campaign Posts</a>
-            </li>
-            <li class="separator">
-                <i class="icon-arrow-right"></i>
-            </li>
+  <!-- <div class="page-header">
+      <div class="page-block">
+          <div class="row align-items-center">
+              <div class="col-md-12">
+                  <div class="page-header-title">
+                      <h5 class="m-b-10">@if(editMode){Update}@else{Create} Campaign Post</h5>
+                  </div>
+                  <ul class="breadcrumb">
+                      <li class="breadcrumb-item"><a [routerLink]="'/dashboard'"><i class="feather icon-home"></i></a>
+                      </li>
+                      <li class="breadcrumb-item"><a [routerLink]="'/list-message-templates'">Campaign Posts</a>
+                      </li>
+                      <li class="breadcrumb-item"><a
+                              [routerLink]="'/add-campaign-post'">@if(editMode){Update}@else{Create} Campaign Post</a>
+                      </li>
+                  </ul>
+              </div>
+          </div>
+      </div>
+  </div> -->
+  <div class="page-header mb-0 flex-column align-items-start">
+      <ul class="breadcrumbs mb-3" style="margin-left: 0; padding-left: 0; border: none;">
+          <li class="nav-item">
+              <a [routerLink]="'/dashboard'"><i class=" icon-home"></i></a>
+          </li>
+          <li class="separator">
+              <i class="icon-arrow-right"></i>
+          </li>
+          <li class="nav-item">
+              <a [routerLink]="'/list-campaign-posts'">Campaign Posts</a>
+          </li>
+          <li class="separator">
+              <i class="icon-arrow-right"></i>
+          </li>
 
-            <li class="nav-item">
-                <a [routerLink]="'/add-post'">@if(editMode){Update}@else{Create} Campaign Post</a>
-            </li>
-        </ul>
-        <h3 class="fw-bold mb-3">@if(editMode){Update}@else{Create} Campaign Post</h3>
-    </div>
-    <div class="row ">
-        <div class="card-body  col-8">
-            <form [formGroup]="CampaignPostForm" (ngSubmit)="onSubmit()" class="">
-                <div class="card card-body col-12">
-                    <div class="mb-3">
-                        <label for="platform">Select a Platform</label>
-                        <div class="col-12 d-flex ">
-                            <div *ngIf="service.checkVisblePlatform(1)"
-                                class="card text-center selected-email-hover m-2" style=" border-radius: 10px;">
-                                <div class="card-body se pt-3 rounded bg-white pointer " (click)="ChangeType(1)"
-                                    [ngClass]="{'selected-email': CampaignPostForm.controls.type.value == 1 || smsPlatform === 'Email'}">
-                                    <i class="fas fa-envelope-open fa-2x"></i>
-                                    <p class="card-text mt-2">Email</p>
-                                </div>
-                            </div>
+          <li class="nav-item">
+              <a [routerLink]="'/add-post'">@if(editMode){Update}@else{Create} Campaign Post</a>
+          </li>
+      </ul>
+      <h3 class="fw-bold mb-3">@if(editMode){Update}@else{Create} Campaign Post</h3>
+  </div>
+  <div class="row ">
+      <div class="card-body  col-8">
+          <form [formGroup]="CampaignPostForm" (ngSubmit)="onSubmit()" class="">
+              <div class="card card-body col-12">
+                  <div class="mb-3">
+                      <label for="platform">Select a Platform</label>
+                      <div class="col-12 d-flex ">
+                          <div *ngIf="service.checkVisblePlatform(1)"
+                              class="card text-center selected-email-hover m-2" style=" border-radius: 10px;">
+                              <div class="card-body se pt-3 rounded bg-white pointer " (click)="ChangeType(1)"
+                                  [ngClass]="{'selected-email': CampaignPostForm.controls.type.value == 1 || smsPlatform === 'Email'}">
+                                  <i class="fas fa-envelope-open fa-2x"></i>
+                                  <p class="card-text mt-2">Email</p>
+                              </div>
+                          </div>
 
-                            <div *ngIf="service.checkVisblePlatform(2)" class="card text-center selected-sms-hover m-2"
-                                style=" border-radius: 10px;">
-                                <div class="card-body se pt-3 rounded bg-white pointer " (click)="ChangeType(2)"
-                                    [ngClass]="{'selected-sms': CampaignPostForm.controls.type.value == 2 || smsPlatform === 'SMS'}">
-                                    <i class="fa fa-envelope text-warning fa-2x"></i>
-                                    <p class="card-text mt-2">SMS</p>
-                                </div>
-                            </div>
+                          <div *ngIf="service.checkVisblePlatform(2)" class="card text-center selected-sms-hover m-2"
+                              style=" border-radius: 10px;">
+                              <div class="card-body se pt-3 rounded bg-white pointer " (click)="ChangeType(2)"
+                                  [ngClass]="{'selected-sms': CampaignPostForm.controls.type.value == 2 || smsPlatform === 'SMS'}">
+                                  <i class="fa fa-envelope text-warning fa-2x"></i>
+                                  <p class="card-text mt-2">SMS</p>
+                              </div>
+                          </div>
 
-                            <div *ngIf="service.checkVisblePlatform(3)"
-                                class="card text-center selected-whatsapp-hover m-2" style=" border-radius: 10px;">
-                                <div class="card-body se pt-3 rounded bg-white pointer " (click)="ChangeType(3)"
-                                    [ngClass]="{'selected-whatsapp': CampaignPostForm.controls.type.value == 3 || smsPlatform === 'WhatsApp'}">
-                                    <i class="fab fa-whatsapp fa-2x"></i>
-                                    <p class="card-text  mt-2" style="font-size: 12px;">WhatsApp</p>
-                                </div>
-                            </div>
+                          <div *ngIf="service.checkVisblePlatform(3)"
+                              class="card text-center selected-whatsapp-hover m-2" style=" border-radius: 10px;">
+                              <div class="card-body se pt-3 rounded bg-white pointer " (click)="ChangeType(3)"
+                                  [ngClass]="{'selected-whatsapp': CampaignPostForm.controls.type.value == 3 || smsPlatform === 'WhatsApp'}">
+                                  <i class="fab fa-whatsapp fa-2x"></i>
+                                  <p class="card-text  mt-2" style="font-size: 12px;">WhatsApp</p>
+                              </div>
+                          </div>
 
-                            <div *ngIf="service.checkVisblePlatform(4)" class="card text-center selected-rcs-hover m-2"
-                                style=" border-radius: 10px;">
-                                <div class="card-body se pt-3 rounded bg-white pointer " (click)="ChangeType(4)"
-                                    [ngClass]="{'selected-rcs': CampaignPostForm.controls.type.value == 4 || smsPlatform === 'RCS'}">
-                                    <i class="fa fa-globe fa-2x"></i>
-                                    <p class="card-text mt-2">RCS</p>
-                                </div>
-                            </div>
-                            <div *ngIf="service.checkVisblePlatform(5)"
-                                class="card text-center selected-facebook-hover m-2" style=" border-radius: 10px;">
-                                <div class="card-body se pt-3 rounded bg-white pointer " (click)="ChangeType(5)"
-                                    [ngClass]="{'selected-facebook': CampaignPostForm.controls.type.value == 5 || smsPlatform === 'Facebook'}">
-                                    <i class="fab fa-facebook fa-2x"></i>
-                                    <p class="card-text mt-2">FaceBook</p>
-                                </div>
-                            </div>
-                            <div *ngIf="service.checkVisblePlatform(6)"
-                                class="card text-center selected-instagram-hover m-2" style=" border-radius: 10px;">
-                                <div class="card-body se pt-3 rounded bg-white pointer " (click)="ChangeType(6)"
-                                    [ngClass]="{'selected-instagram': CampaignPostForm.controls.type.value == 6 || smsPlatform === 'Instagram'}">
-                                    <i class="fab fa-instagram fa-2x"></i>
-                                    <p class="card-text mt-2" style="font-size: 12px;">Instagram</p>
-                                </div>
-                            </div>
-                            <div *ngIf="service.checkVisblePlatform(7)"
-                                class="card text-center selected-instagram-hover m-2" style=" border-radius: 10px;">
-                                <div class="card-body se pt-3 rounded bg-white pointer " (click)="ChangeType(7)"
-                                    [ngClass]="{'selected-facebook': CampaignPostForm.controls.type.value == 7 || smsPlatform === 'LinkedIn'}">
-                                    <i class="fab fa-linkedin-in fa-2x"></i>
-                                    <p class="card-text mt-2">LinkedIn</p>
-                                </div>
-                            </div>
+                          <div *ngIf="service.checkVisblePlatform(4)" class="card text-center selected-rcs-hover m-2"
+                              style=" border-radius: 10px;">
+                              <div class="card-body se pt-3 rounded bg-white pointer " (click)="ChangeType(4)"
+                                  [ngClass]="{'selected-rcs': CampaignPostForm.controls.type.value == 4 || smsPlatform === 'RCS'}">
+                                  <i class="fa fa-globe fa-2x"></i>
+                                  <p class="card-text mt-2">RCS</p>
+                              </div>
+                          </div>
+                          <div *ngIf="service.checkVisblePlatform(5)"
+                              class="card text-center selected-facebook-hover m-2" style=" border-radius: 10px;">
+                              <div class="card-body se pt-3 rounded bg-white pointer " (click)="ChangeType(5)"
+                                  [ngClass]="{'selected-facebook': CampaignPostForm.controls.type.value == 5 || smsPlatform === 'Facebook'}">
+                                  <i class="fab fa-facebook fa-2x"></i>
+                                  <p class="card-text mt-2">FaceBook</p>
+                              </div>
+                          </div>
+                          <div *ngIf="service.checkVisblePlatform(6)"
+                              class="card text-center selected-instagram-hover m-2" style=" border-radius: 10px;">
+                              <div class="card-body se pt-3 rounded bg-white pointer " (click)="ChangeType(6)"
+                                  [ngClass]="{'selected-instagram': CampaignPostForm.controls.type.value == 6 || smsPlatform === 'Instagram'}">
+                                  <i class="fab fa-instagram fa-2x"></i>
+                                  <p class="card-text mt-2" style="font-size: 12px;">Instagram</p>
+                              </div>
+                          </div>
+                          <div *ngIf="service.checkVisblePlatform(7)"
+                              class="card text-center selected-rcs-hover m-2" style=" border-radius: 10px;">
+                              <div class="card-body se pt-3 rounded bg-white pointer " (click)="ChangeType(7)"
+                                  [ngClass]="{'selected-facebook': CampaignPostForm.controls.type.value == 7 || smsPlatform === 'LinkedIn'}">
+                                  <i class="fab fa-linkedin-in fa-2x"></i>
+                                  <p class="card-text mt-2">LinkedIn</p>
+                              </div>
+                          </div>
 
-                            <div *ngIf="service.checkVisblePlatform(8)"
-                                class="card text-center selected-instagram-hover m-2" style=" border-radius: 10px;">
-                                <div class="card-body se   pt-3 rounded bg-white pointer " (click)="ChangeType(8)"
-                                    [ngClass]="{'selected-facebook': CampaignPostForm.controls.type.value == 8 || smsPlatform === 'youtube'}">
-                                    <i class="fab fa-youtube text-danger fa-2x"></i>
-                                    <p class="card-text mt-2">Youtube</p>
-                                </div>
-                            </div>
+                          <div *ngIf="service.checkVisblePlatform(8)"
+                              class="card text-center selected-instagram-hover m-2" style=" border-radius: 10px;">
+                              <div class="card-body se   pt-3 rounded bg-white pointer " (click)="ChangeType(8)"
+                                  [ngClass]="{'selected-facebook': CampaignPostForm.controls.type.value == 8 || smsPlatform === 'youtube'}">
+                                  <i class="fab fa-youtube text-danger fa-2x"></i>
+                                  <p class="card-text mt-2">Youtube</p>
+                              </div>
+                          </div>
 
-                            <div *ngIf="service.checkVisblePlatform(9)"
-                                class="card text-center selected-instagram-hover m-2" style=" border-radius: 10px;">
-                                <div class="card-body se pt-3 rounded bg-white pointer " (click)="ChangeType(9)"
-                                    [ngClass]="{'selected-facebook': CampaignPostForm.controls.type.value == 9 || smsPlatform === 'pinterest'}">
-                                    <i class="fab fa-pinterest text-danger fa-2x"></i>
-                                    <p class="card-text mt-2">Pinterest</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div>
-                        <label for="subject">Subject</label>
-                        <div class="input-group">
-                            <input class="form-control" id="subject" formControlName="subject"
-                                placeholder="Enter subject title to  generate with AI" type="text" />
-                            <button type="button"
-                                style="width: 7%; border-top-right-radius: 25px; border-bottom-right-radius: 25px; font-size: 10px;"
-                                class="btn btn-outline-primary d-flex justify-content-center align-items-center px-2"
-                                (click)="generateSubjectWithAI()" [disabled]="generatingSubject"
-                                title="Generate with AI">
-                                <i class="fas fa-magic me-1 " aria-hidden="true"></i>
-                                <span class="d-none d-md-inline">AI</span>
-                            </button>
-                        </div>
-                        <div *ngIf="aiTitleOptions.length > 0" class="d-flex flex-wrap gap-2 mt-2">
-                            <span *ngFor="let option of aiTitleOptions; let i = index"
-                                class="badge badge-pill badge-primary px-3 py-2 mr-2 mb-2 ai-title-badge"
-                                [class.selected-badge]="selectedTitleBadge === i"
-                                (click)="selectAiTitleOption(option, i)" tabindex="0">
-                                {{ stripOptionPrefix(option) }}
-                            </span>
-                        </div>
-                        @if(CampaignPostForm.get('subject').invalid &&
-                        CampaignPostForm.get('subject').touched){
-                        <div class="text-danger">
-                            Subject is required.
-                        </div>}
-                    </div>
-                    <div *ngIf="CampaignPostForm.get('type').value !== 0 && CampaignPostForm.get('type').value >= 2 && CampaignPostForm.get('type').value <= 9"
-                        class="d-flex align-items-center mb-2">
-                        <label for="organisationName" style="float: inline-start; width: 100%;">Campaign Post
-                            Content</label>
-                        <a type="button" class="btn btn-sm d-flex align-items-center btn-outline-primary  mt-3" style="font-size: 12px; width: 12%;" (click)="openAIContentModal()">
-                            <i class="fas fa-magic  mx-2" aria-hidden="true"></i> Generate with AI
-                        </a>
-                            <a type="button" class="btn btn-sm d-flex align-items-center btn-outline-success mt-3" style="font-size: 12px; width: 15%; margin-left: 8px;" (click)="openAIImageModal()">
-                                <i class="fas fa-image mx-2" aria-hidden="true"></i> Generate Image with AI
-                            </a>
-                    </div>
-                    <div class="d-flex my-3">
-                        <div class="w-100 ">
-                            @if(CampaignPostForm.get('type').value==1 ){
-                            <div class="row my-4 mx-auto p-5 " style="width: 100%;">
-                                <email-editor  [ngModel]="editorContent" (loaded)="editorLoaded($event)"
-                                    (ready)="editorReady($event)"></email-editor>
-                            </div>}
-                            @if(CampaignPostForm.get('type').value==2){
-                            <div class="row my-4 mx-auto mb-5" style="width: 100%;">
-                                <textarea class="form-control"
-  [ngModel]="editorContent"
-  (ngModelChange)="onSimpleTextChange($event)"
-  [ngModelOptions]="{standalone:true}"
-  style="min-height: 30vh; resize: vertical; border-radius: 8px; padding: 12px; font-size: 14px; line-height: 1.5;"
-  placeholder="Enter your SMS content here..." (focus)="showContentAIPopover = true"
-  (blur)="onContentInputBlur()" (input)="onContentInputChange()"
-  #contentInput></textarea>
-                            </div>
-                            }
-                    
-                            @if(CampaignPostForm.get('type').value==3){
-                            <div class="video-upload-container">
-                                <div class="input-group mb-3">
-                                    <div class="custom-file">
-                                        <input #fileInput type="file" class="custom-file-input"
-                                            (change)="onVideoSelected($event)" [accept]="getAcceptType()" />
+                          <div *ngIf="service.checkVisblePlatform(9)"
+                              class="card text-center selected-instagram-hover m-2" style=" border-radius: 10px;">
+                              <div class="card-body se pt-3 rounded bg-white pointer " (click)="ChangeType(9)"
+                                  [ngClass]="{'selected-facebook': CampaignPostForm.controls.type.value == 9 || smsPlatform === 'pinterest'}">
+                                  <i class="fab fa-pinterest text-danger fa-2x"></i>
+                                  <p class="card-text mt-2">Pinterest</p>
+                              </div>
+                          </div>
+                      </div>
+                  </div>
+                  <div>
+                      <label for="subject">Subject</label>
+                      <div class="input-group">
+                          <input class="form-control" id="subject" formControlName="subject"
+                              placeholder="Enter subject title to  generate with AI" type="text" />
+                          <button type="button"
+                              style="width: 7%; border-top-right-radius: 25px; border-bottom-right-radius: 25px; font-size: 10px;"
+                              class="btn btn-outline-primary d-flex justify-content-center align-items-center px-2"
+                              (click)="generateSubjectWithAI()" [disabled]="generatingSubject"
+                              title="Generate with AI">
+                              <i class="fas fa-magic me-1 " aria-hidden="true"></i>
+                              <span class="d-none d-md-inline">AI</span>
+                          </button>
+                      </div>
+                      <div *ngIf="aiTitleOptions.length > 0" class="d-flex flex-wrap gap-2 mt-2">
+                          <span *ngFor="let option of aiTitleOptions; let i = index"
+                              class="badge badge-pill badge-primary px-3 py-2 mr-2 mb-2 ai-title-badge"
+                              [class.selected-badge]="selectedTitleBadge === i"
+                              (click)="selectAiTitleOption(option, i)" tabindex="0">
+                              {{ stripOptionPrefix(option) }}
+                          </span>
+                      </div>
+                      @if(CampaignPostForm.get('subject').invalid &&
+                      CampaignPostForm.get('subject').touched){
+                      <div class="text-danger">
+                          Subject is required.
+                      </div>}
+                  </div>
+                  <div *ngIf="CampaignPostForm.get('type').value !== 0 && CampaignPostForm.get('type').value >= 2 && CampaignPostForm.get('type').value <= 9"
+                      class="d-flex align-items-center mb-2">
+                      <label for="organisationName" style="float: inline-start; width: 100%;">Campaign Post
+                          Content</label>
+                      <a type="button" class="btn btn-sm d-flex align-items-center btn-outline-primary  mt-3" style="font-size: 12px; width: 12%;" (click)="openAIContentModal()">
+                          <i class="fas fa-magic  mx-2" aria-hidden="true"></i> Generate with AI
+                      </a>
+                          <a type="button" class="btn btn-sm d-flex align-items-center btn-outline-success mt-3" style="font-size: 12px; width: 15%; margin-left: 8px;" (click)="openAIImageModal()">
+                              <i class="fas fa-image mx-2" aria-hidden="true"></i> Generate Image with AI
+                          </a>
+                  </div>
+                  <div class="d-flex my-3">
+                      <div class="w-100 ">
+                          @if(CampaignPostForm.get('type').value==1 ){
+                          <div class="row my-4 mx-auto p-5 " style="width: 100%;">
+                              <email-editor  [ngModel]="editorContent" (loaded)="editorLoaded($event)"
+                                  (ready)="editorReady($event)"></email-editor>
+                          </div>}
+                          @if(CampaignPostForm.get('type').value==2){
+                          <div class="row my-4 mx-auto mb-5" style="width: 100%;">
+                              <textarea class="form-control"
+[ngModel]="editorContent"
+(ngModelChange)="onSimpleTextChange($event)"
+[ngModelOptions]="{standalone:true}"
+style="min-height: 30vh; resize: vertical; border-radius: 8px; padding: 12px; font-size: 14px; line-height: 1.5;"
+placeholder="Enter your SMS content here..." (focus)="showContentAIPopover = true"
+(blur)="onContentInputBlur()" (input)="onContentInputChange()"
+#contentInput></textarea>
+                          </div>
+                          }
+                  
+                          @if(CampaignPostForm.get('type').value==3){
+                          <div class="video-upload-container">
+                              <div class="input-group mb-3">
+                                  <div class="custom-file">
+                                      <input #fileInput type="file" class="custom-file-input"
+                                          (change)="onVideoSelected($event)" [accept]="getAcceptType()" />
 
-                                        <label class="custom-file-label" for="inputGroupFile01">Choose file to
-                                            send</label>
+                                      <label class="custom-file-label" for="inputGroupFile01">Choose file to
+                                          send</label>
 
-                                        <button type="button" class="btn btn-outline-danger ms-1"
-                                            *ngIf="[3, 5, 6, 7, 8, 9].includes(+CampaignPostForm.get('type')?.value) && videoUrl"
-                                            (click)="removeSelectedFile(fileInput)">
-                                            Remove
-                                        </button>
-                                    </div>
-                                </div>
-                                <div *ngIf="videoUrl">
-                                    <ng-container *ngIf="selectedFileType === 'video'; else imagePreview">
-                                        <video [src]="videoUrl" controls width="400">Your browser does not support the
-                                            video tag.</video>
-                                    </ng-container>
-                                    <ng-template #imagePreview>
-                                        <img [src]="videoUrl" alt="Uploaded Image" width="400"
-                                            style="border-radius: 8px;" />
-                                    </ng-template>
-                                </div>
-                            </div>
-                            <div class="d-flex align-items-center">
-                                <textarea class="form-control" [(ngModel)]="editorContent"
-                                    [ngModelOptions]="{standalone:true}" style="min-height: 30vh;"></textarea>
-                            </div>
-                            }
-                            @if(CampaignPostForm.get('type').value==4 || CampaignPostForm.get('type').value==5 ||
-                            CampaignPostForm.get('type').value==6 || CampaignPostForm.get('type').value==7 ||
-                            CampaignPostForm.get('type').value==8 || CampaignPostForm.get('type').value==9)
-                            {
-                            @if(CampaignPostForm.get('type').value==5 ||
-                            CampaignPostForm.get('type').value==6||CampaignPostForm.get('type').value==7 ||
-                            CampaignPostForm.get('type').value==8 || CampaignPostForm.get('type').value==9){
-                            <!-- <div class="video-upload-container">
-                                <div class="input-group mb-3">
-                                    <div class="custom-file">
-                                        <input type="file" class="custom-file-input" id="inputGroupFile01"
-                                            (change)="onVideoSelected($event)" accept="video/mp4" />
+                                      <button type="button" class="btn btn-outline-danger ms-1"
+                                          *ngIf="[3, 5, 6, 7, 8, 9].includes(+CampaignPostForm.get('type')?.value) && videoUrl"
+                                          (click)="removeSelectedFile(fileInput)">
+                                          Remove
+                                      </button>
+                                  </div>
+                              </div>
+                              <div *ngIf="videoUrl">
+                                  <ng-container *ngIf="selectedFileType === 'video'; else imagePreview">
+                                      <video [src]="videoUrl" controls width="400">Your browser does not support the
+                                          video tag.</video>
+                                  </ng-container>
+                                  <ng-template #imagePreview>
+                                      <img [src]="videoUrl" alt="Uploaded Image" width="400"
+                                          style="border-radius: 8px;" />
+                                  </ng-template>
+                              </div>
+                          </div>
+                          <div class="d-flex align-items-center">
+                              <textarea class="form-control" [(ngModel)]="editorContent"
+                                  [ngModelOptions]="{standalone:true}" style="min-height: 30vh;"></textarea>
+                          </div>
+                          }
+                          @if(CampaignPostForm.get('type').value==4 || CampaignPostForm.get('type').value==5 ||
+                          CampaignPostForm.get('type').value==6 || CampaignPostForm.get('type').value==7 ||
+                          CampaignPostForm.get('type').value==8 || CampaignPostForm.get('type').value==9)
+                          {
+                          @if(CampaignPostForm.get('type').value==5 ||
+                          CampaignPostForm.get('type').value==6||CampaignPostForm.get('type').value==7 ||
+                          CampaignPostForm.get('type').value==8 || CampaignPostForm.get('type').value==9){
+                          <!-- <div class="video-upload-container">
+                              <div class="input-group mb-3">
+                                  <div class="custom-file">
+                                      <input type="file" class="custom-file-input" id="inputGroupFile01"
+                                          (change)="onVideoSelected($event)" accept="video/mp4" />
 
-                                    </div>
-                                </div>
-                                <div *ngIf="videoUrl">
-                                    <video [src]="videoUrl" controls width="400">
-                                        Your browser does not support the video tag.
-                                    </video>
-                                </div>
-                            </div> -->
+                                  </div>
+                              </div>
+                              <div *ngIf="videoUrl">
+                                  <video [src]="videoUrl" controls width="400">
+                                      Your browser does not support the video tag.
+                                  </video>
+                              </div>
+                          </div> -->
 
-                            <div class="video-upload-container">
-                                <div class="input-group mb-3">
-                                    <div class="custom-file">
-                                      
-                                        <input #fileInput type="file" class="custom-file-input"
-                                            (change)="onVideoSelected($event)" [accept]="getAcceptType()" />
+                          <div class="video-upload-container">
+                              <div class="input-group mb-3">
+                                  <div class="custom-file">
+                                    
+                                      <input #fileInput type="file" class="custom-file-input"
+                                          (change)="onVideoSelected($event)" accept="image/*,video/*" />
 
-                                       
+                                     
 
-                                        <button type="button" class="btn btn-outline-danger ms-2"
-                                            *ngIf="[3, 5, 6, 7, 8, 9].includes(+CampaignPostForm.get('type')?.value) && videoUrl"
-                                            (click)="removeSelectedFile(fileInput)">
-                                            Remove
-                                        </button>
+                                      <button type="button" class="btn btn-outline-danger ms-2"
+                                          *ngIf="[3, 5, 6, 7, 8, 9].includes(+CampaignPostForm.get('type')?.value) && videoUrl"
+                                          (click)="removeSelectedFile(fileInput)">
+                                          Remove
+                                      </button>
 
-                                    </div>
-                                </div>
+                                  </div>
+                              </div>
 
-                                <div *ngIf="videoUrl">
-                                    <ng-container *ngIf="selectedFileType === 'video'; else imagePreview">
-                                        <video [src]="videoUrl" controls width="400">Your browser does not support the
-                                            video tag.</video>
-                                    </ng-container>
-                                    <ng-template #imagePreview>
-                                        <img [src]="videoUrl" alt="Uploaded Image" width="400"
-                                            style="border-radius: 8px;" />
-                                    </ng-template>
-                                </div>
+                              <div *ngIf="videoUrl">
+                                  <ng-container *ngIf="selectedFileType === 'video'; else imagePreview">
+                                      <video [src]="videoUrl" controls width="400">Your browser does not support the
+                                          video tag.</video>
+                                  </ng-container>
+                                  <ng-template #imagePreview>
+                                      <img [src]="videoUrl" alt="Uploaded Image" width="400"
+                                          style="border-radius: 8px;" />
+                                  </ng-template>
+                              </div>
 
-                                <div *ngIf="CampaignPostForm.get('type').value === 8 && !uploadedVideoUrl && attemptedSubmit"
-                                    class="text-danger">
-                                    Video file is required for YouTube posts.
-                                </div>
-                            </div>
-                            }
-                            <div class="row my-4 mx-auto mb-5" style="width: 100%;">
-                                <quill-editor [ngStyle]="{width:'100%'} " [(ngModel)]="editorContent"
-                                    [ngModelOptions]="{standalone:true}" (onFocus)="focus($event)"
-                                    (onBlur)="blur($event)" (onEditorCreated)="created($event)"
-                                    class="mb-4"></quill-editor>
-                            </div>
-                            }
-                        </div>
-                    </div>
+                              <div *ngIf="CampaignPostForm.get('type').value === 8 && !uploadedVideoUrl && attemptedSubmit"
+                                  class="text-danger">
+                                  Video file is required for YouTube posts.
+                              </div>
+                          </div>
+                          }
+                          <div class="row my-4 mx-auto mb-5" style="width: 100%;">
+                              <quill-editor [ngStyle]="{width:'100%'} " [(ngModel)]="editorContent"
+                                  [ngModelOptions]="{standalone:true}" (onFocus)="focus($event)"
+                                  (onBlur)="blur($event)" (onEditorCreated)="created($event)"
+                                  class="mb-4"></quill-editor>
+                          </div>
+                          }
+                      </div>
+                  </div>
 
-                    <div>
-                        <label for="senderEmail">Sender Email</label>
-                        <input class="form-control" id="senderEmail" formControlName="senderEmail" type="email" />
-                        @if(CampaignPostForm.get('senderEmail').invalid &&
-                        CampaignPostForm.get('senderEmail').touched){
-                        <div class="text-danger">
-                            Please enter a valid email.
-                        </div>}
-                    </div>
-                    <div class="text-start mt-3" (click)="openDatePicker()" style="cursor: pointer;">
-                        <label for="scheduledPostTime">Post Time</label>
-                        <input type="datetime-local" id="scheduledPostTime" class="form-control"
-                            formControlName="scheduledPostTime" #dateTimeInput />
-                    </div>
+                  <div>
+                      <label for="senderEmail">Sender Email</label>
+                      <input class="form-control" id="senderEmail" formControlName="senderEmail" type="email" />
+                      @if(CampaignPostForm.get('senderEmail').invalid &&
+                      CampaignPostForm.get('senderEmail').touched){
+                      <div class="text-danger">
+                          Please enter a valid email.
+                      </div>}
+                  </div>
+                  <div class="text-start mt-3" (click)="openDatePicker()" style="cursor: pointer;">
+                      <label for="scheduledPostTime">Post Time</label>
+                      <input type="datetime-local" id="scheduledPostTime" class="form-control"
+                          formControlName="scheduledPostTime" #dateTimeInput />
+                  </div>
 
-                    <div *ngIf="CampaignPostForm.get('scheduledPostTime')?.invalid && CampaignPostForm.get('scheduledPostTime')?.touched"
-                        class="text-danger">
-                        Please select a valid date and time.
-                    </div>
-
-
-                    <br>
-
-                </div>
-                <button type="submit" class="btn btn-primary"
-                    [disabled]="CampaignPostForm.invalid">@if(editMode){Update}@else{Create} Campaign Post</button>
-            </form>
+                  <div *ngIf="CampaignPostForm.get('scheduledPostTime')?.invalid && CampaignPostForm.get('scheduledPostTime')?.touched"
+                      class="text-danger">
+                      Please select a valid date and time.
+                  </div>
 
 
-        </div>
+                  <br>
 
-    </div>
+              </div>
+              <button type="submit" class="btn btn-primary"
+                  [disabled]="CampaignPostForm.invalid">@if(editMode){Update}@else{Create} Campaign Post</button>
+          </form>
+
+
+      </div>
+
+  </div>
 </div>
 
 <div *ngIf="aiTitleOptions.length > 0" class="ai-options-section">
-    <h5>Select a Suggested Title:</h5>
-    <div *ngFor="let option of aiTitleOptions; let i = index" class="ai-option-item">
-        <button type="button" (click)="selectAiTitleOption(option,i)">
-            Option {{i + 1}}: {{option}}
-        </button>
-    </div>
+  <h5>Select a Suggested Title:</h5>
+  <div *ngFor="let option of aiTitleOptions; let i = index" class="ai-option-item">
+      <button type="button" (click)="selectAiTitleOption(option,i)">
+          Option {{i + 1}}: {{option}}
+      </button>
+  </div>
 </div>
 
 <div *ngIf="aiContentOptions.length > 0" class="ai-options-section">
-    <h5>Select a Suggested Content:</h5>
-    <div *ngFor="let option of aiContentOptions; let i = index" class="ai-option-item">
-        <button type="button" (click)="selectAiContentOption(option, i)">
-            Option {{i + 1}}: {{option}}
-        </button>
-    </div>
+  <h5>Select a Suggested Content:</h5>
+  <div *ngFor="let option of aiContentOptions; let i = index" class="ai-option-item">
+      <button type="button" (click)="selectAiContentOption(option, i)">
+          Option {{i + 1}}: {{option}}
+      </button>
+  </div>
 </div>
 
 <div *ngIf="aiContentOptions.length > 0" class="ai-content-chat mt-3">
-    <div *ngFor="let option of aiContentOptions; let i = index" class="chat-bubble ai-content-option">
-        <span>{{ stripOptionPrefix(option) }}</span>
-        <button type="button" class="btn btn-success btn-sm ml-2" (click)="selectAiContentOption(option, i)">
-            &#10003;
-        </button>
-    </div>
+  <div *ngFor="let option of aiContentOptions; let i = index" class="chat-bubble ai-content-option">
+      <span>{{ stripOptionPrefix(option) }}</span>
+      <button type="button" class="btn btn-success btn-sm ml-2" (click)="selectAiContentOption(option, i)">
+          &#10003;
+      </button>
+  </div>
 </div>
 
 <div *ngIf="showAIContentModal" class="modal fade show d-block" tabindex="-1" role="dialog" style="background: rgba(0,0,0,0.5); overflow-y: auto;">
-  <div class="modal-dialog modal-lg " role="document" style="    margin-block: 9%; overflow: hidden;">
-    <div class="modal-content">
-      <div class="modal-header bg-gradient bg-secondary text-white px-4 py-3">
-        <h5 class="modal-title mb-0">AI Content Generation</h5>
-        <button type="button" class="btn btn-danger br-50 ms-2" style="border-radius: 50%;" aria-label="Close" (click)="closeAIContentModal()">
-          <span aria-hidden="true" class="text-white">X</span>
+<div class="modal-dialog modal-lg " role="document" style="    margin-block: 9%; overflow: hidden;">
+  <div class="modal-content">
+    <div class="modal-header bg-gradient bg-secondary text-white px-4 py-3">
+      <h5 class="modal-title mb-0">AI Content Generation</h5>
+      <button type="button" class="btn btn-danger br-50 ms-2" style="border-radius: 50%;" aria-label="Close" (click)="closeAIContentModal()">
+        <span aria-hidden="true" class="text-white">X</span>
+      </button>
+    </div>
+    <div class="card-body p-4 position-relative">
+      <app-chat [platform]="getSelectedPlatformName()" (contentGenerated)="onChatTextSelected($event)"></app-chat>
+      <div *ngIf="showAddToContentButton" class="w-100 d-flex justify-content-end mt-2" style="position: relative;">
+        <button type="button" class="btn btn-primary d-flex align-items-center" (click)="addSelectedChatTextToContent()">
+          <i class="fas fa-plus me-2"></i> Add to content
         </button>
-      </div>
-      <div class="card-body p-4 position-relative">
-        <app-chat [platform]="getSelectedPlatformName()" (contentGenerated)="onChatTextSelected($event)"></app-chat>
-        <div *ngIf="showAddToContentButton" class="w-100 d-flex justify-content-end mt-2" style="position: relative;">
-          <button type="button" class="btn btn-primary d-flex align-items-center" (click)="addSelectedChatTextToContent()">
-            <i class="fas fa-plus me-2"></i> Add to content
-          </button>
-          <span class="ms-2 d-flex align-items-center" style="position: relative;">
-            <i class="fas fa-info-circle" style="cursor: pointer; font-size: 18px; color: #007bff;" (mouseenter)="showTooltipImmediate()" (mouseleave)="hideTooltip()"></i>
-            <span *ngIf="showAddToContentTooltip" class="position-absolute" style="bottom: 120%; right: 0; z-index: 10; background: #fff; color: #333; border: 1px solid #ccc; border-radius: 6px; padding: 6px 12px; font-size: 13px; min-width: 220px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); white-space: nowrap;">
-              <i class="fas fa-info-circle me-1"></i> Select text to add to content box.
-            </span>
+        <span class="ms-2 d-flex align-items-center" style="position: relative;">
+          <i class="fas fa-info-circle" style="cursor: pointer; font-size: 18px; color: #007bff;" (mouseenter)="showTooltipImmediate()" (mouseleave)="hideTooltip()"></i>
+          <span *ngIf="showAddToContentTooltip" class="position-absolute" style="bottom: 120%; right: 0; z-index: 10; background: #fff; color: #333; border: 1px solid #ccc; border-radius: 6px; padding: 6px 12px; font-size: 13px; min-width: 220px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); white-space: nowrap;">
+            <i class="fas fa-info-circle me-1"></i> Select text to add to content box.
           </span>
-        </div>
+        </span>
       </div>
     </div>
   </div>
+</div>
 </div>
 
 
@@ -379,213 +379,213 @@
 
 
 <div *ngIf="showAIImageModal" class="modal fade show d-block" tabindex="-1" role="dialog" style="background: rgba(0,0,0,0.5); overflow-y: auto;">
-  <div class="modal-dialog modal-xl d-flex align-items-center justify-content-center" role="document" style="min-height: 90vh; min-width: 900px; max-width: 1200px; margin: 0 auto; display: flex; align-items: center; justify-content: center;">
-    <div class="modal-content" style="min-height: 80vh; border-radius: 18px; box-shadow: 0 8px 32px rgba(0,0,0,0.18);">
-      <div class="modal-header bg-gradient bg-primary text-white px-4 py-3" style="border-top-left-radius: 18px; border-top-right-radius: 18px;">
-        <h5 class="modal-title mb-0">AI Image Generator</h5>
-        <button type="button" class="btn btn-danger br-50 ms-2" style="border-radius: 50%;" aria-label="Close" (click)="closeAIImageModal()">
-          <span aria-hidden="true" class="text-white">X</span>
-        </button>
+<div class="modal-dialog modal-xl d-flex align-items-center justify-content-center" role="document" style="min-height: 90vh; min-width: 900px; max-width: 1200px; margin: 0 auto; display: flex; align-items: center; justify-content: center;">
+  <div class="modal-content" style="min-height: 80vh; border-radius: 18px; box-shadow: 0 8px 32px rgba(0,0,0,0.18);">
+    <div class="modal-header bg-gradient bg-primary text-white px-4 py-3" style="border-top-left-radius: 18px; border-top-right-radius: 18px;">
+      <h5 class="modal-title mb-0">AI Image Generator</h5>
+      <button type="button" class="btn btn-danger br-50 ms-2" style="border-radius: 50%;" aria-label="Close" (click)="closeAIImageModal()">
+        <span aria-hidden="true" class="text-white">X</span>
+      </button>
+    </div>
+    <div class="card-body p-4 position-relative">
+      <div class="mb-3">
+        <label for="aiImagePrompt" class="form-label fw-semibold">Describe the image you want to generate</label>
+        <input id="aiImagePrompt" class="form-control form-control-lg" [(ngModel)]="aiImagePrompt" [ngModelOptions]="{standalone:true}" placeholder="e.g. A futuristic city skyline at sunset" />
       </div>
-      <div class="card-body p-4 position-relative">
-        <div class="mb-3">
-          <label for="aiImagePrompt" class="form-label fw-semibold">Describe the image you want to generate</label>
-          <input id="aiImagePrompt" class="form-control form-control-lg" [(ngModel)]="aiImagePrompt" [ngModelOptions]="{standalone:true}" placeholder="e.g. A futuristic city skyline at sunset" />
+      <div class="d-flex align-items-center mb-4">
+        <button type="button" class="btn btn-success btn-lg me-2 px-4" (click)="generateImageWithAI()" [disabled]="aiImageLoading">
+          <i class="fas fa-magic me-2"></i> Generate
+        </button>
+        <div *ngIf="aiImageLoading" class="spinner-border text-primary ms-2" role="status" style="width: 2rem; height: 2rem;">
+          <span class="visually-hidden">Loading...</span>
         </div>
-        <div class="d-flex align-items-center mb-4">
-          <button type="button" class="btn btn-success btn-lg me-2 px-4" (click)="generateImageWithAI()" [disabled]="aiImageLoading">
-            <i class="fas fa-magic me-2"></i> Generate
-          </button>
-          <div *ngIf="aiImageLoading" class="spinner-border text-primary ms-2" role="status" style="width: 2rem; height: 2rem;">
-            <span class="visually-hidden">Loading...</span>
-          </div>
-        </div>
-        <div *ngIf="aiImageError" class="alert alert-danger py-2 px-3 mb-2">{{ aiImageError }}</div>
-        <div *ngIf="aiImageResultUrl" class="container mt-4">
-          <div class="row g-4 justify-content-center">
-            <ng-container *ngFor="let row of [0, 1]">
-              <div class="col-12 d-flex justify-content-center">
-                <ng-container *ngFor="let col of [0, 1]">
-                  <ng-container *ngIf="aiImageResults[row * 2 + col]">
-                    <div class="ai-image-thumb position-relative m-2"
-                         [ngClass]="{'selected': selectedAIImageIndex === (row * 2 + col)}"
-                         (click)="selectAIImage(row * 2 + col)"
-                         style="transition: transform 0.2s, box-shadow 0.2s; border-radius: 12px; overflow: hidden; cursor: pointer; box-shadow: 0 2px 12px rgba(0,0,0,0.08);">
-                      <img [src]="aiImageResults[row * 2 + col]" alt="Generated AI Image"
-                           class="img-fluid"
-                           style="max-width: 260px; max-height: 260px; display: block; border-radius: 12px; background: #f8f9fa; transition: transform 0.2s;" />
-                      <button *ngIf="selectedAIImageIndex === (row * 2 + col)" class="btn btn-success btn-sm position-absolute top-0 end-0 m-2" style="border-radius: 50%; pointer-events: none; z-index: 2;">
-                        <i class="fas fa-check"></i>
-                      </button>
-                    </div>
-                  </ng-container>
+      </div>
+      <div *ngIf="aiImageError" class="alert alert-danger py-2 px-3 mb-2">{{ aiImageError }}</div>
+      <div *ngIf="aiImageResultUrl" class="container mt-4">
+        <div class="row g-4 justify-content-center">
+          <ng-container *ngFor="let row of [0, 1]">
+            <div class="col-12 d-flex justify-content-center">
+              <ng-container *ngFor="let col of [0, 1]">
+                <ng-container *ngIf="aiImageResults[row * 2 + col]">
+                  <div class="ai-image-thumb position-relative m-2"
+                       [ngClass]="{'selected': selectedAIImageIndex === (row * 2 + col)}"
+                       (click)="selectAIImage(row * 2 + col)"
+                       style="transition: transform 0.2s, box-shadow 0.2s; border-radius: 12px; overflow: hidden; cursor: pointer; box-shadow: 0 2px 12px rgba(0,0,0,0.08);">
+                    <img [src]="aiImageResults[row * 2 + col]" alt="Generated AI Image"
+                         class="img-fluid"
+                         style="max-width: 260px; max-height: 260px; display: block; border-radius: 12px; background: #f8f9fa; transition: transform 0.2s;" />
+                    <button *ngIf="selectedAIImageIndex === (row * 2 + col)" class="btn btn-success btn-sm position-absolute top-0 end-0 m-2" style="border-radius: 50%; pointer-events: none; z-index: 2;">
+                      <i class="fas fa-check"></i>
+                    </button>
+                  </div>
                 </ng-container>
-              </div>
-            </ng-container>
-          </div>
+              </ng-container>
+            </div>
+          </ng-container>
         </div>
-        <div class="mt-4 text-center">
-          <button
-            type="button"
-            class="btn btn-outline-info btn-lg me-2"
-            (click)="openManualEditorModal()"
-            title="Edit the selected image, or upload your own if none is selected"
-            style="min-width: 220px;"
-          >
-            <i class="fas fa-edit me-1"></i> Edit Image Manually
-          </button>
-          <button *ngIf="selectedAIImageIndex !== null" type="button" class="btn btn-outline-primary btn-lg me-2" (click)="openAIEditModal()">
-            <i class="fas fa-magic me-1"></i> Edit Image with AI
-          </button>
-          <button *ngIf="selectedAIImageIndex !== null" type="button" class="btn btn-outline-warning btn-lg" (click)="openTestAIPayloadModal()">
-            <i class="fas fa-vial me-1"></i> Test AI Image Payload
-          </button>
-          <div class="form-text text-muted mt-2" style="font-size: 13px;">
-            You can edit a generated image, or upload your own to edit manually.
-          </div>
+      </div>
+      <div class="mt-4 text-center">
+        <button
+          type="button"
+          class="btn btn-outline-info btn-lg me-2"
+          (click)="openManualEditorModal()"
+          title="Edit the selected image, or upload your own if none is selected"
+          style="min-width: 220px;"
+        >
+          <i class="fas fa-edit me-1"></i> Edit Image Manually
+        </button>
+        <button *ngIf="selectedAIImageIndex !== null" type="button" class="btn btn-outline-primary btn-lg me-2" (click)="openAIEditModal()">
+          <i class="fas fa-magic me-1"></i> Edit Image with AI
+        </button>
+        <button *ngIf="selectedAIImageIndex !== null" type="button" class="btn btn-outline-warning btn-lg" (click)="openTestAIPayloadModal()">
+          <i class="fas fa-vial me-1"></i> Test AI Image Payload
+        </button>
+        <div class="form-text text-muted mt-2" style="font-size: 13px;">
+          You can edit a generated image, or upload your own to edit manually.
         </div>
       </div>
     </div>
   </div>
+</div>
 </div>
 
 
 <div *ngIf="showAIEditModal" class="modal fade show d-block" tabindex="-1" role="dialog" style="background: rgba(0,0,0,0.5); overflow-y: auto;">
-  <div class="modal-dialog modal-md" role="document" style="margin-block: 10%; overflow: hidden;">
-    <div class="modal-content">
-      <div class="modal-header bg-gradient bg-primary text-white px-4 py-3">
-        <h5 class="modal-title mb-0">AI Edit Image</h5>
-        <button type="button" class="btn btn-danger br-50 ms-2" style="border-radius: 50%;" aria-label="Close" (click)="closeAIEditModal()">
-          <span aria-hidden="true" class="text-white">X</span>
-        </button>
+<div class="modal-dialog modal-md" role="document" style="margin-block: 10%; overflow: hidden;">
+  <div class="modal-content">
+    <div class="modal-header bg-gradient bg-primary text-white px-4 py-3">
+      <h5 class="modal-title mb-0">AI Edit Image</h5>
+      <button type="button" class="btn btn-danger br-50 ms-2" style="border-radius: 50%;" aria-label="Close" (click)="closeAIEditModal()">
+        <span aria-hidden="true" class="text-white">X</span>
+      </button>
+    </div>
+    <div class="card-body p-4 position-relative">
+      <div class="mb-3">
+        <label for="aiEditPrompt" class="form-label">Describe how you want to edit the image</label>
+        <input id="aiEditPrompt" class="form-control" [(ngModel)]="aiEditPrompt" [ngModelOptions]="{standalone:true}" placeholder="e.g. Add a sunset background" />
       </div>
-      <div class="card-body p-4 position-relative">
-        <div class="mb-3">
-          <label for="aiEditPrompt" class="form-label">Describe how you want to edit the image</label>
-          <input id="aiEditPrompt" class="form-control" [(ngModel)]="aiEditPrompt" [ngModelOptions]="{standalone:true}" placeholder="e.g. Add a sunset background" />
+      <div class="mb-3">
+        <label for="aiEditProcessingType" class="form-label">Processing Type</label>
+        <select id="aiEditProcessingType" class="form-select" [(ngModel)]="aiEditProcessingType" [ngModelOptions]="{standalone:true}">
+          <option value="img2img">img2img</option>
+          <option value="inpainting">inpainting</option>
+          <option value="outpainting">outpainting</option>
+          <option value="remix">remix</option>
+        </select>
+      </div>
+      <div class="text-center mb-3">
+        <img *ngIf="aiImageResultUrl" [src]="aiImageResultUrl" alt="Image to Edit" class="img-fluid rounded shadow" style="max-height: 200px;" />
+      </div>
+      <div class="d-flex align-items-center mb-3">
+        <button type="button" class="btn btn-success me-2" (click)="submitAIEdit()" [disabled]="aiEditLoading">
+          <i class="fas fa-magic me-2"></i> Submit
+        </button>
+        <div *ngIf="aiEditLoading" class="spinner-border text-primary ms-2" role="status" style="width: 1.5rem; height: 1.5rem;">
+          <span class="visually-hidden">Loading...</span>
         </div>
-        <div class="mb-3">
-          <label for="aiEditProcessingType" class="form-label">Processing Type</label>
-          <select id="aiEditProcessingType" class="form-select" [(ngModel)]="aiEditProcessingType" [ngModelOptions]="{standalone:true}">
-            <option value="img2img">img2img</option>
-            <option value="inpainting">inpainting</option>
-            <option value="outpainting">outpainting</option>
-            <option value="remix">remix</option>
-          </select>
-        </div>
-        <div class="text-center mb-3">
-          <img *ngIf="aiImageResultUrl" [src]="aiImageResultUrl" alt="Image to Edit" class="img-fluid rounded shadow" style="max-height: 200px;" />
-        </div>
-        <div class="d-flex align-items-center mb-3">
-          <button type="button" class="btn btn-success me-2" (click)="submitAIEdit()" [disabled]="aiEditLoading">
-            <i class="fas fa-magic me-2"></i> Submit
-          </button>
-          <div *ngIf="aiEditLoading" class="spinner-border text-primary ms-2" role="status" style="width: 1.5rem; height: 1.5rem;">
-            <span class="visually-hidden">Loading...</span>
-          </div>
-        </div>
-        <div *ngIf="aiEditError" class="alert alert-danger py-2 px-3 mb-2">{{ aiEditError }}</div>
-        <div *ngIf="aiEditResultUrl && aiEditResultUrl !== aiImageResultUrl" class="text-center mt-3">
-          <img [src]="aiEditResultUrl" alt="Edited AI Image" class="img-fluid rounded shadow" style="max-height: 300px;" />
-        </div>
+      </div>
+      <div *ngIf="aiEditError" class="alert alert-danger py-2 px-3 mb-2">{{ aiEditError }}</div>
+      <div *ngIf="aiEditResultUrl && aiEditResultUrl !== aiImageResultUrl" class="text-center mt-3">
+        <img [src]="aiEditResultUrl" alt="Edited AI Image" class="img-fluid rounded shadow" style="max-height: 300px;" />
       </div>
     </div>
   </div>
+</div>
 </div>
 
 <div *ngIf="showManualEditorModal" class="modal fade show d-block" tabindex="-1" role="dialog" style="background: rgba(0,0,0,0.5); overflow-y: auto;">
-  <div class="modal-dialog modal-xl" role="document" style="margin-block: 5%; overflow: hidden; max-width: 900px;">
-    <div class="modal-content">
-      <div class="modal-header bg-gradient bg-secondary text-white px-4 py-3">
-        <h5 class="modal-title mb-0">Manual Image Editor</h5>
-        <button type="button" class="btn btn-danger br-50 ms-2" style="border-radius: 50%;" aria-label="Close" (click)="closeManualEditorModal()">
-          <span aria-hidden="true" class="text-white">X</span>
-        </button>
+<div class="modal-dialog modal-xl" role="document" style="margin-block: 5%; overflow: hidden; max-width: 900px;">
+  <div class="modal-content">
+    <div class="modal-header bg-gradient bg-secondary text-white px-4 py-3">
+      <h5 class="modal-title mb-0">Manual Image Editor</h5>
+      <button type="button" class="btn btn-danger br-50 ms-2" style="border-radius: 50%;" aria-label="Close" (click)="closeManualEditorModal()">
+        <span aria-hidden="true" class="text-white">X</span>
+      </button>
+    </div>
+    <div class="card-body p-4 position-relative">
+      <div class="mb-3">
+        <label for="manualImageUpload" class="form-label">Upload Image</label>
+        <input id="manualImageUpload" type="file" accept="image/*" class="form-control" (change)="onManualImageFileChange($event)" />
       </div>
-      <div class="card-body p-4 position-relative">
-        <div class="mb-3">
-          <label for="manualImageUpload" class="form-label">Upload Image</label>
-          <input id="manualImageUpload" type="file" accept="image/*" class="form-control" (change)="onManualImageFileChange($event)" />
+      <div *ngIf="editorLoading" class="position-absolute top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center" style="background: rgba(255,255,255,0.7); z-index: 10;">
+        <div class="spinner-border text-primary" style="width: 3rem; height: 3rem;" role="status">
+          <span class="visually-hidden">Loading...</span>
         </div>
-        <div *ngIf="editorLoading" class="position-absolute top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center" style="background: rgba(255,255,255,0.7); z-index: 10;">
-          <div class="spinner-border text-primary" style="width: 3rem; height: 3rem;" role="status">
-            <span class="visually-hidden">Loading...</span>
-          </div>
-        </div>
-        <ejs-imageeditor #imageEditor [width]="imageEditorSettings.width" [height]="imageEditorSettings.height" [toolbar]="imageEditorSettings.toolbar"></ejs-imageeditor>
-        <div class="d-flex justify-content-end mt-3 gap-2">
-          <button type="button" class="btn btn-success" (click)="insertManualEditorImageToContent()" [disabled]="!manualEditorImageUrl">
-            <i class="fas fa-arrow-down me-1"></i> Insert Image into Content
-          </button>
-          <button type="button" class="btn btn-primary" (click)="saveEditedImage()">
-            <i class="fas fa-save me-1"></i> Save
-          </button>
-          <button type="button" class="btn btn-secondary" (click)="closeManualEditorModal()">
-            <i class="fas fa-times me-1"></i> Cancel
-          </button>
-        </div>
+      </div>
+      <ejs-imageeditor #imageEditor [width]="imageEditorSettings.width" [height]="imageEditorSettings.height" [toolbar]="imageEditorSettings.toolbar"></ejs-imageeditor>
+      <div class="d-flex justify-content-end mt-3 gap-2">
+        <button type="button" class="btn btn-success" (click)="insertManualEditorImageToContent()" [disabled]="!manualEditorImageUrl">
+          <i class="fas fa-arrow-down me-1"></i> Insert Image into Content
+        </button>
+        <button type="button" class="btn btn-primary" (click)="saveEditedImage()">
+          <i class="fas fa-save me-1"></i> Save
+        </button>
+        <button type="button" class="btn btn-secondary" (click)="closeManualEditorModal()">
+          <i class="fas fa-times me-1"></i> Cancel
+        </button>
       </div>
     </div>
   </div>
+</div>
 </div>
 
 <div *ngIf="showTestAIPayloadModal" class="modal fade show d-block" tabindex="-1" role="dialog" style="background: rgba(0,0,0,0.5); overflow-y: auto;">
-  <div class="modal-dialog modal-lg d-flex align-items-center justify-content-center" role="document" style="min-height: 70vh; max-width: 700px; margin: 0 auto; display: flex; align-items: center; justify-content: center;">
-    <div class="modal-content" style="border-radius: 18px; box-shadow: 0 8px 32px rgba(0,0,0,0.18);">
-      <div class="modal-header bg-gradient bg-warning text-dark px-4 py-3" style="border-top-left-radius: 18px; border-top-right-radius: 18px;">
-        <h5 class="modal-title mb-0">Test AI Image Payload</h5>
-        <button type="button" class="btn btn-danger br-50 ms-2" style="border-radius: 50%;" aria-label="Close" (click)="closeTestAIPayloadModal()">
-          <span aria-hidden="true" class="text-white">X</span>
-        </button>
-      </div>
-      <div class="card-body p-4 position-relative">
-        <div class="mb-3">
-          <label class="form-label fw-semibold">Select or Upload Image</label>
-          <div class="d-flex flex-wrap gap-3 mb-2">
-            <ng-container *ngFor="let img of aiImageResults; let i = index">
-              <div class="ai-image-thumb position-relative m-1"
-                   [ngClass]="{'selected': testAIPayloadImage === img}"
-                   (click)="testAIPayloadImage = img"
-                   style="transition: transform 0.2s, box-shadow 0.2s; border-radius: 10px; overflow: hidden; cursor: pointer; box-shadow: 0 2px 12px rgba(0,0,0,0.08);">
-                <img [src]="img" alt="Generated AI Image"
-                     class="img-fluid"
-                     style="max-width: 120px; max-height: 120px; display: block; border-radius: 10px; background: #f8f9fa; transition: transform 0.2s;" />
-                <button *ngIf="testAIPayloadImage === img" class="btn btn-success btn-sm position-absolute top-0 end-0 m-1" style="border-radius: 50%; pointer-events: none; z-index: 2;">
-                  <i class="fas fa-check"></i>
-                </button>
-              </div>
-            </ng-container>
-            <div class="d-flex flex-column align-items-center justify-content-center m-1">
-              <label for="testAIPayloadUpload" class="btn btn-outline-secondary btn-sm mb-1" style="width: 120px; height: 120px; display: flex; align-items: center; justify-content: center; border-radius: 10px;">
-                <i class="fas fa-upload fa-2x"></i>
-                <input id="testAIPayloadUpload" type="file" accept="image/*" style="display: none;" (change)="onTestAIPayloadFileChange($event)" />
-              </label>
-              <span style="font-size: 12px;">Upload</span>
+<div class="modal-dialog modal-lg d-flex align-items-center justify-content-center" role="document" style="min-height: 70vh; max-width: 700px; margin: 0 auto; display: flex; align-items: center; justify-content: center;">
+  <div class="modal-content" style="border-radius: 18px; box-shadow: 0 8px 32px rgba(0,0,0,0.18);">
+    <div class="modal-header bg-gradient bg-warning text-dark px-4 py-3" style="border-top-left-radius: 18px; border-top-right-radius: 18px;">
+      <h5 class="modal-title mb-0">Test AI Image Payload</h5>
+      <button type="button" class="btn btn-danger br-50 ms-2" style="border-radius: 50%;" aria-label="Close" (click)="closeTestAIPayloadModal()">
+        <span aria-hidden="true" class="text-white">X</span>
+      </button>
+    </div>
+    <div class="card-body p-4 position-relative">
+      <div class="mb-3">
+        <label class="form-label fw-semibold">Select or Upload Image</label>
+        <div class="d-flex flex-wrap gap-3 mb-2">
+          <ng-container *ngFor="let img of aiImageResults; let i = index">
+            <div class="ai-image-thumb position-relative m-1"
+                 [ngClass]="{'selected': testAIPayloadImage === img}"
+                 (click)="testAIPayloadImage = img"
+                 style="transition: transform 0.2s, box-shadow 0.2s; border-radius: 10px; overflow: hidden; cursor: pointer; box-shadow: 0 2px 12px rgba(0,0,0,0.08);">
+              <img [src]="img" alt="Generated AI Image"
+                   class="img-fluid"
+                   style="max-width: 120px; max-height: 120px; display: block; border-radius: 10px; background: #f8f9fa; transition: transform 0.2s;" />
+              <button *ngIf="testAIPayloadImage === img" class="btn btn-success btn-sm position-absolute top-0 end-0 m-1" style="border-radius: 50%; pointer-events: none; z-index: 2;">
+                <i class="fas fa-check"></i>
+              </button>
             </div>
+          </ng-container>
+          <div class="d-flex flex-column align-items-center justify-content-center m-1">
+            <label for="testAIPayloadUpload" class="btn btn-outline-secondary btn-sm mb-1" style="width: 120px; height: 120px; display: flex; align-items: center; justify-content: center; border-radius: 10px;">
+              <i class="fas fa-upload fa-2x"></i>
+              <input id="testAIPayloadUpload" type="file" accept="image/*,video/*" style="display: none;" (change)="onTestAIPayloadFileChange($event)" />
+            </label>
+            <span style="font-size: 12px;">Upload</span>
           </div>
-          <div *ngIf="testAIPayloadImage" class="text-center mt-2">
-            <img [src]="testAIPayloadImage" alt="Selected Image" style="max-width: 220px; max-height: 220px; border-radius: 10px; box-shadow: 0 2px 12px rgba(0,0,0,0.08);" />
-          </div>
         </div>
-        <div class="mb-3 mt-4">
-          <label class="form-label fw-semibold">Prompt</label>
-          <textarea class="form-control" [(ngModel)]="testAIPayloadPrompt" rows="3" placeholder="Enter or copy the prompt here..."></textarea>
+        <div *ngIf="testAIPayloadImage" class="text-center mt-2">
+          <img [src]="testAIPayloadImage" alt="Selected Image" style="max-width: 220px; max-height: 220px; border-radius: 10px; box-shadow: 0 2px 12px rgba(0,0,0,0.08);" />
         </div>
-        <div class="d-flex justify-content-end mt-4 gap-2">
-          <button type="button" class="btn btn-primary px-4" (click)="saveTestAIPayload()" [disabled]="!testAIPayloadImage || !testAIPayloadPrompt">
-            <i class="fas fa-save me-1"></i> Save Payload
-          </button>
-          <button type="button" class="btn btn-secondary px-4" (click)="closeTestAIPayloadModal()">
-            Cancel
-          </button>
-        </div>
+      </div>
+      <div class="mb-3 mt-4">
+        <label class="form-label fw-semibold">Prompt</label>
+        <textarea class="form-control" [(ngModel)]="testAIPayloadPrompt" rows="3" placeholder="Enter or copy the prompt here..."></textarea>
+      </div>
+      <div class="d-flex justify-content-end mt-4 gap-2">
+        <button type="button" class="btn btn-primary px-4" (click)="saveTestAIPayload()" [disabled]="!testAIPayloadImage || !testAIPayloadPrompt">
+          <i class="fas fa-save me-1"></i> Save Payload
+        </button>
+        <button type="button" class="btn btn-secondary px-4" (click)="closeTestAIPayloadModal()">
+          Cancel
+        </button>
       </div>
     </div>
   </div>
 </div>
+</div>
 
 <div *ngIf="CampaignPostForm.get('type').value === 7 && !uploadedVideoUrl && attemptedSubmit" class="text-danger">
-  Please upload an image or video for LinkedIn post.
+Please upload an image or video for LinkedIn post.
 </div>
 
 

@@ -94,6 +94,9 @@
                 <div *ngIf="contactForm.get('contactWhatsAppCode')?.invalid && contactForm.get('contactWhatsAppCode')?.touched">
                   <span class="text-danger">Country code is required.</span>
                 </div>
+                <div *ngIf="contactForm.get('contactWhatsApp')?.errors?.['required'] && contactForm.get('contactWhatsApp')?.touched">
+                  <span class="text-danger">WhatsApp number is required.</span>
+                </div>
                 <div *ngIf="contactForm.get('contactWhatsApp')?.errors?.['pattern'] && contactForm.get('contactWhatsApp')?.touched">
                   <span class="text-danger">Only numbers allowed (7–15 digits).</span>
                 </div>
