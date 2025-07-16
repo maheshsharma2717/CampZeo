@@ -57,10 +57,12 @@ export class EventComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    debugger;
     this.GetData();
     if (this.accessToken) {
       this.service.getFacebookPages(this.accessToken).subscribe({
         next: (res: any) => {
+          console.log(' Facebook API Response:', res);
           this.pages = res.data || [];
         },
         error: err => {
@@ -70,6 +72,7 @@ export class EventComponent implements OnInit {
     }
   }
   GetData() {
+    debugger;
     this.service.GetEventForCampaignPost({ data: this.id }).subscribe({
       next: (response: any) => {
         this.contacts = response.data.contacts
@@ -122,6 +125,7 @@ export class EventComponent implements OnInit {
   }
 
   sendMessage() {
+    debugger;
     const campaignId = this.Post?.campaignId;
     if (!campaignId) {
       this.toaster.error('Campaign ID is missing.');
@@ -438,28 +442,57 @@ export class EventComponent implements OnInit {
       });
     }
   }
+  // extractContent(message: string) {
+  //   if (!message) return { text: '', images: [], videos: [] };
+  //   const htmlParts = message.split('[{(break)}]');
+  //   const html = htmlParts[0];
+  //   const doc = new DOMParser().parseFromString(html, 'text/html');
+  //   const text = doc.body.textContent?.trim() || '';
+  //   const images: string[] = [];
+  //   doc.querySelectorAll('img').forEach(img => {
+  //     if (img.src.startsWith('data:image')) {
+  //       images.push(img.src);
+  //     }
+  //   });
+
+  //   const videos: string[] = [];
+  //   doc.querySelectorAll('video').forEach(video => {
+  //     if (video.src.startsWith('data:video')) {
+  //       videos.push(video.src);
+  //     }
+  //   });
+
+  //   return { text, images, videos };
+  // }
+
+
   extractContent(message: string) {
-    if (!message) return { text: '', images: [], videos: [] };
-    const htmlParts = message.split('[{(break)}]');
-    const html = htmlParts[0];
-    const doc = new DOMParser().parseFromString(html, 'text/html');
-    const text = doc.body.textContent?.trim() || '';
-    const images: string[] = [];
-    doc.querySelectorAll('img').forEach(img => {
-      if (img.src.startsWith('data:image')) {
-        images.push(img.src);
-      }
-    });
+    debugger;
+  if (!message) return { text: '', images: [], videos: [] };
 
-    const videos: string[] = [];
-    doc.querySelectorAll('video').forEach(video => {
-      if (video.src.startsWith('data:video')) {
-        videos.push(video.src);
-      }
-    });
+  const htmlParts = message.split('[{(break)}]');
+  const html = htmlParts[0];
+  const doc = new DOMParser().parseFromString(html, 'text/html');
 
-    return { text, images, videos };
-  }
+  const text = doc.body.textContent?.trim() || '';
+
+  const images: string[] = [];
+  doc.querySelectorAll('img').forEach(img => {
+    if (img.src && (img.src.startsWith('data:image') || img.src.startsWith('http') || img.src.startsWith('/assets'))) {
+      images.push(img.src);
+    }
+  });
+
+  const videos: string[] = [];
+  doc.querySelectorAll('video').forEach(video => {
+    if (video.src && (video.src.startsWith('data:video') || video.src.startsWith('http'))) {
+      videos.push(video.src);
+    }
+  });
+
+  return { text, images, videos };
+}
+
 
   onItemsPerPageChange(value: number) {
     this.pageSettings = { pageSize: value };
