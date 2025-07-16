@@ -55,6 +55,7 @@ export class EventComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    debugger;
     this.GetData();
     if (this.accessToken) {
       this.service.getFacebookPages(this.accessToken).subscribe({
@@ -384,6 +385,7 @@ export class EventComponent implements OnInit {
 
   //instagram fb changes
   onPageSelect(): void {
+    debugger;
     this.instagramUserId = '';
     if (this.selectedPage?.id && this.selectedPage?.access_token) {
       this.service.getInstagramUserId(this.selectedPage.id, this.selectedPage.access_token).subscribe({
