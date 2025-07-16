@@ -41,7 +41,7 @@ export class AuthCallbackComponent implements OnInit {
 
     this.service.exchangeToken(code, userId, platform).subscribe({
       next: (res: any) => {
-        
+        debugger;
         console.log(`${platform} Token:`, res);
 
         if (platform === 'instagram') {
