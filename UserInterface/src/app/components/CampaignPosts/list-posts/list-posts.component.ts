@@ -208,18 +208,17 @@ vedioresponse:any;
               this.emailHtmlContent = this.previewData.message;
             }
           }
-
+debugger;
           var url = this.previewData.videoUrl;
-          if (url) {
-            let urls: string[] = Array.isArray(url) ? url : [url];
-            urls.forEach((u: string) => {
-              if (/\.(jpg|jpeg|png|gif|bmp|webp|svg)$/i.test(u)) {
-                this.imageresponse = u;
-              }
-              else if (/\.(mp4|mov|avi|wmv|flv|webm|mkv|m4v)$/i.test(u)) {
-                this.vedioresponse = u;
-              }
-            });
+          // url is coming as a direct string, so just check and assign accordingly
+          this.imageresponse = null;
+          this.vedioresponse = null;
+          if (url && typeof url === 'string') {
+            if (/\.(jpg|jpeg|png|gif|bmp|webp|svg)$/i.test(url)) {
+              this.imageresponse = url;
+            } else if (/\.(mp4|mov|avi|wmv|flv|webm|mkv|m4v)$/i.test(url)) {
+              this.vedioresponse = url;
+            }
           }
 
           this.isPreviewModalOpen = true;

@@ -199,7 +199,7 @@
                     <div class="d-flex my-3">
                         <div class="w-100 text-start">
                             <label for="organisationName">Attachments</label>
-                            <div *ngIf="previewData?.type === 6 || previewData?.type === 7 || previewData?.type === 8">
+                            <div *ngIf="previewData">
                                 <video *ngIf="vedioresponse"  height="490" width="770" controls
                                     poster="path/to/thumbnail.jpg" autoplay muted loop>
                                     <source [src]="previewData.videoUrl" type="video/mp4" />
