@@ -223,30 +223,31 @@ export class EventComponent implements OnInit {
   }
 
   private postToLinkedIn(content: any) {
-    // Accept either image or video
-    const base64Image = content.images[0];
-    const videoUrl = this.videoUrl;
+    let text = this.Post?.message || '';
+    const mediaUrl = this.videoUrl;
 
-    if (!base64Image && !videoUrl) {
+    if (!mediaUrl) {
       this.toaster.warning('LinkedIn requires an image or video. Please add one.');
       return;
     }
 
-    // Prefer image if present, else use video
-    let payload: any = {
-      caption: content.text
-    };
-    if (base64Image) {
-      this.service.uploadMedia(base64Image).subscribe({
-        next: (uploadedImageUrl) => {
-          payload.imageUrl = uploadedImageUrl;
-          this.sendLinkedInPost(payload);
-        }
-      });
-    } else if (videoUrl) {
-      payload.videoUrl = videoUrl;
-      this.sendLinkedInPost(payload);
+    const tempDiv = document.createElement('div');
+    tempDiv.innerHTML = text;
+    text = tempDiv.textContent || tempDiv.innerText || '';
+
+    let payload: any = { caption: text };
+    const isImage = typeof mediaUrl === 'string' && mediaUrl.match(/\.(jpeg|jpg|png|gif|bmp|webp)$/i);
+    const isVideo = typeof mediaUrl === 'string' && mediaUrl.match(/\.(mp4|mov|avi|wmv|flv|webm|mkv)$/i);
+
+    if (isImage) {
+      payload.imageUrl = mediaUrl;
+    } else if (isVideo) {
+      payload.videoUrl = mediaUrl;
+    } else {
+      payload.imageUrl = mediaUrl;
     }
+
+    this.sendLinkedInPost(payload);
   }
 
   private sendLinkedInPost(payload: any) {
