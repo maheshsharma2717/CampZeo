@@ -75,7 +75,6 @@ export class EventComponent implements OnInit {
     
     this.service.GetEventForCampaignPost({ data: this.id }).subscribe({
       next: (response: any) => {
-        debugger
         this.contacts = response.data.contacts
         this.Post = response.data.post
         this.filteredContacts = this.contacts
@@ -171,7 +170,6 @@ export class EventComponent implements OnInit {
     }
   }
   private postToPinterest(content: any, pageAccessToken: any){
-debugger
     const imageUrl = content.images[0];
     let payload = {
       access_token: "pina_AMA7OQQXADIHQBAAGCACSDPFL2CARGABACGSPNXWSZXULDYYSD4ETAUWHL7XOVKI6NLOJDK75MZHMCYLIO6MY7D7ZZG2PFAA",
@@ -235,14 +233,14 @@ debugger
   const tempDiv = document.createElement('div');
   tempDiv.innerHTML = caption;
   caption = tempDiv.textContent || tempDiv.innerText || '';
-
+ 
   let images: string[] = [];
   let videos: string[] = [];
-
+ 
   if (this.videoUrl) {
     const isImage = typeof this.videoUrl === 'string' && this.videoUrl.match(/\.(jpeg|jpg|png|gif|bmp|webp)$/i);
     const isVideo = typeof this.videoUrl === 'string' && this.videoUrl.match(/\.(mp4|mov|avi|wmv|flv|webm|mkv)$/i);
-    
+   
     if (isImage) {
       images = [this.videoUrl as string];
     } else if (isVideo) {
@@ -254,50 +252,30 @@ debugger
       });
     }
   }
-
-  // 🟢 Video post
-  if (videos.length > 0) {
-    const payload: any = {
-      instagramUserId: this.instagramUserId,
-      accessToken,
-      caption,
-      videoUrl: videos[0]
-    };
-
-    this.service.postToInstagram(payload).subscribe({
-      next: () => {
-        this.toaster.success('Posted video to Instagram successfully!');
-        this.router.navigate(['list-campaigns']);
-      },
-      error: err => {
-        console.error('Instagram post failed:', err);
-        this.toaster.error('Failed to post video to Instagram.');
-      }
-    });
-  }
-
-  else if (images.length > 0) {
-    const payload = {
-      instagramUserId: this.instagramUserId,
-      accessToken,
-      caption,
-      imageUrl: images[0]
-    };
-
-    this.service.postToInstagram(payload).subscribe({
-      next: () => {
-        this.toaster.success('Posted image to Instagram successfully!');
-        this.router.navigate(['list-campaigns']);
-      },
-      error: err => {
-        console.error('Instagram post failed:', err);
-        this.toaster.error('Failed to post image to Instagram.');
-      }
-    });
-  }
-  else {
+ 
+  const payload = {
+    instagramUserId: this.instagramUserId,
+    accessToken,
+    caption,
+    images,
+    videos
+  };
+ 
+  if (images.length === 0 && videos.length === 0) {
     this.toaster.warning('Instagram requires an image or video. Please add one.');
+    return;
   }
+ 
+  this.service.postToInstagram(payload).subscribe({
+    next: () => {
+      this.toaster.success('Posted to Instagram successfully!');
+      this.router.navigate(['list-campaigns']);
+    },
+    error: err => {
+      console.error('Instagram post failed:', err);
+      this.toaster.error('Failed to post to Instagram.');
+    }
+  });
 }
 
 
