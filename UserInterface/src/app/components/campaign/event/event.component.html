@@ -81,7 +81,16 @@
                                                 </select>
                                             </div>
                                         </div>
-                                        <div class="card-body custom-inner-html" [innerHTML]="GetHtml(Post?.message)">
+                                        <div class="card-body">
+                                          <div *ngIf="vedioresponse">
+                                            <video [src]="vedioresponse" controls width="400">
+                                              Your browser does not support the video tag.
+                                            </video>
+                                          </div>
+                                          <div *ngIf="imageresponse">
+                                            <img [src]="imageresponse" alt="Preview Image" width="400" />
+                                          </div>
+                                          <div class="custom-inner-html" [innerHTML]="GetHtml(Post?.message)"></div>
                                         </div>
                                     </div>
                                 </div>
@@ -126,7 +135,16 @@
                                                 </select>
                                             </div> -->
                                         </div>
-                                        <div class="card-body custom-inner-html" [innerHTML]="GetHtml(Post?.message)">
+                                        <div class="card-body">
+                                          <div *ngIf="vedioresponse">
+                                            <video [src]="vedioresponse" controls width="400">
+                                              Your browser does not support the video tag.
+                                            </video>
+                                          </div>
+                                          <div *ngIf="imageresponse">
+                                            <img [src]="imageresponse" alt="Preview Image" width="400" />
+                                          </div>
+                                          <div class="custom-inner-html" [innerHTML]="GetHtml(Post?.message)"></div>
                                         </div>
                                     </div>
                                 </div>
@@ -134,6 +152,26 @@
 
                             <div class="tab-pane fade" [class.show]="activeTab === 'youtube'"
                                 [class.active]="activeTab === 'youtube'" id="youtube" role="tabpanel"
+                                aria-labelledby="facebook-tab">
+                                <div class="form-group">
+                                    <label for="sub">Subject</label>
+                                    <input type="text" class="form-control" name="sub" id="sub" readonly value="{{Post?.subject}}">
+                                    <div class="card border-0">
+                                        <div class="card-body">
+                                          <div *ngIf="vedioresponse">
+                                            <video [src]="vedioresponse" controls width="400">
+                                              Your browser does not support the video tag.
+                                            </video>
+                                          </div>
+                                          <div *ngIf="imageresponse">
+                                            <img [src]="imageresponse" alt="Preview Image" width="400" />
+                                          </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="tab-pane fade" [class.show]="activeTab === 'Pinterest'"
+                                [class.active]="activeTab === 'Pinterest'" id="Pinterest" role="tabpanel"
                                 aria-labelledby="facebook-tab">
                                 <div class="form-group">
                                     <label for="sub">Subject</label>
@@ -149,7 +187,7 @@
                                             </select>
                                         </div> -->
                                         <div class="card-body custom-inner-html">
-                                            <video muted autoplay loop height="100%" width="100%" src="{{Post?.videoUrl}}"></video>
+                                            <div class="card-body custom-inner-html" [innerHTML]="GetHtml(Post?.message)">
                                         </div>
                                     </div>
                                 </div>
@@ -159,14 +197,14 @@
 
                 </div>
             </div>
-            <div class="col-md-8" *ngIf="Post?.type != 5 && Post?.type != 6&& Post?.type != 7 && Post?.type != 8">
+            <div class="col-md-8" *ngIf="Post?.type != 5 && Post?.type != 6&& Post?.type != 7 && Post?.type != 8 && Post?.type != 9">
                 <div class="col-md-12">
                     <div class=" mb-0">
                         <div class="card-header d-flex align-items-center justify-content-between py-2">
                             <h5>Select Contacts</h5>
                         </div>
                         <div class="card-body table-border-style p-0"
-                            *ngIf="Post?.type != 5 && Post?.type != 6&& Post?.type != 7 && Post?.type != 8">
+                            *ngIf="Post?.type != 5 && Post?.type != 6&& Post?.type != 7 && Post?.type != 8 && Post?.type != 9">
                             <ejs-grid #grid [dataSource]="filteredContacts" [allowPaging]="true" [allowSorting]="true"
                                 [pageSettings]="{ pageSize: itemsPerPage, pageSizes: [5, 10, 20, 50] }"
                                 [searchSettings]="{ fields: ['contactName', 'contactEmail', 'contactMobile', 'contactWhatsApp'], key: searchTerm }"

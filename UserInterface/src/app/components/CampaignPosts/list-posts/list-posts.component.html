@@ -196,16 +196,24 @@
                         <input class="form-control" id="subject" [value]="previewData?.subject" type="text" readonly />
                     </div>
 
-                    <div class="d-flex my-3">
+                    <div *ngIf="previewData?.type === 6 || previewData?.type === 7 || previewData?.type === 8 || previewData?.type === 5 || previewData?.type === 3|| previewData?.type === 9" class="d-flex my-3">
                         <div class="w-100 text-start">
                             <label for="organisationName">Attachments</label>
-                            <div *ngIf="previewData">
-                                <video *ngIf="vedioresponse"  height="490" width="770" controls
-                                    poster="path/to/thumbnail.jpg" autoplay muted loop>
-                                    <source [src]="previewData.videoUrl" type="video/mp4" />
-                                    Your browser does not support the video tag.
-                                </video>
-                                <img *ngIf="imageresponse" [src]="imageresponse" alt="Preview Image"  height="490" width="726" />
+                            <div >
+                                <div class="d-flex align-items-center gap-2">
+                                    <video *ngIf="vedioresponse"
+                                        style="max-width: 140px; max-height: 90px; border-radius: 8px; object-fit: cover;"
+                                        controls
+                                        poster="path/to/thumbnail.jpg"
+                                        autoplay muted loop>
+                                        <source [src]="previewData.videoUrl" type="video/mp4" />
+                                        Your browser does not support the video tag.
+                                    </video>
+                                    <img *ngIf="imageresponse"
+                                        [src]="imageresponse"
+                                        alt="Preview Image"
+                                        style="max-width: 120px; max-height: 90px; border-radius: 8px; object-fit: cover;" />
+                                </div>
                             </div>
                         
                         </div>
@@ -224,8 +232,18 @@
                                     readonly>
                                 </textarea>
                             </div>
+                            <div *ngIf="previewData?.type === 3">
+                                <video *ngIf="previewData?.videoUrl" style="width:100%; height:auto;" controls
+                                    poster="path/to/thumbnail.jpg" autoplay muted loop>
+                                    <source [src]="previewData.videoUrl" type="video/mp4" />
+                                    Your browser does not support the video tag.
+                                </video>
+                                <!-- <textarea class="form-control" [(ngModel)]="simpleText" style="min-height: 30vh;"
+                                    readonly>
+                                </textarea> -->
+                            </div>
                             <div
-                                *ngIf="previewData?.type === 4 || previewData?.type === 5 || previewData?.type === 6|| previewData?.type === 7">
+                                *ngIf="previewData?.type === 4 || previewData?.type === 5 || previewData?.type === 6|| previewData?.type === 7|| previewData?.type === 9">
                                 <div class="border p-2 html-content-div" style="min-height: 30vh;" [innerHTML]="editorContent"></div>
                             </div>
                         </div>

@@ -136,7 +136,7 @@ namespace MC.Basic.API.Controllers
 
                             return Ok(new
                             {
-                                AccessToken = token,
+                                AccessToken = token.AccessToken,
                                 User = fbUser
                             });
                         }
@@ -236,8 +236,6 @@ namespace MC.Basic.API.Controllers
                         var values = new Dictionary<string, string>
     {
         { "grant_type", "authorization_code" },
-        { "client_id", AppId },
-        { "client_secret", AppSecret },
         { "code", request.Code },
         { "redirect_uri", "http://localhost:4200/auth-callback" }
     };
@@ -245,6 +243,8 @@ namespace MC.Basic.API.Controllers
                         using var httpClient = new HttpClient();
                         var content = new FormUrlEncodedContent(values);
                         content.Headers.ContentType = new MediaTypeHeaderValue("application/x-www-form-urlencoded");
+                        var authToken = Convert.ToBase64String(Encoding.UTF8.GetBytes($"{AppId}:{AppSecret}"));
+                        httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", authToken);
                         httpClient.DefaultRequestHeaders.Accept.Clear();
                         httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
@@ -254,8 +254,45 @@ namespace MC.Basic.API.Controllers
                             var errorContent = await response.Content.ReadAsStringAsync();
                             return BadRequest(new { error = "Failed to exchange Pinterest token", response = errorContent });
                         }
+                        var jsonResult = await response.Content.ReadAsStringAsync();
+                        var result = JsonConvert.DeserializeObject<PinterestTokenResponse>(jsonResult);
 
-                        return null;
+                        var accountRequest = new HttpRequestMessage(HttpMethod.Get, "https://api.pinterest.com/v5/user_account");
+                        accountRequest.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", result.access_token);
+                        var accountResponse = await _httpClient.SendAsync(accountRequest);
+                        if (!accountResponse.IsSuccessStatusCode)
+                        {
+                            var errorContent = await response.Content.ReadAsStringAsync();
+                            return BadRequest ( new {error  = "Unable to fetch Pinterest account", response = errorContent });
+                        }
+                        var accountContent = await accountResponse.Content.ReadAsStringAsync();
+                        var data = JsonConvert.DeserializeObject<PinterestProfile>(accountContent);
+                        if (data == null)
+                            return NotFound("Data not found");
+                        var pinterestProfile = new
+                        {
+                            Id = data.Id,
+                            Username = data.Username,
+                            BusinessName = data.Business_Name,
+                            FollowerCount = data.FollowerCount,
+                            FollowingCount = data.FollowingCount,
+                            ProfileImageUrl = data.Profile_Image
+                        };
+
+                        var profile = new
+                        {
+                            pinterestProfile = pinterestProfile,
+                            accessToken = result.access_token,
+                        };
+
+                        var user = _context.Users.FirstOrDefault(x => x.Id == request.UserId);
+                        if (user == null) return NotFound("User not found");
+                        user.PinterestAccessToken = result.access_token;
+                        user.PinterestAuthUrn = data.Id;
+
+                        await _context.SaveChangesAsync();
+
+                        return Ok(profile);
                     }
                 default:
                 return BadRequest("Invalid platform specified.");
@@ -514,6 +551,71 @@ namespace MC.Basic.API.Controllers
                 {
                     return BadRequest("Video upload failed.");
                 }
+            }
+        }
+
+        [HttpPost("CreateBoard")]
+        public async Task<IActionResult> CreateBoard([FromBody] string accessToken)
+        {
+            if (accessToken == null) return BadRequest("Access token not found.");
+            var boardRequest = new
+            {
+                name = "Summer Recipes3",
+                description = "My favorite summer recipes3",
+                privacy = "PUBLIC"
+            };
+
+            var json = JsonConvert.SerializeObject(boardRequest);
+            var content = new StringContent(json, Encoding.UTF8, "application/json");
+            _httpClient.DefaultRequestHeaders.Clear();
+            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+            _httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+            var response = await _httpClient.PostAsync("https://api.pinterest.com/v5/boards", content);
+            if (!response.IsSuccessStatusCode)
+            {
+                var errContent = await response.Content.ReadAsStringAsync();
+            }
+            var successContent = await response.Content.ReadAsStringAsync();
+
+            return Ok(successContent);
+        }
+
+        [HttpPost("UploadPinterest")]
+        public async Task<IActionResult> UploadPinterest(PinterestPost postData)
+        {
+            try
+            {
+                var authToken = await _platformConfigurationRepository.GetConfigurationValueByKey("AuthToken", PlatformType.Pinterest);
+
+                if (string.IsNullOrEmpty(postData.access_token))
+                {
+                    return BadRequest("Access Token not found");
+                }
+                var pinRequest = new
+                {
+                    board_id = "948430071466987763",
+                    title = postData.Title,
+                    alt_text = postData.Description,
+                    media_source = new
+                    {
+                        source_type = "image_url",
+                        url = postData.imageUrl
+                    }
+                };
+                var json = JsonConvert.SerializeObject(pinRequest);
+                var content = new StringContent(json, Encoding.UTF8, "application/json");
+                _httpClient.DefaultRequestHeaders.Clear();
+                _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", authToken);
+                _httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                var response = await _httpClient.PostAsync("https://api-sandbox.pinterest.com/v5/pins", content);
+                var UploadedContent = await response.Content.ReadAsStringAsync();
+                var result = JsonConvert.DeserializeObject<object>(UploadedContent);
+
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
             }
         }
 
