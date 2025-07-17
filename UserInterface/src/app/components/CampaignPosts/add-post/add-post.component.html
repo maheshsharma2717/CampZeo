@@ -200,6 +200,26 @@
                                     class="mb-4"></quill-editor>
                             </div>
                             }
+                            @if(CampaignPostForm.get('type').value==9){
+                            <!-- <div class="image-upload-container">
+                                <div class="input-group mb-3">
+                                    <div class="custom-file">
+                                        <input type="file" class="custom-file-input" id="inputGroupFile02" (change)="onImageSelection($event)"
+                                             />
+                                        <label class="custom-file-label" for="inputGroupFile01">Choose image to
+                                            send</label>
+                                    </div>
+                                </div>
+                            </div> -->
+                            <div class="row my-4 mx-auto mb-5" style="width: 100%;">
+                                <quill-editor [ngStyle]="{width:'100%'} " [(ngModel)]="editorContent"
+                                    [ngModelOptions]="{standalone:true}" (onFocus)="focus($event)"
+                                    (onBlur)="blur($event)" (onEditorCreated)="created($event)"
+                                    class="mb-4"></quill-editor>
+                            </div>
+                            <textarea class="form-control" [(ngModel)]="simpleText" [ngModelOptions]="{standalone:true}"
+                                style="min-height: 30vh;"></textarea>
+                            }
                         </div>
                     </div>
 

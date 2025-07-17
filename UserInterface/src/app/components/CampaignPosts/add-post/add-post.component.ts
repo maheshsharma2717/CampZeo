@@ -46,6 +46,8 @@ export class AddPostComponent {
   campaignInputValue = '';
   showCampaignDropdown = false;
   selectedFileName: string = '';
+  pinterestFile: any;
+  uploadedImageUrl: any;
 
   constructor(public service: AppService, private toaster: ToastrService, private activatedRoute: ActivatedRoute, private route: Router) {
     this.activatedRoute.queryParams.subscribe(param => {
@@ -142,14 +144,19 @@ export class AddPostComponent {
     }
   }
   onSubmit(): void {
+    debugger
     if (this.CampaignPostForm.valid) {
       this.GetMessagePromise()
         .then(() => {
+          debugger
           var templateData = this.CampaignPostForm.value;
           this.CampainIdFromTemplate = this.CampaignPostForm.value.campaignId;
           templateData.id = this.id ? this.id : 0;
           templateData.campainId = this.CampainIdFromTemplate;
           templateData.VideoUrl = this.uploadedVideoUrl;
+          if(this.CampaignPostForm.controls.type.value == 9){
+            templateData.VideoUrl = this.uploadedImageUrl;
+          }
           var request = { data: templateData };
           if (!this.smsPlatform) {
             this.service.AddCampaignPost(request).subscribe({
@@ -237,6 +244,11 @@ export class AddPostComponent {
             message: this.editorContent
           });
           resolve();
+        } else if (this.CampaignPostForm.controls.type.value == 9) {
+          this.CampaignPostForm.patchValue({
+            message: this.editorContent
+          });
+          resolve();
         }
         else {
           this.CampaignPostForm.patchValue({
@@ -288,6 +300,10 @@ export class AddPostComponent {
       this.CampaignPostForm.patchValue({ type: 5 });
     } else if (this.smsPlatform === 'Instagram') {
       this.CampaignPostForm.patchValue({ type: 6 });
+    } else if (this.smsPlatform === 'Youtube') {
+      this.CampaignPostForm.patchValue({ type: 8 });
+    } else if (this.smsPlatform === 'Pinterest') {
+      this.CampaignPostForm.patchValue({ type: 9 });
     }
   }
 
@@ -333,6 +349,27 @@ export class AddPostComponent {
   openDatePicker() {
     this.dateTimeInput.nativeElement.showPicker?.();
     this.dateTimeInput.nativeElement.focus();
+  }
+
+  onImageSelection(event: Event){
+    debugger
+    let fileinput = event.target as HTMLInputElement;
+    const file = fileinput.files?.[0];
+    if (file){
+      const reader = new FileReader();
+      reader.onload = () =>{
+        const base64Image = reader.result as string;
+        this.pinterestFile = base64Image;
+      }
+      reader.readAsDataURL(file)
+      this.service.uploadMedia(this.pinterestFile).subscribe({
+        next: (res: any) =>{
+          this.editorContent = res.url
+          console.log(res);
+        }
+      })
+    }
+
   }
 
 }
