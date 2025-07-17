@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -156,6 +157,19 @@ namespace MC.Basic.Application.Models.Post
         public string Profile_Image { get; set; }
         public string Business_Name { get; set; }
     }
+    
+    public class PinterestTokenResponse
+    {
+        public string access_token { get; set; }
+        public string refresh_token { get; set; }
+    }
 
-
+    public class PinterestPost
+    {
+        public string access_token { get; set; }
+        public string imageUrl { get; set; }
+        public string BoardId { get; set; }
+        public string Title { get; set; }
+        public string Description { get; set; }
+    }
 }

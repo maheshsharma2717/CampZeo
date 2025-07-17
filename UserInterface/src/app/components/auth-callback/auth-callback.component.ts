@@ -58,6 +58,10 @@ export class AuthCallbackComponent implements OnInit {
           localStorage.setItem('google_access_token', res.accessToken);
           sessionStorage.setItem('google_access_token', res.accessToken);
           sessionStorage.setItem('YoutubeUserName', res.user.name);
+        } else if (platform == 'Pinterest' || platform == 'pinterest') {
+          localStorage.setItem('pinterest_access_token', res.accessToken);
+          sessionStorage.setItem('pinterest_access_token', res.accessToken);
+          sessionStorage.setItem('pinterestUserName', res.pinterestProfile.username);
         }
         this.router.navigate(['/accounts']);
       },

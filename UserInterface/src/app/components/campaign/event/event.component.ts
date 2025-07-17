@@ -61,7 +61,6 @@ export class EventComponent implements OnInit {
     if (this.accessToken) {
       this.service.getFacebookPages(this.accessToken).subscribe({
         next: (res: any) => {
-          console.log(' Facebook API Response:', res);
           this.pages = res.data || [];
         },
         error: err => {
@@ -73,6 +72,7 @@ export class EventComponent implements OnInit {
   GetData() {
     this.service.GetEventForCampaignPost({ data: this.id }).subscribe({
       next: (response: any) => {
+        debugger
         this.contacts = response.data.contacts
         this.Post = response.data.post
         this.filteredContacts = this.contacts
@@ -117,6 +117,9 @@ export class EventComponent implements OnInit {
     else if (this.Post.type == 8) {
       this.activeTab = 'youtube';
     }
+    else if (this.Post.type == 9) {
+      this.activeTab = 'Pinterest';
+    }
   }
   onTabClick(tab: string): void {
     this.activeTab = tab;
@@ -136,10 +139,10 @@ export class EventComponent implements OnInit {
     const pageAccessToken = this.selectedPage?.access_token;
 
     if (this.activeTab === 'facebook') {
-      if (!pageId || !pageAccessToken) {
-        this.toaster.error('Facebook Page ID or Access Token is missing.');
-        return;
-      }
+      // if (!pageId || !pageAccessToken) {
+      //   this.toaster.error('Facebook Page ID or Access Token is missing.');
+      //   return;
+      // }
       this.postToFacebook(content, pageId, pageAccessToken);
     }
     else if (this.activeTab === 'instagram') {
@@ -155,9 +158,29 @@ export class EventComponent implements OnInit {
     else if (this.activeTab === 'youtube') {
       this.postToYoutube();
     }
+    else if (this.activeTab === 'Pinterest') {
+      this.postToPinterest(content, pageAccessToken);
+    }
     else {
       this.postToOtherChannels(campaignId, rawMessage);
     }
+  }
+  private postToPinterest(content: any, pageAccessToken: any){
+debugger
+    const imageUrl = content.images[0];
+    let payload = {
+      access_token: "pina_AMA7OQQXADIHQBAAGCACSDPFL2CARGABACGSPNXWSZXULDYYSD4ETAUWHL7XOVKI6NLOJDK75MZHMCYLIO6MY7D7ZZG2PFAA",
+      imageUrl: this.videoUrl,
+      BoardId: "",
+      Title: this.Post.subject,
+      Description: ""
+    }
+    this.service.postToPinterest(payload).subscribe({
+      next:(res: any) =>{
+        console.log(res);
+        this.toaster.success("Pin created successfully.");
+      }
+    })
   }
 
   private postToFacebook(content: any, pageId: string, accessToken: string) {
