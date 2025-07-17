@@ -188,7 +188,6 @@ vedioresponse:any;
 
     this.service.GetTemplateById(templateId).subscribe({
       next: (response: any) => {
-        debugger
         if (response.isSuccess) {
           console.log(response.data)
           this.previewData = response.data;
