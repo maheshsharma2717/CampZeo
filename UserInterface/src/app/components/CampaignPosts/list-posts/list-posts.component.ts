@@ -22,7 +22,7 @@ export class ListPostsComponent {
   filteredModalContentAll: any[] = [];
   searchTerm: string = '';
   page: number = 1;
-  itemsPerPage: number = 10;
+  itemsPerPage: number = 50;
   itemsPerPageOptions: number[] = [5, 10, 20, 100, 200];
   total: number = 0;
   campaignId: any = 0;
@@ -188,6 +188,7 @@ vedioresponse:any;
 
     this.service.GetTemplateById(templateId).subscribe({
       next: (response: any) => {
+        debugger
         if (response.isSuccess) {
           console.log(response.data)
           this.previewData = response.data;

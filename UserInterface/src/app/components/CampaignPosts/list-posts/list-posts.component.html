@@ -232,8 +232,18 @@
                                     readonly>
                                 </textarea>
                             </div>
+                            <div *ngIf="previewData?.type === 3">
+                                <video *ngIf="previewData?.videoUrl" style="width:100%; height:auto;" controls
+                                    poster="path/to/thumbnail.jpg" autoplay muted loop>
+                                    <source [src]="previewData.videoUrl" type="video/mp4" />
+                                    Your browser does not support the video tag.
+                                </video>
+                                <!-- <textarea class="form-control" [(ngModel)]="simpleText" style="min-height: 30vh;"
+                                    readonly>
+                                </textarea> -->
+                            </div>
                             <div
-                                *ngIf="previewData?.type === 4 || previewData?.type === 5 || previewData?.type === 6|| previewData?.type === 7">
+                                *ngIf="previewData?.type === 4 || previewData?.type === 5 || previewData?.type === 6|| previewData?.type === 7|| previewData?.type === 9">
                                 <div class="border p-2 html-content-div" style="min-height: 30vh;" [innerHTML]="editorContent"></div>
                             </div>
                         </div>
