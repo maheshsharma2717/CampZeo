@@ -61,5 +61,6 @@ namespace MC.Basic.Application.Contracts.Infrasructure
         Task<ApiResponse<List<PlatformDto>>> GetPlatforms(ApiRequest<long> request);
         Task<ApiResponse<List<PlatformDto>>> GetPlatformsForOrganisation(ApiRequest<long> request);
         Task<ApiResponse<string>> AssginPlatformForOrganisation(ApiRequest<OrganisationPlatformRequest> request);
+        Task<ApiResponse<CampaignPost>> UpdateCampaignPost(ApiRequest<CampaignPost> request);
     }
 }

@@ -2,7 +2,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { environment } from '../../environments/environments';
 import { Router } from '@angular/router';
-import { BehaviorSubject, map, Observable } from 'rxjs';
+import { BehaviorSubject, map, Observable, of } from 'rxjs';
 import { AuthService } from './auth.service';
 
 const ApiUrl = environment.API_BASE_URL
@@ -198,6 +198,10 @@ export class AppService {
     request.token = this.Token;
     return this.http.post(ApiUrl + "CampaignPost/GetCampaignPostsByCampaignId", request);
   }
+  UpdateCampaignPost(request: any) {
+    request.token = this.Token;
+    return this.http.post(ApiUrl + "CampaignPost/UpdateCampaignPost", request);
+  }
   AddCampaignPost(request: any) {
     request.token = this.Token;
     return this.http.post(ApiUrl + "CampaignPost/CreateCampaignPost", request);
@@ -293,15 +297,15 @@ export class AppService {
   getInstagramUserId(pageId: string, token: string) {
     return this.http.get(`${ApiUrl}socialmedia/instagram-business-account?pageId=${pageId}&accessToken=${token}`);
   }
-  getYoutubeChannel(access_token:any) {
+  getYoutubeChannel(access_token: any) {
     return this.http.get(`${ApiUrl}socialmedia/youtube-channel?accessToken=${access_token}`);
   }
 
-  uploadToYoutube(data: any){
+  uploadToYoutube(data: any) {
     return this.http.post(`${ApiUrl}socialmedia/upload-youtube`, data);
   }
 
-  getVideoList(gToken: any){
+  getVideoList(gToken: any) {
     return this.http.get(`${ApiUrl}socialmedia/GetVideoList?accessToken=${gToken}`);
   }
 
@@ -409,5 +413,21 @@ export class AppService {
     request.token = this.Token;
     return this.http.post(ApiUrl + "Organisation/AssginPlatformForOrganisation", request);
   }
+
+  saveTestAIPayload(payload: { image: string, prompt: string }): Observable<any> {
+    console.log('Payload to save:', payload);
+    return of({ success: true });
+  }
+
+  // getLocationByPincode(pincode: string) {
+  //   return this.http.get<any>(`/api/Organisation/${pincode}`);
+  // }
+
+getLocation(pinCode: string): Observable<any> {
+  debugger;
+  // return this.http.get(ApiUrl + "/Organisation/" + pinCode);
+    return this.http.get(ApiUrl+`Organisation/`+ pinCode)
+}
+  
 }
 

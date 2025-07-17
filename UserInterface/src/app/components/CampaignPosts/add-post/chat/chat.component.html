@@ -1,0 +1,55 @@
+<div class="card chat-container shadow-sm ">
+
+  <div #messageContainer class="chat-messages card-body bg-light position-relative"
+    style="overflow-y:auto; max-height:300px;" (mouseup)="onChatMouseUp($event)">
+    <div *ngFor="let message of messages" class="mb-2">
+      <div [ngClass]="{'text-end': message.isUser, 'text-start': !message.isUser}">
+        <ng-container *ngIf="message.text === 'Please select the desired text from the options above to add to your input.'; else normalMessage">
+          <span class="d-inline-block p-2 rounded highlight-message-info d-flex align-items-center" style="background: #fffbe6; border: 1px solid #ffe58f; color: #ad8b00; font-weight: 500; max-width: 90%;">
+            <i class="fas fa-info-circle me-2" style="font-size: 18px;"></i>
+            {{ message.text }}
+          </span>
+        </ng-container>
+        <ng-template #normalMessage>
+          <span *ngIf="!message.isUser" (mouseup)="onTextSelection($event)"
+            class="d-inline-block p-2 rounded bg-white border text-dark ai-message"
+            style="white-space: pre-line; cursor: text; max-width: 90%;">
+            {{ message.text }}
+          </span>
+          <span *ngIf="message.isUser" class="d-inline-block p-2 rounded bg-primary text-white user-message"
+            style="max-width: 90%;">
+            {{ message.text }}
+          </span>
+        </ng-template>
+      </div>
+    </div>
+    <div *ngIf="isLoading" class="mb-2">
+      <div class="text-start">
+        <span class="d-inline-block p-3 rounded bg-white border shadow-sm text-dark ai-message"
+          style="max-width: 90%; min-width: 56px; min-height: 32px; display: flex; align-items: center;">
+          <span class="loading-dots">
+            <span class="dot"></span>
+            <span class="dot"></span>
+            <span class="dot"></span>
+          </span>
+        </span>
+        <div><small class="text-muted mt-1" style="font-size: 0.85rem; letter-spacing: 0.2px;">AI is typing...</small>
+        </div>
+      </div>
+    </div>
+   
+     
+  </div>
+  <div class="card-footer bg-white border-top-0">
+    <div class="input-group">
+      <textarea [(ngModel)]="newMessage" (keypress)="onKeyPress($event)" placeholder="Type your message here..."
+        [disabled]="isLoading" rows="1" class="form-control message-input" style="resize:none;"></textarea>
+      <button (click)="sendMessage()" [disabled]="!newMessage.trim() || isLoading"
+        class="btn btn-primary ms-1 send-button" title="Send">
+        <i class="fas fa-paper-plane"></i>
+      </button>
+    </div>
+  </div>
+
+
+</div>

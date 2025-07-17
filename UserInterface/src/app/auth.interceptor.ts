@@ -19,11 +19,15 @@ export class AuthInterceptor implements HttpInterceptor {
 
   intercept(request: HttpRequest<unknown>, next: HttpHandler): Observable<HttpEvent<unknown>> {
     const token = this.service.Token;
-    setTimeout(() => {
-      this.service.showSpinner = true;
-    });
-    // Get the token from the service
-    // If the token is available, clone the request and add the Authorization header
+
+    const isChatApi = request.url.includes('/GenText');
+
+    if (!isChatApi) {
+      setTimeout(() => {
+        this.service.showSpinner = true;
+      });
+    }
+
     if (token) {
       request = request.clone({
         setHeaders: {
@@ -32,14 +36,14 @@ export class AuthInterceptor implements HttpInterceptor {
       });
     }
 
-    // Continue with the request and handle errors
     return next.handle(request).pipe(
       catchError((error: HttpErrorResponse) => this.handleError(error)),
       finalize(() => {
-        //some code
-        setTimeout(() => {
-          this.service.showSpinner = false;
-        });
+        if (!isChatApi) {
+          setTimeout(() => {
+            this.service.showSpinner = false;
+          });
+        }
       })
     );
   }

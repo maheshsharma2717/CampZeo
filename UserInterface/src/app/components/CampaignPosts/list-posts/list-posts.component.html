@@ -129,6 +129,10 @@
                                 <i class="far f-20 fa-eye text-secondary"></i>
                             </a>
 
+                            <a class="pointer mx-3" title="Edit Post" [routerLink]="'/edit-post'" [queryParams]="{ id: data.id, campaignId: campaignId }">
+                                <i class="fas f-20 fa-pencil-alt text-primary"></i>
+                            </a>
+
                             <a class="pointer mx-3" title="Manage Posts" [routerLink]="'/campaign-events'"
                                 [queryParams]="{ id: data.id }">
                                 <i class="fas fs-20 fa-paper-plane text-secondary " title="Share Post"></i>
@@ -194,14 +198,24 @@
 
                     <div class="d-flex my-3">
                         <div class="w-100 text-start">
-                            <label for="organisationName">Message Template</label>
-                            <div *ngIf="previewData?.type === 6 || previewData?.type === 7 || previewData?.type === 8">
-                                <video *ngIf="previewData?.videoUrl" style="width:100%; height:auto;" controls
+                            <label for="organisationName">Attachments</label>
+                            <div *ngIf="previewData">
+                                <video *ngIf="vedioresponse"  height="490" width="770" controls
                                     poster="path/to/thumbnail.jpg" autoplay muted loop>
                                     <source [src]="previewData.videoUrl" type="video/mp4" />
                                     Your browser does not support the video tag.
                                 </video>
+                                <img *ngIf="imageresponse" [src]="imageresponse" alt="Preview Image"  height="490" width="726" />
                             </div>
+                        
+                        </div>
+                    </div>
+
+
+                    <div class="d-flex my-3">
+                        <div class="w-100 text-start">
+                            <label for="organisationName">Message Template</label>
+                           
                             <div *ngIf="previewData?.type === 1">
                                 <div class="border p-2" style="min-height: 30vh;" [innerHTML]="emailHtmlContent"></div>
                             </div>

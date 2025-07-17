@@ -13,6 +13,7 @@ import { NgxPaginationModule } from 'ngx-pagination';
 @Component({
   selector: 'app-calendar',
   standalone: true,
+  
   imports: [DayPilotModule, RouterModule, FormsModule, CommonModule, ReactiveFormsModule, QuillModule, EmailEditorModule, NgxPaginationModule],
   templateUrl: './calendar.component.html',
   styleUrl: './calendar.component.css'
@@ -406,57 +407,17 @@ export class CalendarComponent implements OnInit {
     }
 
     if (this.configNavigator.selectMode === 'Week' && eventsOnSameDate.length > 1) {
-      const hoursSet = new Set(
-        eventsOnSameDate.map(ev => ev.start ? new DayPilot.Date(ev.start).getHours() : null)
-      );
-      if (hoursSet.size === 1) {
-        args.data.html = `
-          <div style="
-            display: flex;
-          ">
-            <span style="
-              display: flex;
-              align-items: center;
-            ">
-              ${iconHtml}
-            </span>
-          </div>
-        `;
-      } else {
-        args.data.html = `
-          <div style="
-            display: flex; 
-          ">
-            <span style="
-              display: flex;
-              margin-right: 10px;
-              color: #ffffff;
-            ">
-              ${iconHtml}
-            </span>
-            <div style="display: flex; flex-direction: column; justify-content: center;">
-              <div style="
-                font-weight: 600;
-                color: ${textColor};
-                font-size: 15px;
-                letter-spacing: 0.2px;
-                margin-bottom: 2px;
-                white-space: nowrap;
-                overflow: hidden;
-                text-overflow: ellipsis;
-                max-width: 140px;
-              ">${name}</div>
-              <div style="
-                font-size: 12px;
-                color: #e6e6e6;
-                opacity: 0.85;
-                font-style: italic;
-                letter-spacing: 0.1px;
-              ">${eventDate}</div>
-            </div>
-          </div>
-        `;
-      }
+      // Show all event names and times for the day in each event cell
+      const eventNames = eventsOnSameDate.map(ev => {
+        const evTime = ev.start ? new DayPilot.Date(ev.start).toString('HH:mm') : '';
+        return `<div style=\"font-size:13px; color:#fff; font-weight:500;\">${evTime} - ${ev.text}</div>`;
+      }).join('');
+      args.data.html = `
+        <div style=\"display: flex; flex-direction: column; align-items: flex-start;\">
+          <span style=\"display: flex; align-items: center;\">${iconHtml}</span>
+          <div style=\"margin-top: 2px;\">${eventNames}</div>
+        </div>
+      `;
     } else if (this.configNavigator.selectMode === 'Month') {
       args.data.html = `
         <div style="
@@ -552,6 +513,14 @@ export class CalendarComponent implements OnInit {
 
     this.changeDate(date);
     this.showNavigator = false;
+  }
+
+  isImage(url: string): boolean {
+    return url ? /\.(jpeg|jpg|gif|png|webp|bmp)$/i.test(url) : false;
+  }
+
+  isVideo(url: string): boolean {
+    return url ? /\.(mp4|webm|ogg|mov|avi|mkv)$/i.test(url) : false;
   }
 }
 

@@ -28,7 +28,18 @@
             ],
             "styles": [
               "src/styles.css",
-              "node_modules/ngx-toastr/toastr.css"
+              "node_modules/ngx-toastr/toastr.css",
+              "node_modules/@syncfusion/ej2-angular-buttons/styles/material.css",
+              "node_modules/@syncfusion/ej2-angular-calendars/styles/material.css",
+              "node_modules/@syncfusion/ej2-angular-dropdowns/styles/material.css",
+              "node_modules/@syncfusion/ej2-angular-filemanager/styles/material.css",
+              "node_modules/@syncfusion/ej2-angular-grids/styles/material.css",
+              "node_modules/@syncfusion/ej2-angular-image-editor/styles/material.css",
+              "node_modules/@syncfusion/ej2-angular-inputs/styles/material.css",
+              "node_modules/@syncfusion/ej2-angular-lists/styles/material.css",
+              "node_modules/@syncfusion/ej2-angular-navigations/styles/material.css",
+              "node_modules/@syncfusion/ej2-angular-popups/styles/material.css",
+              "node_modules/@syncfusion/ej2-angular-schedule/styles/material.css"
             ],
             "scripts": [
                        
@@ -39,13 +50,13 @@
               "budgets": [
                 {
                   "type": "initial",
-                  "maximumWarning": "2mb",
-                  "maximumError": "3MB"
+                  "maximumWarning": "5mb",
+                  "maximumError": "7MB"
                 },
                 {
                   "type": "anyComponentStyle",
-                  "maximumWarning": "2kB",
-                  "maximumError": "4kB"
+                  "maximumWarning": "5kB",
+                  "maximumError": "7kB"
                 }
               ],
               "outputHashing": "all"
@@ -89,7 +100,9 @@
             ],
             "styles": [
               "src/styles.css",
-               "node_modules/ngx-toastr/toastr.css"
+               "node_modules/ngx-toastr/toastr.css",
+               "node_modules/@syncfusion/ej2/material.css",
+               "node_modules/@syncfusion/ej2-angular-image-editor/styles/material.css"
             ],
             "scripts": []
           }

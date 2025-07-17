@@ -71,7 +71,7 @@ public class OrganisationController : ControllerBase
             var response = await _applicationService.ApproveOrganisation(request);
             return Ok(response);
         }
-        catch(Exception ex)
+        catch (Exception ex)
         {
             return BadRequest(ex);
         }
@@ -87,7 +87,7 @@ public class OrganisationController : ControllerBase
             var response = await _applicationService.GetOrganisation(request);
             return Ok(response);
         }
-        catch(Exception ex)
+        catch (Exception ex)
         {
             return BadRequest(ex);
         }
@@ -101,11 +101,11 @@ public class OrganisationController : ControllerBase
         try
         {
             var response = await _applicationService.SuspendOrRecoverOrganisation(request);
-            return Ok(response);  
+            return Ok(response);
         }
         catch (Exception ex)
         {
-            return BadRequest(ex.Message); 
+            return BadRequest(ex.Message);
         }
     }
     //ToDO
@@ -170,7 +170,7 @@ public class OrganisationController : ControllerBase
             return BadRequest(ex);
         }
     }
-        [HttpPost("GetPlatformForOrganisation")]
+    [HttpPost("GetPlatformForOrganisation")]
     [Authorize]
     [EnableCors("CorsPolicy")]
     public async Task<IActionResult> GetPlatformForOrganisation([FromBody] ApiRequest<long> request)
@@ -184,8 +184,8 @@ public class OrganisationController : ControllerBase
         {
             return BadRequest(ex);
         }
-    }  
-    
+    }
+
     [HttpPost("AssginPlatformForOrganisation")]
     [Authorize]
     [EnableCors("CorsPolicy")]
@@ -201,5 +201,34 @@ public class OrganisationController : ControllerBase
             return BadRequest(ex);
         }
     }
-    
+
+
+    [HttpGet("{pinCode}")]
+    public async Task<IActionResult> GetLocation(string pinCode)
+    {
+        string url = $"https://api.postalpincode.in/pincode/{pinCode}";
+
+        using (HttpClient client = new HttpClient())
+        {
+            var response = await client.GetStringAsync(url);
+            var data = Newtonsoft.Json.Linq.JArray.Parse(response);
+
+            if (data[0]["Status"].ToString() == "Success")
+            {
+                var postOffice = data[0]["PostOffice"][0];
+                string city = postOffice["District"]?.ToString();
+                string state = postOffice["State"]?.ToString();
+                string country = postOffice["Country"]?.ToString();
+
+                return Ok(new { City = city, State = state, Country = country });
+            }
+            else
+            {
+                return NotFound(new { Error = "Invalid PIN code." });
+            }
+        }
+    }
+
+
+
 }

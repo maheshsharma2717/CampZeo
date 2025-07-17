@@ -136,7 +136,7 @@ namespace MC.Basic.API.Controllers
 
                             return Ok(new
                             {
-                                AccessToken = token,
+                                AccessToken = token.AccessToken,
                                 User = fbUser
                             });
                         }
