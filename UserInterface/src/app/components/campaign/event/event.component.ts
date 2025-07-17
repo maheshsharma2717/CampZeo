@@ -128,6 +128,7 @@ export class EventComponent implements OnInit {
   }
 
   sendMessage() {
+    
     const campaignId = this.Post?.campaignId;
     if (!campaignId) {
       this.toaster.error('Campaign ID is missing.');
