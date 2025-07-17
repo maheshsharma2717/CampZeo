@@ -57,7 +57,7 @@ export class EventComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    debugger;
+    
     this.GetData();
     if (this.accessToken) {
       this.service.getFacebookPages(this.accessToken).subscribe({
@@ -72,7 +72,7 @@ export class EventComponent implements OnInit {
     }
   }
   GetData() {
-    debugger;
+    
     this.service.GetEventForCampaignPost({ data: this.id }).subscribe({
       next: (response: any) => {
         debugger
@@ -129,7 +129,7 @@ export class EventComponent implements OnInit {
   }
 
   sendMessage() {
-    debugger;
+    
     const campaignId = this.Post?.campaignId;
     if (!campaignId) {
       this.toaster.error('Campaign ID is missing.');

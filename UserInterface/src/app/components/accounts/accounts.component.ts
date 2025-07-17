@@ -95,7 +95,7 @@ export class AccountsComponent implements OnInit {
   }
 
   getPages(token: string): void {
-    debugger;
+    
     this.service.getFacebookPages(token).subscribe((res: any) => {
       this.pages = res.data;
       this.selectedPlatform = 'facebook';
