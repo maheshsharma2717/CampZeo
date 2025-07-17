@@ -388,6 +388,7 @@ export class EventComponent implements OnInit {
 
   //instagram fb changes
   onPageSelect(): void {
+    debugger;
     this.instagramUserId = '';
     if (this.selectedPage?.id && this.selectedPage?.access_token) {
       this.service.getInstagramUserId(this.selectedPage.id, this.selectedPage.access_token).subscribe({

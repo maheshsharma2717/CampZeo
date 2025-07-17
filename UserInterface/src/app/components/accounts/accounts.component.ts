@@ -101,6 +101,7 @@ export class AccountsComponent implements OnInit {
   }
 
   loginWithFacebook(): void {
+    debugger;
     const scope =
       'public_profile,pages_show_list,pages_manage_posts,pages_read_engagement,pages_manage_metadata,instagram_basic,instagram_content_publish,business_management';
     const redirectUri = encodeURIComponent(this.redirectUri);

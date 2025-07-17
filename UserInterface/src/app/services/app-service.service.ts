@@ -277,7 +277,7 @@ export class AppService {
   }
 
   getFacebookPages(accessToken: string) {
-    return this.http.get<any>(`${ApiUrl}socialmedia/pages?accessToken=${accessToken}`);
+    return this.http.get<any>(`${ApiUrl}PostTraction/pages?accessToken=${accessToken}`);
   }
 
   getSocialMediaTokenByUser(userId: number) {
@@ -415,13 +415,7 @@ export class AppService {
     return of({ success: true });
   }
 
-  // getLocationByPincode(pincode: string) {
-  //   return this.http.get<any>(`/api/Organisation/${pincode}`);
-  // }
-
 getLocation(pinCode: string): Observable<any> {
-  debugger;
-  // return this.http.get(ApiUrl + "/Organisation/" + pinCode);
     return this.http.get(ApiUrl+`Organisation/`+ pinCode)
 }
   
