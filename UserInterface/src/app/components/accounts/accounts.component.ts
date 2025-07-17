@@ -49,7 +49,7 @@ export class AccountsComponent implements OnInit {
       }
     });
     let fbVal = localStorage.getItem('connectedUser');
-    if(!fbVal){
+    if (!fbVal) {
       this.fb = false;
     }
     const userId = this.service.User.id;
@@ -61,7 +61,7 @@ export class AccountsComponent implements OnInit {
         this.facebookAccountName = name;
         this.isFacebookConnected = true;
         this.fb = true;
-      }else{
+      } else {
         this.isFacebookConnected = false;
         this.fb = false;
       }
@@ -112,10 +112,12 @@ export class AccountsComponent implements OnInit {
 
   loginWithInstagram(): void {
     const scope =
-      'instagram_basic,instagram_content_publish,pages_show_list,pages_read_engagement';
+      //'instagram_basic,instagram_content_publish,pages_show_list,pages_read_engagement';
+      'instagram_basic,instagram_content_publish,instagram_manage_insights,instagram_manage_comments';
     const redirectUri = encodeURIComponent(this.redirectUri);
     const state = 'instagram';
     const igLoginUrl = `https://www.facebook.com/v16.0/dialog/oauth?client_id=${this.fbAppId}&redirect_uri=${redirectUri}&scope=${scope}&response_type=code&state=${state}`;
+    
     // console.log('Instagram Login URL:', igLoginUrl);
     window.location.href = igLoginUrl;
   }

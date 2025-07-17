@@ -122,11 +122,12 @@ export class EventComponent implements OnInit {
 
     const rawMessage = this.Post?.message || '';
     const content = this.extractContent(rawMessage);
-
     const pageId = this.selectedPage?.id;
+
     const pageAccessToken = this.selectedPage?.access_token;
 
     if (this.activeTab === 'facebook') {
+
       if (!pageId || !pageAccessToken) {
         this.toaster.error('Facebook Page ID or Access Token is missing.');
         return;
@@ -134,6 +135,7 @@ export class EventComponent implements OnInit {
       this.postToFacebook(content, pageId, pageAccessToken);
     }
     else if (this.activeTab === 'instagram') {
+
       if (!this.instagramUserId || !pageAccessToken) {
         this.toaster.error('Instagram User ID or Access Token is missing.');
         return;
@@ -152,12 +154,35 @@ export class EventComponent implements OnInit {
   }
 
   private postToFacebook(content: any, pageId: string, accessToken: string) {
+
+    let message = this.Post?.message || '';
+    const tempDiv = document.createElement('div');
+    tempDiv.innerHTML = message;
+    message = tempDiv.textContent || tempDiv.innerText || '';
+
+    let images: string[] = [];
+    let videos: string[] = [];
+    if (this.videoUrl) {
+      const isImage = typeof this.videoUrl === 'string' && this.videoUrl.match(/\.(jpeg|jpg|png|gif|bmp|webp)$/i);
+      const isVideo = typeof this.videoUrl === 'string' && this.videoUrl.match(/\.(mp4|mov|avi|wmv|flv|webm|mkv)$/i);
+      if (isImage) {
+        images = [this.videoUrl as string];
+      } else if (isVideo) {
+        videos = [this.videoUrl as string];
+      } else if (Array.isArray(this.videoUrl)) {
+        (this.videoUrl as string[]).forEach(url => {
+          if (url.match(/\.(jpeg|jpg|png|gif|bmp|webp)$/i)) images.push(url);
+          else if (url.match(/\.(mp4|mov|avi|wmv|flv|webm|mkv)$/i)) videos.push(url);
+        });
+      }
+    }
+
     this.service.postToFacebook({
       pageId,
       pageAccessToken: accessToken,
-      message: content.text,
-      images: content.images,
-      videos: content.videos
+      message: message,
+      images: images,
+      videos: videos
     }).subscribe({
       next: () => {
         this.toaster.success('Posted to Facebook successfully!');
@@ -400,6 +425,7 @@ export class EventComponent implements OnInit {
       });
     }
   }
+
   // extractContent(message: string) {
   //   if (!message) return { text: '', images: [], videos: [] };
   //   const htmlParts = message.split('[{(break)}]');
@@ -408,7 +434,7 @@ export class EventComponent implements OnInit {
   //   const text = doc.body.textContent?.trim() || '';
   //   const images: string[] = [];
   //   doc.querySelectorAll('img').forEach(img => {
-  //     if (img.src.startsWith('data:image')) {
+  //     if (img.src && (img.src.startsWith('http') || img.src.startsWith('data:image'))) {
   //       images.push(img.src);
   //     }
   //   });
@@ -423,31 +449,32 @@ export class EventComponent implements OnInit {
   //   return { text, images, videos };
   // }
 
-
   extractContent(message: string) {
-    debugger;
   if (!message) return { text: '', images: [], videos: [] };
 
   const htmlParts = message.split('[{(break)}]');
   const html = htmlParts[0];
-  const doc = new DOMParser().parseFromString(html, 'text/html');
 
+  const doc = new DOMParser().parseFromString(html, 'text/html');
   const text = doc.body.textContent?.trim() || '';
 
   const images: string[] = [];
   doc.querySelectorAll('img').forEach(img => {
-    if (img.src && (img.src.startsWith('data:image') || img.src.startsWith('http') || img.src.startsWith('/assets'))) {
-      images.push(img.src);
+    const src = img.getAttribute('src');
+    if (src && src.startsWith('data:image')) {
+      images.push(src);
     }
   });
 
   const videos: string[] = [];
   doc.querySelectorAll('video').forEach(video => {
-    if (video.src && (video.src.startsWith('data:video') || video.src.startsWith('http'))) {
-      videos.push(video.src);
+    const src = video.getAttribute('src');
+    if (src && src.startsWith('data:video')) {
+      videos.push(src);
     }
   });
 
+  console.log('Extracted Content:', { text, images, videos });
   return { text, images, videos };
 }
 
