@@ -52,7 +52,6 @@ vedioresponse:any;
     this.GetCampaignPosts();
   }
   GetCampaignPosts() {
-    debugger;
     var request: any = {
       "data": {
         "pageSize": this.itemsPerPage,
@@ -209,9 +208,8 @@ vedioresponse:any;
               this.emailHtmlContent = this.previewData.message;
             }
           }
-debugger;
           var url = this.previewData.videoUrl;
-          // url is coming as a direct string, so just check and assign accordingly
+         
           this.imageresponse = null;
           this.vedioresponse = null;
           if (url && typeof url === 'string') {
