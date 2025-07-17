@@ -154,7 +154,7 @@ debugger
     const imageUrl = content.images[0];
     let payload = {
       access_token: "pina_AMA7OQQXADIHQBAAGCACSDPFL2CARGABACGSPNXWSZXULDYYSD4ETAUWHL7XOVKI6NLOJDK75MZHMCYLIO6MY7D7ZZG2PFAA",
-      imageUrl: imageUrl,
+      imageUrl: this.videoUrl,
       BoardId: "",
       Title: this.Post.subject,
       Description: ""

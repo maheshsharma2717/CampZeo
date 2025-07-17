@@ -586,10 +586,6 @@ namespace MC.Basic.API.Controllers
             try
             {
                 var authToken = await _platformConfigurationRepository.GetConfigurationValueByKey("AuthToken", PlatformType.Pinterest);
-                var base64Data = postData.imageUrl.Split(",")[1];
-                var imageBytes = Convert.FromBase64String(base64Data);
-                var byteArrayContent = new ByteArrayContent(imageBytes);
-                byteArrayContent.Headers.ContentType = new MediaTypeHeaderValue("image/jpeg");
 
                 if (string.IsNullOrEmpty(postData.access_token))
                 {

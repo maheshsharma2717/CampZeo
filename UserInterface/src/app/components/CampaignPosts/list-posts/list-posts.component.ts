@@ -22,7 +22,7 @@ export class ListPostsComponent {
   filteredModalContentAll: any[] = [];
   searchTerm: string = '';
   page: number = 1;
-  itemsPerPage: number = 10;
+  itemsPerPage: number = 50;
   itemsPerPageOptions: number[] = [5, 10, 20, 100, 200];
   total: number = 0;
   campaignId: any = 0;

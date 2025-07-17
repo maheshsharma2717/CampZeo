@@ -22,7 +22,7 @@ import { ImageEditorComponent } from '@syncfusion/ej2-angular-image-editor';
     EmailEditorModule,
     QuillModule,
     ChatComponent,
-    ImageEditorSharedModule,
+    ImageEditorSharedModule
   ],
   templateUrl: './add-post.component.html',
   styleUrl: './add-post.component.css'
@@ -107,6 +107,8 @@ export class AddPostComponent implements AfterViewInit {
   showTestAIPayloadModal: boolean = false;
   testAIPayloadImage: string | null = null;
   testAIPayloadPrompt: string = '';
+  pinterestFile: any;
+  uploadedImageUrl: any;
 
 
   constructor(public service: AppService, private toaster: ToastrService, private activatedRoute: ActivatedRoute, private route: Router, private textGenService: TextGenerationService) {
@@ -1066,7 +1068,6 @@ export class AddPostComponent implements AfterViewInit {
   }
 
   onImageSelection(event: Event){
-    debugger
     let fileinput = event.target as HTMLInputElement;
     const file = fileinput.files?.[0];
     if (file){
