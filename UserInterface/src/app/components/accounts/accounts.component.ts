@@ -95,6 +95,7 @@ export class AccountsComponent implements OnInit {
   }
 
   getPages(token: string): void {
+    
     this.service.getFacebookPages(token).subscribe((res: any) => {
       this.pages = res.data;
       this.selectedPlatform = 'facebook';
@@ -113,10 +114,12 @@ export class AccountsComponent implements OnInit {
 
   loginWithInstagram(): void {
     const scope =
-      'instagram_basic,instagram_content_publish,pages_show_list,pages_read_engagement';
+      //'instagram_basic,instagram_content_publish,pages_show_list,pages_read_engagement';
+      'instagram_basic,instagram_content_publish,instagram_manage_insights,instagram_manage_comments';
     const redirectUri = encodeURIComponent(this.redirectUri);
     const state = 'instagram';
     const igLoginUrl = `https://www.facebook.com/v16.0/dialog/oauth?client_id=${this.fbAppId}&redirect_uri=${redirectUri}&scope=${scope}&response_type=code&state=${state}`;
+    
     // console.log('Instagram Login URL:', igLoginUrl);
     window.location.href = igLoginUrl;
   }

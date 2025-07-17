@@ -57,10 +57,12 @@ export class EventComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    
     this.GetData();
     if (this.accessToken) {
       this.service.getFacebookPages(this.accessToken).subscribe({
         next: (res: any) => {
+          console.log(' Facebook API Response:', res);
           this.pages = res.data || [];
         },
         error: err => {
@@ -70,6 +72,7 @@ export class EventComponent implements OnInit {
     }
   }
   GetData() {
+    
     this.service.GetEventForCampaignPost({ data: this.id }).subscribe({
       next: (response: any) => {
         debugger
@@ -126,6 +129,7 @@ export class EventComponent implements OnInit {
   }
 
   sendMessage() {
+    
     const campaignId = this.Post?.campaignId;
     if (!campaignId) {
       this.toaster.error('Campaign ID is missing.');
@@ -134,8 +138,8 @@ export class EventComponent implements OnInit {
 
     const rawMessage = this.Post?.message || '';
     const content = this.extractContent(rawMessage);
-
     const pageId = this.selectedPage?.id;
+
     const pageAccessToken = this.selectedPage?.access_token;
 
     if (this.activeTab === 'facebook') {
@@ -146,6 +150,7 @@ export class EventComponent implements OnInit {
       this.postToFacebook(content, pageId, pageAccessToken);
     }
     else if (this.activeTab === 'instagram') {
+
       if (!this.instagramUserId || !pageAccessToken) {
         this.toaster.error('Instagram User ID or Access Token is missing.');
         return;
@@ -225,61 +230,76 @@ debugger
     });
   }
 
-  private postToInstagram(content: any, accessToken: string) {
-    if (this.videoUrl) {
-      const payload: any = {
-        instagramUserId: this.instagramUserId,
-        accessToken: accessToken,
-        caption: content.text,
-        imageUrl: content.images[0] || null,
-        videoUrl: this.videoUrl
-      };
+ private postToInstagram(content: any, accessToken: string) {
+  let caption = this.Post?.message || '';
+  const tempDiv = document.createElement('div');
+  tempDiv.innerHTML = caption;
+  caption = tempDiv.textContent || tempDiv.innerText || '';
 
-      this.service.postToInstagram(payload).subscribe({
-        next: () => {
-          this.toaster.success('Posted video to Instagram successfully!');
-          this.router.navigate(['list-campaigns']);
-        },
-        error: err => {
-          console.error('Instagram post failed:', err);
-          this.toaster.error('Failed to post to Instagram.');
-        }
-      });
-    }
-    else {
-      const base64Image = content.images[0];
-      if (!base64Image) {
-        this.toaster.warning('Instagram requires an image or video. Please add one.');
-        return;
-      }
+  let images: string[] = [];
+  let videos: string[] = [];
 
-      this.service.uploadMedia(base64Image).subscribe({
-        next: (uploadedImageUrl) => {
-          const payload = {
-            instagramUserId: this.instagramUserId,
-            accessToken,
-            caption: content.text,
-            imageUrl: uploadedImageUrl
-          };
-
-          this.service.postToInstagram(payload).subscribe({
-            next: () => {
-              this.toaster.success('Posted image to Instagram successfully!');
-              this.router.navigate(['list-campaigns']);
-            },
-            error: err => {
-              console.error('Instagram post failed:', err);
-              this.toaster.error('Failed to post to Instagram.');
-            }
-          });
-        },
-        error: err => {
-          console.error('Image upload failed:', err);
-          this.toaster.error('Failed to upload image.');
-        }
+  if (this.videoUrl) {
+    const isImage = typeof this.videoUrl === 'string' && this.videoUrl.match(/\.(jpeg|jpg|png|gif|bmp|webp)$/i);
+    const isVideo = typeof this.videoUrl === 'string' && this.videoUrl.match(/\.(mp4|mov|avi|wmv|flv|webm|mkv)$/i);
+    
+    if (isImage) {
+      images = [this.videoUrl as string];
+    } else if (isVideo) {
+      videos = [this.videoUrl as string];
+    } else if (Array.isArray(this.videoUrl)) {
+      (this.videoUrl as string[]).forEach(url => {
+        if (url.match(/\.(jpeg|jpg|png|gif|bmp|webp)$/i)) images.push(url);
+        else if (url.match(/\.(mp4|mov|avi|wmv|flv|webm|mkv)$/i)) videos.push(url);
       });
     }
   }
+
+  // 🟢 Video post
+  if (videos.length > 0) {
+    const payload: any = {
+      instagramUserId: this.instagramUserId,
+      accessToken,
+      caption,
+      videoUrl: videos[0]
+    };
+
+    this.service.postToInstagram(payload).subscribe({
+      next: () => {
+        this.toaster.success('Posted video to Instagram successfully!');
+        this.router.navigate(['list-campaigns']);
+      },
+      error: err => {
+        console.error('Instagram post failed:', err);
+        this.toaster.error('Failed to post video to Instagram.');
+      }
+    });
+  }
+
+  else if (images.length > 0) {
+    const payload = {
+      instagramUserId: this.instagramUserId,
+      accessToken,
+      caption,
+      imageUrl: images[0]
+    };
+
+    this.service.postToInstagram(payload).subscribe({
+      next: () => {
+        this.toaster.success('Posted image to Instagram successfully!');
+        this.router.navigate(['list-campaigns']);
+      },
+      error: err => {
+        console.error('Instagram post failed:', err);
+        this.toaster.error('Failed to post image to Instagram.');
+      }
+    });
+  }
+  else {
+    this.toaster.warning('Instagram requires an image or video. Please add one.');
+  }
+}
+
 
   private postToLinkedIn(content: any) {
     let text = this.Post?.message || '';
