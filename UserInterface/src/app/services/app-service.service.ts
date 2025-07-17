@@ -420,7 +420,6 @@ export class AppService {
   // }
 
 getLocation(pinCode: string): Observable<any> {
-  debugger;
   // return this.http.get(ApiUrl + "/Organisation/" + pinCode);
     return this.http.get(ApiUrl+`Organisation/`+ pinCode)
 }

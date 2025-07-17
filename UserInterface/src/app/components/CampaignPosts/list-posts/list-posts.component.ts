@@ -52,7 +52,6 @@ vedioresponse:any;
     this.GetCampaignPosts();
   }
   GetCampaignPosts() {
-    debugger;
     var request: any = {
       "data": {
         "pageSize": this.itemsPerPage,
@@ -208,7 +207,6 @@ vedioresponse:any;
               this.emailHtmlContent = this.previewData.message;
             }
           }
-debugger;
           var url = this.previewData.videoUrl;
          
           this.imageresponse = null;
