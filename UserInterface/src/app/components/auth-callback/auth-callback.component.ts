@@ -44,9 +44,10 @@ export class AuthCallbackComponent implements OnInit {
         console.log(`${platform} Token:`, res);
 
         if (platform === 'instagram') {
-          localStorage.setItem('insta_access_token', res.accessToken);
+          localStorage.setItem('insta_access_token', res['access_token']);
           localStorage.setItem('insta_connected', 'true');
-        } else if (platform === 'facebook') {
+        }
+        else if (platform === 'facebook') {
           localStorage.setItem('access_token', res.accessToken);
           localStorage.setItem('fb_connected', 'true');
           sessionStorage.setItem('connectedUser', res.user.name);

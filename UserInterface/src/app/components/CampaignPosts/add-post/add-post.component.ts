@@ -219,7 +219,7 @@ export class AddPostComponent implements AfterViewInit {
   }
 
   onSubmit(): void {
-    debugger;
+
     this.attemptedSubmit = true;
     const type = this.CampaignPostForm.get('type')?.value;
     if (type === 7 && !this.uploadedVideoUrl) {

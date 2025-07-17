@@ -316,6 +316,7 @@ export class AppService {
     imageUrl?: string;
     videos?: string[];  // should be public URLs
   }) {
+  
     return this.http.post(`${ApiUrl}socialmedia/post-instagram`, payload);
   }
   postToLinkedIn(payload: any): Observable<any> {
