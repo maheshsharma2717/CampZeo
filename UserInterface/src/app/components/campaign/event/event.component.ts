@@ -275,7 +275,7 @@ debugger
       }
     });
   }
-  // 🟢 Image post
+
   else if (images.length > 0) {
     const payload = {
       instagramUserId: this.instagramUserId,
@@ -295,7 +295,6 @@ debugger
       }
     });
   }
-  // 🔴 No media
   else {
     this.toaster.warning('Instagram requires an image or video. Please add one.');
   }
