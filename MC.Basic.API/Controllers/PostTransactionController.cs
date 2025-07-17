@@ -835,13 +835,28 @@ namespace MC.Basic.API.Controllers
 
             if (!string.IsNullOrEmpty(post.ImageUrl))
             {
+                string imageUrlToUse = post.ImageUrl;
+                if (post.ImageUrl.StartsWith("/uploads/") || post.ImageUrl.Contains("localhost") || post.ImageUrl.Contains(Request.Host.Value))
+                {
+                    string fileName;
+                    if (post.ImageUrl.StartsWith("/uploads/"))
+                        fileName = post.ImageUrl.Substring("/uploads/".Length);
+                    else
+                    {
+                        var uri = new Uri(post.ImageUrl);
+                        fileName = uri.Segments.Last();
+                    }
+                    var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads", fileName);
+                    if (!System.IO.File.Exists(filePath))
+                        return NotFound("Image file not found on server.");
+                    imageUrlToUse = $"{Request.Scheme}://{Request.Host}/uploads/{fileName}";
+                }
                 var createMediaUrl = $"https://graph.facebook.com/v21.0/{post.InstagramUserId}/media";
                 var mediaParams = new Dictionary<string, string>
              {
-            { "image_url", post.ImageUrl },
-            //{ "image_url", post.ImageUrl },
-            { "caption", post.Caption ?? "" },
-            { "access_token", post.AccessToken }
+                { "image_url", imageUrlToUse },
+                { "caption", post.Caption ?? "" },
+                { "access_token", post.AccessToken }
              };
 
                 var response = await _httpClient.PostAsync(createMediaUrl, new FormUrlEncodedContent(mediaParams));
@@ -854,16 +869,29 @@ namespace MC.Basic.API.Controllers
             }
             else if (post.Videos?.Any() == true)
             {
-                var videoUrl = post.Videos[0];
-
+                string videoUrlToUse = post.Videos[0];
+                if (videoUrlToUse.StartsWith("/uploads/") || videoUrlToUse.Contains("localhost") || videoUrlToUse.Contains(Request.Host.Value))
+                {
+                    string fileName;
+                    if (videoUrlToUse.StartsWith("/uploads/"))
+                        fileName = videoUrlToUse.Substring("/uploads/".Length);
+                    else
+                    {
+                        var uri = new Uri(videoUrlToUse);
+                        fileName = uri.Segments.Last();
+                    }
+                    var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads", fileName);
+                    if (!System.IO.File.Exists(filePath))
+                        return NotFound("Video file not found on server.");
+                    videoUrlToUse = $"{Request.Scheme}://{Request.Host}/uploads/{fileName}";
+                }
                 var createMediaUrl = $"https://graph.facebook.com/v21.0/{post.InstagramUserId}/media";
                 var mediaParams = new Dictionary<string, string>
             {
-            { "media_type", "REELS" },
-            { "video_url", "https://drive.google.com/uc?export=download&id=1w4DkdCLGJJpxNR20HHNyRbnwfk4BIyrK" }, 
-            //{ "video_url", videoUrl },
-            { "caption", post.Caption ?? "" },
-            { "access_token", post.AccessToken }
+                { "media_type", "REELS" },
+                { "video_url", videoUrlToUse },
+                { "caption", post.Caption ?? "" },
+                { "access_token", post.AccessToken }
             };
 
                 var response = await _httpClient.PostAsync(createMediaUrl, new FormUrlEncodedContent(mediaParams));
