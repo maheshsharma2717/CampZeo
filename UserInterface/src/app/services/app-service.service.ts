@@ -323,6 +323,10 @@ export class AppService {
     var req = { token: this.Token, data: payload }
     return this.http.post(`${ApiUrl}socialmedia/post-linkedin`, req);
   }
+  postToPinterest (payload: any): Observable<any> {
+    var req = { token: this.Token, data: payload }
+    return this.http.post(`${ApiUrl}socialmedia/UploadPinterest`, payload);
+  }
 
   uploadMedia(base64Data: string): Observable<string> {
     return this.http.post<{ fileUrl: string }>(`${ApiUrl}socialmedia/upload-media-file`, {
@@ -421,7 +425,6 @@ export class AppService {
   // }
 
 getLocation(pinCode: string): Observable<any> {
-  debugger;
   // return this.http.get(ApiUrl + "/Organisation/" + pinCode);
     return this.http.get(ApiUrl+`Organisation/`+ pinCode)
 }

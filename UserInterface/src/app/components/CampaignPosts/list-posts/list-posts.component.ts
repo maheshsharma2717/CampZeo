@@ -22,7 +22,7 @@ export class ListPostsComponent {
   filteredModalContentAll: any[] = [];
   searchTerm: string = '';
   page: number = 1;
-  itemsPerPage: number = 10;
+  itemsPerPage: number = 50;
   itemsPerPageOptions: number[] = [5, 10, 20, 100, 200];
   total: number = 0;
   campaignId: any = 0;
@@ -52,7 +52,6 @@ vedioresponse:any;
     this.GetCampaignPosts();
   }
   GetCampaignPosts() {
-    debugger;
     var request: any = {
       "data": {
         "pageSize": this.itemsPerPage,
@@ -189,6 +188,7 @@ vedioresponse:any;
 
     this.service.GetTemplateById(templateId).subscribe({
       next: (response: any) => {
+        debugger
         if (response.isSuccess) {
           console.log(response.data)
           this.previewData = response.data;
@@ -208,9 +208,8 @@ vedioresponse:any;
               this.emailHtmlContent = this.previewData.message;
             }
           }
-debugger;
           var url = this.previewData.videoUrl;
-          // url is coming as a direct string, so just check and assign accordingly
+         
           this.imageresponse = null;
           this.vedioresponse = null;
           if (url && typeof url === 'string') {

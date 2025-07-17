@@ -53,6 +53,7 @@ namespace MC.Basic.API.Helpers
 
             new() {Key = "AppId", Value = "", Platform = PlatformType.Pinterest},
             new() {Key = "ClientSecret", Value = "", Platform = PlatformType.Pinterest},
+            new() {Key = "AuthToken", Value = "", Platform = PlatformType.Pinterest}
             };
 
             foreach(var config in configsToAdd)
