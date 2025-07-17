@@ -81,7 +81,16 @@
                                                 </select>
                                             </div>
                                         </div>
-                                        <div class="card-body custom-inner-html" [innerHTML]="GetHtml(Post?.message)">
+                                        <div class="card-body">
+                                          <div *ngIf="vedioresponse">
+                                            <video [src]="vedioresponse" controls width="400">
+                                              Your browser does not support the video tag.
+                                            </video>
+                                          </div>
+                                          <div *ngIf="imageresponse">
+                                            <img [src]="imageresponse" alt="Preview Image" width="400" />
+                                          </div>
+                                          <div class="custom-inner-html" [innerHTML]="GetHtml(Post?.message)"></div>
                                         </div>
                                     </div>
                                 </div>
@@ -126,7 +135,16 @@
                                                 </select>
                                             </div> -->
                                         </div>
-                                        <div class="card-body custom-inner-html" [innerHTML]="GetHtml(Post?.message)">
+                                        <div class="card-body">
+                                          <div *ngIf="vedioresponse">
+                                            <video [src]="vedioresponse" controls width="400">
+                                              Your browser does not support the video tag.
+                                            </video>
+                                          </div>
+                                          <div *ngIf="imageresponse">
+                                            <img [src]="imageresponse" alt="Preview Image" width="400" />
+                                          </div>
+                                          <div class="custom-inner-html" [innerHTML]="GetHtml(Post?.message)"></div>
                                         </div>
                                     </div>
                                 </div>
@@ -139,17 +157,15 @@
                                     <label for="sub">Subject</label>
                                     <input type="text" class="form-control" name="sub" id="sub" readonly value="{{Post?.subject}}">
                                     <div class="card border-0">
-                                        <!-- <div class="card-header">
-                                            <label for="pageSelect" class="form-label">Select Channel</label>
-                                            <select id="pageSelect" class="form-control" [(ngModel)]="selectedChannel"
-                                                (change)="onPageSelect()">
-                                                <option value="" disabled selected>Select a channel</option>
-                                                <option *ngFor="let channel of channels" [ngValue]="channels">{{ channel.name }}
-                                                </option>
-                                            </select>
-                                        </div> -->
-                                        <div class="card-body custom-inner-html">
-                                            <video muted autoplay loop height="100%" width="100%" src="{{Post?.videoUrl}}"></video>
+                                        <div class="card-body">
+                                          <div *ngIf="vedioresponse">
+                                            <video [src]="vedioresponse" controls width="400">
+                                              Your browser does not support the video tag.
+                                            </video>
+                                          </div>
+                                          <div *ngIf="imageresponse">
+                                            <img [src]="imageresponse" alt="Preview Image" width="400" />
+                                          </div>
                                         </div>
                                     </div>
                                 </div>

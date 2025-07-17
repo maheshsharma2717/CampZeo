@@ -210,7 +210,7 @@ vedioresponse:any;
           }
 debugger;
           var url = this.previewData.videoUrl;
-          // url is coming as a direct string, so just check and assign accordingly
+         
           this.imageresponse = null;
           this.vedioresponse = null;
           if (url && typeof url === 'string') {
