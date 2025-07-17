@@ -599,7 +599,7 @@ namespace MC.Basic.API.Controllers
                     media_source = new
                     {
                         source_type = "image_url",
-                        url = postData.imageUrl
+                        url = "https://i.pinimg.com/736x/55/23/e6/5523e66cfc8f6c9e3c14b075a7b8f78d.jpg"
                     }
                 };
                 var json = JsonConvert.SerializeObject(pinRequest);

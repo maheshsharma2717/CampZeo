@@ -72,7 +72,6 @@ export class EventComponent implements OnInit {
   GetData() {
     this.service.GetEventForCampaignPost({ data: this.id }).subscribe({
       next: (response: any) => {
-        debugger
         this.contacts = response.data.contacts
         this.Post = response.data.post
         this.filteredContacts = this.contacts

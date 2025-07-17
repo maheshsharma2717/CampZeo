@@ -238,6 +238,9 @@ export class AddPostComponent implements AfterViewInit {
           templateData.id = this.id ? this.id : 0;
           templateData.campainId = this.CampainIdFromTemplate;
           templateData.VideoUrl = this.uploadedVideoUrl;
+          if(this.CampaignPostForm.controls.type.value == 9){
+            templateData.VideoUrl = this.uploadedImageUrl;
+          }
           var request = { data: templateData };
           if (this.editMode) {
             this.service.UpdateCampaignPost(request).subscribe({
@@ -435,7 +438,6 @@ export class AddPostComponent implements AfterViewInit {
   }
 
   onVideoSelected(event: Event): void {
-    debugger
     const input = event.target as HTMLInputElement;
     if (input.files && input.files[0]) {
       const file = input.files[0];
@@ -1066,24 +1068,24 @@ export class AddPostComponent implements AfterViewInit {
     }
   }
 
-  // onImageSelection(event: Event){
-  //   let fileinput = event.target as HTMLInputElement;
-  //   const file = fileinput.files?.[0];
-  //   if (file){
-  //     const reader = new FileReader();
-  //     reader.onload = () =>{
-  //       const base64Image = reader.result as string;
-  //       this.pinterestFile = base64Image;
-  //     }
-  //     reader.readAsDataURL(file)
-  //     this.service.uploadMedia(this.pinterestFile).subscribe({
-  //       next: (res: any) =>{
-  //         this.editorContent = res.url
-  //         console.log(res);
-  //       }
-  //     })
-  //   }
+  onImageSelection(event: Event){
+    let fileinput = event.target as HTMLInputElement;
+    const file = fileinput.files?.[0];
+    if (file){
+      const reader = new FileReader();
+      reader.onload = () =>{
+        const base64Image = reader.result as string;
+        this.pinterestFile = base64Image;
+      }
+      reader.readAsDataURL(file)
+      this.service.uploadMedia(this.pinterestFile).subscribe({
+        next: (res: any) =>{
+          this.editorContent = res.url
+          console.log(res);
+        }
+      })
+    }
 
-  // }
+  }
 
 }
