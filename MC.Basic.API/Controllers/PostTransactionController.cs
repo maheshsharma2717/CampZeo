@@ -45,6 +45,17 @@ namespace MC.Basic.API.Controllers
         [HttpPost("exchange-token")]
         public async Task<IActionResult> ExchangeToken([FromBody] ExchangeTokenRequest request)
         {
+            var origin = Request.Headers["Origin"].ToString();
+            string redirectUri;
+            if (!string.IsNullOrEmpty(origin) &&
+                (origin == "http://localhost:4200" || origin == "https://campzeo.com"))
+            {
+                redirectUri = $"{origin}/auth-callback";
+            }
+            else
+            {
+                redirectUri = "http://localhost:4200/auth-callback";
+            }
             switch (request.Platform.ToLower())
             {
                 case "instagram":
@@ -59,7 +70,7 @@ namespace MC.Basic.API.Controllers
         {
             { "client_id", InstaAppId },
             { "client_secret", InstaAppSecret },
-            { "redirect_uri", "http://localhost:4200/auth-callback" },
+            { "redirect_uri", redirectUri },
             { "code", request.Code }
         };
 
@@ -135,7 +146,7 @@ namespace MC.Basic.API.Controllers
                             var AppSecret = await _platformConfigurationRepository.GetConfigurationValueByKey("AppSecret", PlatformType.Facebook);
 
                             var fbResponse = await _httpClient.GetAsync(
-                            $"https://graph.facebook.com/v19.0/oauth/access_token?fields=id,name,email&client_id={appId}&redirect_uri={"http://localhost:4200/auth-callback"}&client_secret={AppSecret}&code={request.Code}"
+                            $"https://graph.facebook.com/v19.0/oauth/access_token?fields=id,name,email&client_id={appId}&redirect_uri={redirectUri}&client_secret={AppSecret}&code={request.Code}"
                             );
 
                             var fbContent = await fbResponse.Content.ReadAsStringAsync();
@@ -187,7 +198,7 @@ namespace MC.Basic.API.Controllers
                         }
                         using var httpClient = new HttpClient();
                         httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", request.Code);
-                        var response = await httpClient.GetAsync($"https://www.googleapis.com/oauth2/v3/userinfo?access_token={request.Code}&redirect_uri={"http://localhost:4200/auth-callback"}&client_secret={AppSecret}");
+                        var response = await httpClient.GetAsync($"https://www.googleapis.com/oauth2/v3/userinfo?access_token={request.Code}&redirect_uri={redirectUri}&client_secret={AppSecret}");
 
                         var content = await response.Content.ReadAsStringAsync();
                         var YoutubeChannelData = JsonConvert.DeserializeObject<YoutubeUserDto>(content);
@@ -217,7 +228,7 @@ namespace MC.Basic.API.Controllers
     {
         { "grant_type", "authorization_code" },
         { "code", request.Code },
-        { "redirect_uri", "http://localhost:4200/auth-callback" },
+        { "redirect_uri", redirectUri },
         { "client_id", clientId },
         { "client_secret", clientSecret }
     };
@@ -269,7 +280,7 @@ namespace MC.Basic.API.Controllers
     {
         { "grant_type", "authorization_code" },
         { "code", request.Code },
-        { "redirect_uri", "http://localhost:4200/auth-callback" }
+        { "redirect_uri", redirectUri }
     };
 
                         using var httpClient = new HttpClient();
