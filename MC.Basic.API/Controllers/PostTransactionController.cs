@@ -636,16 +636,55 @@ namespace MC.Basic.API.Controllers
                 {
                     return BadRequest("Access Token not found");
                 }
+
+                object mediaSource;
+                string contentType = "image/png";
+                string fileName = null;
+                string base64Image = null;
+                if (!string.IsNullOrEmpty(postData.imageUrl) && (postData.imageUrl.StartsWith("/uploads/") || postData.imageUrl.Contains("localhost") || postData.imageUrl.Contains(Request.Host.Value)))
+                {
+                   
+                    if (postData.imageUrl.StartsWith("/uploads/"))
+                    {
+                        fileName = postData.imageUrl.Substring("/uploads/".Length);
+                    }
+                    else
+                    {
+                      
+                        var uri = new Uri(postData.imageUrl);
+                        fileName = uri.Segments.Last();
+                    }
+                    var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads", fileName);
+                    if (!System.IO.File.Exists(filePath))
+                    {
+                        return NotFound("Image file not found on server.");
+                    }
+                    var fileBytes = await System.IO.File.ReadAllBytesAsync(filePath);
+                    base64Image = Convert.ToBase64String(fileBytes);
+                  
+                    var ext = Path.GetExtension(fileName).ToLower();
+                    if (ext == ".jpg" || ext == ".jpeg") contentType = "image/jpeg";
+                    else if (ext == ".png") contentType = "image/png";
+                    else if (ext == ".gif") contentType = "image/gif";
+                    mediaSource = new {
+                        source_type = "image_base64",
+                        content_type = contentType,
+                        data = base64Image
+                    };
+                }
+                else
+                {
+                    mediaSource = new {
+                        source_type = "image_url",
+                        url = postData.imageUrl
+                    };
+                }
                 var pinRequest = new
                 {
                     board_id = "948430071466987763",
                     title = postData.Title,
                     alt_text = postData.Description,
-                    media_source = new
-                    {
-                        source_type = "image_url",
-                        url = postData.imageUrl
-                    }
+                    media_source = mediaSource
                 };
                 var json = JsonConvert.SerializeObject(pinRequest);
                 var content = new StringContent(json, Encoding.UTF8, "application/json");

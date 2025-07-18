@@ -357,7 +357,8 @@ export class EventComponent implements OnInit {
 
 
   private postToOtherChannels(campaignId: number, message: string) {
-    const selectedContacts = this.grid.getSelectedRecords();
+    
+    const selectedContacts = this.filteredContacts.filter(c => c.selected);
     if (!selectedContacts || selectedContacts.length === 0) {
       this.toaster.warning('Please select at least one contact.', 'Warning');
       return;
@@ -446,7 +447,7 @@ export class EventComponent implements OnInit {
     return html[0];
   }
 
-  //instagram fb changes
+
   onPageSelect(): void {
     this.instagramUserId = '';
     if (this.selectedPage?.id && this.selectedPage?.access_token) {
@@ -515,4 +516,7 @@ export class EventComponent implements OnInit {
     this.pageSettings = { pageSize: value };
   }
 
+  get isContactPlatform(): boolean {
+    return ['SMS', 'email', 'whatsApp'].includes(this.activeTab);
+  }
 }

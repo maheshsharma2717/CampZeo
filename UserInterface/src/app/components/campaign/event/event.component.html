@@ -23,22 +23,25 @@
         <div class="card-header bg-gradient bg-secondary rounded-top-3 text-white">
             Share Campaign Post
         </div>
-        <div class="row">
-            <div class="col">
+        <div class="row d-flex">
+            <div class="col-12" *ngIf="!isContactPlatform">
                 <div class="h-100">
+                    <!-- Post Preview Section (full width for non-contact platforms) -->
                     <div class="card-header py-2">
                         <h5>Post Preview</h5>
                     </div>
                     <div class="card-body pt-2">
                         <div class="tab-content pt-2" id="myTabContent">
                             <div class="tab-pane fade" [class.show]="activeTab === 'SMS'"
-                                [class.active]="activeTab === 'SMS'" id="SMS" role="tabpanel" aria-labelledby="SMS-tab">
+                                [class.active]="activeTab === 'SMS'" id="SMS" role="tabpanel"
+                                aria-labelledby="SMS-tab">
                                 <div class="form-group">
                                     <div class="form-control" id="messageText" rows="5"
                                         [innerHTML]="GetHtml(Post?.message)" style="min-height: 3vh; border: none">
                                     </div>
                                 </div>
                             </div>
+
                             <div class="tab-pane fade" [class.show]="activeTab === 'whatsApp'"
                                 [class.active]="activeTab === 'whatsApp'" id="whatsApp" role="tabpanel"
                                 aria-labelledby="whatsApp-tab">
@@ -58,7 +61,8 @@
                                 </div>
                             </div>
                             <div class="tab-pane fade" [class.show]="activeTab === 'rcs'"
-                                [class.active]="activeTab === 'rcs'" id="rcs" role="tabpanel" aria-labelledby="rcs-tab">
+                                [class.active]="activeTab === 'rcs'" id="rcs" role="tabpanel"
+                                aria-labelledby="rcs-tab">
                                 <div class="form-group">
                                     <div class="form-control" id="messageText" rows="5"
                                         [innerHTML]="GetHtml(Post?.message)" style="min-height: 3vh; border: none">
@@ -74,23 +78,26 @@
                                         <div class="card-header">
                                             <div class="mb-3">
                                                 <label for="pageSelect" class="form-label">Select Page</label>
-                                                <select id="pageSelect" class="form-control" [(ngModel)]="selectedPage">
+                                                <select id="pageSelect" class="form-control"
+                                                    [(ngModel)]="selectedPage">
                                                     <option value="" disabled selected>Select a page</option>
-                                                    <option *ngFor="let page of pages" [ngValue]="page">{{ page.name }}
+                                                    <option *ngFor="let page of pages" [ngValue]="page">{{ page.name
+                                                        }}
                                                     </option>
                                                 </select>
                                             </div>
                                         </div>
                                         <div class="card-body">
-                                          <div *ngIf="vedioresponse">
-                                            <video [src]="vedioresponse" controls width="400">
-                                              Your browser does not support the video tag.
-                                            </video>
-                                          </div>
-                                          <div *ngIf="imageresponse">
-                                            <img [src]="imageresponse" alt="Preview Image" width="400" />
-                                          </div>
-                                          <div class="custom-inner-html" [innerHTML]="GetHtml(Post?.message)"></div>
+                                            <div *ngIf="vedioresponse">
+                                                <video [src]="vedioresponse" controls width="400">
+                                                    Your browser does not support the video tag.
+                                                </video>
+                                            </div>
+                                            <div *ngIf="imageresponse">
+                                                <img [src]="imageresponse" alt="Preview Image" width="400" />
+                                            </div>
+                                            <div class="custom-inner-html" [innerHTML]="GetHtml(Post?.message)">
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -104,15 +111,17 @@
                                         <div class="card-header">
                                             <div class="mb-3">
                                                 <label for="pageSelect" class="form-label">Select Page</label>
-                                                <select id="pageSelect" class="form-control" [(ngModel)]="selectedPage"
-                                                    (change)="onPageSelect()">
+                                                <select id="pageSelect" class="form-control"
+                                                    [(ngModel)]="selectedPage" (change)="onPageSelect()">
                                                     <option value="" disabled selected>Select a page</option>
-                                                    <option *ngFor="let page of pages" [ngValue]="page">{{ page.name }}
+                                                    <option *ngFor="let page of pages" [ngValue]="page">{{ page.name
+                                                        }}
                                                     </option>
                                                 </select>
                                             </div>
                                         </div>
-                                        <div class="card-body custom-inner-html" [innerHTML]="GetHtml(Post?.message)">
+                                        <div class="card-body custom-inner-html"
+                                            [innerHTML]="GetHtml(Post?.message)">
                                         </div>
                                         <video [src]="videoUrl" controls width="400">
                                             Your browser does not support the video tag.
@@ -136,15 +145,16 @@
                                             </div> -->
                                         </div>
                                         <div class="card-body">
-                                          <div *ngIf="vedioresponse">
-                                            <video [src]="vedioresponse" controls width="400">
-                                              Your browser does not support the video tag.
-                                            </video>
-                                          </div>
-                                          <div *ngIf="imageresponse">
-                                            <img [src]="imageresponse" alt="Preview Image" width="400" />
-                                          </div>
-                                          <div class="custom-inner-html" [innerHTML]="GetHtml(Post?.message)"></div>
+                                            <div *ngIf="vedioresponse">
+                                                <video [src]="vedioresponse" controls width="400">
+                                                    Your browser does not support the video tag.
+                                                </video>
+                                            </div>
+                                            <div *ngIf="imageresponse">
+                                                <img [src]="imageresponse" alt="Preview Image" width="400" />
+                                            </div>
+                                            <div class="custom-inner-html" [innerHTML]="GetHtml(Post?.message)">
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -155,17 +165,18 @@
                                 aria-labelledby="facebook-tab">
                                 <div class="form-group">
                                     <label for="sub">Subject</label>
-                                    <input type="text" class="form-control" name="sub" id="sub" readonly value="{{Post?.subject}}">
+                                    <input type="text" class="form-control" name="sub" id="sub" readonly
+                                        value="{{Post?.subject}}">
                                     <div class="card border-0">
                                         <div class="card-body">
-                                          <div *ngIf="vedioresponse">
-                                            <video [src]="vedioresponse" controls width="400">
-                                              Your browser does not support the video tag.
-                                            </video>
-                                          </div>
-                                          <div *ngIf="imageresponse">
-                                            <img [src]="imageresponse" alt="Preview Image" width="400" />
-                                          </div>
+                                            <div *ngIf="vedioresponse">
+                                                <video [src]="vedioresponse" controls width="400">
+                                                    Your browser does not support the video tag.
+                                                </video>
+                                            </div>
+                                            <div *ngIf="imageresponse">
+                                                <img [src]="imageresponse" alt="Preview Image" width="400" />
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -175,7 +186,8 @@
                                 aria-labelledby="facebook-tab">
                                 <div class="form-group">
                                     <label for="sub">Subject</label>
-                                    <input type="text" class="form-control" name="sub" id="sub" readonly value="{{Post?.subject}}">
+                                    <input type="text" class="form-control" name="sub" id="sub" readonly
+                                        value="{{Post?.subject}}">
                                     <div class="card border-0">
                                         <!-- <div class="card-header">
                                             <label for="pageSelect" class="form-label">Select Channel</label>
@@ -187,125 +199,290 @@
                                             </select>
                                         </div> -->
                                         <div class="card-body custom-inner-html">
-                                            <div class="card-body custom-inner-html" [innerHTML]="GetHtml(Post?.message)">
+                                            <div class="card-body custom-inner-html"
+                                                [innerHTML]="GetHtml(Post?.message)">
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
 
+                    </div>
                 </div>
             </div>
-            <div class="col-md-8" *ngIf="Post?.type != 5 && Post?.type != 6&& Post?.type != 7 && Post?.type != 8 && Post?.type != 9">
-                <div class="col-md-12">
-                    <div class=" mb-0">
-                        <div class="card-header d-flex align-items-center justify-content-between py-2">
-                            <h5>Select Contacts</h5>
+            <div class="col-5" *ngIf="isContactPlatform">
+                <div class="col-12">
+                    <div class="h-100">
+                        <div class="card-header py-2">
+                            <h5>Post Preview</h5>
                         </div>
-                        <div class="card-body table-border-style p-0"
-                            *ngIf="Post?.type != 5 && Post?.type != 6&& Post?.type != 7 && Post?.type != 8 && Post?.type != 9">
-                            <ejs-grid #grid [dataSource]="filteredContacts" [allowPaging]="true" [allowSorting]="true"
-                                [pageSettings]="{ pageSize: itemsPerPage, pageSizes: [5, 10, 20, 50] }"
-                                [searchSettings]="{ fields: ['contactName', 'contactEmail', 'contactMobile', 'contactWhatsApp'], key: searchTerm }"
-                                [toolbar]="toolbar" height="400" (change)="onIndividualCheckChange()">
-                                <e-columns>
-                                    <e-column type="checkbox" width="50"></e-column>
-                                    <e-column field="contactName" headerText="Contact Name" width="150"></e-column>
-                                    <e-column field="contactEmail" headerText="Email" width="180"></e-column>
-                                    <e-column field="contactMobile" headerText="Mobile" width="120"></e-column>
-                                    <e-column field="contactWhatsApp" headerText="WhatsApp" width="120"></e-column>
-                                </e-columns>
-                            </ejs-grid>
+                        <div class="card-body pt-2">
+                            <div class="tab-content pt-2" id="myTabContent">
+                                <div class="tab-pane fade" [class.show]="activeTab === 'SMS'"
+                                    [class.active]="activeTab === 'SMS'" id="SMS" role="tabpanel"
+                                    aria-labelledby="SMS-tab">
+                                    <div class="form-group">
+                                        <div class="form-control" id="messageText" rows="5"
+                                            [innerHTML]="GetHtml(Post?.message)" style="min-height: 3vh; border: none">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="tab-pane fade" [class.show]="activeTab === 'whatsApp'"
+                                    [class.active]="activeTab === 'whatsApp'" id="whatsApp" role="tabpanel"
+                                    aria-labelledby="whatsApp-tab">
+                                    <div class="form-group">
+                                        <div class="form-control" id="messageText" rows="5"
+                                            [innerHTML]="GetHtml(Post?.message)" style="min-height: 3vh; border: none">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="tab-pane fade" [class.show]="activeTab === 'email'"
+                                    [class.active]="activeTab === 'email'" id="email" role="tabpanel"
+                                    aria-labelledby="email-tab">
+                                    <div class="form-group">
+                                        <div class="form-control" id="messageText" rows="5"
+                                            [innerHTML]="GetHtml(Post?.message)" style="min-height: 3vh; border: none">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="tab-pane fade" [class.show]="activeTab === 'rcs'"
+                                    [class.active]="activeTab === 'rcs'" id="rcs" role="tabpanel"
+                                    aria-labelledby="rcs-tab">
+                                    <div class="form-group">
+                                        <div class="form-control" id="messageText" rows="5"
+                                            [innerHTML]="GetHtml(Post?.message)" style="min-height: 3vh; border: none">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="tab-pane fade" [class.show]="activeTab === 'facebook'"
+                                    [class.active]="activeTab === 'facebook'" id="facebook" role="tabpanel"
+                                    aria-labelledby="facebook-tab">
+                                    <div class="form-group">
+                                        <div class="card border-0">
+                                            <div class="card-header">
+                                                <div class="mb-3">
+                                                    <label for="pageSelect" class="form-label">Select Page</label>
+                                                    <select id="pageSelect" class="form-control"
+                                                        [(ngModel)]="selectedPage">
+                                                        <option value="" disabled selected>Select a page</option>
+                                                        <option *ngFor="let page of pages" [ngValue]="page">{{ page.name
+                                                            }}
+                                                        </option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="card-body">
+                                                <div *ngIf="vedioresponse">
+                                                    <video [src]="vedioresponse" controls width="400">
+                                                        Your browser does not support the video tag.
+                                                    </video>
+                                                </div>
+                                                <div *ngIf="imageresponse">
+                                                    <img [src]="imageresponse" alt="Preview Image" width="400" />
+                                                </div>
+                                                <div class="custom-inner-html" [innerHTML]="GetHtml(Post?.message)">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="tab-pane fade" [class.show]="activeTab === 'instagram'"
+                                    [class.active]="activeTab === 'instagram'" id="instagram" role="tabpanel"
+                                    aria-labelledby="instagram-tab">
+                                    <div class="form-group">
+                                        <div class="card border-0">
+                                            <div class="card-header">
+                                                <div class="mb-3">
+                                                    <label for="pageSelect" class="form-label">Select Page</label>
+                                                    <select id="pageSelect" class="form-control"
+                                                        [(ngModel)]="selectedPage" (change)="onPageSelect()">
+                                                        <option value="" disabled selected>Select a page</option>
+                                                        <option *ngFor="let page of pages" [ngValue]="page">{{ page.name
+                                                            }}
+                                                        </option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="card-body custom-inner-html"
+                                                [innerHTML]="GetHtml(Post?.message)">
+                                            </div>
+                                            <video [src]="videoUrl" controls width="400">
+                                                Your browser does not support the video tag.
+                                            </video>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="tab-pane fade" [class.show]="activeTab === 'linkedIn'"
+                                    [class.active]="activeTab === 'linkedIn'" id="linkedIn" role="tabpanel"
+                                    aria-labelledby="facebook-tab">
+                                    <div class="form-group">
+                                        <div class="card border-0">
+                                            <div class="card-header">
+                                                <!-- <div class="mb-3">
+                                                <label for="pageSelect" class="form-label">Select Page</label>
+                                                <select id="pageSelect" class="form-control" [(ngModel)]="selectedPage">
+                                                    <option value="" disabled selected>Select a page</option>
+                                                    <option *ngFor="let page of pages" [ngValue]="page">{{ page.name }}
+                                                    </option>
+                                                </select>
+                                            </div> -->
+                                            </div>
+                                            <div class="card-body">
+                                                <div *ngIf="vedioresponse">
+                                                    <video [src]="vedioresponse" controls width="400">
+                                                        Your browser does not support the video tag.
+                                                    </video>
+                                                </div>
+                                                <div *ngIf="imageresponse">
+                                                    <img [src]="imageresponse" alt="Preview Image" width="400" />
+                                                </div>
+                                                <div class="custom-inner-html" [innerHTML]="GetHtml(Post?.message)">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="tab-pane fade" [class.show]="activeTab === 'youtube'"
+                                    [class.active]="activeTab === 'youtube'" id="youtube" role="tabpanel"
+                                    aria-labelledby="facebook-tab">
+                                    <div class="form-group">
+                                        <label for="sub">Subject</label>
+                                        <input type="text" class="form-control" name="sub" id="sub" readonly
+                                            value="{{Post?.subject}}">
+                                        <div class="card border-0">
+                                            <div class="card-body">
+                                                <div *ngIf="vedioresponse">
+                                                    <video [src]="vedioresponse" controls width="400">
+                                                        Your browser does not support the video tag.
+                                                    </video>
+                                                </div>
+                                                <div *ngIf="imageresponse">
+                                                    <img [src]="imageresponse" alt="Preview Image" width="400" />
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="tab-pane fade" [class.show]="activeTab === 'Pinterest'"
+                                    [class.active]="activeTab === 'Pinterest'" id="Pinterest" role="tabpanel"
+                                    aria-labelledby="facebook-tab">
+                                    <div class="form-group">
+                                        <label for="sub">Subject</label>
+                                        <input type="text" class="form-control" name="sub" id="sub" readonly
+                                            value="{{Post?.subject}}">
+                                        <div class="card border-0">
+                                            <!-- <div class="card-header">
+                                            <label for="pageSelect" class="form-label">Select Channel</label>
+                                            <select id="pageSelect" class="form-control" [(ngModel)]="selectedChannel"
+                                                (change)="onPageSelect()">
+                                                <option value="" disabled selected>Select a channel</option>
+                                                <option *ngFor="let channel of channels" [ngValue]="channels">{{ channel.name }}
+                                                </option>
+                                            </select>
+                                        </div> -->
+                                            <div class="card-body custom-inner-html">
+                                                <div class="card-body custom-inner-html"
+                                                    [innerHTML]="GetHtml(Post?.message)">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
-        <div class="card-footer">
-            <button class="btn btn-secondary mt-3 ms-4 " (click)="sendMessage()">Share</button>
+            <div class="col-7" *ngIf="isContactPlatform" style="height: auto;">
+
+                <div class="col-12">
+                    <div class="card-header d-flex aligin-item-center justify-content-between py-2">
+                        <div class="title-table d-flex align-items-center">
+                            <h5>Campaign Events</h5>
+                        </div>
+
+                    </div>
+                    <div class="card-header d-flex aligin-item-center justify-content-between py-2">
+                        <input type="text" class="form-control w-25" placeholder="Search..."
+                            [(ngModel)]="searchTerm" (input)="onSearchChange()" />
+
+                        <div class="d-flex align-items-center justify-content-center ">
+                            <div class="mx-2">
+                                <span class="text-primary">entries per page</span>
+                            </div>
+                            <div class="">
+                                <select id="itemsPerPageSelect" class="form-control" [(ngModel)]="itemsPerPage"
+                                    (change)="onItemsPerPageChange(itemsPerPage)">
+                                    <option *ngFor="let option of itemsPerPageOptions" [value]="option">{{ option }}
+                                    </option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body table-border-style pb-1">
+                        <div class="table-responsive" *ngIf="Post?.type!=5 && Post?.type!=6">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th scope="col" class="align-middle">
+                                            <input type="checkbox" class="form-check-input pointer"
+                                                [checked]="allSelected" (change)="selectAll($event)" />
+                                        </th>
+                                        <th scope="col">Contact Name</th>
+                                        <th scope="col">Email</th>
+                                        <th scope="col">Mobile</th>
+                                        <th scope="col">WhatsApp</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr
+                                        *ngFor="let contact of filteredContacts | paginate: { itemsPerPage: itemsPerPage, currentPage: page, totalItems: total }">
+                                        <td class="align-middle">
+                                            <input class="form-check-input pointer" type="checkbox"
+                                                [(ngModel)]="contact.selected" (change)="onIndividualCheckChange()"
+                                                id="contact{{contact.id}}">
+                                        </td>
+                                        <td class="align-middle">
+                                            <label class="form-check-label" for="contact{{contact.id}}">
+                                                {{ contact.contactName }}
+                                            </label>
+                                        </td>
+                                        <td class="align-middle">
+                                            <label class="form-check-label" for="contact{{contact.id}}">
+                                                {{ contact.contactEmail }}
+                                            </label>
+                                        </td>
+                                        <td class="align-middle">
+                                            <label class="form-check-label" for="contact{{contact.id}}">
+                                                {{ contact.contactMobile }}
+                                            </label>
+                                        </td>
+                                        <td class="align-middle">
+                                            <label class="form-check-label" for="contact{{contact.id}}">
+                                                {{ contact.contactWhatsApp }}
+                                            </label>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <div class="d-flex justify-content-end pt-2 mb-0">
+                                <pagination-controls class="pagination"
+                                    (pageChange)="pageChangeEvent($event)"></pagination-controls>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            
+            <div class="card-footer">
+                <button class="btn btn-secondary mt-3 ms-4 " (click)="sendMessage()">Share</button>
+            </div>
         </div>
     </div>
-
-</div>
-<!-- <div class="row">
-        <div class="col-md-12">
-            <div class="card">
-                <div class="card-header d-flex aligin-item-center justify-content-between py-2">
-                    <div class="title-table d-flex align-items-center">
-                        <h5>Campaign Events</h5>
-                    </div>
-
-                </div>
-                <div class="card-header d-flex aligin-item-center justify-content-between py-2">
-                    <input type="text" class="form-control w-25" placeholder="Search..." [(ngModel)]="searchTerm"
-                        (input)="onSearchChange()" />
-
-                    <div class="d-flex align-items-center justify-content-center ">
-                        <div class="mx-2">
-                            <span class="text-primary">entries per page</span>
-                        </div>
-                        <div class="">
-                            <select id="itemsPerPageSelect" class="form-control" [(ngModel)]="itemsPerPage"
-                                (change)="onItemsPerPageChange(itemsPerPage)">
-                                <option *ngFor="let option of itemsPerPageOptions" [value]="option">{{ option }}
-                                </option>
-                            </select>
-                        </div>
-                    </div>
-                </div>
-                <div class="card-body table-border-style pb-1">
-                    <div class="table-responsive" *ngIf="Post?.type!=5 && Post?.type!=6">
-                        <table class="table">
-                            <thead>
-                                <tr>
-                                    <th scope="col" class="align-middle">
-                                        <input type="checkbox" class="form-check-input pointer" [checked]="allSelected"
-                                            (change)="selectAll($event)" />
-                                    </th>
-                                    <th scope="col">Contact Name</th>
-                                    <th scope="col">Email</th>
-                                    <th scope="col">Mobile</th>
-                                    <th scope="col">WhatsApp</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr
-                                    *ngFor="let contact of filteredContacts | paginate: { itemsPerPage: itemsPerPage, currentPage: page, totalItems: total }">
-                                    <td class="align-middle">
-                                        <input class="form-check-input pointer" type="checkbox"
-                                            [(ngModel)]="contact.selected" (change)="onIndividualCheckChange()"
-                                            id="contact{{contact.id}}">
-                                    </td>
-                                    <td class="align-middle">
-                                        <label class="form-check-label" for="contact{{contact.id}}">
-                                            {{ contact.contactName }}
-                                        </label>
-                                    </td>
-                                    <td class="align-middle">
-                                        <label class="form-check-label" for="contact{{contact.id}}">
-                                            {{ contact.contactEmail }}
-                                        </label>
-                                    </td>
-                                    <td class="align-middle">
-                                        <label class="form-check-label" for="contact{{contact.id}}">
-                                            {{ contact.contactMobile }}
-                                        </label>
-                                    </td>
-                                    <td class="align-middle">
-                                        <label class="form-check-label" for="contact{{contact.id}}">
-                                            {{ contact.contactWhatsApp }}
-                                        </label>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                        <div class="d-flex justify-content-end pt-2 mb-0">
-                            <pagination-controls class="pagination"
-                                (pageChange)="pageChangeEvent($event)"></pagination-controls>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div> -->
