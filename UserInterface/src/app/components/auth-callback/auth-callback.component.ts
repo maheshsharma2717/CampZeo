@@ -41,13 +41,13 @@ export class AuthCallbackComponent implements OnInit {
 
     this.service.exchangeToken(code, userId, platform).subscribe({
       next: (res: any) => {
-        
         console.log(`${platform} Token:`, res);
 
         if (platform === 'instagram') {
-          localStorage.setItem('insta_access_token', res.accessToken);
+          localStorage.setItem('insta_access_token', res['access_token']);
           localStorage.setItem('insta_connected', 'true');
-        } else if (platform === 'facebook') {
+        }
+        else if (platform === 'facebook') {
           localStorage.setItem('access_token', res.accessToken);
           localStorage.setItem('fb_connected', 'true');
           sessionStorage.setItem('connectedUser', res.user.name);
@@ -59,6 +59,10 @@ export class AuthCallbackComponent implements OnInit {
           localStorage.setItem('google_access_token', res.accessToken);
           sessionStorage.setItem('google_access_token', res.accessToken);
           sessionStorage.setItem('YoutubeUserName', res.user.name);
+        } else if (platform == 'Pinterest' || platform == 'pinterest') {
+          localStorage.setItem('pinterest_access_token', res.accessToken);
+          sessionStorage.setItem('pinterest_access_token', res.accessToken);
+          sessionStorage.setItem('pinterestUserName', res.pinterestProfile.username);
         }
         this.router.navigate(['/accounts']);
       },

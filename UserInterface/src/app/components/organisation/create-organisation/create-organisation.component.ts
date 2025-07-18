@@ -145,7 +145,6 @@ export class CreateOrganisationComponent implements OnInit {
   }
 
   fetchLocationFromPin(pinCode: string): void {
-    debugger;
   this.service.getLocation(pinCode).subscribe({
     next: (res) => {
       this.form.patchValue({

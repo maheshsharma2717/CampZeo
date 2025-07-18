@@ -22,7 +22,7 @@ import { ImageEditorComponent } from '@syncfusion/ej2-angular-image-editor';
     EmailEditorModule,
     QuillModule,
     ChatComponent,
-    ImageEditorSharedModule,
+    ImageEditorSharedModule
   ],
   templateUrl: './add-post.component.html',
   styleUrl: './add-post.component.css'
@@ -107,6 +107,8 @@ export class AddPostComponent implements AfterViewInit {
   showTestAIPayloadModal: boolean = false;
   testAIPayloadImage: string | null = null;
   testAIPayloadPrompt: string = '';
+  pinterestFile: any;
+  uploadedImageUrl: any;
 
 
   constructor(public service: AppService, private toaster: ToastrService, private activatedRoute: ActivatedRoute, private route: Router, private textGenService: TextGenerationService) {
@@ -217,6 +219,7 @@ export class AddPostComponent implements AfterViewInit {
   }
 
   onSubmit(): void {
+
     this.attemptedSubmit = true;
     const type = this.CampaignPostForm.get('type')?.value;
     if (type === 7 && !this.uploadedVideoUrl) {
@@ -235,7 +238,6 @@ export class AddPostComponent implements AfterViewInit {
           templateData.id = this.id ? this.id : 0;
           templateData.campainId = this.CampainIdFromTemplate;
           templateData.VideoUrl = this.uploadedVideoUrl;
-          templateData.videoUrl = this.uploadedVideoUrl; 
           var request = { data: templateData };
           if (this.editMode) {
             this.service.UpdateCampaignPost(request).subscribe({
@@ -331,6 +333,11 @@ export class AddPostComponent implements AfterViewInit {
             message: this.editorContent
           });
           resolve();
+        } else if (this.CampaignPostForm.controls.type.value == 9) {
+          this.CampaignPostForm.patchValue({
+            message: this.editorContent
+          });
+          resolve();
         }
         else {
           this.CampaignPostForm.patchValue({
@@ -404,6 +411,10 @@ export class AddPostComponent implements AfterViewInit {
       this.CampaignPostForm.patchValue({ type: 5 });
     } else if (this.smsPlatform === 'Instagram') {
       this.CampaignPostForm.patchValue({ type: 6 });
+    } else if (this.smsPlatform === 'Youtube') {
+      this.CampaignPostForm.patchValue({ type: 8 });
+    } else if (this.smsPlatform === 'Pinterest') {
+      this.CampaignPostForm.patchValue({ type: 9 });
     }
   }
 
@@ -1053,5 +1064,25 @@ export class AddPostComponent implements AfterViewInit {
       this.toaster.error('Failed to process file');
     }
   }
+
+  // onImageSelection(event: Event){
+  //   let fileinput = event.target as HTMLInputElement;
+  //   const file = fileinput.files?.[0];
+  //   if (file){
+  //     const reader = new FileReader();
+  //     reader.onload = () =>{
+  //       const base64Image = reader.result as string;
+  //       this.pinterestFile = base64Image;
+  //     }
+  //     reader.readAsDataURL(file)
+  //     this.service.uploadMedia(this.pinterestFile).subscribe({
+  //       next: (res: any) =>{
+  //         this.editorContent = res.url
+  //         console.log(res);
+  //       }
+  //     })
+  //   }
+
+  // }
 
 }

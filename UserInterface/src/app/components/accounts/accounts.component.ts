@@ -31,6 +31,7 @@ export class AccountsComponent implements OnInit {
   linkedinClientId: any = '';
   facebookAccountName: any;
   googleAccountName: any;
+  pinterestAccountName: any;
   fb: any;
 
   constructor(
@@ -49,19 +50,20 @@ export class AccountsComponent implements OnInit {
       }
     });
     let fbVal = localStorage.getItem('connectedUser');
-    if(!fbVal){
+    if (!fbVal) {
       this.fb = false;
     }
     const userId = this.service.User.id;
     localStorage.removeItem('fbRedirect');
     this.facebookAccountName = sessionStorage.getItem('connectedUser');
     this.googleAccountName = sessionStorage.getItem('YoutubeUserName');
+    this.pinterestAccountName = sessionStorage.getItem('pinterestUserName');
     this.service.connectedUser$.subscribe(name => {
       if (name) {
         this.facebookAccountName = name;
         this.isFacebookConnected = true;
         this.fb = true;
-      }else{
+      } else {
         this.isFacebookConnected = false;
         this.fb = false;
       }
@@ -93,6 +95,7 @@ export class AccountsComponent implements OnInit {
   }
 
   getPages(token: string): void {
+    
     this.service.getFacebookPages(token).subscribe((res: any) => {
       this.pages = res.data;
       this.selectedPlatform = 'facebook';
@@ -112,10 +115,12 @@ export class AccountsComponent implements OnInit {
 
   loginWithInstagram(): void {
     const scope =
-      'instagram_basic,instagram_content_publish,pages_show_list,pages_read_engagement';
+      //'instagram_basic,instagram_content_publish,pages_show_list,pages_read_engagement';
+      'instagram_basic,instagram_content_publish,instagram_manage_insights,instagram_manage_comments';
     const redirectUri = encodeURIComponent(this.redirectUri);
     const state = 'instagram';
     const igLoginUrl = `https://www.facebook.com/v16.0/dialog/oauth?client_id=${this.fbAppId}&redirect_uri=${redirectUri}&scope=${scope}&response_type=code&state=${state}`;
+    
     // console.log('Instagram Login URL:', igLoginUrl);
     window.location.href = igLoginUrl;
   }
@@ -153,8 +158,17 @@ export class AccountsComponent implements OnInit {
   connectToPinterest() {
     const clientId = '1524471';
     const redirectUri = 'http://localhost:4200/auth-callback';
+    const scopes = [
+      'boards:read',
+      'pins:read',
+      'user_accounts:read',
+      'boards:write',
+      'pins:write',
+      'user_accounts:write'
+    ].join(',');
+
     const state = 'Pinterest';
-    const url = `https://www.pinterest.com/oauth/?client_id=${clientId}&redirect_uri=${redirectUri}&response_type=code&scope=boards:read,pins:read&state=${state}`;
+    const url = `https://www.pinterest.com/oauth/?client_id=${clientId}&redirect_uri=${redirectUri}&response_type=code&scope=${scopes}&state=${state}`;
     window.location.href = url
   }
 

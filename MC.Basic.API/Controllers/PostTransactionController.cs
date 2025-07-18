@@ -45,59 +45,90 @@ namespace MC.Basic.API.Controllers
         [HttpPost("exchange-token")]
         public async Task<IActionResult> ExchangeToken([FromBody] ExchangeTokenRequest request)
         {
-            switch(request.Platform.ToLower())
+            switch (request.Platform.ToLower())
             {
                 case "instagram":
-                {
-                    var InstaAppId = await _platformConfigurationRepository.GetConfigurationValueByKey("AppId", PlatformType.Instagram);
-                    var InstaAppSecret = await _platformConfigurationRepository.GetConfigurationValueByKey("AppSecret", PlatformType.Instagram);
-
-                    var requestUri = $"https://graph.facebook.com/v19.0/oauth/access_token";
-                    var formData = new Dictionary<string, string>
-                {
-                 { "client_id", InstaAppId },
-                 { "client_secret", InstaAppSecret },
-                 { "redirect_uri", "http://localhost:4200/auth-callback" },
-                 { "code", request.Code }
-                };
-
-                    var requestMessage = new HttpRequestMessage(HttpMethod.Post, requestUri)
                     {
-                        Content = new FormUrlEncodedContent(formData)
-                    };
-
-                    var tokenResponse = await _httpClient.SendAsync(requestMessage);
-                    var content = await tokenResponse.Content.ReadAsStringAsync();
-
-                    if(!tokenResponse.IsSuccessStatusCode)
-                    {
-                        return BadRequest(new
+                        try
                         {
-                            error = "Instagram token exchange failed",
-                            response = content
-                        });
-                    }
+                            var InstaAppId = await _platformConfigurationRepository.GetConfigurationValueByKey("AppId", PlatformType.Instagram);
+                            var InstaAppSecret = await _platformConfigurationRepository.GetConfigurationValueByKey("AppSecret", PlatformType.Instagram);
 
-                    var igToken = JsonConvert.DeserializeObject<InstagramTokenResponse>(content);
-                    if(igToken != null)
-                    {
-                        var user = _context.Users.FirstOrDefault(x => x.Id == request.UserId);
-                        if(user == null) return NotFound("User not found");
+                            var requestUri = $"https://graph.facebook.com/v19.0/oauth/access_token";
+                            var formData = new Dictionary<string, string>
+        {
+            { "client_id", InstaAppId },
+            { "client_secret", InstaAppSecret },
+            { "redirect_uri", "http://localhost:4200/auth-callback" },
+            { "code", request.Code }
+        };
 
-                        user.InstagramAccessToken = igToken.AccessToken;
-                        user.InstagramTokenCreatedAt = DateTime.UtcNow;
+                            var requestMessage = new HttpRequestMessage(HttpMethod.Post, requestUri)
+                            {
+                                Content = new FormUrlEncodedContent(formData)
+                            };
 
-                        if(igToken.ExpiresIn > 0)
-                        {
-                            user.InstagramTokenExpiresIn = igToken.ExpiresIn;
+                            var tokenResponse = await _httpClient.SendAsync(requestMessage);
+                            var content = await tokenResponse.Content.ReadAsStringAsync();
+
+                            if (!tokenResponse.IsSuccessStatusCode)
+                            {
+                                return BadRequest(new
+                                {
+                                    error = "Instagram token exchange failed",
+                                    statusCode = tokenResponse.StatusCode,
+                                    response = content
+                                });
+                            }
+
+                            var igToken = JsonConvert.DeserializeObject<InstagramTokenResponse>(content);
+                            if (igToken != null)
+                            {
+                                var user = _context.Users.FirstOrDefault(x => x.Id == request.UserId);
+                                if (user == null) return NotFound("User not found");
+
+                                user.InstagramAccessToken = igToken.AccessToken;
+                                user.InstagramTokenCreatedAt = DateTime.UtcNow;
+
+                                if (igToken.ExpiresIn > 0)
+                                {
+                                    user.InstagramTokenExpiresIn = igToken.ExpiresIn;
+                                }
+
+                                await _context.SaveChangesAsync();
+                                return Ok(igToken);
+                            }
+
+                            return BadRequest("Could not parse Instagram token");
                         }
-                        await _context.SaveChangesAsync();
-                        return Ok(igToken);
+                        catch (HttpRequestException httpEx)
+                        {
+                            return BadRequest(new
+                            {
+                                error = "HTTP request to Instagram failed",
+                                message = httpEx.Message
+                            });
+                        }
+                        catch (JsonException jsonEx)
+                        {
+                            return BadRequest(new
+                            {
+                                error = "Failed to parse Instagram token response",
+                                message = jsonEx.Message
+                            });
+                        }
+                        catch (Exception ex)
+                        {
+                            return StatusCode(500, new
+                            {
+                                error = "Unexpected server error",
+                                message = ex.Message
+                            });
+                        }
                     }
-                    return BadRequest("Could not parse Instagram token");
-                }
+
                 case "facebook":
-                {
+                    {
                         try
                         {
                             var appId = await _platformConfigurationRepository.GetConfigurationValueByKey("AppId", PlatformType.Facebook);
@@ -136,21 +167,22 @@ namespace MC.Basic.API.Controllers
 
                             return Ok(new
                             {
-                                AccessToken = token,
+                                AccessToken = token.AccessToken,
                                 User = fbUser
                             });
                         }
-                        catch(Exception ex)
+                        catch (Exception ex)
                         {
                             throw new Exception("Error exchanging Facebook token", ex);
                         }
-                }
+                    }
                 case "youtube":
-                {
+                    {
                         var AppId = await _platformConfigurationRepository.GetConfigurationValueByKey("ClientId", PlatformType.Youtube);
                         var AppSecret = await _platformConfigurationRepository.GetConfigurationValueByKey("ClientSecret", PlatformType.Youtube);
 
-                        if (string.IsNullOrEmpty(request.Code)){
+                        if (string.IsNullOrEmpty(request.Code))
+                        {
                             return BadRequest("Token is missing");
                         }
                         using var httpClient = new HttpClient();
@@ -174,14 +206,14 @@ namespace MC.Basic.API.Controllers
                             AccessToken = request.Code,
                             User = youtubeUser
                         });
-                }
+                    }
                 case "linkedin":
-                {
-                    var clientId = await _platformConfigurationRepository.GetConfigurationValueByKey("ClientId", PlatformType.LinkedIn);
-                    var clientSecret = await _platformConfigurationRepository.GetConfigurationValueByKey("CLientSecret", PlatformType.LinkedIn);
+                    {
+                        var clientId = await _platformConfigurationRepository.GetConfigurationValueByKey("ClientId", PlatformType.LinkedIn);
+                        var clientSecret = await _platformConfigurationRepository.GetConfigurationValueByKey("CLientSecret", PlatformType.LinkedIn);
 
-                    // Step 1: Exchange code for access token
-                    var tokenRequest = new Dictionary<string, string>
+                        // Step 1: Exchange code for access token
+                        var tokenRequest = new Dictionary<string, string>
     {
         { "grant_type", "authorization_code" },
         { "code", request.Code },
@@ -190,39 +222,39 @@ namespace MC.Basic.API.Controllers
         { "client_secret", clientSecret }
     };
 
-                    using var httpClient = new HttpClient();
-                    var tokenResponse = await httpClient.PostAsync(
-                        "https://www.linkedin.com/oauth/v2/accessToken",
-                        new FormUrlEncodedContent(tokenRequest));
+                        using var httpClient = new HttpClient();
+                        var tokenResponse = await httpClient.PostAsync(
+                            "https://www.linkedin.com/oauth/v2/accessToken",
+                            new FormUrlEncodedContent(tokenRequest));
 
-                    if(!tokenResponse.IsSuccessStatusCode)
-                        return StatusCode((int)tokenResponse.StatusCode, await tokenResponse.Content.ReadAsStringAsync());
+                        if (!tokenResponse.IsSuccessStatusCode)
+                            return StatusCode((int)tokenResponse.StatusCode, await tokenResponse.Content.ReadAsStringAsync());
 
-                    var tokenJson = await tokenResponse.Content.ReadAsStringAsync();
-                    var token = JsonConvert.DeserializeObject<LinkedInTokenResponse>(tokenJson);
+                        var tokenJson = await tokenResponse.Content.ReadAsStringAsync();
+                        var token = JsonConvert.DeserializeObject<LinkedInTokenResponse>(tokenJson);
 
-                    // Step 2: Get user profile (for author URN)
-                    httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token.AccessToken);
-                    var profileResponse = await httpClient.GetAsync("https://api.linkedin.com/v2/userinfo");
+                        // Step 2: Get user profile (for author URN)
+                        httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token.AccessToken);
+                        var profileResponse = await httpClient.GetAsync("https://api.linkedin.com/v2/userinfo");
 
-                    if(!profileResponse.IsSuccessStatusCode)
-                        return StatusCode((int)profileResponse.StatusCode, await profileResponse.Content.ReadAsStringAsync());
+                        if (!profileResponse.IsSuccessStatusCode)
+                            return StatusCode((int)profileResponse.StatusCode, await profileResponse.Content.ReadAsStringAsync());
 
-                    var profileJson = await profileResponse.Content.ReadAsStringAsync();
-                    dynamic profile = JsonConvert.DeserializeObject(profileJson);
-                    string authorUrn = $"urn:li:person:{profile.sub}";
-                    if(token != null)
-                    {
-                        var user = _context.Users.FirstOrDefault(x => x.Id == request.UserId);
-                        if(user == null) return NotFound("User not found");
+                        var profileJson = await profileResponse.Content.ReadAsStringAsync();
+                        dynamic profile = JsonConvert.DeserializeObject(profileJson);
+                        string authorUrn = $"urn:li:person:{profile.sub}";
+                        if (token != null)
+                        {
+                            var user = _context.Users.FirstOrDefault(x => x.Id == request.UserId);
+                            if (user == null) return NotFound("User not found");
 
-                        user.LinkedInAccessToken = token.AccessToken;
-                        user.LinkedInAuthUrn = authorUrn;
-                        await _context.SaveChangesAsync();
+                            user.LinkedInAccessToken = token.AccessToken;
+                            user.LinkedInAuthUrn = authorUrn;
+                            await _context.SaveChangesAsync();
+                        }
+                        // Step 3: Return token + authorUrn
+                        return Ok(token);
                     }
-                    // Step 3: Return token + authorUrn
-                    return Ok(token);
-                }
                 case "pinterest":
                     {
                         var AppId = await _platformConfigurationRepository.GetConfigurationValueByKey("AppId", PlatformType.Pinterest);
@@ -236,8 +268,6 @@ namespace MC.Basic.API.Controllers
                         var values = new Dictionary<string, string>
     {
         { "grant_type", "authorization_code" },
-        { "client_id", AppId },
-        { "client_secret", AppSecret },
         { "code", request.Code },
         { "redirect_uri", "http://localhost:4200/auth-callback" }
     };
@@ -245,6 +275,8 @@ namespace MC.Basic.API.Controllers
                         using var httpClient = new HttpClient();
                         var content = new FormUrlEncodedContent(values);
                         content.Headers.ContentType = new MediaTypeHeaderValue("application/x-www-form-urlencoded");
+                        var authToken = Convert.ToBase64String(Encoding.UTF8.GetBytes($"{AppId}:{AppSecret}"));
+                        httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", authToken);
                         httpClient.DefaultRequestHeaders.Accept.Clear();
                         httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
@@ -254,11 +286,48 @@ namespace MC.Basic.API.Controllers
                             var errorContent = await response.Content.ReadAsStringAsync();
                             return BadRequest(new { error = "Failed to exchange Pinterest token", response = errorContent });
                         }
+                        var jsonResult = await response.Content.ReadAsStringAsync();
+                        var result = JsonConvert.DeserializeObject<PinterestTokenResponse>(jsonResult);
 
-                        return null;
+                        var accountRequest = new HttpRequestMessage(HttpMethod.Get, "https://api.pinterest.com/v5/user_account");
+                        accountRequest.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", result.access_token);
+                        var accountResponse = await _httpClient.SendAsync(accountRequest);
+                        if (!accountResponse.IsSuccessStatusCode)
+                        {
+                            var errorContent = await response.Content.ReadAsStringAsync();
+                            return BadRequest ( new {error  = "Unable to fetch Pinterest account", response = errorContent });
+                        }
+                        var accountContent = await accountResponse.Content.ReadAsStringAsync();
+                        var data = JsonConvert.DeserializeObject<PinterestProfile>(accountContent);
+                        if (data == null)
+                            return NotFound("Data not found");
+                        var pinterestProfile = new
+                        {
+                            Id = data.Id,
+                            Username = data.Username,
+                            BusinessName = data.Business_Name,
+                            FollowerCount = data.FollowerCount,
+                            FollowingCount = data.FollowingCount,
+                            ProfileImageUrl = data.Profile_Image
+                        };
+
+                        var profile = new
+                        {
+                            pinterestProfile = pinterestProfile,
+                            accessToken = result.access_token,
+                        };
+
+                        var user = _context.Users.FirstOrDefault(x => x.Id == request.UserId);
+                        if (user == null) return NotFound("User not found");
+                        user.PinterestAccessToken = result.access_token;
+                        user.PinterestAuthUrn = data.Id;
+
+                        await _context.SaveChangesAsync();
+
+                        return Ok(profile);
                     }
                 default:
-                return BadRequest("Invalid platform specified.");
+                    return BadRequest("Invalid platform specified.");
             }
 
 
@@ -280,61 +349,74 @@ namespace MC.Basic.API.Controllers
         {
             var attachments = new List<string>();
 
-            foreach(var imageBase64 in post.Images)
+            // Directly use image URLs (no base64 conversion)
+            foreach (var imageUrl in post.Images)
             {
-                var base64Data = imageBase64.Split(',')[1];
-                var imageBytes = Convert.FromBase64String(base64Data);
+                // Download the image from the URL
+                using var imageResponse = await _httpClient.GetAsync(imageUrl);
+                if (!imageResponse.IsSuccessStatusCode)
+                {
+                    return BadRequest($"Failed to download image from URL: {imageUrl}");
+                }
+                var imageBytes = await imageResponse.Content.ReadAsByteArrayAsync();
                 var byteContent = new ByteArrayContent(imageBytes);
                 byteContent.Headers.ContentType = new MediaTypeHeaderValue("image/jpeg");
 
                 var uploadImageUrl = $"https://graph.facebook.com/v19.0/{post.PageId}/photos";
 
                 var content = new MultipartFormDataContent
-        {
-            { new StringContent(post.PageAccessToken), "access_token" },
-            { new StringContent("false"), "published" },
-            { byteContent, "source", "image.jpg" }
-        };
+                {
+                    { new StringContent(post.PageAccessToken), "access_token" },
+                    { new StringContent("false"), "published" },
+                    { byteContent, "source", "image.jpg" }
+                };
 
                 var uploadResponse = await _httpClient.PostAsync(uploadImageUrl, content);
                 var uploadContent = await uploadResponse.Content.ReadAsStringAsync();
 
-                if(!uploadResponse.IsSuccessStatusCode)
+                if (!uploadResponse.IsSuccessStatusCode)
                 {
                     return BadRequest($"Image upload failed: {uploadContent}");
                 }
 
                 var mediaId = JObject.Parse(uploadContent)["id"]?.ToString();
-                if(mediaId != null)
+                if (mediaId != null)
                 {
                     attachments.Add($"{{\"media_fbid\":\"{mediaId}\"}}");
                 }
             }
 
-            foreach(var videoBase64 in post.Videos)
+            // Directly use video URLs (no base64 conversion)
+            foreach (var videoUrl in post.Videos)
             {
-                var base64Data = videoBase64.Split(',')[1];
-                var videoBytes = Convert.FromBase64String(base64Data);
+                // Download the video from the URL
+                using var videoResponse = await _httpClient.GetAsync(videoUrl);
+                if (!videoResponse.IsSuccessStatusCode)
+                {
+                    return BadRequest($"Failed to download video from URL: {videoUrl}");
+                }
+                var videoBytes = await videoResponse.Content.ReadAsByteArrayAsync();
                 var byteContent = new ByteArrayContent(videoBytes);
                 byteContent.Headers.ContentType = new MediaTypeHeaderValue("video/mp4");
+
                 var uploadVideoUrl = $"https://graph.facebook.com/v19.0/{post.PageId}/videos";
                 var content = new MultipartFormDataContent
-            {
-            { new StringContent(post.PageAccessToken), "access_token" },
-            { new StringContent("false"), "published" },
-            { byteContent, "source", "video.mp4" }
-            };
+                {
+                    { new StringContent(post.PageAccessToken), "access_token" },
+                    { new StringContent("false"), "published" },
+                    { byteContent, "source", "video.mp4" }
+                };
 
                 var uploadResponse = await _httpClient.PostAsync(uploadVideoUrl, content);
                 var uploadContent = await uploadResponse.Content.ReadAsStringAsync();
 
-                if(!uploadResponse.IsSuccessStatusCode)
+                if (!uploadResponse.IsSuccessStatusCode)
                 {
                     return BadRequest($"Video upload failed: {uploadContent}");
                 }
 
                 var mediaId = JObject.Parse(uploadContent)["id"]?.ToString();
-                if(mediaId != null)
+                if (mediaId != null)
                 {
                     attachments.Add($"{{\"media_fbid\":\"{mediaId}\"}}");
                 }
@@ -342,12 +424,12 @@ namespace MC.Basic.API.Controllers
 
             var postUrl = $"https://graph.facebook.com/v19.0/{post.PageId}/feed";
             var postData = new Dictionary<string, string>
-        {
-        { "access_token", post.PageAccessToken },
-        { "message", post.Message }
-        };
+            {
+                { "access_token", post.PageAccessToken },
+                { "message", post.Message }
+            };
 
-            if(attachments.Any())
+            if (attachments.Any())
             {
                 postData["attached_media"] = "[" + string.Join(",", attachments) + "]";
             }
@@ -358,13 +440,12 @@ namespace MC.Basic.API.Controllers
 
             var result = await response.Content.ReadAsStringAsync();
 
-            if(!response.IsSuccessStatusCode)
+            if (!response.IsSuccessStatusCode)
             {
                 return BadRequest($"Post failed: {result}");
             }
             var postResult = JObject.Parse(result);
             var createdPostId = postResult["id"]?.ToString();
-            //var createdPostIds = uploadContent;
 
             var mediaUrls = new List<string>();
             mediaUrls.AddRange(post.Images);
@@ -392,11 +473,12 @@ namespace MC.Basic.API.Controllers
             return Ok(JsonConvert.DeserializeObject(result));
         }
 
+
         [HttpGet("user-social-media-tokens/{userId}")]
         public async Task<IActionResult> GetUserFacebookToken(int userId)
         {
             var user = _context.Users.Where(x => x.Id == userId).FirstOrDefault();
-            if(user == null)
+            if (user == null)
             {
                 return NotFound("Token not available");
             }
@@ -442,11 +524,11 @@ namespace MC.Basic.API.Controllers
                 return BadRequest("Access token required");
             if (string.IsNullOrEmpty(request.VideoUrl))
                 return BadRequest("No video data.");
-            
+
             var videoUrl = request.VideoUrl;
             var filename = Path.GetFileName(new Uri(videoUrl).AbsolutePath);
             var fullFilePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads", filename);
-            if(!System.IO.File.Exists(fullFilePath))
+            if (!System.IO.File.Exists(fullFilePath))
             {
                 return NotFound("Video file not found.");
             }
@@ -517,6 +599,110 @@ namespace MC.Basic.API.Controllers
             }
         }
 
+        [HttpPost("CreateBoard")]
+        public async Task<IActionResult> CreateBoard([FromBody] string accessToken)
+        {
+            if (accessToken == null) return BadRequest("Access token not found.");
+            var boardRequest = new
+            {
+                name = "Summer Recipes3",
+                description = "My favorite summer recipes3",
+                privacy = "PUBLIC"
+            };
+
+            var json = JsonConvert.SerializeObject(boardRequest);
+            var content = new StringContent(json, Encoding.UTF8, "application/json");
+            _httpClient.DefaultRequestHeaders.Clear();
+            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+            _httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+            var response = await _httpClient.PostAsync("https://api.pinterest.com/v5/boards", content);
+            if (!response.IsSuccessStatusCode)
+            {
+                var errContent = await response.Content.ReadAsStringAsync();
+            }
+            var successContent = await response.Content.ReadAsStringAsync();
+
+            return Ok(successContent);
+        }
+
+        [HttpPost("UploadPinterest")]
+        public async Task<IActionResult> UploadPinterest(PinterestPost postData)
+        {
+            try
+            {
+                var authToken = await _platformConfigurationRepository.GetConfigurationValueByKey("AuthToken", PlatformType.Pinterest);
+
+                if (string.IsNullOrEmpty(postData.access_token))
+                {
+                    return BadRequest("Access Token not found");
+                }
+
+                object mediaSource;
+                string contentType = "image/png";
+                string fileName = null;
+                string base64Image = null;
+                if (!string.IsNullOrEmpty(postData.imageUrl) && (postData.imageUrl.StartsWith("/uploads/") || postData.imageUrl.Contains("localhost") || postData.imageUrl.Contains(Request.Host.Value)))
+                {
+                   
+                    if (postData.imageUrl.StartsWith("/uploads/"))
+                    {
+                        fileName = postData.imageUrl.Substring("/uploads/".Length);
+                    }
+                    else
+                    {
+                      
+                        var uri = new Uri(postData.imageUrl);
+                        fileName = uri.Segments.Last();
+                    }
+                    var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads", fileName);
+                    if (!System.IO.File.Exists(filePath))
+                    {
+                        return NotFound("Image file not found on server.");
+                    }
+                    var fileBytes = await System.IO.File.ReadAllBytesAsync(filePath);
+                    base64Image = Convert.ToBase64String(fileBytes);
+                  
+                    var ext = Path.GetExtension(fileName).ToLower();
+                    if (ext == ".jpg" || ext == ".jpeg") contentType = "image/jpeg";
+                    else if (ext == ".png") contentType = "image/png";
+                    else if (ext == ".gif") contentType = "image/gif";
+                    mediaSource = new {
+                        source_type = "image_base64",
+                        content_type = contentType,
+                        data = base64Image
+                    };
+                }
+                else
+                {
+                    mediaSource = new {
+                        source_type = "image_url",
+                        url = postData.imageUrl
+                    };
+                }
+                var pinRequest = new
+                {
+                    board_id = "948430071466987763",
+                    title = postData.Title,
+                    alt_text = postData.Description,
+                    media_source = mediaSource
+                };
+                var json = JsonConvert.SerializeObject(pinRequest);
+                var content = new StringContent(json, Encoding.UTF8, "application/json");
+                _httpClient.DefaultRequestHeaders.Clear();
+                _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", authToken);
+                _httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                var response = await _httpClient.PostAsync("https://api-sandbox.pinterest.com/v5/pins", content);
+                var UploadedContent = await response.Content.ReadAsStringAsync();
+                var result = JsonConvert.DeserializeObject<object>(UploadedContent);
+
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
         [HttpGet("GetVideoList")]
         public async Task<IActionResult> GetVideoList([FromQuery] string accesstoken)
         {
@@ -569,7 +755,7 @@ namespace MC.Basic.API.Controllers
                 }
                 return Ok(videos);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 throw new Exception(ex.Message);
             }
@@ -580,7 +766,7 @@ namespace MC.Basic.API.Controllers
         {
             try
             {
-                if(string.IsNullOrEmpty(accessToken) || accessToken == null)
+                if (string.IsNullOrEmpty(accessToken) || accessToken == null)
                 {
                     return BadRequest("Access token is required.");
                 }
@@ -614,7 +800,7 @@ namespace MC.Basic.API.Controllers
                 }).ToList();
                 return Ok(comments);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 throw new Exception(ex.Message);
             }
@@ -656,7 +842,7 @@ namespace MC.Basic.API.Controllers
                 };
                 return Ok(pinterestAccount);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 throw new Exception(ex.Message);
             }
@@ -669,92 +855,120 @@ namespace MC.Basic.API.Controllers
             var response = await _httpClient.GetAsync(url);
             var content = await response.Content.ReadAsStringAsync();
 
-            if(!response.IsSuccessStatusCode)
+            if (!response.IsSuccessStatusCode)
             {
                 return BadRequest(new { error = "Failed to get Instagram Business Account", response = content });
             }
             var data = JsonConvert.DeserializeObject<dynamic>(content);
             string igUserId = data.instagram_business_account?.id;
 
-            if(string.IsNullOrEmpty(igUserId))
+            if (string.IsNullOrEmpty(igUserId))
                 return NotFound("Instagram Business Account not connected to this page.");
             return Ok(new { instagramUserId = igUserId });
         }
-
 
         [HttpPost("post-instagram")]
         public async Task<IActionResult> PostToInstagram([FromBody] InstagramPostRequest post)
         {
             string mediaId = null;
 
-            if(!string.IsNullOrEmpty(post.ImageUrl))
+            if (!string.IsNullOrEmpty(post.ImageUrl))
             {
+                string imageUrlToUse = post.ImageUrl;
+                if (post.ImageUrl.StartsWith("/uploads/") || post.ImageUrl.Contains("localhost") || post.ImageUrl.Contains(Request.Host.Value))
+                {
+                    string fileName;
+                    if (post.ImageUrl.StartsWith("/uploads/"))
+                        fileName = post.ImageUrl.Substring("/uploads/".Length);
+                    else
+                    {
+                        var uri = new Uri(post.ImageUrl);
+                        fileName = uri.Segments.Last();
+                    }
+                    var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads", fileName);
+                    if (!System.IO.File.Exists(filePath))
+                        return NotFound("Image file not found on server.");
+                    imageUrlToUse = $"{Request.Scheme}://{Request.Host}/uploads/{fileName}";
+                }
                 var createMediaUrl = $"https://graph.facebook.com/v21.0/{post.InstagramUserId}/media";
                 var mediaParams = new Dictionary<string, string>
              {
-            { "image_url", post.ImageUrl },
-            { "caption", post.Caption ?? "" },
-            { "access_token", post.AccessToken }
+                { "image_url", imageUrlToUse },
+                { "caption", post.Caption ?? "" },
+                { "access_token", post.AccessToken }
              };
 
                 var response = await _httpClient.PostAsync(createMediaUrl, new FormUrlEncodedContent(mediaParams));
                 var result = await response.Content.ReadAsStringAsync();
 
-                if(!response.IsSuccessStatusCode)
+                if (!response.IsSuccessStatusCode)
                     return BadRequest(new { error = "Image upload failed", response = result });
 
                 mediaId = JObject.Parse(result)["id"]?.ToString();
             }
-            else if(post.Videos?.Any() == true)
+            else if (post.Videos?.Any() == true)
             {
-                var videoUrl = post.Videos[0];
-
+                string videoUrlToUse = post.Videos[0];
+                if (videoUrlToUse.StartsWith("/uploads/") || videoUrlToUse.Contains("localhost") || videoUrlToUse.Contains(Request.Host.Value))
+                {
+                    string fileName;
+                    if (videoUrlToUse.StartsWith("/uploads/"))
+                        fileName = videoUrlToUse.Substring("/uploads/".Length);
+                    else
+                    {
+                        var uri = new Uri(videoUrlToUse);
+                        fileName = uri.Segments.Last();
+                    }
+                    var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads", fileName);
+                    if (!System.IO.File.Exists(filePath))
+                        return NotFound("Video file not found on server.");
+                    videoUrlToUse = $"{Request.Scheme}://{Request.Host}/uploads/{fileName}";
+                }
                 var createMediaUrl = $"https://graph.facebook.com/v21.0/{post.InstagramUserId}/media";
                 var mediaParams = new Dictionary<string, string>
             {
-            { "media_type", "REELS" },
-            { "video_url", "https://drive.google.com/uc?export=download&id=1w4DkdCLGJJpxNR20HHNyRbnwfk4BIyrK" }, 
-            //{ "video_url", videoUrl },
-            { "caption", post.Caption ?? "" },
-            { "access_token", post.AccessToken }
+                { "media_type", "REELS" },
+                { "video_url", videoUrlToUse },
+                { "caption", post.Caption ?? "" },
+                { "access_token", post.AccessToken }
             };
 
                 var response = await _httpClient.PostAsync(createMediaUrl, new FormUrlEncodedContent(mediaParams));
                 var result = await response.Content.ReadAsStringAsync();
 
-                if(!response.IsSuccessStatusCode)
+                if (!response.IsSuccessStatusCode)
                     return BadRequest(new { error = "Video upload failed", response = result });
 
                 mediaId = JObject.Parse(result)["id"]?.ToString();
             }
 
-            if(string.IsNullOrEmpty(mediaId))
+            if (string.IsNullOrEmpty(mediaId))
                 return BadRequest("Media creation failed.");
 
             string mediaStatus = null;
             int attempts = 0;
             const int maxAttempts = 5;
             const int delayBetweenAttempts = 5000;
-            while(attempts < maxAttempts)
+            while (attempts < maxAttempts)
             {
                 var checkMediaUrl = $"https://graph.facebook.com/v21.0/{mediaId}?fields=status_code&access_token={post.AccessToken}";
                 var checkResponse = await _httpClient.GetAsync(checkMediaUrl);
                 var checkResult = await checkResponse.Content.ReadAsStringAsync();
                 mediaStatus = JObject.Parse(checkResult)["status_code"]?.ToString();
 
-                if(mediaStatus == "FINISHED")
+                if (mediaStatus == "FINISHED")
                 {
                     break;
                 }
 
                 attempts++;
-                if(attempts < maxAttempts)
+                if (attempts < maxAttempts)
                 {
                     await Task.Delay(delayBetweenAttempts);
                 }
             }
 
-            if(mediaStatus != "FINISHED")
+            if (mediaStatus != "FINISHED")
             {
                 return BadRequest("Media is still being processed, please try again later.");
             }
@@ -769,15 +983,15 @@ namespace MC.Basic.API.Controllers
             var publishResponse = await _httpClient.PostAsync(publishUrl, new FormUrlEncodedContent(publishPayload));
             var publishContent = await publishResponse.Content.ReadAsStringAsync();
 
-            if(!publishResponse.IsSuccessStatusCode)
+            if (!publishResponse.IsSuccessStatusCode)
                 return BadRequest(new { error = "Publish failed", response = publishContent });
             var publishResult = JObject.Parse(publishContent);
             var createdPostId = publishResult["id"]?.ToString();
 
             var mediaUrls = new List<string>();
-            if(!string.IsNullOrEmpty(post.ImageUrl))
+            if (!string.IsNullOrEmpty(post.ImageUrl))
                 mediaUrls.Add(post.ImageUrl);
-            if(post.Videos != null)
+            if (post.Videos != null)
                 mediaUrls.AddRange(post.Videos);
 
             var newPost = new PostTransaction
@@ -810,7 +1024,7 @@ namespace MC.Basic.API.Controllers
                 var base64 = request.Base64;
                 var extension = base64.Contains("image") ? "jpg" : "mp4";
                 var folder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/uploads");
-                if(!Directory.Exists(folder)) Directory.CreateDirectory(folder);
+                if (!Directory.Exists(folder)) Directory.CreateDirectory(folder);
 
                 var fileName = $"{Guid.NewGuid()}.{extension}";
                 var filePath = Path.Combine(folder, fileName);
@@ -822,7 +1036,7 @@ namespace MC.Basic.API.Controllers
                 var fileUrl = $"{Request.Scheme}://{Request.Host}/uploads/{fileName}";
                 return Ok(new { fileUrl });
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 return BadRequest(new { error = "Failed to upload media", detail = ex.Message });
             }
@@ -835,13 +1049,13 @@ namespace MC.Basic.API.Controllers
         {
             var file = dto.File;
 
-            if(file == null || file.Length == 0)
+            if (file == null || file.Length == 0)
                 return BadRequest(new { message = "No file uploaded." });
 
             try
             {
                 var uploadFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads");
-                if(!Directory.Exists(uploadFolder))
+                if (!Directory.Exists(uploadFolder))
                 {
                     Directory.CreateDirectory(uploadFolder);
                 }
@@ -849,7 +1063,7 @@ namespace MC.Basic.API.Controllers
                 var fileName = $"{Guid.NewGuid()}{Path.GetExtension(file.FileName)}";
                 var filePath = Path.Combine(uploadFolder, fileName);
 
-                using(var stream = new FileStream(filePath, FileMode.Create))
+                using (var stream = new FileStream(filePath, FileMode.Create))
                 {
                     await file.CopyToAsync(stream);
                 }
@@ -858,7 +1072,7 @@ namespace MC.Basic.API.Controllers
 
                 return Ok(new { url = fileUrl });
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 return StatusCode(500, new { message = "Upload failed.", error = ex.Message });
             }
@@ -867,7 +1081,7 @@ namespace MC.Basic.API.Controllers
         [HttpGet("get-post-insights")]
         public async Task<IActionResult> GetPostInsights(string postId, string accessToken, string platform)
         {
-            if(platform.ToLower() == "facebook")
+            if (platform.ToLower() == "facebook")
             {
                 var insightsUrl = $"https://graph.facebook.com/v21.0/{postId}/insights?metric=post_impressions,post_engaged_users,post_reactions_like_total,post_reactions_love_total&access_token={accessToken}";
                 //var insightsUrl = $"https://graph.facebook.com/v21.0/{postId}/insights?metric=post_impressions,post_engaged_users,post_clicks,post_reactions_by_type_total&access_token={accessToken}";
@@ -879,7 +1093,7 @@ namespace MC.Basic.API.Controllers
                 var summaryResponse = await _httpClient.GetAsync(summaryUrl);
                 var summaryContent = await summaryResponse.Content.ReadAsStringAsync();
 
-                if(!insightsResponse.IsSuccessStatusCode || !summaryResponse.IsSuccessStatusCode)
+                if (!insightsResponse.IsSuccessStatusCode || !summaryResponse.IsSuccessStatusCode)
                 {
                     return BadRequest(new
                     {
@@ -895,13 +1109,13 @@ namespace MC.Basic.API.Controllers
                     summary = JsonConvert.DeserializeObject(summaryContent)
                 });
             }
-            else if(platform.ToLower() == "instagram")
+            else if (platform.ToLower() == "instagram")
             {
                 var url = $"https://graph.facebook.com/v21.0/{postId}/insights?metric=impressions,reach,engagement,saved,video_views&access_token={accessToken}";
                 var response = await _httpClient.GetAsync(url);
                 var content = await response.Content.ReadAsStringAsync();
 
-                if(!response.IsSuccessStatusCode)
+                if (!response.IsSuccessStatusCode)
                     return BadRequest(new { error = "Failed to fetch Instagram insights", response = content });
 
                 return Ok(JsonConvert.DeserializeObject(content));
@@ -921,13 +1135,13 @@ namespace MC.Basic.API.Controllers
         {
             try
             {
-                var user =await _userRepository.GetAsync(x => x.Token == apiReq.Token);
+                var user = await _userRepository.GetAsync(x => x.Token == apiReq.Token);
                 // Step 1: Register the upload (if it's an image or video)
                 var post = apiReq.Data;
-                if(user == null || string.IsNullOrEmpty(user.LinkedInAccessToken))
+                if (user == null || string.IsNullOrEmpty(user.LinkedInAccessToken))
                     return BadRequest("User not found or LinkedIn access token is missing.");
                 string uploadedMediaUrn = null;
-                if(!string.IsNullOrEmpty(post.ImageUrl))
+                if (!string.IsNullOrEmpty(post.ImageUrl))
                 {
                     var registerUploadUrl = "https://api.linkedin.com/v2/assets?action=registerUpload";
                     var registerPayload = new
@@ -953,17 +1167,17 @@ namespace MC.Basic.API.Controllers
                     });
 
                     var registerResult = await registerResponse.Content.ReadAsStringAsync();
-                    if(!registerResponse.IsSuccessStatusCode)
+                    if (!registerResponse.IsSuccessStatusCode)
                         return BadRequest(new { error = "Register upload failed", response = registerResult });
 
                     var registerObj = JObject.Parse(registerResult);
                     var uploadUrl = registerObj["value"]?["uploadMechanism"]?["com.linkedin.digitalmedia.uploading.MediaUploadHttpRequest"]?["uploadUrl"]?.ToString();
                     uploadedMediaUrn = registerObj["value"]?["asset"]?.ToString();
 
-                    if(!string.IsNullOrEmpty(uploadUrl))
+                    if (!string.IsNullOrEmpty(uploadUrl))
                     {
                         using var imageResponse = await _httpClient.PutAsync(uploadUrl, new StreamContent(await _httpClient.GetStreamAsync(post.ImageUrl)));
-                        if(!imageResponse.IsSuccessStatusCode)
+                        if (!imageResponse.IsSuccessStatusCode)
                             return BadRequest("Image upload to LinkedIn failed.");
                     }
                 }
@@ -972,7 +1186,7 @@ namespace MC.Basic.API.Controllers
                 var postUrl = "https://api.linkedin.com/v2/ugcPosts";
                 var postBody = new Dictionary<string, object>
                 {
-                    ["author"] =user.LinkedInAuthUrn,
+                    ["author"] = user.LinkedInAuthUrn,
                     ["lifecycleState"] = "PUBLISHED",
                     ["specificContent"] = new Dictionary<string, object>
                     {
@@ -1010,7 +1224,7 @@ namespace MC.Basic.API.Controllers
                 var publishResponse = await _httpClient.SendAsync(request);
                 var publishResult = await publishResponse.Content.ReadAsStringAsync();
 
-                    if(!publishResponse.IsSuccessStatusCode)
+                if (!publishResponse.IsSuccessStatusCode)
                     return BadRequest(new { error = "Post publish failed", response = publishResult });
 
                 // Save Post to DB
@@ -1034,7 +1248,7 @@ namespace MC.Basic.API.Controllers
 
                 return Ok(JsonConvert.DeserializeObject(publishResult));
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 return StatusCode(500, new { error = ex.Message });
             }

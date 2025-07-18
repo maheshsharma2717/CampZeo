@@ -48,6 +48,8 @@ export class EventComponent implements OnInit {
   channels: any;
   selectedChannel: any;
   videoUrl: string | ArrayBuffer | null = null;
+  imageresponse: any = null;
+  vedioresponse: any = null;
   constructor(private service: AppService, private toaster: ToastrService, private router: Router, private activatedRoutes: ActivatedRoute) {
     this.activatedRoutes.queryParams.subscribe(param => {
       this.id = param['id']
@@ -55,11 +57,12 @@ export class EventComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    debugger;
+    
     this.GetData();
     if (this.accessToken) {
       this.service.getFacebookPages(this.accessToken).subscribe({
         next: (res: any) => {
+          console.log(' Facebook API Response:', res);
           this.pages = res.data || [];
         },
         error: err => {
@@ -69,6 +72,7 @@ export class EventComponent implements OnInit {
     }
   }
   GetData() {
+    
     this.service.GetEventForCampaignPost({ data: this.id }).subscribe({
       next: (response: any) => {
         this.contacts = response.data.contacts
@@ -76,6 +80,16 @@ export class EventComponent implements OnInit {
         this.filteredContacts = this.contacts
         this.total = this.contacts.length;
         this.videoUrl = this.Post?.videoUrl || '';
+        // Set image/video preview like list-posts
+        this.imageresponse = null;
+        this.vedioresponse = null;
+        if (this.videoUrl && typeof this.videoUrl === 'string') {
+          if (/\.(jpg|jpeg|png|gif|bmp|webp|svg)$/i.test(this.videoUrl)) {
+            this.imageresponse = this.videoUrl;
+          } else if (/\.(mp4|mov|avi|wmv|flv|webm|mkv|m4v)$/i.test(this.videoUrl)) {
+            this.vedioresponse = this.videoUrl;
+          }
+        }
         if (this.Post.type == 8) {
           // this.getChannel();
         }
@@ -105,12 +119,16 @@ export class EventComponent implements OnInit {
     else if (this.Post.type == 8) {
       this.activeTab = 'youtube';
     }
+    else if (this.Post.type == 9) {
+      this.activeTab = 'Pinterest';
+    }
   }
   onTabClick(tab: string): void {
     this.activeTab = tab;
   }
 
   sendMessage() {
+    
     const campaignId = this.Post?.campaignId;
     if (!campaignId) {
       this.toaster.error('Campaign ID is missing.');
@@ -119,18 +137,19 @@ export class EventComponent implements OnInit {
 
     const rawMessage = this.Post?.message || '';
     const content = this.extractContent(rawMessage);
-
     const pageId = this.selectedPage?.id;
+
     const pageAccessToken = this.selectedPage?.access_token;
 
     if (this.activeTab === 'facebook') {
-      if (!pageId || !pageAccessToken) {
-        this.toaster.error('Facebook Page ID or Access Token is missing.');
-        return;
-      }
+      // if (!pageId || !pageAccessToken) {
+      //   this.toaster.error('Facebook Page ID or Access Token is missing.');
+      //   return;
+      // }
       this.postToFacebook(content, pageId, pageAccessToken);
     }
     else if (this.activeTab === 'instagram') {
+
       if (!this.instagramUserId || !pageAccessToken) {
         this.toaster.error('Instagram User ID or Access Token is missing.');
         return;
@@ -143,18 +162,60 @@ export class EventComponent implements OnInit {
     else if (this.activeTab === 'youtube') {
       this.postToYoutube();
     }
+    else if (this.activeTab === 'Pinterest') {
+      this.postToPinterest(content, pageAccessToken);
+    }
     else {
       this.postToOtherChannels(campaignId, rawMessage);
     }
   }
+  private postToPinterest(content: any, pageAccessToken: any){
+    const imageUrl = content.images[0];
+    let payload = {
+      access_token: "pina_AMA7OQQXADIHQBAAGCACSDPFL2CARGABACGSPNXWSZXULDYYSD4ETAUWHL7XOVKI6NLOJDK75MZHMCYLIO6MY7D7ZZG2PFAA",
+      imageUrl: this.videoUrl,
+      BoardId: "",
+      Title: this.Post.subject,
+      Description: ""
+    }
+    this.service.postToPinterest(payload).subscribe({
+      next:(res: any) =>{
+        console.log(res);
+        this.toaster.success("Pin created successfully.");
+      }
+    })
+  }
 
   private postToFacebook(content: any, pageId: string, accessToken: string) {
+    
+    let message = this.Post?.message || '';
+    const tempDiv = document.createElement('div');
+    tempDiv.innerHTML = message;
+    message = tempDiv.textContent || tempDiv.innerText || '';
+
+    let images: string[] = [];
+    let videos: string[] = [];
+    if (this.videoUrl) {
+      const isImage = typeof this.videoUrl === 'string' && this.videoUrl.match(/\.(jpeg|jpg|png|gif|bmp|webp)$/i);
+      const isVideo = typeof this.videoUrl === 'string' && this.videoUrl.match(/\.(mp4|mov|avi|wmv|flv|webm|mkv)$/i);
+      if (isImage) {
+        images = [this.videoUrl as string];
+      } else if (isVideo) {
+        videos = [this.videoUrl as string];
+      } else if (Array.isArray(this.videoUrl)) {
+        (this.videoUrl as string[]).forEach(url => {
+          if (url.match(/\.(jpeg|jpg|png|gif|bmp|webp)$/i)) images.push(url);
+          else if (url.match(/\.(mp4|mov|avi|wmv|flv|webm|mkv)$/i)) videos.push(url);
+        });
+      }
+    }
+
     this.service.postToFacebook({
       pageId,
       pageAccessToken: accessToken,
-      message: content.text,
-      images: content.images,
-      videos: content.videos
+      message: message,
+      images: images,
+      videos: videos
     }).subscribe({
       next: () => {
         this.toaster.success('Posted to Facebook successfully!');
@@ -167,87 +228,83 @@ export class EventComponent implements OnInit {
     });
   }
 
-  private postToInstagram(content: any, accessToken: string) {
-    if (this.videoUrl) {
-      const payload: any = {
-        instagramUserId: this.instagramUserId,
-        accessToken: accessToken,
-        caption: content.text,
-        imageUrl: content.images[0] || null,
-        videoUrl: this.videoUrl
-      };
-
-      this.service.postToInstagram(payload).subscribe({
-        next: () => {
-          this.toaster.success('Posted video to Instagram successfully!');
-          this.router.navigate(['list-campaigns']);
-        },
-        error: err => {
-          console.error('Instagram post failed:', err);
-          this.toaster.error('Failed to post to Instagram.');
-        }
-      });
-    }
-    else {
-      const base64Image = content.images[0];
-      if (!base64Image) {
-        this.toaster.warning('Instagram requires an image or video. Please add one.');
-        return;
-      }
-
-      this.service.uploadMedia(base64Image).subscribe({
-        next: (uploadedImageUrl) => {
-          const payload = {
-            instagramUserId: this.instagramUserId,
-            accessToken,
-            caption: content.text,
-            imageUrl: uploadedImageUrl
-          };
-
-          this.service.postToInstagram(payload).subscribe({
-            next: () => {
-              this.toaster.success('Posted image to Instagram successfully!');
-              this.router.navigate(['list-campaigns']);
-            },
-            error: err => {
-              console.error('Instagram post failed:', err);
-              this.toaster.error('Failed to post to Instagram.');
-            }
-          });
-        },
-        error: err => {
-          console.error('Image upload failed:', err);
-          this.toaster.error('Failed to upload image.');
-        }
+ private postToInstagram(content: any, accessToken: string) {
+  let caption = this.Post?.message || '';
+  const tempDiv = document.createElement('div');
+  tempDiv.innerHTML = caption;
+  caption = tempDiv.textContent || tempDiv.innerText || '';
+ 
+  let images: string[] = [];
+  let videos: string[] = [];
+ 
+  if (this.videoUrl) {
+    const isImage = typeof this.videoUrl === 'string' && this.videoUrl.match(/\.(jpeg|jpg|png|gif|bmp|webp)$/i);
+    const isVideo = typeof this.videoUrl === 'string' && this.videoUrl.match(/\.(mp4|mov|avi|wmv|flv|webm|mkv)$/i);
+   
+    if (isImage) {
+      images = [this.videoUrl as string];
+    } else if (isVideo) {
+      videos = [this.videoUrl as string];
+    } else if (Array.isArray(this.videoUrl)) {
+      (this.videoUrl as string[]).forEach(url => {
+        if (url.match(/\.(jpeg|jpg|png|gif|bmp|webp)$/i)) images.push(url);
+        else if (url.match(/\.(mp4|mov|avi|wmv|flv|webm|mkv)$/i)) videos.push(url);
       });
     }
   }
+ 
+  const payload = {
+    instagramUserId: this.instagramUserId,
+    accessToken,
+    caption,
+    images,
+    videos
+  };
+ 
+  if (images.length === 0 && videos.length === 0) {
+    this.toaster.warning('Instagram requires an image or video. Please add one.');
+    return;
+  }
+ 
+  this.service.postToInstagram(payload).subscribe({
+    next: () => {
+      this.toaster.success('Posted to Instagram successfully!');
+      this.router.navigate(['list-campaigns']);
+    },
+    error: err => {
+      console.error('Instagram post failed:', err);
+      this.toaster.error('Failed to post to Instagram.');
+    }
+  });
+}
+
 
   private postToLinkedIn(content: any) {
-    // Accept either image or video
-    const base64Image = content.images[0];
-    const videoUrl = this.videoUrl;
+    let text = this.Post?.message || '';
+    const mediaUrl = this.videoUrl;
 
-    if (!base64Image && !videoUrl) {
+    if (!mediaUrl) {
       this.toaster.warning('LinkedIn requires an image or video. Please add one.');
       return;
     }
 
-    // Prefer image if present, else use video
-    let payload: any = {
-      caption: content.text
-    };
-    if (base64Image) {
-      this.service.uploadMedia(base64Image).subscribe({
-        next: (uploadedImageUrl) => {
-          payload.imageUrl = uploadedImageUrl;
-          this.sendLinkedInPost(payload);
-        }
-      });
-    } else if (videoUrl) {
-      payload.videoUrl = videoUrl;
-      this.sendLinkedInPost(payload);
+    const tempDiv = document.createElement('div');
+    tempDiv.innerHTML = text;
+    text = tempDiv.textContent || tempDiv.innerText || '';
+
+    let payload: any = { caption: text };
+    const isImage = typeof mediaUrl === 'string' && mediaUrl.match(/\.(jpeg|jpg|png|gif|bmp|webp)$/i);
+    const isVideo = typeof mediaUrl === 'string' && mediaUrl.match(/\.(mp4|mov|avi|wmv|flv|webm|mkv)$/i);
+
+    if (isImage) {
+      payload.imageUrl = mediaUrl;
+    } else if (isVideo) {
+      payload.videoUrl = mediaUrl;
+    } else {
+      payload.imageUrl = mediaUrl;
     }
+
+    this.sendLinkedInPost(payload);
   }
 
   private sendLinkedInPost(payload: any) {
@@ -273,15 +330,21 @@ export class EventComponent implements OnInit {
 
   private async postToYoutube() {
     let google_access_token = localStorage.getItem("google_access_token");
+    let description = this.Post?.message || '';
+    const tempDiv = document.createElement('div');
+    tempDiv.innerHTML = description;
+    description = tempDiv.textContent || tempDiv.innerText || '';
+    console.log('YouTube Description (plain text):', description);
+
     const payload = {
       accessToken: google_access_token,
       title: this.Post.subject,
-      description: this.Post.message,
+      description: description, // plain text only
       tags: ['angular', 'youtube', 'upload'],
       categoryId: '22',
       privacyStatus: 'public',
-      videoUrl: this.videoUrl
-      
+      videoUrl: this.videoUrl,
+      Videos: Array.isArray(this.videoUrl) ? this.videoUrl : [this.videoUrl]
     };
 
     this.service.uploadToYoutube(payload).subscribe({
@@ -294,7 +357,8 @@ export class EventComponent implements OnInit {
 
 
   private postToOtherChannels(campaignId: number, message: string) {
-    const selectedContacts = this.grid.getSelectedRecords();
+    
+    const selectedContacts = this.filteredContacts.filter(c => c.selected);
     if (!selectedContacts || selectedContacts.length === 0) {
       this.toaster.warning('Please select at least one contact.', 'Warning');
       return;
@@ -383,7 +447,7 @@ export class EventComponent implements OnInit {
     return html[0];
   }
 
-  //instagram fb changes
+
   onPageSelect(): void {
     debugger;
     this.instagramUserId = '';
@@ -398,31 +462,62 @@ export class EventComponent implements OnInit {
       });
     }
   }
+  // extractContent(message: string) {
+  //   if (!message) return { text: '', images: [], videos: [] };
+  //   const htmlParts = message.split('[{(break)}]');
+  //   const html = htmlParts[0];
+  //   const doc = new DOMParser().parseFromString(html, 'text/html');
+  //   const text = doc.body.textContent?.trim() || '';
+  //   const images: string[] = [];
+  //   doc.querySelectorAll('img').forEach(img => {
+  //     if (img.src.startsWith('data:image')) {
+  //       images.push(img.src);
+  //     }
+  //   });
+
+  //   const videos: string[] = [];
+  //   doc.querySelectorAll('video').forEach(video => {
+  //     if (video.src.startsWith('data:video')) {
+  //       videos.push(video.src);
+  //     }
+  //   });
+
+  //   return { text, images, videos };
+  // }
+
+
   extractContent(message: string) {
-    if (!message) return { text: '', images: [], videos: [] };
-    const htmlParts = message.split('[{(break)}]');
-    const html = htmlParts[0];
-    const doc = new DOMParser().parseFromString(html, 'text/html');
-    const text = doc.body.textContent?.trim() || '';
-    const images: string[] = [];
-    doc.querySelectorAll('img').forEach(img => {
-      if (img.src.startsWith('data:image')) {
-        images.push(img.src);
-      }
-    });
+  if (!message) return { text: '', images: [], videos: [] };
 
-    const videos: string[] = [];
-    doc.querySelectorAll('video').forEach(video => {
-      if (video.src.startsWith('data:video')) {
-        videos.push(video.src);
-      }
-    });
+  const htmlParts = message.split('[{(break)}]');
+  const html = htmlParts[0];
+  const doc = new DOMParser().parseFromString(html, 'text/html');
 
-    return { text, images, videos };
-  }
+  const text = doc.body.textContent?.trim() || '';
+
+  const images: string[] = [];
+  doc.querySelectorAll('img').forEach(img => {
+    if (img.src && (img.src.startsWith('data:image') || img.src.startsWith('http') || img.src.startsWith('/assets'))) {
+      images.push(img.src);
+    }
+  });
+
+  const videos: string[] = [];
+  doc.querySelectorAll('video').forEach(video => {
+    if (video.src && (video.src.startsWith('data:video') || video.src.startsWith('http'))) {
+      videos.push(video.src);
+    }
+  });
+
+  return { text, images, videos };
+}
+
 
   onItemsPerPageChange(value: number) {
     this.pageSettings = { pageSize: value };
   }
 
+  get isContactPlatform(): boolean {
+    return ['SMS', 'email', 'whatsApp'].includes(this.activeTab);
+  }
 }

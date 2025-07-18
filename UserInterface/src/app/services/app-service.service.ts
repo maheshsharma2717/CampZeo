@@ -316,11 +316,16 @@ export class AppService {
     imageUrl?: string;
     videos?: string[];  // should be public URLs
   }) {
+  
     return this.http.post(`${ApiUrl}socialmedia/post-instagram`, payload);
   }
   postToLinkedIn(payload: any): Observable<any> {
     var req = { token: this.Token, data: payload }
     return this.http.post(`${ApiUrl}socialmedia/post-linkedin`, req);
+  }
+  postToPinterest (payload: any): Observable<any> {
+    var req = { token: this.Token, data: payload }
+    return this.http.post(`${ApiUrl}socialmedia/UploadPinterest`, payload);
   }
 
   uploadMedia(base64Data: string): Observable<string> {
@@ -416,6 +421,7 @@ export class AppService {
   }
 
 getLocation(pinCode: string): Observable<any> {
+  // return this.http.get(ApiUrl + "/Organisation/" + pinCode);
     return this.http.get(ApiUrl+`Organisation/`+ pinCode)
 }
   

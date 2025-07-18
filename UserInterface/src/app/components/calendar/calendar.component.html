@@ -29,7 +29,7 @@
                     <div [class.calendar-faded]="calendarFaded">
                         <daypilot-calendar [config]="configDay" [events]="events" #day></daypilot-calendar>
                         <daypilot-calendar [config]="configWeek" [events]="events" #week></daypilot-calendar>
-                        <daypilot-month [config]="configMonth" [events]="events" #month></daypilot-month> 
+                        <daypilot-month [config]="configMonth" [events]="events" #month></daypilot-month>
                     </div>
 
                 </div>
@@ -91,11 +91,9 @@
                     <div class="d-flex align-items-center mb-2">
                         <label class="form-label fw-semibold text-secondary mb-0 me-2">Post Type:</label>
                         <span class="d-flex align-items-center">
-                            <i 
-                                [ngClass]="getIconByType(mapTemplateTypeToString(previewData?.type))"
+                            <i [ngClass]="getIconByType(mapTemplateTypeToString(previewData?.type))"
                                 [style.color]="getColorByType(mapTemplateTypeToString(previewData?.type))"
-                                style="font-size: 2rem; vertical-align: middle;"
-                            ></i>
+                                style="font-size: 2rem; vertical-align: middle;"></i>
                             <span class="ms-2 text-capitalize fw-medium text-dark">
                                 {{ mapTemplateTypeToString(previewData?.type) }}
                             </span>
@@ -108,19 +106,26 @@
                     <input class="form-control" id="subject" [value]="previewData?.subject" type="text" readonly />
                 </div>
 
-                <div class="d-flex my-3">
+                <div *ngIf="previewData?.type === 6 || previewData?.type === 7 || previewData?.type === 8 || previewData?.type === 5"
+                    class="d-flex my-3">
                     <div class="w-100 text-start">
                         <label for="organisationName">Attachments</label>
 
-                <div *ngIf="previewData?.type === 6 || previewData?.type === 7 || previewData?.type === 8 || previewData?.type === 5">
-                    <video *ngIf="previewData.videoUrl && isVideo(previewData.videoUrl)" height="490" width="770" controls poster="path/to/thumbnail.jpg" autoplay muted loop>
-                        <source [src]="previewData.videoUrl" type="video/mp4" />
-                        Your browser does not support the video tag.
-                    </video>
-                    <img *ngIf="previewData.videoUrl && isImage(previewData.videoUrl)" [src]="previewData.videoUrl" alt="Preview Image"  height="490" width="770" />
+                        <div>
+                            <div class="d-flex align-items-center gap-2">
+                                <video *ngIf="previewData.videoUrl && isVideo(previewData.videoUrl)"
+                                    style="max-width: 140px; max-height: 90px; border-radius: 8px; object-fit: cover;"
+                                    controls poster="path/to/thumbnail.jpg" autoplay muted loop>
+                                    <source [src]="previewData.videoUrl" type="video/mp4" />
+                                    Your browser does not support the video tag.
+                                </video>
+                                <img *ngIf="previewData.videoUrl && isImage(previewData.videoUrl)"
+                                    [src]="previewData.videoUrl" alt="Preview Image"
+                                    style="max-width: 120px; max-height: 90px; border-radius: 8px; object-fit: cover;" />
+                            </div>
+                        </div>
+                    </div>
                 </div>
-            </div>
-        </div>
                 <div class="d-flex my-3">
                     <div class="w-100 text-start">
                         <label for="organisationName">Message Template</label>
@@ -132,9 +137,10 @@
                                 readonly></textarea>
                         </div>
 
-                       
+
                         <div *ngIf="previewData?.type === 4">
-                            <div class="border p-2 html-content-div" style="min-height: 30vh;" [innerHTML]="editorContent"></div>
+                            <div class="border p-2 html-content-div" style="min-height: 30vh;"
+                                [innerHTML]="editorContent"></div>
                         </div>
                     </div>
                 </div>

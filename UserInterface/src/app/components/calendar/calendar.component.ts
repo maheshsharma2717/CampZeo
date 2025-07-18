@@ -250,7 +250,6 @@ export class CalendarComponent implements OnInit {
   };
 
   viewDay(): void {
-    debugger
     this.configNavigator.selectMode = "Day";
     this.configDay.visible = true;
     this.configWeek.visible = false;
@@ -272,7 +271,6 @@ export class CalendarComponent implements OnInit {
   }
 
   async onTimeRangeSelected(args: any) {
-    debugger;
   
     const selectedDate = args.start;
     if (selectedDate) {
