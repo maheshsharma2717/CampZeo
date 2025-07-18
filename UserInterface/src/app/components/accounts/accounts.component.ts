@@ -5,6 +5,7 @@ import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, NavigationEnd, Router, RouterModule } from '@angular/router';
 import { AppService } from '../../services/app-service.service';
 import { ToastrService } from 'ngx-toastr';
+import { environment } from '../../../environments/environments';
 declare var google: any;
 
 @Component({
@@ -140,7 +141,7 @@ export class AccountsComponent implements OnInit {
 
   connectToYoutube() {
     const clientId = '407987005028-goqhfc0ndc8cj6sadlko00bl7jtapbut.apps.googleusercontent.com';
-    const redirectUri = 'http://localhost:4200/auth-callback';
+    const redirectUri = window.location.origin + '/auth-callback';
     const state = 'youtube';
     const scope = [
       'https://www.googleapis.com/auth/userinfo.profile',
@@ -156,7 +157,8 @@ export class AccountsComponent implements OnInit {
   }
   connectToPinterest() {
     const clientId = '1524471';
-    const redirectUri = 'http://localhost:4200/auth-callback';
+    const redirectUri = window.location.origin + '/auth-callback';
+    // const redirectUri =  environment.API_BASE + 'auth-callback';
     const scopes = [
       'boards:read',
       'pins:read',
