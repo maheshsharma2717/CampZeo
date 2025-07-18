@@ -233,39 +233,37 @@ export class EventComponent implements OnInit {
   const tempDiv = document.createElement('div');
   tempDiv.innerHTML = caption;
   caption = tempDiv.textContent || tempDiv.innerText || '';
- 
-  let images: string[] = [];
-  let videos: string[] = [];
- 
+
+  let payload: any = {
+    InstagramUserId: this.instagramUserId,
+    AccessToken: accessToken,
+    Caption: caption
+  };
+
   if (this.videoUrl) {
     const isImage = typeof this.videoUrl === 'string' && this.videoUrl.match(/\.(jpeg|jpg|png|gif|bmp|webp)$/i);
     const isVideo = typeof this.videoUrl === 'string' && this.videoUrl.match(/\.(mp4|mov|avi|wmv|flv|webm|mkv)$/i);
-   
+
     if (isImage) {
-      images = [this.videoUrl as string];
+      payload.ImageUrl = this.videoUrl as string;
     } else if (isVideo) {
-      videos = [this.videoUrl as string];
+      payload.Videos = [this.videoUrl as string];
     } else if (Array.isArray(this.videoUrl)) {
-      (this.videoUrl as string[]).forEach(url => {
-        if (url.match(/\.(jpeg|jpg|png|gif|bmp|webp)$/i)) images.push(url);
-        else if (url.match(/\.(mp4|mov|avi|wmv|flv|webm|mkv)$/i)) videos.push(url);
-      });
+      const images = (this.videoUrl as string[]).filter(url => url.match(/\.(jpeg|jpg|png|gif|bmp|webp)$/i));
+      const videos = (this.videoUrl as string[]).filter(url => url.match(/\.(mp4|mov|avi|wmv|flv|webm|mkv)$/i));
+      if (videos.length > 0) {
+        payload.Videos = videos;
+      } else if (images.length > 0) {
+        payload.ImageUrl = images[0];
+      }
     }
   }
- 
-  const payload = {
-    instagramUserId: this.instagramUserId,
-    accessToken,
-    caption,
-    images,
-    videos
-  };
- 
-  if (images.length === 0 && videos.length === 0) {
+
+  if (!payload.ImageUrl && !payload.Videos) {
     this.toaster.warning('Instagram requires an image or video. Please add one.');
     return;
   }
- 
+
   this.service.postToInstagram(payload).subscribe({
     next: () => {
       this.toaster.success('Posted to Instagram successfully!');

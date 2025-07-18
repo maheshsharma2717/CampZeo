@@ -158,7 +158,6 @@ export class AccountsComponent implements OnInit {
   connectToPinterest() {
     const clientId = '1524471';
     const redirectUri = window.location.origin + '/auth-callback';
-    // const redirectUri =  environment.API_BASE + 'auth-callback';
     const scopes = [
       'boards:read',
       'pins:read',
