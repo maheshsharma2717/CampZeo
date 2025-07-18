@@ -157,16 +157,30 @@
         <div
           *ngIf="CampaignPostForm.get('type').value !== 0 && CampaignPostForm.get('type').value >= 2 && CampaignPostForm.get('type').value <= 9"
           class="d-flex align-items-center mb-2">
+          <div class="row">
           <label for="organisationName" style="float: inline-start; width: 100%;">Campaign Post
             Content</label>
-          <a type="button" class="btn btn-sm d-flex align-items-center btn-outline-primary  mt-3"
-            style="font-size: 12px; width: 12%;" (click)="openAIContentModal()">
-            <i class="fas fa-magic  mx-2" aria-hidden="true"></i> Generate with AI
-          </a>
-          <a type="button" class="btn btn-sm d-flex align-items-center btn-outline-success mt-3"
-            style="font-size: 12px; width: 15%; margin-left: 8px;" (click)="openAIImageModal()">
-            <i class="fas fa-image mx-2" aria-hidden="true"></i> Generate Image with AI
-          </a>
+            <br>
+          <div class="d-flex   align-items-center gap-2  mt-3" style="width: 100%; ">
+        
+            <a type="button"
+              class="btn btn-sm d-flex align-items-center btn-outline-primary"
+              style="font-size: 12px; min-width: 120px;"
+              (click)="openAIContentModal()">
+              <i class="fas fa-magic me-1" aria-hidden="true"></i>
+              <span class="d-none d-sm-inline">Generate with AI</span>
+              <span class="d-inline d-sm-none">AI</span>
+            </a>
+            <a type="button"
+              class="btn btn-sm d-flex align-items-center btn-outline-success"
+              style="font-size: 12px; min-width: 150px;"
+              (click)="openAIImageModal()">
+              <i class="fas fa-image me-1" aria-hidden="true"></i>
+              <span class="d-none d-sm-inline">Generate Image with AI</span>
+              <span class="d-inline d-sm-none">Image AI</span>
+            </a>
+          </div>
+        </div>
         </div>
         <div class="d-flex my-3">
           <div class="w-100 ">
